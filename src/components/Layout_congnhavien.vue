@@ -10,26 +10,26 @@
       </div>
 
       <nav class="nav flex-column mt-3">
-        <a href="#" class="nav-link active">
+        <router-link to="/" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">dashboard</span>
           <span>Bảng điều khiển</span>
-        </a>
-        <a href="#" class="nav-link">
+        </router-link>
+        <router-link to="/cham-cong" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">schedule</span>
           <span>Chấm công</span>
-        </a>
-        <a href="#" class="nav-link">
+        </router-link>
+        <router-link to="/luong" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">payments</span>
           <span>Phiếu lương</span>
-        </a>
-        <a href="#" class="nav-link">
+        </router-link>
+        <router-link to="/ho-so" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">person</span>
           <span>Hồ sơ</span>
-        </a>
-        <a href="#" class="nav-link">
+        </router-link>
+        <router-link to="/nghi-phep" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">event_busy</span>
           <span>Nghỉ phép</span>
-        </a>
+        </router-link>
       </nav>
 
       <div class="sidebar-footer mt-auto p-4 border-top">
