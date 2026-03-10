@@ -93,6 +93,10 @@
       <div class="card-header bg-white border-bottom p-4 d-flex flex-wrap gap-3 align-items-center justify-content-between">
         <h3 class="h6 mb-0 fw-bold text-uppercase tracking-tight">Lịch sử cá nhân</h3>
         <div class="d-flex gap-2">
+          <button class="btn btn-primary btn-sm rounded-3 px-3 py-2 d-flex align-items-center gap-2">
+            <span class="material-symbols-outlined fs-5">add_circle</span>
+            Xin bổ sung công
+          </button>
           <div class="dropdown">
             <button class="btn btn-light btn-sm border px-3 py-2 rounded-3 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
               Tháng 10

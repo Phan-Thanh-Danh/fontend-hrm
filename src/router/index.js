@@ -28,6 +28,21 @@ const routes = [
                         path: 'luong',
                         name: 'luong',
                         component: () => import('../View/portal_nhanvien/BangLuong.vue')
+                  },
+                  {
+                        path: 'ho-so',
+                        name: 'ho-so',
+                        component: () => import('../View/portal_nhanvien/HoSoCaNhan.vue')
+                  },
+                  {
+                        path: 'nghi-phep',
+                        name: 'nghi-phep',
+                        component: () => import('../View/portal_nhanvien/NghiPhep.vue')
+                  },
+                  {
+                        path: 'dich-vu',
+                        name: 'dich-vu',
+                        component: () => import('../View/portal_nhanvien/DichVuNoiBo.vue')
                   }
             ]
       }

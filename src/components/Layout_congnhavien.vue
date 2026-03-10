@@ -11,24 +11,28 @@
 
       <nav class="nav flex-column mt-3">
         <router-link to="/" class="nav-link" active-class="active">
-          <span class="material-symbols-outlined">dashboard</span>
-          <span>Bảng điều khiển</span>
-        </router-link>
-        <router-link to="/cham-cong" class="nav-link" active-class="active">
-          <span class="material-symbols-outlined">schedule</span>
-          <span>Chấm công</span>
-        </router-link>
-        <router-link to="/luong" class="nav-link" active-class="active">
-          <span class="material-symbols-outlined">payments</span>
-          <span>Phiếu lương</span>
+          <span class="material-symbols-outlined">home</span>
+          <span>Trang chủ</span>
         </router-link>
         <router-link to="/ho-so" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">person</span>
-          <span>Hồ sơ</span>
+          <span>Hồ sơ Cá nhân</span>
+        </router-link>
+        <router-link to="/cham-cong" class="nav-link" active-class="active">
+          <span class="material-symbols-outlined">schedule</span>
+          <span>Thời gian (Time)</span>
         </router-link>
         <router-link to="/nghi-phep" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">event_busy</span>
-          <span>Nghỉ phép</span>
+          <span>Nghỉ phép (Leave)</span>
+        </router-link>
+        <router-link to="/dich-vu" class="nav-link" active-class="active">
+          <span class="material-symbols-outlined">support_agent</span>
+          <span>Dịch vụ nội bộ</span>
+        </router-link>
+        <router-link to="/luong" class="nav-link" active-class="active">
+          <span class="material-symbols-outlined">payments</span>
+          <span>Tiền lương (Payroll)</span>
         </router-link>
       </nav>
 
