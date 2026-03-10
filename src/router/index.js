@@ -6,6 +6,11 @@ import { startLoading, stopLoading } from '../utils/loaderState'
 
 const routes = [
       {
+            path: '/login',
+            name: 'login',
+            component: () => import('../components/Login.vue')
+      },
+      {
             path: '/',
             component: Layout_congnhavien,
             children: [
@@ -18,6 +23,11 @@ const routes = [
                         path: 'cham-cong',
                         name: 'cham-cong',
                         component: Cham_cong
+                  },
+                  {
+                        path: 'luong',
+                        name: 'luong',
+                        component: () => import('../View/portal_nhanvien/BangLuong.vue')
                   }
             ]
       }
