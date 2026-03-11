@@ -159,6 +159,15 @@
         </nav>
       </div>
     </div>
+
+    <!-- Nút Giải trình chấm công -->
+    <div class="mt-4 d-flex justify-content-end">
+      <router-link to="/giai-trinh-cham-cong" class="btn btn-warning fw-bold px-4 py-2 rounded-3 shadow-sm d-inline-flex align-items-center gap-2 text-dark border border-warning">
+        <span class="material-symbols-outlined">report_problem</span>
+        Giải Trình Chấm Công
+      </router-link>
+    </div>
+
   </div>
 </template>
 

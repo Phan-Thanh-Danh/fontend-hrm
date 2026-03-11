@@ -27,7 +27,7 @@ const routes = [
                   {
                         path: 'luong',
                         name: 'luong',
-                        component: () => import('../View/portal_nhanvien/BangLuong.vue')
+                        component: () => import('../View/portal_nhanvien/PhieuLuong.vue')
                   },
                   {
                         path: 'ho-so',
@@ -40,9 +40,24 @@ const routes = [
                         component: () => import('../View/portal_nhanvien/NghiPhep.vue')
                   },
                   {
+                        path: 'don-nghi-viec',
+                        name: 'don-nghi-viec',
+                        component: () => import('../View/portal_nhanvien/GiayPhep/DonNghiViec.vue')
+                  },
+                  {
                         path: 'dich-vu',
                         name: 'dich-vu',
                         component: () => import('../View/portal_nhanvien/DichVuNoiBo.vue')
+                  },
+                  {
+                        path: 'giai-trinh-cham-cong',
+                        name: 'giai-trinh-cham-cong',
+                        component: () => import('../View/portal_nhanvien/GiayPhep/GiaiTrinhChamCong.vue')
+                  },
+                  {
+                        path: 'thong-bao',
+                        name: 'thong-bao',
+                        component: () => import('../View/portal_nhanvien/ThongBao.vue')
                   }
             ]
       }

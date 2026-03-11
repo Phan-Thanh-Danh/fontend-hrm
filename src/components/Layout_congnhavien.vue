@@ -14,36 +14,32 @@
           <span class="material-symbols-outlined">home</span>
           <span>Trang chủ</span>
         </router-link>
-        <router-link to="/ho-so" class="nav-link" active-class="active">
-          <span class="material-symbols-outlined">person</span>
-          <span>Hồ sơ Cá nhân</span>
-        </router-link>
         <router-link to="/cham-cong" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">schedule</span>
-          <span>Thời gian (Time)</span>
+          <span>Chấm Công</span>
         </router-link>
         <router-link to="/nghi-phep" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">event_busy</span>
-          <span>Nghỉ phép (Leave)</span>
+          <span>Nghỉ phép</span>
+        </router-link>
+        <router-link to="/luong" class="nav-link" active-class="active">
+          <span class="material-symbols-outlined">payments</span>
+          <span>Tiền lương</span>
         </router-link>
         <router-link to="/dich-vu" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">support_agent</span>
           <span>Dịch vụ nội bộ</span>
         </router-link>
-        <router-link to="/luong" class="nav-link" active-class="active">
-          <span class="material-symbols-outlined">payments</span>
-          <span>Tiền lương (Payroll)</span>
-        </router-link>
       </nav>
 
       <div class="sidebar-footer mt-auto p-4 border-top">
-        <div class="d-flex align-items-center gap-3 p-2 bg-light rounded-3">
+        <router-link to="/ho-so" class="d-flex align-items-center gap-3 p-2 bg-light rounded-3 text-decoration-none text-dark">
           <div class="avatar-circle">A</div>
           <div class="flex-grow-1 overflow-hidden">
             <div class="fw-semibold text-truncate small">Nguyễn Văn A</div>
             <div class="text-muted text-truncate x-small">Nhân viên chính thức</div>
           </div>
-        </div>
+        </router-link>
       </div>
     </aside>
 
@@ -62,15 +58,15 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-          <button class="btn btn-link p-2 text-secondary position-relative text-decoration-none">
-            <span class="material-symbols-outlined">notifications</span>
+          <router-link to="/thong-bao" class="btn p-2 text-secondary position-relative text-decoration-none d-flex align-items-center">
+            <span class="material-symbols-outlined fs-4">notifications</span>
             <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="margin-top: 10px; margin-left: -10px;"></span>
-          </button>
+          </router-link>
           <div class="vr mx-2 d-none d-sm-block"></div>
-          <div class="d-flex align-items-center gap-2">
+          <router-link to="/ho-so" class="d-flex align-items-center gap-2 text-decoration-none text-dark" style="cursor: pointer;">
             <span class="small fw-medium d-none d-sm-block">Nguyễn Văn A</span>
             <div class="avatar-circle">A</div>
-          </div>
+          </router-link>
         </div>
       </header>
 

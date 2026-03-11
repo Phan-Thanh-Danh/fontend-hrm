@@ -1,183 +1,231 @@
 <template>
-  <div class="container-fluid py-4">
-    <div class="mb-5">
-      <h1 class="h2 fw-black tracking-tight text-dark mb-1">Chào buổi sáng, A!</h1>
-      <p class="text-muted">Hôm nay là Thứ Tư, ngày 25 tháng 10 năm 2023. Chúc bạn một ngày làm việc hiệu quả.</p>
+  <div class="dashboard-wrapper container-fluid py-4 min-vh-100">
+    <!-- Header -->
+    <div class="mb-4">
+      <h1 class="h2 fw-black text-dark mb-1">Chào buổi sáng, A!</h1>
+      <p class="text-secondary fw-medium">Hôm nay là Thứ Tư, ngày 25 tháng 10 năm 2023. Chúc bạn một ngày làm việc hiệu quả.</p>
     </div>
 
-    <div class="row g-4">
-      <!-- Left Column: Check-in & Time -->
-      <div class="col-lg-8">
-        <div class="card border-0 shadow-sm rounded-4 p-4 mb-4">
-          <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-4">
-            <div class="text-center text-md-start">
-              <p class="text-uppercase small fw-bold text-muted tracking-wider mb-2">Giờ hiện tại</p>
-              <div class="d-flex align-items-baseline gap-2">
-                <span class="display-3 fw-black text-primary tracking-tighter">08:45</span>
-                <span class="h4 fw-bold text-muted opacity-50">32s</span>
+    <!-- Main Content Grid -->
+    <div class="row g-4 mb-4">
+      <!-- Left Column (Layout for Check-in, Leave, Summary) -->
+      <div class="col-lg-8 d-flex flex-column gap-4">
+        
+        <!-- Top Row: Time & Check-in/out -->
+        <div class="card bento-card p-4">
+          <div class="row align-items-center g-4">
+            <!-- Time Section -->
+            <div class="col-md-6 border-end-md">
+              <p class="text-uppercase small fw-bold text-secondary tracking-wider mb-2">GIỜ HIỆN TẠI</p>
+              <div class="d-flex align-items-baseline gap-1 mb-2">
+                <span class="display-3 fw-bold text-brand-blue lh-1">08:45</span>
+                <span class="h4 fw-bold text-secondary ms-1 mb-0">32s</span>
               </div>
-              <p class="text-muted mt-2 d-flex align-items-center gap-2 justify-content-center justify-content-md-start">
+              <p class="text-muted small d-flex align-items-center gap-1 mb-1">
                 <span class="material-symbols-outlined fs-6">location_on</span>
                 Văn phòng TP. Hồ Chí Minh
               </p>
+              <p class="text-success small fw-semibold d-flex align-items-center gap-1 mb-0">
+                <span class="rounded-circle bg-success d-inline-block" style="width: 6px; height: 6px;"></span>
+                GPS/IP: HỢP LỆ
+              </p>
             </div>
-            <div class="d-flex flex-column flex-sm-row gap-3 w-100 w-md-auto">
-              <button class="btn btn-primary btn-lg rounded-3 fw-bold px-4 py-3 shadow-primary">
-                <span class="material-symbols-outlined align-middle me-2">login</span>
-                Check-in nhanh
-              </button>
-              <button class="btn btn-light btn-lg rounded-3 fw-bold px-4 py-3 border">
-                <span class="material-symbols-outlined align-middle me-2">logout</span>
-                Check-out
-              </button>
+            
+            <!-- Check-in/out Buttons -->
+            <div class="col-md-6">
+              <div class="d-flex gap-3 justify-content-md-end">
+                <button class="btn btn-checkin text-white fw-bold d-flex align-items-center gap-2 px-4 shadow-sm">
+                  <span class="material-symbols-outlined fs-5">login</span>
+                  <span class="text-start lh-sm fs-5">Check-<br>in</span>
+                </button>
+                <button class="btn btn-checkout text-white fw-bold d-flex align-items-center gap-2 px-4 shadow-sm">
+                  <span class="material-symbols-outlined fs-5">logout</span>
+                  <span class="text-start lh-sm fs-5">Check-<br>out</span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
+        <!-- Bottom Row: Leave & Summary -->
         <div class="row g-4">
-          <!-- Leave Balance -->
+          <!-- Leave Balance Card -->
           <div class="col-sm-6">
-            <div class="card border-0 shadow-sm rounded-4 text-white bg-gradient-primary p-4 h-100">
+            <div class="card bento-card bg-brand-blue text-white p-4 h-100 position-relative overflow-hidden">
               <div class="d-flex justify-content-between align-items-start mb-4">
-                <div class="p-2 bg-white-20 rounded-3 backdrop-blur">
-                  <span class="material-symbols-outlined">calendar_today</span>
+                <div class="icon-box-white rounded-3 d-flex align-items-center justify-content-center bg-white bg-opacity-25">
+                  <span class="material-symbols-outlined">calendar_month</span>
                 </div>
-                <span class="badge bg-white-20 py-2 px-3 rounded-pill small">Năm 2023</span>
+                <span class="badge bg-white bg-opacity-25 py-2 px-3 rounded-2 fw-medium">Năm 2023</span>
               </div>
-              <p class="small text-white-50 fw-medium">Số ngày phép còn lại</p>
-              <div class="d-flex align-items-baseline gap-2 mt-1">
-                <span class="display-5 fw-black">12</span>
-                <span class="h5 opacity-75">ngày</span>
+              
+              <p class="small fw-semibold text-white-75 mb-1 text-uppercase">QUỸ PHÉP NĂM CÒN LẠI</p>
+              <div class="d-flex align-items-baseline gap-2 mb-4">
+                <span class="display-3 fw-bold lh-1">12</span>
+                <span class="h5 fw-medium">ngày</span>
               </div>
-              <div class="mt-4 progress bg-white-20" style="height: 8px;">
-                <div class="progress-bar bg-white" role="progressbar" style="width: 66%;"></div>
+              
+              <div class="mt-auto">
+                <div class="d-flex justify-content-between x-small text-white-75 fw-medium mb-2 text-uppercase">
+                  <span>ĐÃ DÙNG: 6</span>
+                  <span>TỔNG: 18</span>
+                </div>
+                <div class="progress rounded-pill bg-white bg-opacity-25" style="height: 12px;">
+                  <div class="progress-bar bg-white rounded-pill" role="progressbar" style="width: 33%;"></div>
+                </div>
               </div>
-              <p class="mt-3 x-small text-white-50">Bạn đã sử dụng 6/18 ngày phép</p>
             </div>
           </div>
 
-          <!-- Working Hours -->
+          <!-- Monthly Attendance Summary -->
           <div class="col-sm-6">
-            <div class="card border-0 shadow-sm rounded-4 p-4 h-100">
-              <div class="d-flex justify-content-between align-items-start mb-4">
-                <div class="p-2 bg-light rounded-3 text-primary">
-                  <span class="material-symbols-outlined">timer</span>
+            <div class="card bento-card p-4 h-100">
+              <h3 class="h6 fw-bold mb-4 text-uppercase">TÓM TẮT CHẤM CÔNG THÁNG</h3>
+              <div class="row text-center g-3 mt-2">
+                <!-- Actual -->
+                <div class="col-4 px-1">
+                  <div class="text-success mb-2">
+                    <span class="material-symbols-outlined">event_available</span>
+                  </div>
+                  <div class="x-small text-muted fw-bold mb-2">CÔNG THỰC<br>TẾ</div>
+                  <div class="h3 fw-bold text-dark mb-0">18.5</div>
                 </div>
-                <span class="badge bg-success-light text-success py-2 px-3 rounded-pill small">+2.5h</span>
-              </div>
-              <p class="small text-muted fw-medium">Tổng giờ làm tháng này</p>
-              <div class="d-flex align-items-baseline gap-2 mt-1">
-                <span class="display-5 fw-black text-dark">152.5</span>
-                <span class="h5 text-muted">giờ</span>
-              </div>
-              <div class="mt-4 d-flex align-items-center gap-2">
-                <div class="flex-grow-1 progress bg-light" style="height: 6px;">
-                  <div class="progress-bar bg-primary" role="progressbar" style="width: 80%;"></div>
+                <!-- Absent -->
+                <div class="col-4 px-1 border-start border-end">
+                  <div class="text-danger mb-2">
+                    <span class="material-symbols-outlined">event_busy</span>
+                  </div>
+                  <div class="x-small text-muted fw-bold mb-2"><br>VẮNG</div>
+                  <div class="h3 fw-bold text-dark mb-0">0</div>
                 </div>
-                <span class="x-small fw-bold text-muted fw-bold">80%</span>
+                <!-- Late -->
+                <div class="col-4 px-1">
+                  <div class="text-warning mb-2">
+                    <span class="material-symbols-outlined">schedule</span>
+                  </div>
+                  <div class="x-small text-muted fw-bold mb-2">PHÚT ĐI<br>MUỘN</div>
+                  <div class="h3 fw-bold text-dark mb-0">15</div>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
       </div>
 
       <!-- Right Column: Notifications -->
       <div class="col-lg-4">
-        <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-          <div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center">
+        <div class="card bento-card h-100 d-flex flex-column">
+          <div class="p-4 d-flex justify-content-between align-items-center">
             <h3 class="h6 mb-0 fw-bold d-flex align-items-center gap-2">
-              <span class="material-symbols-outlined text-primary">notifications_active</span>
+              <span class="material-symbols-outlined text-brand-blue fs-5">notifications</span>
               Thông báo mới
             </h3>
-            <button class="btn btn-link btn-sm p-0 text-primary text-decoration-none fw-bold small">Xem tất cả</button>
+            <a href="#" class="text-brand-blue text-decoration-none fw-semibold small">Xem tất cả</a>
           </div>
-          <div class="card-body p-0">
-            <div class="list-group list-group-flush">
-              <!-- Notification Item -->
-              <div class="list-group-item list-group-item-action border-0 p-4">
-                <div class="d-flex gap-3">
-                  <div class="avatar-circle bg-success-light text-success flex-shrink-0">
-                    <span class="material-symbols-outlined">check_circle</span>
-                  </div>
-                  <div>
-                    <p class="small fw-bold mb-1">Đơn nghỉ phép đã duyệt</p>
-                    <p class="x-small text-muted mb-2 text-line-clamp-2">Đơn nghỉ phép ngày 28/10 của bạn đã được quản lý phê duyệt.</p>
-                    <span class="x-small text-muted opacity-50">10 phút trước</span>
-                  </div>
+          
+          <div class="flex-grow-1 px-4">
+            <!-- Interleaved notification items -->
+            <div class="notification-item py-3 border-top">
+              <div class="d-flex gap-3 align-items-start">
+                <div class="notif-icon-circle bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+                  <span class="material-symbols-outlined fs-5">check_circle</span>
+                </div>
+                <div>
+                  <h4 class="small fw-bold text-dark mb-1">Đơn nghỉ phép đã duyệt</h4>
+                  <p class="x-small text-secondary mb-2 lh-base">Đơn nghỉ phép ngày 28/10 của bạn đã được quản lý phê duyệt.</p>
+                  <span class="text-muted" style="font-size: 0.7rem;">10 phút trước</span>
                 </div>
               </div>
-              <!-- Notification Item -->
-              <div class="list-group-item list-group-item-action border-0 p-4">
-                <div class="d-flex gap-3">
-                  <div class="avatar-circle bg-primary-light text-primary flex-shrink-0">
-                    <span class="material-symbols-outlined">payments</span>
-                  </div>
-                  <div>
-                    <p class="small fw-bold mb-1">Đã có phiếu lương</p>
-                    <p class="x-small text-muted mb-2">Phiếu lương tháng 09/2023 đã sẵn sàng để xem.</p>
-                    <span class="x-small text-muted opacity-50">2 giờ trước</span>
-                  </div>
+            </div>
+
+            <div class="notification-item py-3 border-top">
+              <div class="d-flex gap-3 align-items-start">
+                <div class="notif-icon-circle bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+                  <span class="material-symbols-outlined fs-5">payments</span>
+                </div>
+                <div>
+                  <h4 class="small fw-bold text-dark mb-1">Đã có phiếu lương</h4>
+                  <p class="x-small text-secondary mb-2 lh-base">Phiếu lương tháng 09/2023 đã sẵn sàng để xem.</p>
+                  <span class="text-muted" style="font-size: 0.7rem;">2 giờ trước</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="notification-item py-3 border-top">
+              <div class="d-flex gap-3 align-items-start">
+                <div class="notif-icon-circle bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
+                  <span class="material-symbols-outlined fs-5">campaign</span>
+                </div>
+                <div>
+                  <h4 class="small fw-bold text-dark mb-1">Thông báo Công ty</h4>
+                  <p class="x-small text-secondary mb-2 lh-base">V/v Nghỉ lễ Quốc khánh sắp tới và lịch trực...</p>
+                  <span class="text-muted" style="font-size: 0.7rem;">Hôm qua</span>
                 </div>
               </div>
             </div>
           </div>
-          <div class="card-footer bg-light text-center p-3">
-            <p class="x-small text-muted italic mb-0">Bạn có 3 thông báo chưa đọc</p>
+          
+          <div class="p-3 bg-light rounded-bottom-4 position-relative border-top text-center">
+            <p class="x-small text-muted fw-medium fst-italic mb-0 d-flex align-items-center justify-content-center gap-2">
+              <span class="rounded-circle bg-brand-blue d-inline-block" style="width: 6px; height: 6px;"></span>
+              Bạn có 3 thông báo chưa đọc
+            </p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Recent Activities -->
-    <div class="mt-5">
-      <div class="card border-0 shadow-sm rounded-4 p-4">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-          <h3 class="h6 mb-0 fw-bold">Hoạt động gần đây</h3>
-          <button class="btn btn-link btn-sm p-0 text-muted text-decoration-none d-flex align-items-center gap-1">
-            Filter
-            <span class="material-symbols-outlined fs-6">filter_list</span>
-          </button>
-        </div>
-        <div class="table-responsive">
-          <table class="table table-hover align-middle mb-0">
-            <thead class="x-small text-muted text-uppercase fw-bold border-bottom">
-              <tr>
-                <th class="py-3 px-0 border-0">Ngày</th>
-                <th class="py-3 border-0">Hoạt động</th>
-                <th class="py-3 border-0">Thời gian</th>
-                <th class="py-3 border-0 text-end">Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody class="small">
-              <tr>
-                <td class="py-3 px-0 fw-semibold">25/10/2023</td>
-                <td class="py-3">Chấm công vào (Check-in)</td>
-                <td class="py-3 text-muted">08:02 AM</td>
-                <td class="py-3 text-end">
-                  <span class="badge bg-success-light text-success fw-bold x-small text-uppercase px-2 py-1">Thành công</span>
-                </td>
-              </tr>
-              <tr>
-                <td class="py-3 px-0 fw-semibold">24/10/2023</td>
-                <td class="py-3">Chấm công ra (Check-out)</td>
-                <td class="py-3 text-muted">17:35 PM</td>
-                <td class="py-3 text-end">
-                  <span class="badge bg-success-light text-success fw-bold x-small text-uppercase px-2 py-1">Thành công</span>
-                </td>
-              </tr>
-              <tr>
-                <td class="py-3 px-0 fw-semibold">24/10/2023</td>
-                <td class="py-3">Gửi đơn nghỉ phép</td>
-                <td class="py-3 text-muted">14:20 PM</td>
-                <td class="py-3 text-end">
-                  <span class="badge bg-primary-light text-primary fw-bold x-small text-uppercase px-2 py-1">Đã duyệt</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <!-- Recent Activities Table -->
+    <div class="card bento-card p-4">
+      <div class="d-flex align-items-center justify-content-between mb-4">
+        <h3 class="h6 mb-0 fw-bold">Hoạt động gần đây</h3>
+        <button class="btn btn-sm text-secondary px-0 d-flex align-items-center gap-1 bg-transparent border-0 hover-opacity">
+          Filter
+          <span class="material-symbols-outlined fs-6">filter_list</span>
+        </button>
+      </div>
+      
+      <div class="table-responsive">
+        <table class="table table-borderless align-middle mb-0 activity-table">
+          <thead class="text-muted text-uppercase small border-bottom">
+            <tr>
+              <th class="py-3 ps-0 fw-bold w-25">NGÀY</th>
+              <th class="py-3 px-2 fw-bold w-40">HOẠT ĐỘNG</th>
+              <th class="py-3 px-2 fw-bold w-20">THỜI GIAN</th>
+              <th class="py-3 pe-0 fw-bold w-15 text-end">TRẠNG THÁI</th>
+            </tr>
+          </thead>
+          <tbody class="small text-dark fw-medium">
+            <tr class="border-bottom-custom">
+              <td class="py-3 ps-0">25/10/2023</td>
+              <td class="py-3 px-2 text-secondary">Chấm công vào (Check-in)</td>
+              <td class="py-3 px-2 text-secondary">08:02 AM</td>
+              <td class="py-3 pe-0 text-end">
+                <span class="badge status-success text-uppercase rounded-1 px-2 py-1 user-select-none">THÀNH CÔNG</span>
+              </td>
+            </tr>
+            <tr class="border-bottom-custom">
+              <td class="py-3 ps-0">24/10/2023</td>
+              <td class="py-3 px-2 text-secondary">Chấm công ra (Check-out)</td>
+              <td class="py-3 px-2 text-secondary">17:35 PM</td>
+              <td class="py-3 pe-0 text-end">
+                <span class="badge status-success text-uppercase rounded-1 px-2 py-1 user-select-none">THÀNH CÔNG</span>
+              </td>
+            </tr>
+            <tr>
+              <td class="py-3 ps-0">24/10/2023</td>
+              <td class="py-3 px-2 text-secondary">Gửi đơn nghỉ phép</td>
+              <td class="py-3 px-2 text-secondary">14:20 PM</td>
+              <td class="py-3 pe-0 text-end">
+                <span class="badge status-primary text-uppercase rounded-1 px-2 py-1 user-select-none">ĐÃ DUYỆT</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+
   </div>
 </template>
 
@@ -185,4 +233,107 @@
 </script>
 
 <style scoped>
+/* Google Font inter-like, adjust as necessary */
+.dashboard-wrapper {
+  background-color: #F8FAFC;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+/* Material Symbols Override if needed */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Base Card Styling - Soft UI/Bento Grid feel */
+.bento-card {
+  border: none;
+  border-radius: 1.25rem; /* ~20px */
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: box-shadow 0.2s ease;
+}
+
+/* Brand Colors */
+.text-brand-blue {
+  color: #3B58E9 !important;
+}
+.bg-brand-blue {
+  background-color: #3B58E9 !important;
+}
+.text-white-75 {
+  color: rgba(255, 255, 255, 0.75) !important;
+}
+
+/* Big Buttons */
+.btn-checkin {
+  background-color: #519E67;
+  border-color: #519E67;
+  border-radius: 0.75rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  min-width: 140px;
+}
+.btn-checkin:hover {
+  background-color: #438756;
+  border-color: #438756;
+}
+
+.btn-checkout {
+  background-color: #DD7C37;
+  border-color: #DD7C37;
+  border-radius: 0.75rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  min-width: 140px;
+}
+.btn-checkout:hover {
+  background-color: #C36A2D;
+  border-color: #C36A2D;
+}
+
+.icon-box-white {
+  width: 40px;
+  height: 40px;
+}
+
+/* Borders and lines */
+@media (min-width: 768px) {
+  .border-end-md {
+    border-right: 1px solid #e9ecef !important;
+  }
+}
+
+.border-bottom-custom {
+  border-bottom: 1px solid #f8f9fa !important;
+}
+
+/* Badge specific colors reproducing figma design closely */
+.status-success {
+  background-color: #E6F5EA;
+  color: #2D8A4E;
+}
+
+.status-primary {
+  background-color: #EAF0FF;
+  color: #3B58E9;
+}
+
+.hover-opacity:hover {
+  opacity: 0.8;
+}
+
+/* Table styling fixes */
+th {
+  font-weight: 700 !important;
+  color: #8E9BAE !important;
+}
+
+/* Text clamp for notifications if they get long */
+.text-line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;  
+  overflow: hidden;
+}
 </style>
