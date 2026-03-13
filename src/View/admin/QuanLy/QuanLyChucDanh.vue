@@ -21,7 +21,7 @@
                 <span class="material-symbols-outlined fs-5 text-muted">search</span>
               </span>
               <input type="text" class="form-control bg-light border-0 py-2 ps-1" placeholder="Tìm kiếm theo mã hoặc tên chức danh...">
-            </div>
+        </div>
           </div>
           <div class="col-md-2">
             <select class="form-select border-0 bg-light py-2 text-muted fw-medium">
@@ -36,7 +36,7 @@
           <div class="col-md-1">
             <button class="btn btn-light w-100 h-100 border-0 d-flex align-items-center justify-content-center text-muted">
               <span class="material-symbols-outlined fs-5">filter_list</span>
-            </button>
+          </button>
           </div>
         </div>
       </div>
@@ -83,7 +83,7 @@
           </tbody>
         </table>
       </div>
-      
+
       <!-- Footer/Pagination -->
       <div class="card-footer bg-white border-top p-4 d-flex justify-content-between align-items-center">
         <span class="text-muted small">Hiển thị {{ jobTitles.length }} trong tổng số 42 bản ghi</span>

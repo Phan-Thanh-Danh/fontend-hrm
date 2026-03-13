@@ -43,7 +43,7 @@
           </button>
           <div class="position-relative d-none d-sm-block">
             <span class="material-symbols-outlined position-absolute start-0 top-50 translate-middle-y ms-3 text-muted fs-5">search</span>
-            <input type="text" class="search-input" placeholder="Tìm kiếm nhanh...">
+            <input type="text" class="search-input" style="padding-left: 44px !important;" placeholder="Tìm kiếm nhanh...">
           </div>
         </div>
 

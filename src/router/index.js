@@ -3,6 +3,7 @@ import Layout_NhanVien from '../components/Layout_NhanVien.vue'
 import Dashboard_portal from '../View/portal_nhanvien/Dashboard_portal.vue'
 import Cham_cong from '../View/portal_nhanvien/Cham_cong.vue'
 import { startLoading, stopLoading } from '../utils/loaderState'
+import Layout_Admin from '../components/Layout_Admin.vue'
 
 const routes = [
       {
@@ -58,6 +59,57 @@ const routes = [
                         path: 'thong-bao',
                         name: 'thong-bao',
                         component: () => import('../View/portal_nhanvien/ThongBao.vue')
+                  }
+            ]
+      },
+      {
+            path: '/admin',
+            component: Layout_Admin,
+            children: [
+                  {
+                        path: '',
+                        name: 'dashboard-admin',
+                        component: () => import('../View/admin/Dashboard_admin.vue')
+                  },
+                  {
+                        path: 'tuyen-dung',
+                        name: 'admin-tuyen-dung',
+                        component: () => import('../View/admin/HR/TuyenDung.vue')
+                  },
+                  {
+                        path: 'nhan-su',
+                        name: 'admin-nhan-su',
+                        component: () => import('../View/admin/QuanLy/QuanLyNhanSu.vue')
+                  },
+                  {
+                        path: 'chuc-danh',
+                        name: 'admin-chuc-danh',
+                        component: () => import('../View/admin/QuanLy/QuanLyChucDanh.vue')
+                  },
+                  {
+                        path: 'phong-ban',
+                        name: 'admin-phong-ban',
+                        component: () => import('../View/admin/QuanLy/QuanLyPhongban.vue')
+                  },
+                  {
+                        path: 'hop-dong',
+                        name: 'admin-hop-dong',
+                        component: () => import('../View/admin/QuanLy/QuanLyHopDong.vue')
+                  },
+                  {
+                        path: 'cham-cong',
+                        name: 'admin-cham-cong',
+                        component: () => import('../View/admin/ChamCongAdmin.vue')
+                  },
+                  {
+                        path: 'nghi-phep',
+                        name: 'admin-nghi-phep',
+                        component: () => import('../View/admin/HR/NghiPhep.vue')
+                  },
+                  {
+                        path: 'lich-phong-van',
+                        name: 'admin-lich-phong-van',
+                        component: () => import('../View/admin/HR/LichPhongVan.vue')
                   }
             ]
       }

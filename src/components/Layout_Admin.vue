@@ -1,7 +1,7 @@
 <template>
   <div class="hrm-layout">
     <!-- Sidebar -->
-    <aside class="sidebar admin-sidebar border-end" :class="{ 'show': isSidebarOpen }">
+    <aside class="sidebar" :class="{ 'show': isSidebarOpen }">
       <div class="sidebar-header p-4 d-flex align-items-center gap-3">
         <div class="bg-primary p-2 rounded-3 d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
           <span class="material-symbols-outlined text-white fs-4">domain</span>
@@ -12,52 +12,71 @@
         </div>
       </div>
 
-      <nav class="nav flex-column mt-2 px-3 flex-grow-1">
-        <router-link to="/admin" class="nav-link rounded-3 mb-1" exact-active-class="active">
+      <nav class="nav flex-column mt-3">
+        <router-link to="/admin" class="nav-link" exact-active-class="active">
           <span class="material-symbols-outlined">grid_view</span>
-          <span class="fw-medium">Bảng điều khiển</span>
+          <span>Bảng điều khiển</span>
         </router-link>
-        <router-link to="/admin/tuyen-dung" class="nav-link rounded-3 mb-1" active-class="active">
+        <router-link to="/admin/tuyen-dung" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">person_add</span>
-          <span class="fw-medium">Tuyển dụng</span>
+          <span>Tuyển dụng</span>
         </router-link>
-        <router-link to="/admin/nhan-su" class="nav-link rounded-3 mb-1" active-class="active">
-          <span class="material-symbols-outlined">how_to_reg</span>
-          <span class="fw-medium">Quản lý nhân sự</span>
-        </router-link>
-        <router-link to="/admin/chuc-danh" class="nav-link rounded-3 mb-1" active-class="active">
-          <span class="material-symbols-outlined">badge</span>
-          <span class="fw-medium">Quản lý chức danh</span>
-        </router-link>
-        <router-link to="/admin/cham-cong" class="nav-link rounded-3 mb-1" active-class="active">
+        <router-link to="/admin/cham-cong" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">schedule</span>
-          <span class="fw-medium">Chấm công</span>
+          <span>Chấm công</span>
         </router-link>
-        <router-link to="/admin/nghi-phep" class="nav-link rounded-3 mb-1" active-class="active">
+        <router-link to="/admin/nghi-phep" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">event_busy</span>
-          <span class="fw-medium">Nghỉ phép</span>
+          <span>Nghỉ phép</span>
         </router-link>
-        <router-link to="/admin/ban-luong" class="nav-link rounded-3 mb-3" active-class="active">
+        <router-link to="/admin/ban-luong" class="nav-link" active-class="active">
           <span class="material-symbols-outlined">account_balance_wallet</span>
-          <span class="fw-medium">Bảng lương</span>
+          <span>Bảng lương</span>
         </router-link>
-        
-        <hr class="text-black-50 my-2 mx-2">
 
-        <router-link to="/admin/cai-dat" class="nav-link rounded-3 mt-2" active-class="active">
-          <span class="material-symbols-outlined">settings</span>
-          <span class="fw-medium">Cài đặt</span>
-        </router-link>
+        <!-- Mục Quản lý gộp lại thành dropdown -->
+        <div
+          class="nav-group"
+          :class="{ 'open': isQuanLyOpen }"
+          @mouseenter="isQuanLyOpen = true"
+          @mouseleave="isQuanLyOpen = false"
+        >
+          <div
+            class="nav-link nav-group-toggle"
+            :class="{ 'active-group': isQuanLyActive }"
+            @click="isQuanLyOpen = !isQuanLyOpen"
+            role="button"
+          >
+            <span class="material-symbols-outlined">manage_accounts</span>
+            <span>Quản lý</span>
+            <span class="material-symbols-outlined ms-auto nav-chevron">expand_more</span>
+          </div>
+          <div class="nav-submenu">
+            <router-link to="/admin/nhan-su" class="nav-link nav-sublink" active-class="active">
+              <span class="material-symbols-outlined">how_to_reg</span>
+              <span>Nhân sự</span>
+            </router-link>
+            <router-link to="/admin/chuc-danh" class="nav-link nav-sublink" active-class="active">
+              <span class="material-symbols-outlined">badge</span>
+              <span>Chức danh</span>
+            </router-link>
+            <router-link to="/admin/hop-dong" class="nav-link nav-sublink" active-class="active">
+              <span class="material-symbols-outlined">contract</span>
+              <span>Hợp đồng</span>
+            </router-link>
+            <router-link to="/admin/phong-ban" class="nav-link nav-sublink" active-class="active">
+              <span class="material-symbols-outlined">domain_verification</span>
+              <span>Phòng ban</span>
+            </router-link>
+          </div>
+        </div>
       </nav>
 
-      <div class="sidebar-footer mt-auto border-top p-3 d-flex align-items-center gap-3">
-        <div class="avatar-circle-sm bg-warning-subtle text-dark-emphasis d-flex align-items-center justify-content-center">
-          <span class="material-symbols-outlined fs-4 text-secondary">person</span>
-        </div>
-        <div class="d-flex flex-column">
-          <span class="fw-bold text-dark small">Nguyễn Văn A</span>
-          <span class="text-muted" style="font-size: 0.75rem;">admin@hrm.com</span>
-        </div>
+      <div class="sidebar-footer">
+        <router-link to="/admin/cai-dat" class="nav-link mb-3" active-class="active">
+          <span class="material-symbols-outlined">settings</span>
+          <span>Cài đặt</span>
+        </router-link>
       </div>
     </aside>
 
@@ -71,7 +90,7 @@
           </button>
           <div class="position-relative d-none d-sm-block">
             <span class="material-symbols-outlined position-absolute start-0 top-50 translate-middle-y ms-3 text-muted fs-5">search</span>
-            <input type="text" class="search-input bg-light" placeholder="Tìm kiếm nhanh...">
+            <input type="text" class="search-input" style="padding-left: 44px !important;" placeholder="Tìm kiếm nhanh...">
           </div>
         </div>
 
@@ -79,6 +98,11 @@
           <router-link to="/admin/thong-bao" class="btn p-2 text-secondary position-relative text-decoration-none d-flex align-items-center bell-btn">
             <span class="material-symbols-outlined fs-4">notifications</span>
             <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="margin-top: 10px; margin-left: -10px;"></span>
+          </router-link>
+          <div class="vr mx-2 d-none d-sm-block"></div>
+          <router-link to="/admin/ho-so" class="d-flex align-items-center gap-2 text-decoration-none text-dark" style="cursor: pointer;">
+            <span class="small fw-medium d-none d-sm-block">Nguyễn Văn A</span>
+            <div class="avatar-circle">A</div>
           </router-link>
         </div>
       </header>
@@ -92,9 +116,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const isSidebarOpen = ref(false);
+const isQuanLyOpen = ref(false);
+
+const quanLyRoutes = ['/admin/nhan-su', '/admin/chuc-danh', '/admin/hop-dong', '/admin/phong-ban'];
+
+const isQuanLyActive = computed(() => {
+  return quanLyRoutes.some(r => route.path.startsWith(r));
+});
+
+// Tự động mở submenu nếu user đang ở một trong các trang quản lý
+if (quanLyRoutes.some(r => route.path.startsWith(r))) {
+  isQuanLyOpen.value = true;
+}
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
@@ -102,62 +140,122 @@ const toggleSidebar = () => {
 </script>
 
 <style scoped>
-/* Admin Sidebar Custom Overrides */
-.admin-sidebar {
-  background-color: #ffffff;
-  display: flex;
-  flex-direction: column;
+.x-small {
+  font-size: 0.75rem;
 }
 
-/* Base override for nav links inside light sidebar */
-.admin-sidebar .nav-link {
-  color: #4b5563; /* Slate 600 */
+.sidebar-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 
-.admin-sidebar .nav-link .material-symbols-outlined {
-  color: #6b7280; /* Gray 500 */
+.bg-primary {
+  background-color: #3b3abb !important;
 }
 
-.admin-sidebar .nav-link:hover {
-  background-color: #f3f4f6; /* Gray 100 */
-  color: #111827; /* Gray 900 */
-  transform: scale(1.02);
+.text-primary {
+  color: #3b3abb !important;
 }
 
-.admin-sidebar .nav-link.active {
-  background-color: var(--primary-color);
-  color: #ffffff;
-  transform: scale(1.02);
-  box-shadow: 0 4px 6px -1px rgba(30, 64, 175, 0.4);
+.nav-link span {
+  font-size: 1.05rem;
 }
 
-.admin-sidebar .nav-link.active .material-symbols-outlined {
-  color: #ffffff;
-  transform: scale(1.1);
+/* ===== Sidebar Base ===== */
+.sidebar {
+  background-color: #ffffff !important;
+  color: #1e293b !important;
+  border-right: 1px solid #e2e8f0;
 }
 
-.avatar-circle-sm {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #e6c89c; /* Based on the amber tone from the image */
+::v-deep(.sidebar .nav-link) {
+  color: #4b5563 !important;
 }
 
-/* Layout Utilities (assuming inherited from global but some tweaks) */
-.main-wrapper {
-  margin-left: var(--sidebar-width);
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+::v-deep(.sidebar .nav-link .material-symbols-outlined) {
+  color: #6b7280 !important;
 }
 
-@media (max-width: 991.98px) {
-  .main-wrapper {
-    margin-left: 0;
-  }
+::v-deep(.sidebar .nav-link:hover) {
+  background-color: #f3f4f6 !important;
+  color: #111827 !important;
 }
 
-/* Notification Bell Animation */
+::v-deep(.sidebar .nav-link:hover .material-symbols-outlined) {
+  color: #111827 !important;
+}
+
+::v-deep(.sidebar .nav-link.active) {
+  background-color: #3f41ac !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 6px -1px rgba(63, 65, 172, 0.4) !important;
+}
+
+::v-deep(.sidebar .nav-link.active .material-symbols-outlined) {
+  color: #ffffff !important;
+}
+
+/* ===== NAV GROUP (Quản lý Dropdown) ===== */
+.nav-group {
+  position: relative;
+}
+
+/* Toggle button dùng class nav-link từ global, chỉ thêm cursor + justify */
+.nav-group-toggle {
+  cursor: pointer;
+  user-select: none;
+  justify-content: flex-start !important;
+}
+
+/* Trạng thái active khi đang ở một trong các route Quản lý */
+::v-deep(.nav-group-toggle.active-group) {
+  background-color: rgba(63, 65, 172, 0.08) !important;
+  color: #3f41ac !important;
+}
+
+::v-deep(.nav-group-toggle.active-group .material-symbols-outlined) {
+  color: #3f41ac !important;
+}
+
+/* Xoay mũi tên chevron khi mở */
+.nav-chevron {
+  transition: transform 0.25s ease;
+  margin-left: auto;
+}
+
+.nav-group.open .nav-chevron {
+  transform: rotate(180deg);
+}
+
+/* Submenu slide down */
+.nav-submenu {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background-color: rgba(241, 245, 249, 0.5);
+  border-radius: 0.5rem;
+  margin: 0 0.75rem 4px;
+}
+
+.nav-group.open .nav-submenu {
+  max-height: 300px;
+}
+
+/* Submenu item - thụt lề vào */
+::v-deep(.nav-sublink) {
+  padding-left: 2.75rem !important;
+  font-size: 0.88rem !important;
+  margin-top: 1px !important;
+  margin-bottom: 1px !important;
+}
+
+/* ===== Main content ===== */
+.main-bg {
+  background-color: #F8FAFC;
+}
+
+/* ===== Bell Animation ===== */
 @keyframes ring {
   0% { transform: rotate(0); }
   25% { transform: rotate(15deg); }
@@ -178,5 +276,19 @@ const toggleSidebar = () => {
 .bell-btn:hover .material-symbols-outlined {
   animation: ring 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
   color: var(--primary-color);
+}
+
+.bell-btn:active,
+.bell-btn.router-link-active {
+  transform: scale(0.95);
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.25);
+}
+
+.bell-btn:active .material-symbols-outlined,
+.bell-btn.router-link-active .material-symbols-outlined {
+  color: white !important;
 }
 </style>
