@@ -85,7 +85,15 @@
       <div class="col-lg-8">
         <div class="card bento-card border-1 border-opacity-10 border-dark overflow-hidden h-100 d-flex flex-column">
           
-          <!-- Header -->
+          <!-- Tabs -->
+          <div class="border-bottom-custom bg-light px-4 pt-3 d-flex gap-4">
+            <button @click="activeTab = 'salary'" :class="['btn rounded-bottom-0 px-4 py-2 fw-bold text-uppercase x-small border-0 border-bottom border-3', activeTab === 'salary' ? 'border-brand-blue text-brand-blue bg-white' : 'border-transparent text-secondary hover:text-dark']">Phiếu lương</button>
+            <button @click="activeTab = 'insurance'" :class="['btn rounded-bottom-0 px-4 py-2 fw-bold text-uppercase x-small border-0 border-bottom border-3', activeTab === 'insurance' ? 'border-brand-blue text-brand-blue bg-white' : 'border-transparent text-secondary hover:text-dark']">Bảo hiểm</button>
+          </div>
+
+          <!-- SALARY TAB CONTENT -->
+          <div v-show="activeTab === 'salary'" class="flex-grow-1 d-flex flex-column overflow-hidden">
+            <!-- Header -->
           <div class="p-4 px-md-5 border-bottom-custom bg-light bg-opacity-50 d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
             <div class="d-flex align-items-center gap-3">
               <div class="rounded-4 bg-brand-blue bg-opacity-10 text-brand-blue d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
@@ -203,6 +211,59 @@
 
             </div>
           </div>
+          </div> <!-- Close v-show salary -->
+
+          <!-- INSURANCE TAB CONTENT -->
+          <div v-show="activeTab === 'insurance'" class="flex-grow-1 d-flex flex-column bg-white">
+            <div class="p-4 px-md-5 py-5 overflow-auto custom-scrollbar flex-grow-1">
+              <div class="mx-auto" style="max-width: 800px;">
+                <h4 class="h5 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
+                  <span class="material-symbols-outlined text-brand-blue fs-4 icon-filled">health_and_safety</span>
+                  Thông tin Bảo hiểm
+                </h4>
+                
+                <div class="row g-4 mb-5 border-bottom-custom pb-4">
+                  <div class="col-sm-6">
+                    <p class="x-small fw-bold text-secondary text-uppercase tracking-wider mb-2">Số sổ BHXH</p>
+                    <p class="fw-bold text-dark mb-1">BH2023-0987654</p>
+                    <p class="small text-secondary mb-0">Nơi đăng ký KCB ban đầu: BV Đa khoa Xanh Pôn</p>
+                  </div>
+                  <div class="col-sm-6 text-sm-end">
+                    <p class="x-small fw-bold text-secondary text-uppercase tracking-wider mb-2">Trạng thái</p>
+                    <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold border border-success border-opacity-25" style="font-size: 0.75rem;">ĐANG ĐÓNG</span>
+                  </div>
+                </div>
+
+                <div class="mt-2">
+                  <h6 class="fw-bold text-dark mb-3 pb-2 border-bottom-custom d-flex align-items-center gap-2">
+                    <span class="material-symbols-outlined text-brand-blue fs-5 icon-filled">percent</span>
+                    Tỷ lệ đóng (Theo quy định hiện hành)
+                  </h6>
+                  <div class="p-4 rounded-4 bg-light bg-opacity-50 border border-secondary border-opacity-10 d-flex flex-column gap-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <span class="small text-dark fw-medium">Bảo hiểm Xã hội (BHXH)</span>
+                      <span class="small fw-bold text-secondary">NLĐ: 8% - CTY: 17.5%</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-top border-secondary border-opacity-10 pt-3">
+                      <span class="small text-dark fw-medium">Bảo hiểm Y tế (BHYT)</span>
+                      <span class="small fw-bold text-secondary">NLĐ: 1.5% - CTY: 3%</span>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center border-top border-secondary border-opacity-10 pt-3">
+                      <span class="small text-dark fw-medium">Bảo hiểm Thất nghiệp (BHTN)</span>
+                      <span class="small fw-bold text-secondary">NLĐ: 1% - CTY: 1%</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="p-4 rounded-3 border-1 border-opacity-10 border-info bg-info bg-opacity-10 mt-5">
+                  <p class="x-small text-dark mb-0 lh-base fw-medium text-justify">
+                    <strong class="text-brand-blue">Lưu ý:</strong> Thông tin bảo hiểm được đồng bộ từ hệ thống BHXH Việt Nam. Nếu có sai sót, vui lòng liên hệ bộ phận C&B để được hỗ trợ điều chỉnh.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- END TABS -->
         </div>
       </div>
       
@@ -211,6 +272,9 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
+const activeTab = ref('salary');
 </script>
 
 <style scoped>

@@ -2,7 +2,6 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Layout_NhanVien from '../components/Layout_NhanVien.vue'
 import Dashboard_portal from '../View/portal_nhanvien/Dashboard_portal.vue'
 import Cham_cong from '../View/portal_nhanvien/Cham_cong.vue'
-import { startLoading, stopLoading } from '../utils/loaderState'
 import Layout_Admin from '../components/Layout_Admin.vue'
 
 const routes = [
@@ -119,14 +118,5 @@ const router = createRouter({
       history: createWebHistory(),
       routes
 })
-
-router.beforeEach((to, from, next) => {
-      startLoading();
-      next();
-});
-
-router.afterEach(() => {
-      stopLoading();
-});
 
 export default router
