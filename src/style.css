@@ -2,10 +2,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 
 :root {
-  --primary-color: #1754cf;
-  --background-light: #f6f6f8;
+  --primary-color: #1E40AF;
+  --secondary-color: #64748B;
+  --background-light: #F8FAFC;
   --background-dark: #111621;
+  --accent-color: #3B82F6;
+  --success-color: #117c39;
+  --warning-color: #dd8e09;
+  --danger-color: #d42f2f;
   --sidebar-width: 280px;
+
+  /* Bootstrap Variable Overrides for Opacity Support */
+  --bs-primary: #1E40AF;
+  --bs-primary-rgb: 30, 64, 175;
+  --bs-secondary: #64748B;
+  --bs-secondary-rgb: 100, 116, 139;
+  --bs-success: #117c39;
+  --bs-success-rgb: 17, 124, 57;
+  --bs-warning: #dd8e09;
+  --bs-warning-rgb: 221, 142, 9;
+  --bs-danger: #d42f2f;
+  --bs-danger-rgb: 212, 47, 47;
 
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   line-height: 1.5;
@@ -19,6 +36,8 @@ body {
   min-height: 100vh;
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
 }
+
+
 
 .material-symbols-outlined {
   font-variation-settings:
@@ -35,14 +54,14 @@ body {
   position: fixed;
   left: 0;
   top: 0;
-  background: white;
-  border-right: 1px solid #e2e8f0;
+  background: #111621;
+  border-right: 1px solid #1e293b;
   z-index: 1000;
   transition: transform 0.3s ease;
 }
 
 .sidebar .nav-link {
-  color: #64748b;
+  color: #94a3b8;
   padding: 0.75rem 1rem;
   border-radius: 0.75rem;
   margin: 0.25rem 1rem;
@@ -50,18 +69,39 @@ body {
   align-items: center;
   gap: 0.75rem;
   font-weight: 500;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: left center;
+}
+
+.sidebar .nav-link .material-symbols-outlined {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar .nav-link:hover {
-  background-color: #f1f5f9;
-  color: #1e293b;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #f8fafc;
+  transform: scale(1.04);
+}
+
+.sidebar .nav-link:hover .material-symbols-outlined {
+  color: var(--accent-color);
+  transform: scale(1.2);
+}
+
+.sidebar .nav-link:active {
+  transform: scale(0.97);
 }
 
 .sidebar .nav-link.active {
-  background-color: rgba(23, 84, 207, 0.1);
-  color: var(--primary-color);
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--accent-color);
   font-weight: 600;
+  transform: scale(1.04);
+}
+
+.sidebar .nav-link.active .material-symbols-outlined {
+  color: var(--accent-color);
+  transform: scale(1.2);
 }
 
 .main-wrapper {
@@ -108,7 +148,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background-color: rgba(23, 84, 207, 0.2);
+  background-color: rgba(30, 64, 175, 0.2);
   color: var(--primary-color);
   display: flex;
   align-items: center;
@@ -134,7 +174,7 @@ body {
 }
 
 .bg-gradient-primary {
-  background: linear-gradient(135deg, var(--primary-color) 0%, #1e40af 100%);
+  background: linear-gradient(135deg, var(--primary-color) 0%, #17328A 100%);
 }
 
 .bg-white-20 {
@@ -142,11 +182,11 @@ body {
 }
 
 .bg-success-light {
-  background-color: rgba(22, 163, 74, 0.1) !important;
+  background-color: rgba(17, 124, 57, 0.1) !important;
 }
 
 .bg-primary-light {
-  background-color: rgba(23, 84, 207, 0.1) !important;
+  background-color: rgba(30, 64, 175, 0.1) !important;
 }
 
 .backdrop-blur {
@@ -159,7 +199,7 @@ body {
 }
 
 .shadow-primary {
-  box-shadow: 0 10px 15px -3px rgba(23, 84, 207, 0.2);
+  box-shadow: 0 10px 15px -3px rgba(30, 64, 175, 0.2);
 }
 
 .text-line-clamp-2 {

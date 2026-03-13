@@ -7,7 +7,7 @@
         <p class="text-muted mb-0">Quản lý thời gian làm việc và xem lại lịch sử chấm công của bạn.</p>
       </div>
       <div class="text-end d-none d-sm-block">
-        <p class="h5 fw-bold text-primary mb-0">Thứ Hai, 23/10/2023</p>
+        <p class="h5 fw-bold text-primary mb-0">{{ currentDateStr }}</p>
       </div>
     </div>
 
@@ -19,21 +19,21 @@
           <div class="d-flex gap-3 mb-5">
             <div class="d-flex flex-column align-items-center gap-2">
               <div class="clock-unit bg-light rounded-4 d-flex align-items-center justify-content-center shadow-inner">
-                <span class="display-5 fw-black text-primary">08</span>
+                <span class="display-5 fw-black text-primary">{{ currentHours }}</span>
               </div>
               <span class="x-small fw-bold text-uppercase tracking-wider text-muted">Giờ</span>
             </div>
             <div class="display-5 fw-black text-muted pt-2">:</div>
             <div class="d-flex flex-column align-items-center gap-2">
               <div class="clock-unit bg-light rounded-4 d-flex align-items-center justify-content-center shadow-inner">
-                <span class="display-5 fw-black text-primary">30</span>
+                <span class="display-5 fw-black text-primary">{{ currentMinutes }}</span>
               </div>
               <span class="x-small fw-bold text-uppercase tracking-wider text-muted">Phút</span>
             </div>
             <div class="display-5 fw-black text-muted pt-2 text-opacity-25">:</div>
             <div class="d-flex flex-column align-items-center gap-2">
               <div class="clock-unit bg-light rounded-4 d-flex align-items-center justify-content-center shadow-inner">
-                <span class="display-5 fw-black text-primary opacity-50">45</span>
+                <span class="display-5 fw-black text-primary opacity-50">{{ currentSeconds }}</span>
               </div>
               <span class="x-small fw-bold text-uppercase tracking-wider text-muted">Giây</span>
             </div>
@@ -172,7 +172,32 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
+
+const currentHours = ref('00');
+const currentMinutes = ref('00');
+const currentSeconds = ref('00');
+const currentDateStr = ref('');
+let timerInterval = null;
+
+const updateTime = () => {
+  const now = new Date();
+  currentHours.value = String(now.getHours()).padStart(2, '0');
+  currentMinutes.value = String(now.getMinutes()).padStart(2, '0');
+  currentSeconds.value = String(now.getSeconds()).padStart(2, '0');
+  
+  const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+  currentDateStr.value = `${days[now.getDay()]}, ngày ${now.getDate()} tháng ${now.getMonth() + 1} năm ${now.getFullYear()}.`;
+};
+
+onMounted(() => {
+  updateTime();
+  timerInterval = setInterval(updateTime, 1000);
+});
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
+});
 
 const historyItems = ref([
   { day: 'Thứ Sáu, 20/10', checkIn: '08:10:45', checkOut: '17:35:12', total: '8.5h', status: 'Hợp lệ' },
@@ -207,19 +232,19 @@ const getStatusClass = (status) => {
 }
 
 .bg-warning-light {
-  background-color: rgba(245, 158, 11, 0.1) !important;
+  background-color: rgba(221, 142, 9, 0.1) !important;
 }
 
 .bg-danger-light {
-  background-color: rgba(239, 68, 68, 0.1) !important;
+  background-color: rgba(212, 47, 47, 0.1) !important;
 }
 
 .text-warning {
-  color: #f59e0b !important;
+  color: var(--warning-color) !important;
 }
 
 .text-danger {
-  color: #ef4444 !important;
+  color: var(--danger-color) !important;
 }
 
 .page-link.active {

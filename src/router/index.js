@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Layout_congnhavien from '../components/Layout_congnhavien.vue'
+import Layout_NhanVien from '../components/Layout_NhanVien.vue'
 import Dashboard_portal from '../View/portal_nhanvien/Dashboard_portal.vue'
 import Cham_cong from '../View/portal_nhanvien/Cham_cong.vue'
 import { startLoading, stopLoading } from '../utils/loaderState'
@@ -12,7 +12,7 @@ const routes = [
       },
       {
             path: '/',
-            component: Layout_congnhavien,
+            component: Layout_NhanVien,
             children: [
                   {
                         path: '',

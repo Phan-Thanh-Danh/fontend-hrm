@@ -7,6 +7,12 @@
         <h1 class="h3 fw-bold text-dark mb-1">Nghỉ phép</h1>
         <p class="text-secondary mb-0 fw-medium">Theo dõi và tạo yêu cầu nghỉ phép của bạn</p>
       </div>
+      <div class="text-md-end">
+        <button @click="showModal = true" class="btn btn-brand-blue fw-bold px-4 py-2 rounded-3 shadow-sm d-inline-flex align-items-center gap-2">
+          <span class="material-symbols-outlined fs-5">add</span>
+          Tạo đơn nghỉ phép
+        </button>
+      </div>
     </div>
 
     <!-- Metric Cards -->
@@ -49,8 +55,8 @@
     </div>
 
     <div class="row g-4 d-flex align-items-stretch">
-      <!-- Left Column: Lịch sử đơn nghỉ phép -->
-      <div class="col-lg-8">
+      <!-- Bảng Lịch sử đơn nghỉ phép -->
+      <div class="col-12">
         <div class="card bento-card h-100 border border-1 border-opacity-10 border-dark overflow-hidden">
           <div class="p-4 border-bottom-custom">
             <h2 class="h6 fw-bold text-dark mb-0">Lịch sử đơn nghỉ phép</h2>
@@ -96,67 +102,74 @@
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- Right Column: Form tạo đơn nghỉ phép -->
-      <div class="col-lg-4">
-        <div class="card bento-card p-4 h-100 border border-1 border-opacity-10 border-dark d-flex flex-column">
-          <h2 class="h6 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
-            <span class="material-symbols-outlined text-brand-blue fs-5">edit_square</span>
-            Tạo đơn nghỉ phép
-          </h2>
-          
-          <form class="d-flex flex-column gap-3 flex-grow-1">
-            <!-- Loại nghỉ -->
-            <div>
-              <label class="form-label small fw-bold text-dark mb-2">Loại nghỉ</label>
-              <select class="form-select custom-input text-dark fw-medium">
-                <option selected>Nghỉ phép năm</option>
-                <option>Nghỉ ốm</option>
-                <option>Nghỉ không lương</option>
-              </select>
+    <!-- Modal Tạo Đơn Nghỉ Phép -->
+    <div v-if="showModal" class="modal-backdrop-custom d-flex justify-content-center align-items-center">
+      <div class="modal-content-custom bg-white rounded-4 shadow-lg p-4">
+        
+        <form @submit.prevent="showModal = false" class="d-flex flex-column gap-4">
+          <!-- Loại nghỉ phép -->
+          <div>
+            <label class="form-label small fw-bold text-dark mb-2">Loại nghỉ phép <span class="text-danger">*</span></label>
+            <select class="form-select custom-input text-dark fw-medium">
+              <option selected disabled>Chọn loại nghỉ phép...</option>
+              <option>Nghỉ phép năm</option>
+              <option>Nghỉ ốm</option>
+              <option>Nghỉ không lương</option>
+            </select>
+          </div>
+
+          <!-- Từ ngày / Đến ngày -->
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-dark mb-2">Từ ngày <span class="text-danger">*</span></label>
+              <input type="date" class="form-control custom-input text-secondary">
             </div>
-
-            <!-- Từ ngày / Đến ngày -->
-            <div class="row g-2">
-              <div class="col-6">
-                <label class="form-label small fw-bold text-dark mb-2">Từ ngày</label>
-                <input type="date" class="form-control custom-input text-secondary" placeholder="mm/dd/yy">
-              </div>
-              <div class="col-6">
-                <label class="form-label small fw-bold text-dark mb-2">Đến ngày</label>
-                <input type="date" class="form-control custom-input text-secondary" placeholder="mm/dd/yy">
-              </div>
+            <div class="col-md-6">
+              <label class="form-label small fw-bold text-dark mb-2">Đến ngày <span class="text-danger">*</span></label>
+              <input type="date" class="form-control custom-input text-secondary">
             </div>
+          </div>
 
-            <!-- Lý do -->
-            <div>
-              <label class="form-label small fw-bold text-dark mb-2">Lý do</label>
-              <textarea class="form-control custom-input text-secondary" rows="3" placeholder="Nhập lý do chi tiết tại đây..."></textarea>
+          <!-- Tổng số ngày nghỉ dự kiến -->
+          <div class="bg-primary bg-opacity-10 p-3 rounded-3 d-flex justify-content-between align-items-center border border-primary border-opacity-25">
+            <div class="d-flex align-items-center gap-2 text-secondary fw-semibold small">
+              <span class="material-symbols-outlined text-brand-blue fs-5">calculate</span>
+              Tổng số ngày nghỉ dự kiến:
             </div>
-
-            <!-- Tài liệu đính kèm -->
-            <div>
-              <label class="form-label small fw-bold text-dark mb-2 d-flex justify-content-between align-items-center">
-                <span>Tài liệu đính kèm</span>
-                <span class="x-small text-muted fw-normal fst-italic">Tùy chọn (pdf, jpg, png...)</span>
-              </label>
-              <input class="form-control custom-input text-secondary small" type="file" id="formFile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style="padding: 0.4rem 0.75rem; font-size: 0.8rem;">
+            <div class="fw-bold text-brand-blue">
+              <span class="fs-5">0</span> ngày
             </div>
+          </div>
 
-            <!-- Info box -->
-            <div class="info-box d-flex gap-3 align-items-start p-3 rounded-3 mt-auto">
-              <span class="material-symbols-outlined text-brand-blue icon-filled fs-5 flex-shrink-0 mt-1">info</span>
-              <p class="x-small text-secondary mb-0 fw-medium lh-base">
-                Đơn nghỉ của bạn sẽ được gửi đến quản lý trực tiếp để phê duyệt.
-              </p>
+          <!-- Lý do nghỉ phép -->
+          <div>
+            <label class="form-label small fw-bold text-dark mb-2">Lý do nghỉ phép <span class="text-danger">*</span></label>
+            <textarea class="form-control custom-input text-secondary" rows="4" placeholder="Nhập chi tiết lý do nghỉ phép của bạn..."></textarea>
+          </div>
+
+          <!-- Tài liệu đính kèm -->
+          <div>
+            <label class="form-label small fw-bold text-dark mb-2">Tài liệu đính kèm (nếu có)</label>
+            <div class="upload-zone border-dashed rounded-3 p-4 d-flex flex-column align-items-center justify-content-center text-center bg-light cursor-pointer">
+              <span class="material-symbols-outlined fs-1 text-secondary opacity-75 mb-2">cloud_upload</span>
+              <p class="fw-bold text-dark small mb-1">Nhấp để tải lên hoặc kéo thả file</p>
+              <p class="x-small text-muted mb-0">Hỗ trợ định dạng PDF, JPG, PNG (Tối đa 5MB)</p>
             </div>
+          </div>
 
-            <!-- Submit button -->
-            <button type="submit" class="btn btn-brand-blue w-100 fw-bold py-2 mt-3 rounded-3 shadow-sm">
+          <!-- Các nút thao tác -->
+          <div class="d-flex gap-3 justify-content-between mt-2">
+            <button type="submit" class="btn btn-brand-blue fw-bold py-2 rounded-3 shadow-sm d-flex align-items-center justify-content-center gap-2 flex-grow-1">
+              <span class="material-symbols-outlined fs-5">send</span>
               Gửi đơn nghỉ phép
             </button>
-          </form>
-        </div>
+            <button type="button" @click="showModal = false" class="btn btn-light fw-bold py-2 rounded-3 px-4 flex-shrink-0" style="min-width: 120px; background-color: #F1F5F9; color: #475569;">
+              Hủy bỏ
+            </button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -164,6 +177,9 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
+const showModal = ref(false);
 </script>
 
 <style scoped>
@@ -257,5 +273,43 @@ textarea.custom-input {
 input[type="date"].custom-input::-webkit-calendar-picker-indicator {
   color: #64748B;
   opacity: 0.6;
+}
+
+/* Modal Custom Styles */
+.modal-backdrop-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: 1050;
+}
+
+.modal-content-custom {
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modal-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modal-pop {
+  0% { transform: scale(0.95) translateY(20px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.border-dashed {
+  border: 2px dashed #CBD5E1;
+}
+
+.upload-zone:hover {
+  background-color: #F8FAFC !important;
+  border-color: #94A3B8;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

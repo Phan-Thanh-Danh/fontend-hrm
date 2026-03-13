@@ -6,11 +6,11 @@
         <div class="bg-primary p-2 rounded-lg d-flex align-items-center justify-content-center">
           <span class="material-symbols-outlined text-white">corporate_fare</span>
         </div>
-        <h2 class="h5 mb-0 fw-bold text-primary">HRM Portal</h2>
+        <h2 class="h5 mb-0 fw-bold text-white">HRM Portal</h2>
       </div>
 
       <nav class="nav flex-column mt-3">
-        <router-link to="/" class="nav-link" active-class="active">
+        <router-link to="/" class="nav-link" exact-active-class="active">
           <span class="material-symbols-outlined">home</span>
           <span>Trang chủ</span>
         </router-link>
@@ -31,16 +31,6 @@
           <span>Dịch vụ nội bộ</span>
         </router-link>
       </nav>
-
-      <div class="sidebar-footer mt-auto p-4 border-top">
-        <router-link to="/ho-so" class="d-flex align-items-center gap-3 p-2 bg-light rounded-3 text-decoration-none text-dark">
-          <div class="avatar-circle">A</div>
-          <div class="flex-grow-1 overflow-hidden">
-            <div class="fw-semibold text-truncate small">Nguyễn Văn A</div>
-            <div class="text-muted text-truncate x-small">Nhân viên chính thức</div>
-          </div>
-        </router-link>
-      </div>
     </aside>
 
     <!-- Main Content -->
@@ -58,7 +48,7 @@
         </div>
 
         <div class="d-flex align-items-center gap-3">
-          <router-link to="/thong-bao" class="btn p-2 text-secondary position-relative text-decoration-none d-flex align-items-center">
+          <router-link to="/thong-bao" class="btn p-2 text-secondary position-relative text-decoration-none d-flex align-items-center bell-btn">
             <span class="material-symbols-outlined fs-4">notifications</span>
             <span class="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style="margin-top: 10px; margin-left: -10px;"></span>
           </router-link>
@@ -71,7 +61,7 @@
       </header>
 
       <!-- Main Content Area -->
-      <main class="p-4 flex-grow-1 overflow-auto bg-light">
+      <main class="p-4 flex-grow-1 overflow-auto main-bg">
         <router-view></router-view>
       </main>
     </div>
@@ -109,5 +99,49 @@ const toggleSidebar = () => {
 
 .nav-link span {
   font-size: 1.1rem;
+}
+.sidebar{
+  background-color: 18181B;
+  color: white;
+}
+.main-bg{
+  background-color: #F8FAFC;
+}
+
+/* Notification Bell Animation */
+@keyframes ring {
+  0% { transform: rotate(0); }
+  25% { transform: rotate(15deg); }
+  50% { transform: rotate(-10deg); }
+  75% { transform: rotate(5deg); }
+  100% { transform: rotate(0); }
+}
+
+.bell-btn {
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.bell-btn .material-symbols-outlined {
+  transition: transform 0.2s ease;
+  display: inline-block; /* Required for transform to work */
+}
+
+.bell-btn:hover .material-symbols-outlined {
+  animation: ring 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) infinite;
+  color: var(--primary-color);
+}
+
+.bell-btn:active,
+.bell-btn.router-link-active {
+  transform: scale(0.95);
+  background-color: var(--primary-color) !important;
+  color: white !important;
+  border-radius: 0.5rem;
+  box-shadow: 0 0 0 4px rgba(30, 64, 175, 0.25); /* Khung mờ bao quanh */
+}
+
+.bell-btn:active .material-symbols-outlined,
+.bell-btn.router-link-active .material-symbols-outlined {
+  color: white !important;
 }
 </style>

@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class="mb-4">
       <h1 class="h2 fw-black text-dark mb-1">Chào buổi sáng, A!</h1>
-      <p class="text-secondary fw-medium">Hôm nay là Thứ Tư, ngày 25 tháng 10 năm 2023. Chúc bạn một ngày làm việc hiệu quả.</p>
+      <p class="text-secondary fw-medium">{{ currentDateStr }} Chúc bạn một ngày làm việc hiệu quả.</p>
     </div>
 
     <!-- Main Content Grid -->
@@ -18,8 +18,8 @@
             <div class="col-md-6 border-end-md">
               <p class="text-uppercase small fw-bold text-secondary tracking-wider mb-2">GIỜ HIỆN TẠI</p>
               <div class="d-flex align-items-baseline gap-1 mb-2">
-                <span class="display-3 fw-bold text-brand-blue lh-1">08:45</span>
-                <span class="h4 fw-bold text-secondary ms-1 mb-0">32s</span>
+                <span class="display-3 fw-bold text-brand-blue lh-1">{{ currentHours }}:{{ currentMinutes }}</span>
+                <span class="h4 fw-bold text-secondary ms-1 mb-0">{{ currentSeconds }}s</span>
               </div>
               <p class="text-muted small d-flex align-items-center gap-1 mb-1">
                 <span class="material-symbols-outlined fs-6">location_on</span>
@@ -34,13 +34,13 @@
             <!-- Check-in/out Buttons -->
             <div class="col-md-6">
               <div class="d-flex gap-3 justify-content-md-end">
-                <button class="btn btn-checkin text-white fw-bold d-flex align-items-center gap-2 px-4 shadow-sm">
+                <button class="btn btn-checkin text-white fw-bold d-flex align-items-center justify-content-center gap-2 px-4 shadow-sm">
                   <span class="material-symbols-outlined fs-5">login</span>
-                  <span class="text-start lh-sm fs-5">Check-<br>in</span>
+                  <span class="fs-5 text-nowrap">Check-in</span>
                 </button>
-                <button class="btn btn-checkout text-white fw-bold d-flex align-items-center gap-2 px-4 shadow-sm">
+                <button class="btn btn-checkout text-white fw-bold d-flex align-items-center justify-content-center gap-2 px-4 shadow-sm">
                   <span class="material-symbols-outlined fs-5">logout</span>
-                  <span class="text-start lh-sm fs-5">Check-<br>out</span>
+                  <span class="fs-5 text-nowrap">Check-out</span>
                 </button>
               </div>
             </div>
@@ -84,26 +84,26 @@
               <div class="row text-center g-3 mt-2">
                 <!-- Actual -->
                 <div class="col-4 px-1">
-                  <div class="text-success mb-2">
+                  <div class="text-success mb-2 d-flex justify-content-center">
                     <span class="material-symbols-outlined">event_available</span>
                   </div>
-                  <div class="x-small text-muted fw-bold mb-2">CÔNG THỰC<br>TẾ</div>
+                  <div class="x-small text-muted fw-bold mb-2 text-nowrap">CÔNG THỰC TẾ</div>
                   <div class="h3 fw-bold text-dark mb-0">18.5</div>
                 </div>
                 <!-- Absent -->
                 <div class="col-4 px-1 border-start border-end">
-                  <div class="text-danger mb-2">
+                  <div class="text-danger mb-2 d-flex justify-content-center">
                     <span class="material-symbols-outlined">event_busy</span>
                   </div>
-                  <div class="x-small text-muted fw-bold mb-2"><br>VẮNG</div>
+                  <div class="x-small text-muted fw-bold mb-2 text-nowrap">VẮNG</div>
                   <div class="h3 fw-bold text-dark mb-0">0</div>
                 </div>
                 <!-- Late -->
                 <div class="col-4 px-1">
-                  <div class="text-warning mb-2">
+                  <div class="text-warning mb-2 d-flex justify-content-center">
                     <span class="material-symbols-outlined">schedule</span>
                   </div>
-                  <div class="x-small text-muted fw-bold mb-2">PHÚT ĐI<br>MUỘN</div>
+                  <div class="x-small text-muted fw-bold mb-2 text-nowrap">PHÚT ĐI MUỘN</div>
                   <div class="h3 fw-bold text-dark mb-0">15</div>
                 </div>
               </div>
@@ -230,6 +230,32 @@
 </template>
 
 <script setup>
+import { ref, onMounted, onUnmounted } from 'vue';
+
+const currentHours = ref('00');
+const currentMinutes = ref('00');
+const currentSeconds = ref('00');
+const currentDateStr = ref('');
+let timerInterval = null;
+
+const updateTime = () => {
+  const now = new Date();
+  currentHours.value = String(now.getHours()).padStart(2, '0');
+  currentMinutes.value = String(now.getMinutes()).padStart(2, '0');
+  currentSeconds.value = String(now.getSeconds()).padStart(2, '0');
+  
+  const days = ['Chủ Nhật', 'Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy'];
+  currentDateStr.value = `Hôm nay là ${days[now.getDay()]}, ngày ${now.getDate()} tháng ${now.getMonth() + 1} năm ${now.getFullYear()}.`;
+};
+
+onMounted(() => {
+  updateTime();
+  timerInterval = setInterval(updateTime, 1000);
+});
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval);
+});
 </script>
 
 <style scoped>
@@ -255,10 +281,10 @@
 
 /* Brand Colors */
 .text-brand-blue {
-  color: #3B58E9 !important;
+  color: var(--primary-color) !important;
 }
 .bg-brand-blue {
-  background-color: #3B58E9 !important;
+  background-color: var(--primary-color) !important;
 }
 .text-white-75 {
   color: rgba(255, 255, 255, 0.75) !important;
@@ -266,29 +292,29 @@
 
 /* Big Buttons */
 .btn-checkin {
-  background-color: #519E67;
-  border-color: #519E67;
+  background-color: var(--success-color);
+  border-color: var(--success-color);
   border-radius: 0.75rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
   min-width: 140px;
 }
 .btn-checkin:hover {
-  background-color: #438756;
-  border-color: #438756;
+  background-color: #0d632e;
+  border-color: #0d632e;
 }
 
 .btn-checkout {
-  background-color: #DD7C37;
-  border-color: #DD7C37;
+  background-color: var(--warning-color);
+  border-color: var(--warning-color);
   border-radius: 0.75rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
   min-width: 140px;
 }
 .btn-checkout:hover {
-  background-color: #C36A2D;
-  border-color: #C36A2D;
+  background-color: #b87506;
+  border-color: #b87506;
 }
 
 .icon-box-white {
@@ -309,13 +335,13 @@
 
 /* Badge specific colors reproducing figma design closely */
 .status-success {
-  background-color: #E6F5EA;
-  color: #2D8A4E;
+  background-color: rgba(17, 124, 57, 0.15);
+  color: var(--success-color);
 }
 
 .status-primary {
-  background-color: #EAF0FF;
-  color: #3B58E9;
+  background-color: rgba(30, 64, 175, 0.15);
+  color: var(--primary-color);
 }
 
 .hover-opacity:hover {
