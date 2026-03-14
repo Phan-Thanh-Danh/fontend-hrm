@@ -213,3 +213,8 @@ body {
 .x-small {
   font-size: 0.75rem !important;
 }
+
+/* Global reset to remove underline from links everywhere (Bootstrap override) */
+a, router-link {
+  text-decoration: none !important;
+}
