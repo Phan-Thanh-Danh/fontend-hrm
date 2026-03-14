@@ -1,9 +1,9 @@
 <template>
-  <div class="nghi-phep-page p-4 bg-light min-vh-100">
+  <div class="nghi-phep-page space-y-6">
     <!-- Header -->
-    <div class="mb-4">
-      <h4 class="fw-bold mb-1">Danh sách Đơn Nghỉ Phép</h4>
-      <p class="text-muted small mb-0">Quản lý và phê duyệt các yêu cầu nghỉ phép của toàn hệ thống.</p>
+    <div class="mb-8">
+      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Nghỉ Phép</h1>
+      <p class="text-slate-500 text-sm font-medium italic">Quản lý và phê duyệt các yêu cầu nghỉ phép của toàn hệ thống.</p>
     </div>
 
     <!-- Main Content -->
@@ -187,7 +187,7 @@
           <!-- Actions -->
           <div v-if="activeRequest.status === 'pending'" class="card-footer bg-white border-top p-4 d-flex gap-3 rounded-bottom-4 mt-auto">
             <button class="btn btn-white flex-grow-1 fw-bold py-2 border shadow-sm text-dark font-medium">Từ chối</button>
-            <button class="btn flex-grow-1 fw-bold py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white" style="background-color: #4ade80; border-color: #4ade80;"><span class="material-symbols-outlined fs-5">check_circle</span> Duyệt đơn</button>
+            <button class="btn flex-grow-1 fw-bold py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white" style="background-color: #6366f1; border-color: #6366f1;"><span class="material-symbols-outlined fs-5">check_circle</span> Duyệt đơn</button>
           </div>
         </div>
       </div>

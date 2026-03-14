@@ -1,291 +1,417 @@
 <template>
-  <div class="quan-ly-nhan-su-page p-4 bg-light min-vh-100">
+  <div class="space-y-6">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h4 class="fw-bold mb-1">Quản lý Nhân sự Mới</h4>
-        <p class="text-muted small mb-0">Theo dõi và thực hiện quy trình Onboarding cho nhân viên mới.</p>
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Nhân sự</h1>
+        <p class="text-slate-500 text-sm font-medium italic">Quản lý hồ sơ, hợp đồng và lộ trình công tác của nhân viên.</p>
       </div>
-      <div class="d-flex gap-3">
-        <div class="input-group" style="width: 300px;">
-          <span class="input-group-text bg-white border-end-0"><span class="material-symbols-outlined fs-6 text-muted">search</span></span>
-          <input type="text" class="form-control border-start-0 ps-0" placeholder="Tìm kiếm nhân sự...">
+      <div class="flex flex-wrap items-center lg:justify-end gap-3 flex-1">
+        <div class="relative group hidden xl:block">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+          <input 
+            v-model="searchQuery"
+            type="text" 
+            placeholder="Tìm mã NV, tên..." 
+            class="pl-10 pr-4 py-2.5 w-52 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold"
+          >
         </div>
-        <button class="btn btn-primary d-flex align-items-center gap-2 px-4 shadow-sm fw-medium rounded-3">
-          <span class="material-symbols-outlined fs-5">person_add</span> Thêm mới/Tiếp nhận
+        
+        <div class="flex items-center gap-2">
+          <select v-model="filterDepartment" class="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-[11px] font-black text-slate-500 outline-none hover:border-blue-300 transition-all">
+            <option value="ALL">Tất cả phòng ban</option>
+            <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
+          </select>
+
+          <select v-model="filterStatus" class="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-[11px] font-black text-slate-500 outline-none hover:border-blue-300 transition-all">
+            <option value="ALL">Tất cả trạng thái</option>
+            <option value="ĐANG_LÀM_VIỆC">Đang làm việc</option>
+            <option value="THỬ_VIỆC">Thử việc</option>
+            <option value="ĐÃ_NGHỈ_VIỆC">Đã nghỉ việc</option>
+          </select>
+        </div>
+
+        <button 
+          @click="openAddModal"
+          class="px-5 py-2.5 bg-indigo-600 rounded-xl font-black text-white hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all flex items-center gap-2 whitespace-nowrap ml-auto md:ml-0"
+        >
+          <span class="material-symbols-outlined text-[20px]">person_add</span>
+          Thêm nhân sự
         </button>
       </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="row g-4 mb-4">
-      <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 h-100">
-          <div class="card-body p-4 text-center d-flex flex-column align-items-center justify-content-center">
-            <h6 class="text-muted fw-bold small text-uppercase mb-4 align-self-start">Tiến độ Onboarding Tháng này</h6>
-            <!-- Circular Progress Placeholder -->
-            <div class="position-relative d-inline-block" style="width: 120px; height: 120px;">
-              <svg viewBox="0 0 36 36" class="circular-chart text-primary">
-                <path class="circle-bg" stroke="#e2e8f0" stroke-width="3" fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                <path class="circle" stroke="#3b82f6" stroke-dasharray="75, 100" stroke-width="3" fill="none"
-                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-              </svg>
-              <div class="position-absolute top-50 start-50 translate-middle fw-bold fs-3 text-dark">75%</div>
-            </div>
-            <p class="text-muted small mt-3 mb-0">15/20 nhân viên đã hoàn tất</p>
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div v-for="stat in stats" :key="stat.label" class="bg-white p-5 rounded-3xl border border-slate-100 shadow-sm">
+        <div class="flex items-center gap-4">
+          <div :class="`w-12 h-12 rounded-2xl ${stat.bgColor} ${stat.textColor} flex items-center justify-center`">
+            <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">{{ stat.icon }}</span>
+          </div>
+          <div>
+            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">{{ stat.label }}</p>
+            <p class="text-xl font-black text-slate-900 leading-none">{{ stat.value }}</p>
           </div>
         </div>
       </div>
-      
-      <div class="col-md-8">
-         <div class="row g-4 h-100">
-             <div class="col-md-4">
-                 <div class="card border-0 shadow-sm rounded-4 h-100 p-4">
-                     <div class="d-flex align-items-center gap-2 mb-3">
-                         <div class="bg-warning bg-opacity-10 text-warning p-2 rounded"><span class="material-symbols-outlined fs-5 d-block" style="color: #f59e0b;">pending_actions</span></div>
-                         <span class="fw-bold text-muted small">Đang chờ xử lý</span>
-                     </div>
-                     <h2 class="fw-bold mb-0 text-dark">03</h2>
-                 </div>
-             </div>
-             <div class="col-md-4">
-                 <div class="card border-0 shadow-sm rounded-4 h-100 p-4">
-                     <div class="d-flex align-items-center gap-2 mb-3">
-                         <div class="bg-danger bg-opacity-10 text-danger p-2 rounded"><span class="material-symbols-outlined fs-5 d-block" style="color: #ef4444;">error</span></div>
-                         <span class="fw-bold text-muted small">Chưa hoàn tất</span>
-                     </div>
-                     <h2 class="fw-bold mb-0 text-dark">02</h2>
-                 </div>
-             </div>
-             <div class="col-md-4">
-                 <div class="card border-0 shadow-sm rounded-4 h-100 p-4">
-                     <div class="d-flex align-items-center gap-2 mb-3">
-                         <div class="bg-success bg-opacity-10 text-success p-2 rounded"><span class="material-symbols-outlined fs-5 d-block" style="color: #22c55e;">check_circle</span></div>
-                         <span class="fw-bold text-muted small">Đã hoàn tất</span>
-                     </div>
-                     <h2 class="fw-bold mb-0 text-dark">15</h2>
-                 </div>
-             </div>
-         </div>
-      </div>
     </div>
 
-    <!-- Candidate List -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-      <div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center rounded-top-4">
-        <h6 class="fw-bold mb-0 text-dark">Danh sách nhân sự mới</h6>
-        <a href="#" class="text-primary text-decoration-none small fw-medium d-flex align-items-center gap-1">Xem tất cả <span class="material-symbols-outlined fs-6">arrow_right_alt</span></a>
-      </div>
-      <div class="table-responsive">
-        <table class="table align-middle text-nowrap mb-0 table-hover">
-          <thead class="bg-white">
-            <tr>
-              <th class="border-bottom-0 py-3 px-4 text-muted fw-bold small">Họ tên</th>
-              <th class="border-bottom-0 py-3 text-muted fw-bold small">Vị trí</th>
-              <th class="border-bottom-0 py-3 text-muted fw-bold small">Ngày bắt đầu</th>
-              <th class="border-bottom-0 py-3 px-4 text-muted fw-bold small text-center">Trạng thái Onboarding</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr class="border-top">
-              <td class="py-3 px-4 fw-bold text-dark">Nguyễn Văn A</td>
-              <td class="py-3 text-muted font-medium">Lập trình viên</td>
-              <td class="py-3 text-muted font-medium">15/10/2023</td>
-              <td class="py-3 px-4 text-center"><span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-2 border border-danger border-opacity-25" style="color: #ef4444 !important;">Chưa hoàn tất</span></td>
-            </tr>
-            <tr>
-              <td class="py-3 px-4 fw-bold text-dark">Trần Thị B</td>
-              <td class="py-3 text-muted font-medium">Kế toán trưởng</td>
-              <td class="py-3 text-muted font-medium">10/10/2023</td>
-              <td class="py-3 px-4 text-center"><span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-3 py-2 border border-warning border-opacity-25" style="color: #d97706 !important;">Đang chờ xử lý</span></td>
-            </tr>
-            <tr>
-              <td class="py-3 px-4 fw-bold text-dark">Lê Văn C</td>
-              <td class="py-3 text-muted font-medium">Chuyên viên Marketing</td>
-              <td class="py-3 text-muted font-medium">01/10/2023</td>
-              <td class="py-3 px-4 text-center"><span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-2 border border-success border-opacity-25" style="color: #16a34a !important;">Hoàn tất</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- Bottom Sections -->
-    <div class="row g-4">
-        <!-- Thông tin công việc -->
-        <div class="col-xl-5 h-100">
-            <div class="card border-0 shadow-sm rounded-4 h-100 p-4">
-                <h6 class="fw-bold mb-4 d-flex align-items-center gap-2 text-dark"><span class="material-symbols-outlined text-primary fs-5">work</span> Thông tin Công việc</h6>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-6">
-                        <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Họ và tên</label>
-                        <input type="text" class="form-control bg-light border-0 py-2 text-muted" value="Trần Thị B" readonly>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Số điện thoại</label>
-                        <input type="text" class="form-control bg-light border-0 py-2 text-muted" value="0901 234 567" readonly>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Email cá nhân</label>
-                        <input type="text" class="form-control bg-light border-0 py-2 text-muted" value="tran.thi.b@gmail.com" readonly>
-                    </div>
-                    <div class="col-md-6 mt-3">
-                        <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Phòng ban</label>
-                        <select class="form-select border border-light py-2 text-dark font-medium cursor-pointer">
-                            <option>Tài chính - Kế toán</option>
-                        </select>
-                    </div>
-                     <div class="col-md-6 mt-3">
-                        <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Chức danh</label>
-                        <select class="form-select border border-light py-2 text-dark font-medium cursor-pointer">
-                            <option>Kế toán trưởng</option>
-                        </select>
-                    </div>
-                    <div class="col-12 mt-3">
-                        <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Ngày bắt đầu</label>
-                        <input type="date" class="form-control border border-light py-2 text-dark font-medium" value="2023-10-10">
-                    </div>
+    <!-- Table -->
+    <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden text-sm">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50/50">
+            <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Nhân viên</th>
+            <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Phòng ban / Chức vụ</th>
+            <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-center">Ngày vào làm</th>
+            <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Trạng thái</th>
+            <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="emp in filteredEmployees" :key="emp.id" class="hover:bg-slate-50/50 transition-all group">
+            <td class="px-6 py-4 border-b border-slate-50">
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 font-black flex items-center justify-center text-sm border border-blue-200">
+                  {{ emp.full_name.charAt(0) }}
                 </div>
-                <!-- Spacing to push button down -->
-                <div class="flex-grow-1"></div>
-                <button class="btn btn-primary w-100 fw-medium py-2 rounded-3 mt-3 d-flex align-items-center justify-content-center gap-2"><span class="material-symbols-outlined fs-5">person_add</span> Xác nhận tiếp nhận nhân sự</button>
-            </div>
-        </div>
+                <div>
+                  <p class="text-sm font-black text-slate-900 mb-0.5">{{ emp.full_name }}</p>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ emp.employee_code }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4 border-b border-slate-50">
+              <p class="text-xs font-bold text-slate-700 mb-0.5">{{ emp.department }}</p>
+              <p class="text-[10px] font-medium text-slate-500">{{ emp.position }}</p>
+            </td>
+            <td class="px-6 py-4 border-b border-slate-50 text-center">
+              <p class="text-[11px] font-bold text-slate-500">{{ emp.hire_date }}</p>
+            </td>
+            <td class="px-6 py-4 border-b border-slate-50">
+              <span :class="`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusColor(emp.status)} shadow-sm font-bold`">
+                {{ emp.status.replace('_', ' ') }}
+              </span>
+            </td>
+            <td class="px-6 py-4 border-b border-slate-50 text-right">
+              <div class="flex items-center justify-end gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                <button @click="editEmployee(emp)" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
+                  <span class="material-symbols-outlined text-[18px]">edit</span>
+                </button>
+                <button @click="confirmResign(emp)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Chuyển trạng thái nghỉ việc">
+                  <span class="material-symbols-outlined text-[18px]">person_off</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-        <!-- Khởi tạo tài khoản -->
-        <div class="col-xl-7 h-100">
-            <div class="card border-0 shadow-sm rounded-4 h-100 p-4">
-                <h6 class="fw-bold mb-4 d-flex align-items-center gap-2 text-dark"><span class="material-symbols-outlined text-primary fs-5">mail</span> Khởi tạo Tài khoản & Welcome Email</h6>
+    <!-- Add/Edit Modal -->
+    <transition name="modal">
+      <div v-if="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showModal = false"></div>
+        <div class="relative bg-white w-full max-w-4xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col">
+          <!-- Modal Header -->
+          <div class="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div>
+              <h3 class="text-xl font-black text-slate-900">{{ editMode ? 'Cập nhật hồ sơ' : 'Thêm nhân viên mới' }}</h3>
+              <p class="text-sm text-slate-500 font-medium italic">Vui lòng điền các thông tin bắt buộc (*)</p>
+            </div>
+            <button @click="showModal = false" class="w-12 h-12 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-md transition-all text-slate-400">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <!-- Modal Body (Scrollable) -->
+          <div class="flex-1 overflow-y-auto p-10 custom-scrollbar">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <!-- Left: Personal Info -->
+              <div class="space-y-6">
+                <h4 class="text-xs font-black text-blue-600 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span> Thông tin cá nhân
+                </h4>
                 
-                <p class="text-muted small fw-bold text-uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.5px;">Portal Account Info</p>
-                <div class="row g-3 mb-4">
-                    <div class="col-md-4">
-                        <div class="border rounded-3 p-2 px-3 bg-light bg-opacity-50">
-                            <small class="text-muted d-block fw-bold mb-1" style="font-size: 0.65rem;">EMP ID</small>
-                            <span class="fw-bolder text-dark fs-6 d-block" style="font-family: monospace;">EMP-2023-089</span>
-                        </div>
+                <div class="space-y-4">
+                  <div class="group">
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Họ và tên *</label>
+                    <input v-model="form.full_name" type="text" placeholder="VD: Nguyễn Văn A" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                  </div>
+                  
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày sinh</label>
+                      <input v-model="form.date_of_birth" type="date" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
                     </div>
-                    <div class="col-md-4">
-                        <div class="border rounded-3 p-2 px-3 bg-light bg-opacity-50">
-                            <small class="text-muted d-block fw-bold mb-1" style="font-size: 0.65rem;">USERNAME</small>
-                            <span class="fw-bolder text-dark fs-6 d-block" style="font-family: monospace;">b.tranthi</span>
-                        </div>
+                    <div>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Giới tính</label>
+                      <select v-model="form.gender" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                        <option value="NAM">Nam</option>
+                        <option value="NỮ">Nữ</option>
+                        <option value="KHÁC">Khác</option>
+                      </select>
                     </div>
-                    <div class="col-md-4">
-                        <div class="border rounded-3 p-2 px-3 bg-light bg-opacity-50 d-flex justify-content-between align-items-center">
-                            <div>
-                                <small class="text-muted d-block fw-bold mb-1" style="font-size: 0.65rem;">PASSWORD</small>
-                                <span class="fw-bolder text-dark fs-6 d-block" style="font-family: monospace;">••••••••</span>
-                            </div>
-                            <span class="material-symbols-outlined text-muted fs-5 cursor-pointer">visibility</span>
-                        </div>
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4">
+                     <div>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Số điện thoại *</label>
+                      <input v-model="form.phone_number" type="tel" placeholder="09xxx..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
                     </div>
+                     <div>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Số CCCD *</label>
+                      <input v-model="form.id_card" type="text" placeholder="001..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                    </div>
+                  </div>
+
+                  <div>
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Email cá nhân</label>
+                    <input v-model="form.personal_email" type="email" placeholder="user@gmail.com" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                  </div>
+
+                  <div>
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Địa chỉ thường trú</label>
+                    <textarea v-model="form.permanent_address" rows="1" placeholder="Số nhà, đường, phường/xã..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"></textarea>
+                  </div>
                 </div>
+              </div>
 
-                <p class="text-muted small fw-bold text-uppercase mb-2" style="font-size: 0.7rem; letter-spacing: 0.5px;">Welcome Email Preview</p>
-                <div class="bg-light bg-opacity-50 rounded-3 p-4 border mb-4">
-                    <p class="fw-bold text-dark mb-3">Subject: Chào mừng gia nhập đội ngũ - Trần Thị B</p>
-                    <p class="text-muted small mb-3">Chào bạn Trần Thị B,</p>
-                    <p class="text-muted small mb-4">Chúng tôi rất vui mừng chào đón bạn gia nhập công ty. Dưới đây là thông tin tài khoản Portal để bạn bắt đầu quy trình nhận việc:</p>
-                    <p class="text-muted small mb-0">- Link Portal: <a href="#" class="text-primary text-decoration-underline">portal.company.com</a></p>
-                </div>
-
-                <div class="flex-grow-1"></div>
-                <button class="btn btn-light text-primary w-100 fw-bold py-2 rounded-3 border-0 mt-3 d-flex align-items-center justify-content-center gap-2" style="background-color: #eff6ff;"><span class="material-symbols-outlined fs-5">send</span> Gửi Email</button>
-
-            </div>
-        </div>
-
-        <!-- Duyệt hồ sơ & Cấp phát tài sản -->
-        <div class="col-12 mt-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4">
-                <h6 class="fw-bold mb-4 d-flex align-items-center gap-2 text-dark"><span class="material-symbols-outlined text-primary fs-5">verified_user</span> Duyệt hồ sơ & Cấp phát tài sản</h6>
+              <!-- Right: Job Info -->
+              <div class="space-y-6">
+                <h4 class="text-xs font-black text-green-600 uppercase tracking-[0.2em] flex items-center gap-2">
+                  <span class="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span> Thông tin công việc
+                </h4>
                 
-                <div class="row g-4 pt-2">
-                    <!-- Xác minh hồ sơ -->
-                    <div class="col-md-5 border-end pe-md-4">
-                        <h6 class="fw-bold mb-4 d-flex align-items-center gap-2 text-dark small"><span class="material-symbols-outlined text-primary fs-5" style="color: #3b82f6 !important;">badge</span> Xác minh hồ sơ</h6>
-                        
-                        <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
-                            <span class="text-muted small">Số CCCD:</span>
-                            <span class="fw-bold text-dark small">012345678912</span>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3 border-bottom pb-3">
-                            <span class="text-muted small">Số tài khoản Bank:</span>
-                            <span class="fw-bold text-dark small">9999 8888 7777 <span class="text-muted fw-normal">(Vietcombank)</span></span>
-                        </div>
-                        <div class="d-flex flex-column mb-4 pb-2">
-                            <span class="text-muted small mb-2">Địa chỉ thường trú:</span>
-                            <span class="fw-bold text-dark small">123 Đường Láng, Đống Đa, Hà Nội</span>
-                        </div>
-                        
-                        <div class="d-flex gap-3 mb-3">
-                            <button class="btn btn-success fw-medium py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 flex-grow-1"><span class="material-symbols-outlined fs-5">check_circle</span> Duyệt</button>
-                            <button class="btn btn-outline-warning fw-medium py-2 px-3 rounded-3 d-flex align-items-center justify-content-center gap-2 text-warning border-warning" style="color: #d97706 !important; border-color: #d97706 !important;"><span class="material-symbols-outlined fs-5">edit_note</span> Yêu cầu sửa đổi</button>
-                        </div>
-                        <textarea class="form-control bg-light border-0 py-2 mt-2" rows="3" placeholder="Lý do yêu cầu sửa đổi (nếu có)..."></textarea>
+                <div class="space-y-4">
+                  <div class="grid grid-cols-2 gap-4">
+                     <div>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Phòng ban *</label>
+                      <select v-model="form.department" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                        <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
+                      </select>
                     </div>
-
-                    <!-- Danh mục tài sản -->
-                    <div class="col-md-7 ps-md-4">
-                        <h6 class="fw-bold mb-4 d-flex align-items-center gap-2 text-dark small"><span class="material-symbols-outlined text-primary fs-5" style="color: #3b82f6 !important;">inventory_2</span> Danh mục tài sản cấp phát</h6>
-                        
-                        <div class="bg-light bg-opacity-50 p-4 rounded-3 border mb-4 flex-grow-1">
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="asset1">
-                                <label class="form-check-label text-muted small fw-medium" for="asset1">Thẻ nhân viên <span class="text-muted fw-normal">(Tên + QR)</span></label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input bg-primary border-primary" type="checkbox" id="asset2" checked>
-                                <label class="form-check-label text-dark small fw-bold" for="asset2">Laptop <span class="fw-normal text-muted">(Dell Latitude 7420)</span></label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="asset3">
-                                <label class="form-check-label text-muted small fw-medium" for="asset3">Đồng phục công ty <span class="text-muted fw-normal">(02 bộ)</span></label>
-                            </div>
-                            <div class="form-check mb-3">
-                                <input class="form-check-input" type="checkbox" id="asset4">
-                                <label class="form-check-label text-muted small fw-medium" for="asset4">Văn phòng phẩm cơ bản</label>
-                            </div>
-                            <div class="form-check mb-0">
-                                <input class="form-check-input" type="checkbox" id="asset5">
-                                <label class="form-check-label text-muted small fw-medium" for="asset5">Access Card <span class="text-muted fw-normal">(Tầng 12 & 15)</span></label>
-                            </div>
-                        </div>
-
-                        <button class="btn btn-dark w-100 fw-medium py-2 rounded-3 mt-auto">Xác nhận bàn giao tài sản</button>
+                     <div>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Chức vụ *</label>
+                      <select v-model="form.position" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                        <option v-for="pos in positions" :key="pos" :value="pos">{{ pos }}</option>
+                      </select>
                     </div>
+                  </div>
+
+                   <div>
+                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Email công ty *</label>
+                    <input v-model="form.company_email" type="email" placeholder="user@company.com" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                  </div>
+
+                  <div class="grid grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày vào làm *</label>
+                      <input v-model="form.hire_date" type="date" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trạng thái</label>
+                      <select v-model="form.status" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                        <option value="ĐANG_LÀM_VIỆC">Đang làm việc</option>
+                        <option value="THỬ_VIỆC">Thử việc</option>
+                        <option value="ĐÃ_NGHỈ_VIỆC">Đã nghỉ việc</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="p-5 bg-blue-50/50 rounded-3xl border border-blue-100 shadow-inner">
+                    <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2 italic">Mã nhân viên (Hệ thống tự tạo)</p>
+                    <p class="text-xl font-black text-blue-900 tracking-wider">{{ form.employee_code || 'EMP-XXXX-XXX' }}</p>
+                  </div>
                 </div>
+              </div>
             </div>
-        </div>
+          </div>
 
-    </div>
+          <!-- Modal Footer -->
+          <div class="px-10 py-8 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
+            <button @click="showModal = false" class="px-8 py-3.5 text-sm font-black text-slate-400 hover:text-slate-600 transition-all">Đóng</button>
+            <button @click="saveEmployee" class="px-10 py-3.5 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-sm">save</span>
+                {{ editMode ? 'Cập nhật hồ sơ' : 'Lưu nhân viên' }}
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
+
+// Initial Mock Data
+const employees = ref([
+  { 
+    id: 1, 
+    employee_code: 'EMP-2023-001', 
+    full_name: 'Nguyễn Văn An', 
+    department: 'Công nghệ thông tin', 
+    position: 'Frontend Developer', 
+    status: 'ĐANG_LÀM_VIỆC', 
+    hire_date: '10/05/2023',
+    gender: 'NAM',
+    phone_number: '0912345678',
+    id_card: '001099002345',
+    company_email: 'an.nv@company.com',
+    personal_email: 'an.dev@gmail.com',
+    date_of_birth: '1995-05-10',
+    permanent_address: '123 Đường Láng, Hà Nội'
+  },
+  { 
+    id: 2, 
+    employee_code: 'EMP-2023-005', 
+    full_name: 'Trần Thị Thu', 
+    department: 'Nhân sự', 
+    position: 'HR Executive', 
+    status: 'ĐANG_LÀM_VIỆC', 
+    hire_date: '01/08/2023',
+    gender: 'NỮ',
+    phone_number: '0901234888',
+    id_card: '001095006789',
+    company_email: 'thu.tt@company.com',
+    personal_email: 'thu.tran@gmail.com',
+    date_of_birth: '1990-08-01',
+    permanent_address: 'Ngõ 2, Hải Phòng'
+  }
+]);
+
+const searchQuery = ref('');
+const filterDepartment = ref('ALL');
+const filterStatus = ref('ALL');
+const showModal = ref(false);
+const editMode = ref(false);
+
+const stats = ref([
+  { label: 'Tổng nhân sự', value: '1,250', icon: 'groups', bgColor: 'bg-blue-50', textColor: 'text-blue-600' },
+  { label: 'Thử việc mới', value: '24', icon: 'person_add', bgColor: 'bg-orange-50', textColor: 'text-orange-600' },
+  { label: 'Nghỉ phép today', value: '12', icon: 'event_busy', bgColor: 'bg-red-50', textColor: 'text-red-600' },
+  { label: 'Sinh nhật tháng', value: '45', icon: 'cake', bgColor: 'bg-green-50', textColor: 'text-green-600' }
+]);
+
+const departments = ['Công nghệ thông tin', 'Nhân sự', 'Tài chính - Kế toán', 'Marketing', 'Kinh doanh', 'Vận hành'];
+const positions = ['Frontend Developer', 'Backend Developer', 'UI/UX Designer', 'HR Manager', 'HR Executive', 'Accountant', 'Sales Lead'];
+
+const emptyForm = {
+  full_name: '',
+  date_of_birth: '',
+  gender: 'NAM',
+  phone_number: '',
+  id_card: '',
+  personal_email: '',
+  permanent_address: '',
+  department: 'Công nghệ thông tin',
+  position: 'Frontend Developer',
+  company_email: '',
+  hire_date: new Date().toISOString().substr(0, 10),
+  status: 'THỬ_VIỆC',
+  employee_code: ''
+};
+
+const form = ref({ ...emptyForm });
+
+const filteredEmployees = computed(() => {
+  let list = employees.value;
+  
+  if (filterDepartment.value !== 'ALL') {
+    list = list.filter(e => e.department === filterDepartment.value);
+  }
+  
+  if (filterStatus.value !== 'ALL') {
+    list = list.filter(e => e.status === filterStatus.value);
+  }
+
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase();
+    list = list.filter(e => 
+      e.full_name.toLowerCase().includes(q) || 
+      e.employee_code.toLowerCase().includes(q)
+    );
+  }
+  
+  return list;
+});
+
+const getStatusColor = (status) => {
+  switch (status) {
+    case 'ĐANG_LÀM_VIỆC': return 'bg-green-100 text-green-700';
+    case 'THỬ_VIỆC': return 'bg-blue-100 text-blue-700';
+    case 'ĐÃ_NGHỈ_VIỆC': return 'bg-red-100 text-red-700';
+    default: return 'bg-slate-100 text-slate-700';
+  }
+};
+
+const openAddModal = () => {
+  editMode.value = false;
+  form.value = { ...emptyForm };
+  form.value.employee_code = `EMP-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
+  showModal.value = true;
+};
+
+const editEmployee = (emp) => {
+  editMode.value = true;
+  form.value = { ...emp };
+  // Convert date format for input date
+  if (form.value.date_of_birth && form.value.date_of_birth.includes('/')) {
+      const parts = form.value.date_of_birth.split('/');
+      form.value.date_of_birth = `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  showModal.value = true;
+};
+
+const saveEmployee = () => {
+  if (!form.value.full_name || !form.value.company_email) {
+    alert('Vui lòng nhập đầy đủ các trường bắt buộc (*)');
+    return;
+  }
+
+  if (editMode.value) {
+    const index = employees.value.findIndex(e => e.id === form.value.id);
+    if (index !== -1) {
+      employees.value[index] = { ...form.value };
+    }
+  } else {
+    employees.value.unshift({
+      ...form.value,
+      id: Date.now(),
+      hire_date: new Date(form.value.hire_date).toLocaleDateString('vi-VN')
+    });
+  }
+  showModal.value = false;
+};
+
+const confirmResign = (emp) => {
+  if (confirm(`Bạn có chắc muốn chuyển trạng thái nghỉ việc cho nhân viên ${emp.full_name}?`)) {
+    emp.status = 'ĐÃ_NGHỈ_VIỆC';
+  }
+};
 </script>
 
 <style scoped>
-/* Circular chart SVG styles */
-.circular-chart {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  max-height: 250px;
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
 }
-.circle-bg {
-  fill: none;
-  stroke: #e2e8f0;
-  stroke-width: 2.5;
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
-.circle {
-  fill: none;
-  stroke-width: 2.5;
-  stroke-linecap: round;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
 }
-.cursor-pointer {
-    cursor: pointer;
+
+/* Modal Transitions */
+.modal-enter-active, .modal-leave-active {
+  transition: all 0.3s ease;
+}
+.modal-enter-from, .modal-leave-to {
+  opacity: 0;
+  transform: scale(0.95) translateY(20px);
 }
 </style>

@@ -1,5 +1,10 @@
 <template>
-  <div class="tuyen-dung-page">
+  <div class="tuyen-dung-page space-y-6">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Tuyển dụng</h1>
+      <p class="text-slate-500 text-sm font-medium italic">Quản lý tin tuyển dụng, theo dõi ứng viên và đánh giá hồ sơ bằng AI.</p>
+    </div>
 
     <!-- Main Content Split -->
     <div class="row g-4 mb-4">
@@ -114,7 +119,7 @@
                             <input type="time" class="form-control bg-light border-0 py-2 text-dark font-medium">
                         </div>
                     </div>
-                    <button class="btn btn-primary w-100 fw-medium py-2 rounded-3 mt-1">Lưu lịch & Gửi mail</button>
+                    <button class="bg-indigo-600 text-white w-100 fw-bold py-2.5 rounded-xl mt-1 shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all uppercase tracking-widest text-xs">Lưu lịch & Gửi mail</button>
                 </div>
 
                 <!-- Case 2: Past Interview (Ready for Pass/Fail) -->

@@ -1,5 +1,10 @@
 <template>
-  <div class="lich-phong-van-page">
+  <div class="lich-phong-van-page space-y-6">
+    <!-- Header -->
+    <div class="mb-8">
+      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Lịch Phỏng Vấn</h1>
+      <p class="text-slate-500 text-sm font-medium italic">Sắp xếp, theo dõi và quản lý các buổi phỏng vấn ứng viên.</p>
+    </div>
 
     <!-- Toolbar -->
     <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
@@ -33,8 +38,8 @@
         </div>
       </div>
 
-      <button @click="showCreateModal = true" class="btn btn-primary d-flex align-items-center gap-2 fw-medium rounded-3 px-4 py-2 shadow-sm" style="background-color: #3b82f6;">
-        <span class="material-symbols-outlined fs-5">add</span>
+      <button @click="showCreateModal = true" class="px-5 py-2.5 bg-indigo-600 rounded-xl font-black text-white hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all flex items-center gap-2">
+        <span class="material-symbols-outlined text-[20px]">add</span>
         Tạo lịch mới
       </button>
     </div>
@@ -212,7 +217,7 @@
             </div>
           </div>
 
-          <button @click="saveSchedule" class="btn btn-primary w-100 fw-medium py-2 rounded-3" style="background-color: #5a75f9; border: none;">Lưu lịch</button>
+          <button @click="saveSchedule" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 uppercase tracking-widest text-xs transition-all">Lưu lịch</button>
         </div>
       </div>
     </div>

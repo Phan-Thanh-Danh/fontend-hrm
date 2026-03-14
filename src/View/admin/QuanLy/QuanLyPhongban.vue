@@ -1,228 +1,243 @@
 <template>
-  <div class="p-4 md:p-6 w-full mx-auto flex flex-col font-sans gap-6 relative">
-    
-    <!-- Top Header -->
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+  <div class="space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Quản lý phòng ban</h1>
-        <p class="text-sm text-slate-500 font-medium mt-1">Phân bổ, thiết lập và quản lý sơ đồ tổ chức công ty.</p>
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Phòng ban</h1>
+        <p class="text-slate-500 text-sm font-medium italic">Cấu trúc sơ đồ tổ chức và quản lý nhân sự theo đơn vị.</p>
       </div>
-      <button @click="openModal('add')" class="bg-[#3b3abb] hover:bg-blue-800 text-white font-semibold py-2.5 px-5 rounded-lg shadow-sm transition-colors flex items-center gap-2 shrink-0">
-        <span class="material-symbols-outlined text-[20px] font-bold" style="font-variation-settings: 'FILL' 1;">add_box</span>
-        Thêm phòng ban
-      </button>
-    </div>
-
-    <!-- Stats summary (Hồi trước nằm bên phải, giờ đem lên trên) -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-5">
-      <div class="bg-indigo-50/60 rounded-xl border border-indigo-100/60 p-5 flex items-center gap-4 shadow-sm">
-         <div class="w-12 h-12 rounded-full bg-white text-[#3b3abb] flex items-center justify-center shadow-sm">
-           <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">corporate_fare</span>
-         </div>
-         <div>
-           <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Tổng phòng ban</p>
-           <p class="text-2xl font-extrabold text-[#3b3abb] mt-0.5">12</p>
-         </div>
-      </div>
-      <div class="bg-emerald-50/60 rounded-xl border border-emerald-100/60 p-5 flex items-center gap-4 shadow-sm">
-         <div class="w-12 h-12 rounded-full bg-white text-emerald-600 flex items-center justify-center shadow-sm">
-           <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-         </div>
-         <div>
-           <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Đang hoạt động</p>
-           <p class="text-2xl font-extrabold text-emerald-600 mt-0.5">10</p>
-         </div>
-      </div>
-      <div class="bg-amber-50/60 rounded-xl border border-amber-100/60 p-5 flex items-center gap-4 shadow-sm">
-         <div class="w-12 h-12 rounded-full bg-white text-amber-600 flex items-center justify-center shadow-sm">
-           <span class="material-symbols-outlined text-[24px]">account_tree</span>
-         </div>
-         <div>
-           <p class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Cấu trúc</p>
-           <p class="text-2xl font-extrabold text-amber-600 mt-0.5">3 <span class="text-sm font-medium text-slate-600 ml-1">cấp bậc</span></p>
-         </div>
-      </div>
-    </div>
-
-    <!-- Main Content: Department List -->
-    <div class="w-full flex flex-col gap-5 border border-slate-100 bg-white p-6 rounded-2xl shadow-sm">
-      
-      <!-- Filters & Meta -->
-      <div class="flex flex-wrap justify-between items-center gap-4 border-b border-slate-100 pb-5">
-        <div class="flex gap-3">
-          <div class="relative">
-            <select class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-2.5 pl-4 pr-10 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#3b3abb]/50 focus:bg-white cursor-pointer transition-colors shadow-sm">
-              <option>Trạng thái: Đang hoạt động</option>
-              <option>Tất cả trạng thái</option>
-            </select>
-            <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
-          </div>
-          <div class="relative">
-            <select class="appearance-none bg-slate-50 border border-slate-200 text-slate-700 py-2.5 pl-4 pr-10 rounded-lg text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-[#3b3abb]/50 focus:bg-white cursor-pointer transition-colors shadow-sm">
-              <option>Loại phòng ban</option>
-              <option>Chuyên môn</option>
-              <option>Kinh doanh</option>
-            </select>
-            <span class="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[20px]">expand_more</span>
-          </div>
+      <div class="flex flex-wrap items-center gap-3 text-sm">
+        <div class="relative group hidden sm:block">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+          <input 
+            v-model="searchQuery"
+            type="text" 
+            placeholder="Tìm mã hoặc tên phòng..." 
+            class="pl-10 pr-4 py-2.5 w-64 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-bold"
+          >
         </div>
-        <span class="text-xs text-slate-400 font-medium italic">Cập nhật lần cuối: Hôm nay, 09:45 AM</span>
-      </div>
 
-      <!-- Table Data -->
-      <div class="overflow-x-auto overflow-y-visible">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="border-b border-slate-200 text-xs text-slate-500 font-bold uppercase tracking-wider">
-              <th class="py-4 px-2 w-[35%]">Tên phòng ban</th>
-              <th class="py-4 px-2">Mã phòng</th>
-              <th class="py-4 px-2">Trưởng phòng</th>
-              <th class="py-4 px-2">Trạng thái</th>
-              <th class="py-4 px-2 text-center">Số lượng nhân sự</th>
-              <th class="py-4 px-2 text-center w-24">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-slate-100/80">
-            <tr v-for="(dept, index) in departments" :key="index" class="hover:bg-slate-50/70 transition-colors group">
-              <td class="py-5 px-2">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-indigo-50/50 text-[#3b3abb] flex items-center justify-center border border-indigo-100 shadow-sm shrink-0">
-                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">{{ dept.icon }}</span>
-                  </div>
-                  <span class="font-bold text-slate-800 text-sm whitespace-nowrap">{{ dept.name }}</span>
+        <select v-model="filterActive" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-500 outline-none hover:border-indigo-300 transition-all">
+          <option value="ALL">Tất cả trạng thái</option>
+          <option :value="true">Đang hoạt động</option>
+          <option :value="false">Đã giải thể</option>
+        </select>
+
+        <button 
+          @click="openModal('add')" 
+          class="px-5 py-2.5 bg-indigo-600 rounded-xl font-black text-white hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all flex items-center gap-2"
+        >
+          <span class="material-symbols-outlined text-[20px]">add_business</span>
+          Thêm phòng ban
+        </button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div v-for="stat in stats" :key="stat.label" class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5">
+        <div :class="`w-14 h-14 rounded-2xl flex items-center justify-center ${stat.bg} ${stat.color} shadow-inner`">
+          <span class="material-symbols-outlined text-3xl">{{ stat.icon }}</span>
+        </div>
+        <div>
+          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">{{ stat.label }}</p>
+          <p class="text-2xl font-black text-slate-900 leading-none">{{ stat.value }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- List -->
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden text-sm">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-slate-50/50">
+            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Tên đơn vị / Mã phòng</th>
+            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Trưởng phòng</th>
+            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-center">Nhân sự</th>
+            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Trạng thái</th>
+            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-right">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-50">
+          <tr v-for="dept in filteredDepartments" :key="dept.id" class="hover:bg-slate-50/50 transition-all group">
+            <td class="px-8 py-5">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors border border-slate-200 group-hover:border-indigo-200">
+                  <span class="material-symbols-outlined text-xl">{{ dept.icon || 'corporate_fare' }}</span>
                 </div>
-              </td>
-              <td class="py-5 px-2 text-slate-600 font-semibold text-sm">{{ dept.code }}</td>
-              <td class="py-5 px-2 text-slate-600 font-medium text-sm">{{ dept.manager }}</td>
-              <td class="py-5 px-2">
-                <span v-if="dept.active" class="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-bold bg-green-50 text-green-600 border border-green-200/60">
-                  ĐANG HOẠT ĐỘNG
-                </span>
-                <span v-else class="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-bold bg-slate-100 text-slate-500 border border-slate-200/60">
-                  ĐÃ GIẢI THỂ
-                </span>
-              </td>
-              <td class="py-5 px-2 text-center font-bold text-slate-700 text-sm">{{ dept.count }}</td>
-              <td class="py-5 px-2 text-center flex items-center justify-center gap-1">
-                <button @click="openModal('edit', dept)" class="text-slate-400 hover:text-[#3b3abb] transition-colors rounded-lg p-2 hover:bg-indigo-50" title="Chỉnh sửa">
+                <div>
+                  <p class="font-black text-slate-900 mb-0.5">{{ dept.name }}</p>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ dept.code }}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-8 py-5 text-sm font-bold text-slate-600">
+              <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-slate-300"></div>
+                {{ dept.manager || 'Chưa bổ nhiệm' }}
+              </div>
+            </td>
+            <td class="px-8 py-5 text-center">
+              <span class="px-3 py-1 bg-slate-100 rounded-lg font-black text-slate-600 text-[11px]">
+                {{ dept.employee_count }} NV
+              </span>
+            </td>
+            <td class="px-8 py-5">
+              <span :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${dept.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`">
+                {{ dept.active ? 'Đang hoạt động' : 'Đã giải thể' }}
+              </span>
+            </td>
+            <td class="px-8 py-5 text-right">
+              <div class="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                <button @click="openModal('edit', dept)" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
                   <span class="material-symbols-outlined text-[20px]">edit</span>
                 </button>
-                <button class="text-slate-400 hover:text-rose-500 transition-colors rounded-lg p-2 hover:bg-rose-50" title="Xoá">
-                  <span class="material-symbols-outlined text-[20px]">delete</span>
+                <button @click="confirmDissolve(dept)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                  <span class="material-symbols-outlined text-[20px]">domain_disabled</span>
                 </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
-    <!-- Modal Overlay -->
-    <div v-if="showModal" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 sm:p-6" style="margin-top: 0 !important;">
-      <!-- Backdrop -->
-      <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" @click="closeModal"></div>
-      
-      <!-- Modal Panel -->
-      <div class="bg-white rounded-2xl shadow-2xl w-full max-w-[500px] flex flex-col max-h-[90vh] relative z-10 transform transition-all">
-        <!-- Form Header -->
-        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50 rounded-t-2xl">
-          <div class="flex items-center gap-2.5 text-slate-900">
-            <span class="material-symbols-outlined text-[#3b3abb] text-[22px]">{{ isEdit ? 'edit' : 'add_circle' }}</span>
-            <h3 class="font-bold text-[17px]">{{ isEdit ? 'Chỉnh sửa phòng ban' : 'Thêm mới phòng ban' }}</h3>
-          </div>
-          <button @click="closeModal" class="text-slate-400 hover:text-rose-500 transition-colors rounded-full p-1.5 hover:bg-rose-50 outline-none">
-            <span class="material-symbols-outlined text-[20px]">close</span>
-          </button>
-        </div>
-        
-        <!-- Form Body -->
-        <div class="p-6 flex flex-col gap-5 overflow-y-auto custom-scrollbar">
-          <!-- MÃ PHÒNG BAN -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Mã phòng ban <span class="text-rose-500">*</span></label>
-            <input type="text" :value="isEdit ? 'PPM004' : ''" placeholder="Vd: KKD001" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3b3abb]/20 focus:border-[#3b3abb] font-semibold shadow-sm transition-shadow" />
-          </div>
-
-          <!-- TÊN PHÒNG BAN -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Tên phòng ban <span class="text-rose-500">*</span></label>
-            <input type="text" :value="isEdit ? 'Phòng Phát Triển Phần Mềm' : ''" placeholder="Nhập tên phòng ban" class="w-full px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3b3abb]/20 focus:border-[#3b3abb] font-semibold shadow-sm transition-all" />
-          </div>
-
-          <!-- PHÒNG BAN CHA -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Phòng ban cha</label>
-            <div class="relative">
-              <select class="appearance-none w-full px-4 py-2.5 bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3b3abb]/20 focus:border-[#3b3abb] font-semibold cursor-pointer shadow-sm transition-all">
-                <option value="">-- Không có (Phòng ban gốc) --</option>
-                <option :selected="isEdit">Khối Kỹ Thuật</option>
-                <option>Tổng Công ty (HO)</option>
-              </select>
-              <div class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 flex items-center pr-1 border-l border-slate-300 pl-3">
-                 <span class="material-symbols-outlined text-[20px]">account_tree</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- TRƯỞNG PHÒNG -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Trưởng phòng</label>
-            <div class="relative">
-              <span class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-[20px]">search</span>
-              <input type="text" placeholder="Tìm kiếm nhân sự..." class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3b3abb]/20 focus:border-[#3b3abb] shadow-sm font-medium transition-all placeholder:text-slate-400" />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-5">
-            <!-- NGÀY THÀNH LẬP -->
+    <!-- Modal -->
+    <transition name="modal">
+      <div v-if="showModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="closeModal"></div>
+        <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all">
+          <!-- Modal Header -->
+          <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
             <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Ngày thành lập</label>
-              <div class="relative">
-                <input type="date" :value="isEdit ? '2023-01-15' : ''" class="w-full pl-4 pr-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3b3abb]/20 focus:border-[#3b3abb] font-semibold shadow-sm transition-all text-sm" />
-              </div>
+              <h3 class="text-lg font-black text-slate-900">{{ isEdit ? 'Cập nhật phòng ban' : 'Thêm phòng ban mới' }}</h3>
+              <p class="text-xs text-slate-500 font-bold italic mt-0.5">Vui lòng điền đủ thông tin để lưu</p>
             </div>
+            <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-md transition-all text-slate-400">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
 
-            <!-- TRẠNG THÁI -->
-            <div>
-              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Trạng thái hoạt động</label>
-              <div class="flex items-center gap-3 h-[42px]">
-                <button class="w-11 h-6 bg-[#3b3abb] rounded-full relative transition-colors duration-200 focus:outline-none">
-                  <span class="absolute left-1 top-1 bg-white w-4 h-4 rounded-full shadow-sm transition-transform duration-200 transform translate-x-5"></span>
-                </button>
-                <span class="text-sm font-semibold text-[#3b3abb]">Đang hoạt động</span>
+          <!-- Body -->
+          <div class="p-8 space-y-5 custom-scrollbar max-h-[70vh] overflow-y-auto">
+            <div class="space-y-4">
+              <div class="grid grid-cols-5 gap-4">
+                <div class="col-span-2">
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Mã phòng *</label>
+                  <input v-model="form.code" type="text" placeholder="VD: IT-01" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+                </div>
+                <div class="col-span-3">
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Icon hiển thị</label>
+                  <select v-model="form.icon" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+                    <option v-for="icon in iconOptions" :key="icon" :value="icon">{{ icon.toUpperCase().replace('_', ' ') }}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Tên phòng ban *</label>
+                <input v-model="form.name" type="text" placeholder="Nhập tên đơn vị..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Phòng ban cha (Cấp trên)</label>
+                <select v-model="form.parent_id" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+                  <option :value="null">-- Là cấp quản lý cao nhất --</option>
+                  <option v-for="d in departments" :key="d.id" :value="d.id" :disabled="d.id === form.id">{{ d.name }}</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trưởng phòng / Người quản lý</label>
+                <input v-model="form.manager" type="text" placeholder="Tìm kiếm hoặc nhập tên..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trạng thái hoạt động</label>
+                <div class="flex items-center gap-3">
+                    <button 
+                        @click="form.active = !form.active"
+                        type="button"
+                        :class="`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 outline-none ${form.active ? 'bg-indigo-600' : 'bg-slate-200'}`"
+                    >
+                        <span :class="`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ${form.active ? 'translate-x-5' : 'translate-x-0'}`"></span>
+                    </button>
+                    <span class="text-xs font-bold" :class="form.active ? 'text-indigo-600' : 'text-slate-400'">{{ form.active ? 'ĐANG HOẠT ĐỘNG' : 'TẠM NGƯNG' }}</span>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- MÔ TẢ -->
-          <div>
-            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-2">Mô tả</label>
-            <textarea rows="3" placeholder="Ghi chú thêm về phòng ban..." class="w-full px-4 py-3 bg-white border border-slate-200 hover:border-slate-300 rounded-lg text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#3b3abb]/20 focus:border-[#3b3abb] resize-none shadow-sm transition-all"></textarea>
+          <!-- Footer -->
+          <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex gap-3">
+            <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 transition-all font-black uppercase tracking-widest">Hủy</button>
+            <button @click="handleSave" class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all uppercase tracking-widest">
+              {{ isEdit ? 'Cập nhật' : 'Lưu mới' }}
+            </button>
           </div>
-        </div>
-        
-        <!-- Form Actions -->
-        <div class="px-6 py-4 border-t border-slate-100 flex gap-3 bg-slate-50/50 rounded-b-2xl shrink-0">
-          <button @click="closeModal" class="flex-1 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2.5 rounded-lg shadow-sm transition-all text-sm">
-            Hủy
-          </button>
-          <button @click="closeModal" class="flex-1 bg-[#3b3abb] hover:bg-blue-800 text-white font-bold py-2.5 rounded-lg shadow-sm transition-all text-sm">
-            {{ isEdit ? 'Cập nhật' : 'Thêm mới' }}
-          </button>
         </div>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 
 const showModal = ref(false);
 const isEdit = ref(false);
+const searchQuery = ref('');
+const filterActive = ref('ALL');
+
+const departments = ref([
+  { id: 1, name: 'Khối Điều Hành (HO)', code: 'HO-ADMIN', manager: 'Nguyễn Văn A', active: true, employee_count: 5, icon: 'corporate_fare', parent_id: null },
+  { id: 2, name: 'Phòng Công Nghệ', code: 'IT-DEPT', manager: 'Trần Kỹ Thuật', active: true, employee_count: 12, icon: 'engineering', parent_id: 1 },
+  { id: 3, name: 'Phòng Nhân Sự', code: 'HR-DEPT', manager: 'Lê Tuyển Dụng', active: true, employee_count: 8, icon: 'groups', parent_id: 1 },
+  { id: 4, name: 'Tổ Frontend', code: 'IT-FE', manager: 'Chưa bổ nhiệm', active: true, employee_count: 5, icon: 'web', parent_id: 2 }
+]);
+
+const filteredDepartments = computed(() => {
+    let list = departments.value;
+    if (filterActive.value !== 'ALL') {
+        list = list.filter(d => d.active === filterActive.value);
+    }
+    if (searchQuery.value) {
+        const q = searchQuery.value.toLowerCase();
+        list = list.filter(d => 
+            d.name.toLowerCase().includes(q) || 
+            d.code.toLowerCase().includes(q)
+        );
+    }
+    return list;
+});
+
+const stats = ref([
+  { label: 'Tổng phòng ban', value: '12', icon: 'account_tree', bg: 'bg-indigo-50', color: 'text-indigo-600' },
+  { label: 'Đang hoạt động', value: '10', icon: 'check_circle', bg: 'bg-green-50', color: 'text-green-600' },
+  { label: 'Cơ cấu tổ chức', value: '3 Cấp', icon: 'schema', bg: 'bg-amber-50', color: 'text-amber-600' }
+]);
+
+const iconOptions = ['corporate_fare', 'engineering', 'groups', 'web', 'payments', 'hub', 'apartment', 'meeting_room'];
+
+const emptyForm = {
+  id: null,
+  name: '',
+  code: '',
+  manager: '',
+  active: true,
+  icon: 'corporate_fare',
+  parent_id: null
+};
+
+const form = ref({ ...emptyForm });
 
 const openModal = (type, dept = null) => {
   isEdit.value = type === 'edit';
+  if (isEdit.value && dept) {
+    form.value = { ...dept };
+  } else {
+    form.value = { ...emptyForm };
+  }
   showModal.value = true;
 };
 
@@ -230,44 +245,56 @@ const closeModal = () => {
   showModal.value = false;
 };
 
-const departments = ref([
-  { name: 'Tổng Công ty (HO)', code: 'TCT001', manager: 'Nguyễn Văn A', active: true, count: 45, icon: 'corporate_fare' },
-  { name: 'Khối Kinh Doanh', code: 'KKD002', manager: 'Trần Thị B', active: true, count: 28, icon: 'groups' },
-  { name: 'Khối Kỹ Thuật', code: 'KKT003', manager: 'Lê Văn C', active: true, count: 15, icon: 'engineering' },
-  { name: 'Phát Triển Phần Mềm', code: 'PPM004', manager: 'Chưa cập nhật', active: false, count: 0, icon: 'event_note' },
-]);
+const handleSave = () => {
+  if (!form.value.name || !form.value.code) {
+    alert('Vui lòng nhập tên và mã phòng ban!');
+    return;
+  }
+
+  if (isEdit.value) {
+    const idx = departments.value.findIndex(d => d.id === form.value.id);
+    if (idx !== -1) {
+      departments.value[idx] = { ...form.value };
+    }
+  } else {
+    departments.value.push({
+      ...form.value,
+      id: Date.now(),
+      employee_count: 0
+    });
+  }
+  closeModal();
+};
+
+const confirmDissolve = (dept) => {
+  if (dept.employee_count > 0) {
+    alert(`Không thể giải thể phòng ${dept.name} vì đang có ${dept.employee_count} nhân viên. Hãy điều chuyển nhân sự trước!`);
+    return;
+  }
+  if (confirm(`Bạn có chắc muốn giải thể phòng ban ${dept.name}? Action này không thể hoàn tác.`)) {
+    dept.active = false;
+  }
+};
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
-
-.material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24px;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  -webkit-font-feature-settings: 'liga';
-  font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Custom scrollbar cho Modal */
 .custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
+  background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
-  border-radius: 4px;
+  background: #e2e8f0;
+  border-radius: 10px;
+}
+
+/* Modal Transitions */
+.modal-enter-active, .modal-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.modal-enter-from, .modal-leave-to {
+  opacity: 0;
+  transform: scale(0.9) translateY(30px);
 }
 </style>

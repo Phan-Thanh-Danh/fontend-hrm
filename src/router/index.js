@@ -109,6 +109,26 @@ const routes = [
                         path: 'lich-phong-van',
                         name: 'admin-lich-phong-van',
                         component: () => import('../View/admin/HR/LichPhongVan.vue')
+                  },
+                  {
+                        path: 'bang-luong',
+                        name: 'admin-bang-luong',
+                        component: () => import('../View/admin/QuanLy/QuanLyLuong.vue')
+                  },
+                  {
+                        path: 'tai-san',
+                        name: 'admin-tai-san',
+                        component: () => import('../View/admin/QuanLy/QuanLyTaiSan.vue')
+                  },
+                  {
+                        path: 'phe-duyet',
+                        name: 'admin-phe-duyet',
+                        component: () => import('../View/admin/QuanLy/PheDuyetDon.vue')
+                  },
+                  {
+                        path: 'cai-dat',
+                        name: 'admin-cai-dat',
+                        component: () => import('../View/admin/Setting_admin.vue')
                   }
             ]
       }

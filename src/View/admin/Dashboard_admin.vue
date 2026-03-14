@@ -1,8 +1,9 @@
 <template>
-  <div class="container-fluid py-4">
+  <div class="dashboard-admin space-y-6">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h1 class="h3 mb-0 text-gray-800 fw-bold">Dashboard Tổng quan</h1>
+    <div class="mb-8">
+      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Dashboard Tổng quan</h1>
+      <p class="text-slate-500 text-sm font-medium italic">Chào mừng trở lại! Dưới đây là tóm tắt hoạt động nhân sự và tình hình hệ thống hôm nay.</p>
     </div>
 
     <!-- Stats Cards -->

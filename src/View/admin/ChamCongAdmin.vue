@@ -1,11 +1,11 @@
 <template>
-  <div class="cham-cong-admin-page p-4 bg-light min-vh-100">
+  <div class="cham-cong-admin-page space-y-6">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <div>
-        <h4 class="fw-bold mb-1">Quản lý Chấm công & Thống kê</h4>
-        <p class="text-muted small mb-0">Theo dõi chuyên cần, phê duyệt bảng công và quản lý dữ liệu nhân sự</p>
-      </div>
+    <div class="mb-8">
+      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Chấm công & Thống kê</h1>
+      <p class="text-slate-500 text-sm font-medium italic">Theo dõi chuyên cần, phê duyệt bảng công và quản lý dữ liệu nhân sự.</p>
+    </div>
       <div class="d-flex align-items-center gap-3">
         <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-3 border">
             <span class="text-muted small fw-medium">TRẠNG THÁI THÁNG 10/2023</span>
@@ -32,7 +32,7 @@
                       <span class="material-symbols-outlined fs-6">trending_up</span> +12.5% so với tháng trước
                   </p>
               </div>
-              <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3">
+              <div class="bg-indigo-50 text-indigo-600 p-2 rounded-3">
                   <span class="material-symbols-outlined fs-4">timer</span>
               </div>
           </div>
@@ -48,7 +48,7 @@
                       <span class="material-symbols-outlined fs-6">trending_up</span> +0.2% so với tháng trước
                   </p>
               </div>
-              <div class="bg-primary bg-opacity-10 text-primary p-2 rounded-3">
+              <div class="bg-indigo-50 text-indigo-600 p-2 rounded-3">
                   <span class="material-symbols-outlined fs-4">verified_user</span>
               </div>
           </div>
@@ -79,32 +79,32 @@
                 <h6 class="fw-bold text-dark mb-4">Tổng giờ OT theo Phòng ban (Tháng này)</h6>
                 <div class="d-flex align-items-end justify-content-around flex-grow-1 pt-4 px-2" style="height: 200px;">
                     <div class="d-flex flex-column align-items-center gap-3 w-100">
-                        <div class="bg-primary bg-opacity-10 rounded-top w-50 position-relative" style="height: 120px;">
-                            <div class="bg-primary rounded-top position-absolute bottom-0 w-100" style="height: 60%;"></div>
+                        <div class="bg-indigo-50 rounded-top w-50 position-relative" style="height: 120px;">
+                            <div class="bg-indigo-600 rounded-top position-absolute bottom-0 w-100" style="height: 60%;"></div>
                         </div>
                         <span class="text-muted small fw-bold">IT</span>
                     </div>
                     <div class="d-flex flex-column align-items-center gap-3 w-100">
-                        <div class="bg-primary bg-opacity-10 rounded-top w-50 position-relative" style="height: 120px;">
-                            <div class="bg-primary rounded-top position-absolute bottom-0 w-100" style="height: 40%;"></div>
+                        <div class="bg-indigo-50 rounded-top w-50 position-relative" style="height: 120px;">
+                            <div class="bg-indigo-600 rounded-top position-absolute bottom-0 w-100" style="height: 40%;"></div>
                         </div>
                         <span class="text-muted small fw-bold">HR</span>
                     </div>
                     <div class="d-flex flex-column align-items-center gap-3 w-100">
-                        <div class="bg-primary bg-opacity-10 rounded-top w-50 position-relative" style="height: 120px;">
-                            <div class="bg-primary rounded-top position-absolute bottom-0 w-100" style="height: 85%;"></div>
+                        <div class="bg-indigo-50 rounded-top w-50 position-relative" style="height: 120px;">
+                            <div class="bg-indigo-600 rounded-top position-absolute bottom-0 w-100" style="height: 85%;"></div>
                         </div>
                         <span class="text-muted small fw-bold">Sales</span>
                     </div>
                     <div class="d-flex flex-column align-items-center gap-3 w-100">
-                        <div class="bg-primary bg-opacity-10 rounded-top w-50 position-relative" style="height: 120px;">
-                            <div class="bg-primary rounded-top position-absolute bottom-0 w-100" style="height: 30%;"></div>
+                        <div class="bg-indigo-50 rounded-top w-50 position-relative" style="height: 120px;">
+                            <div class="bg-indigo-600 rounded-top position-absolute bottom-0 w-100" style="height: 30%;"></div>
                         </div>
                         <span class="text-muted small fw-bold">MKT</span>
                     </div>
                     <div class="d-flex flex-column align-items-center gap-3 w-100">
-                        <div class="bg-primary bg-opacity-10 rounded-top w-50 position-relative" style="height: 120px;">
-                            <div class="bg-primary rounded-top position-absolute bottom-0 w-100" style="height: 55%;"></div>
+                        <div class="bg-indigo-50 rounded-top w-50 position-relative" style="height: 120px;">
+                            <div class="bg-indigo-600 rounded-top position-absolute bottom-0 w-100" style="height: 55%;"></div>
                         </div>
                         <span class="text-muted small fw-bold">Ops</span>
                     </div>
