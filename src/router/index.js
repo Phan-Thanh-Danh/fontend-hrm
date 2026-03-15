@@ -3,6 +3,7 @@ import Layout_NhanVien from '../components/Layout_NhanVien.vue'
 import Dashboard_portal from '../View/portal_nhanvien/Dashboard_portal.vue'
 import Cham_cong from '../View/portal_nhanvien/Cham_cong.vue'
 import Layout_Admin from '../components/Layout_Admin.vue'
+import Layout_GiamDoc from '../components/Layout_GiamDoc.vue'
 
 const routes = [
       {
@@ -129,6 +130,17 @@ const routes = [
                         path: 'cai-dat',
                         name: 'admin-cai-dat',
                         component: () => import('../View/admin/Setting_admin.vue')
+                  }
+            ]
+      },
+      {
+            path: '/giam-doc',
+            component: Layout_GiamDoc,
+            children: [
+                  {
+                        path: '',
+                        name: 'dashboard-giam-doc',
+                        component: () => import('../View/admin/GiamDoc/Dashboard_GiamDoc.vue')
                   }
             ]
       }

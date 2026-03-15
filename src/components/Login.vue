@@ -53,6 +53,7 @@
                 Tài khoản trải nghiệm:
               </p>
               <ul class="list-disc pl-8 space-y-1 text-blue-700">
+                <li>Giám đốc: <b>ceo@hrm.com</b> / <b>ceo</b></li>
                 <li>Admin: <b>admin@hrm.com</b> / <b>admin</b></li>
                 <li>Nhân viên: <b>user@hrm.com</b> / <b>user</b></li>
               </ul>
@@ -155,6 +156,10 @@ const handleLogin = () => {
     else if (email.value === 'user@hrm.com' && password.value === 'user') {
       localStorage.setItem('userRole', 'user');
       router.push('/');
+    } 
+    else if (email.value === 'ceo@hrm.com' && password.value === 'ceo') {
+      localStorage.setItem('userRole', 'ceo');
+      router.push('/giam-doc');
     } 
     else {
       errorMsg.value = 'Tài khoản hoặc mật khẩu không chính xác!';
