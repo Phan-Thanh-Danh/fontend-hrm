@@ -51,7 +51,10 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
 }
 
-
+/* Optimized transition for smooth dark/light mode toggle without layout lag */
+body, .card, .bento-card, .list-group-item, .modal-content, input, select, textarea, .form-control, .form-select, table, th, td, tr {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
 
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;

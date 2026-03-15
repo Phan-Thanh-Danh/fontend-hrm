@@ -168,7 +168,7 @@
         </div>
 
         <!-- Lưu ý Box (Info box container) -->
-        <div class="card bento-card border-1 border-brand-blue border-opacity-25 p-4 flex-shrink-0" style="background-color: #f1f4ff;">
+        <div class="card bento-card border-1 border-brand-blue border-opacity-25 p-4 flex-shrink-0" style="background-color: var(--sys-bg-page, #f1f4ff);">
           <h2 class="h6 fw-bold text-brand-blue mb-3 d-flex align-items-center gap-2">
             <span class="material-symbols-outlined icon-filled fs-5">info</span>
             Lưu ý
@@ -203,7 +203,7 @@
 
 <style scoped>
 .explanation-wrapper {
-  background-color: #F8FAFC;
+  background-color: transparent;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
@@ -243,9 +243,9 @@
 /* Inputs */
 .custom-input {
   border-radius: 0.5rem;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--sys-border, #E2E8F0);
   font-size: 0.875rem;
-  background-color: #FAFCFF;
+  background-color: var(--sys-bg-page, #FAFCFF);
   padding: 0.75rem 1rem;
 }
 .custom-input:focus {
@@ -260,8 +260,8 @@ textarea.custom-input {
 
 /* Upload Area */
 .upload-area {
-  border: 2px dashed #CBD5E1;
-  background-color: #FAFCFF;
+  border: 2px dashed var(--sys-border, #CBD5E1);
+  background-color: var(--sys-bg-page, #FAFCFF);
   transition: all 0.2s ease;
 }
 .upload-area:hover {

@@ -137,6 +137,19 @@
                   </div>
                 </div>
               </div>
+              <!-- Custom Xem Tất Cả Thông Báo Link -->
+              <div
+                class="border-t p-2 text-center"
+                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[var(--sys-border)]'"
+              >
+                <router-link
+                  to="/thong-bao"
+                  @click="isNotificationOpen = false"
+                  class="text-xs font-semibold transition-colors duration-200 text-[var(--sys-accent)] hover:text-[oklch(0.4_0.15_265)] inline-block py-1 px-4 rounded-full hover:bg-[var(--sys-accent)]/10"
+                >
+                  Xem tất cả thông báo
+                </router-link>
+              </div>
             </div>
           </transition>
         </div>
@@ -195,19 +208,19 @@
         <div class="relative" ref="profileDropdownRef">
           <button
             @click="isProfileOpen = !isProfileOpen"
-            class="flex items-center gap-2 p-1 pl-1 pr-2 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-border)]"
+            class="flex items-center gap-2.5 p-1 pr-3 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]"
           >
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
               style="background:linear-gradient(135deg,oklch(0.62 0.22 340),oklch(0.55 0.25 300))"
             >L</div>
-            <div class="hidden lg:block text-left">
-              <p
-                class="text-xs font-bold leading-none mb-0.5 text-[var(--sys-text-primary)]"
-              >Lê Quản Trị</p>
-              <p
-                class="text-[9px] uppercase tracking-tight font-semibold text-[var(--sys-text-secondary)]"
-              >Admin</p>
+            <div class="hidden lg:flex flex-col justify-center text-left">
+              <span
+                class="text-sm font-bold leading-tight text-[var(--sys-text-primary)]"
+              >Lê Quản Trị</span>
+              <span
+                class="text-[10px] uppercase tracking-widest font-bold mt-0.5 leading-none text-[var(--sys-text-secondary)]"
+              >Admin</span>
             </div>
             <span
               class="material-symbols-rounded text-sm transition-transform duration-200"

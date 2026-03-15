@@ -135,6 +135,19 @@
                   </div>
                 </div>
               </div>
+              <!-- Custom Xem Tất Cả Thông Báo Link -->
+              <div
+                class="border-t p-2 text-center"
+                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[var(--sys-border)]'"
+              >
+                <router-link
+                  to="/thong-bao"
+                  @click="isNotificationOpen = false"
+                  class="text-xs font-semibold transition-colors duration-200 text-[var(--sys-accent)] hover:text-[oklch(0.4_0.15_265)] inline-block py-1 px-4 rounded-full hover:bg-[var(--sys-accent)]/10"
+                >
+                  Xem tất cả thông báo
+                </router-link>
+              </div>
             </div>
           </transition>
         </div>
@@ -193,20 +206,20 @@
         <div class="relative" ref="profileDropdownRef">
           <button
             @click="isProfileOpen = !isProfileOpen"
-            class="flex items-center gap-2 p-1 pl-1 pr-2 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-border)]"
+            class="flex items-center gap-2.5 p-1 pr-3 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]"
           >
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--sys-accent)]/10 text-[var(--sys-accent)] border border-[var(--sys-accent)]/20 text-sm font-bold shrink-0"
             >A</div>
-            <div class="hidden lg:block text-left">
-              <p
-                class="text-xs font-bold leading-none mb-0.5"
-                :class="isDark ? 'text-[oklch(0.91_0.01_265)]' : 'text-[oklch(0.18_0.015_265)]'"
-              >Nguyễn Văn A</p>
-              <p
-                class="text-[9px] uppercase tracking-tight font-semibold"
-                :class="isDark ? 'text-[oklch(0.65_0.1_265)]' : 'text-[oklch(0.48_0.14_265)]'"
-              >Nhân viên</p>
+            <div class="hidden lg:flex flex-col justify-center text-left">
+              <span
+                class="text-sm font-bold leading-tight"
+                :class="isDark ? 'text-[oklch(0.91_0.01_265)]' : 'text-[var(--sys-text-primary)]'"
+              >Nguyễn Văn A</span>
+              <span
+                class="text-[10px] uppercase tracking-widest font-bold mt-0.5 leading-none"
+                :class="isDark ? 'text-[oklch(0.65_0.1_265)]' : 'text-[var(--sys-text-secondary)]'"
+              >Nhân viên</span>
             </div>
             <span
               class="material-symbols-rounded text-sm transition-transform duration-200"

@@ -171,7 +171,7 @@
 
 <style scoped>
 .notifications-wrapper {
-  background-color: #F8FAFC;
+  background-color: transparent;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   margin: 0 auto;
 }
@@ -206,27 +206,27 @@
 }
 
 .btn-white {
-  background-color: #ffffff;
-  border: 1px solid #E2E8F0;
+  background-color: var(--sys-bg-surface, #ffffff);
+  border: 1px solid var(--sys-border, #E2E8F0);
 }
 .btn-white:hover {
-  background-color: #F1F5F9;
+  background-color: var(--sys-bg-page, #F1F5F9);
 }
 
 /* Base custom input */
 .custom-input {
   border-radius: 0.75rem;
   border: 1px solid transparent;
-  background-color: #F1F4F9;
+  background-color: var(--sys-bg-page, #F1F4F9);
   font-size: 0.875rem;
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
-  color: #1E293B;
+  color: var(--sys-text-primary, #1E293B);
   transition: all 0.2s ease;
 }
 .custom-input:focus {
   border-color: rgba(59, 88, 233, 0.4);
-  background-color: #ffffff;
+  background-color: var(--sys-bg-surface, #ffffff);
   box-shadow: 0 0 0 0.25rem rgba(59, 88, 233, 0.1);
   outline: none;
 }
@@ -241,7 +241,7 @@
 .cursor-pointer { cursor: pointer; }
 
 .hover-bg-light:hover {
-  background-color: #FAFCFF !important;
+  background-color: var(--sys-bg-page, #FAFCFF) !important;
 }
 .hover-opacity:hover {
   opacity: 0.8;

@@ -275,7 +275,7 @@
 
 <style scoped>
 .profile-wrapper {
-  background-color: #F8FAFC;
+  background-color: transparent;
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
@@ -326,14 +326,14 @@
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
   border-radius: 0.5rem;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--sys-border, #E2E8F0);
   font-size: 0.875rem;
-  color: #1E293B;
-  background-color: #ffffff;
+  color: var(--sys-text-primary, #1E293B);
+  background-color: var(--sys-bg-page, #ffffff);
 }
 .custom-input[readonly], .custom-input[disabled] {
-  background-color: #ffffff;
-  opacity: 1;
+  background-color: var(--sys-bg-page, #ffffff);
+  opacity: 0.9;
 }
 .custom-input:focus {
   border-color: #3B58E9;
@@ -347,14 +347,14 @@
 }
 
 .custom-thead {
-  background-color: #F8FAFC;
-  border-top: 1px solid #F1F5F9;
-  border-bottom: 1px solid #F1F5F9;
+  background-color: var(--sys-bg-surface, #F8FAFC);
+  border-top: 1px solid var(--sys-border, #F1F5F9);
+  border-bottom: 1px solid var(--sys-border, #F1F5F9);
 }
 
 /* Borders and lines */
 .border-bottom-custom {
-  border-bottom: 1px solid #F1F5F9 !important;
+  border-bottom: 1px solid var(--sys-border, #F1F5F9) !important;
 }
 
 /* Helpers */
@@ -368,7 +368,7 @@
   opacity: 0.8;
 }
 .icon-bg {
-  background-color: #F8FAFC;
+  background-color: var(--sys-bg-page, #F8FAFC);
   padding: 6px;
   border-radius: 6px;
   font-size: 1.25rem;
@@ -379,19 +379,19 @@
 
 /* Button overrides */
 .btn-white {
-  background-color: #ffffff;
-  border-color: #e2e8f0;
+  background-color: var(--sys-bg-surface, #ffffff);
+  border-color: var(--sys-border, #e2e8f0);
 }
 .btn-white:hover {
-  background-color: #f8fafc;
+  background-color: var(--sys-bg-page, #f8fafc);
 }
 .btn-outline-secondary {
-  border-color: #E2E8F0;
-  color: #64748B;
+  border-color: var(--sys-border, #E2E8F0);
+  color: var(--sys-text-secondary, #64748B);
 }
 .btn-outline-secondary:hover {
-  background-color: #F8FAFC;
-  border-color: #CBD5E1;
-  color: #475569;
+  background-color: var(--sys-bg-page, #F8FAFC);
+  border-color: var(--sys-border, #CBD5E1);
+  color: var(--sys-text-primary, #475569);
 }
 </style>
