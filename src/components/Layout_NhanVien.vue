@@ -1,271 +1,669 @@
 <template>
-  <div class="flex min-h-screen bg-slate-50 font-sans text-slate-900">
-    <!-- Sidebar -->
-    <aside class="w-64 flex flex-col bg-slate-50 border-r border-slate-200 transition-transform duration-300" :class="isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0 relative fixed inset-y-0 left-0 z-40 lg:block'">
-      <div class="p-5 flex items-center gap-3 border-b border-slate-100">
-        <span class="material-symbols-outlined text-blue-600 text-4xl" style="font-variation-settings: 'FILL' 1, 'wght' 600;">corporate_fare</span>
-        <h2 class="text-lg font-bold text-slate-900 leading-tight m-0">HRM Portal</h2>
+  <div
+    class="min-h-screen font-[Roboto,Inter,sans-serif] transition-colors duration-300 bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)]"
+  >
+
+    <!-- ═══════════════════════════════════════════════
+         M3 TOP APP BAR
+    ═══════════════════════════════════════════════ -->
+    <header
+      class="fixed top-0 left-0 right-0 z-40 flex items-center h-16 px-2 gap-1 transition-colors duration-300 bg-[var(--sys-bg-surface)] border-b border-[var(--sys-border)]"
+      :class="isDark
+        ? 'shadow-[0_1px_3px_oklch(0_0_0/0.4)]'
+        : 'shadow-[0_1px_2px_oklch(0_0_0/0.07),0_2px_4px_oklch(0_0_0/0.05)]'"
+    >
+      <!-- Menu / Hamburger -->
+      <button
+        @click="handleMenuToggle"
+        aria-label="Toggle sidebar"
+        class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)]"
+      >
+        <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">menu</span>
+      </button>
+
+      <!-- Brand -->
+      <div class="flex items-center gap-2.5 ml-1">
+        <div
+          class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md"
+          style="background:linear-gradient(135deg,oklch(0.52 0.22 265),oklch(0.45 0.19 295));box-shadow:0 2px 8px oklch(0.48 0.195 265 / 0.35)"
+        >
+          <span class="material-symbols-rounded text-white" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 20">corporate_fare</span>
+        </div>
+        <span
+          class="hidden sm:block whitespace-nowrap font-medium text-[1.08rem] transition-colors duration-300 text-[var(--sys-text-primary)]"
+        >HRM Portal</span>
       </div>
 
-      <nav class="flex-1 overflow-y-auto mt-4 px-3 flex flex-col gap-1">
-        <router-link to="/" class="group flex items-center gap-3 px-4 py-2.5 rounded-xl focus-visible:ring-2 focus-visible:ring-indigo-600 focus:outline-none transition-all no-underline" :class="isExactActive('/') ? 'bg-[oklch(93.2%_0.032_255.585)] text-[oklch(62.3%_0.214_259.815)] font-semibold' : 'text-slate-500 hover:bg-slate-100 bg-transparent font-medium'">
-          <div class="relative w-6 h-6 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute"
-                  :class="isExactActive('/') ? 'opacity-0 scale-50' : 'opacity-100 scale-100 text-slate-500 group-hover:text-slate-500'">
-              home
-            </span>
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute" style="font-variation-settings: 'FILL' 1, 'wght' 600;"
-                  :class="isExactActive('/') ? 'bg-gradient-to-br from-[oklch(62.3%_0.214_259.815)] to-[oklch(45.5%_0.2_260)] bg-clip-text text-transparent opacity-100 scale-100' : 'opacity-0 scale-50 text-slate-400'">
-              home
-            </span>
-          </div>
-          <span class="text-sm transition-colors duration-200">Trang chủ</span>
-        </router-link>
-
-        <router-link to="/cham-cong" class="group flex items-center gap-3 px-4 py-2.5 rounded-xl focus-visible:ring-2 focus-visible:ring-indigo-600 focus:outline-none transition-all no-underline" :class="isActive('/cham-cong') ? 'bg-[oklch(93.2%_0.032_255.585)] text-[oklch(62.3%_0.214_259.815)] font-semibold' : 'text-slate-500 hover:bg-slate-100 bg-transparent font-medium'">
-          <div class="relative w-6 h-6 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute"
-                  :class="isActive('/cham-cong') ? 'opacity-0 scale-50' : 'opacity-100 scale-100 text-slate-500 group-hover:text-slate-500'">
-              schedule
-            </span>
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute" style="font-variation-settings: 'FILL' 1, 'wght' 600;"
-                  :class="isActive('/cham-cong') ? 'bg-gradient-to-br from-[oklch(62.3%_0.214_259.815)] to-[oklch(45.5%_0.2_260)] bg-clip-text text-transparent opacity-100 scale-100' : 'opacity-0 scale-50 text-slate-400'">
-              schedule
-            </span>
-          </div>
-          <span class="text-sm transition-colors duration-200">Chấm Công</span>
-        </router-link>
-
-        <router-link to="/nghi-phep" class="group flex items-center gap-3 px-4 py-2.5 rounded-xl focus-visible:ring-2 focus-visible:ring-indigo-600 focus:outline-none transition-all no-underline" :class="isActive('/nghi-phep') ? 'bg-[oklch(93.2%_0.032_255.585)] text-[oklch(62.3%_0.214_259.815)] font-semibold' : 'text-slate-500 hover:bg-slate-100 bg-transparent font-medium'">
-          <div class="relative w-6 h-6 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute"
-                  :class="isActive('/nghi-phep') ? 'opacity-0 scale-50' : 'opacity-100 scale-100 text-slate-500 group-hover:text-slate-500'">
-              event_busy
-            </span>
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute" style="font-variation-settings: 'FILL' 1, 'wght' 600;"
-                  :class="isActive('/nghi-phep') ? 'bg-gradient-to-br from-[oklch(62.3%_0.214_259.815)] to-[oklch(45.5%_0.2_260)] bg-clip-text text-transparent opacity-100 scale-100' : 'opacity-0 scale-50 text-slate-400'">
-              event_busy
-            </span>
-          </div>
-          <span class="text-sm transition-colors duration-200">Nghỉ phép</span>
-        </router-link>
-
-        <router-link to="/luong" class="group flex items-center gap-3 px-4 py-2.5 rounded-xl focus-visible:ring-2 focus-visible:ring-indigo-600 focus:outline-none transition-all no-underline" :class="isActive('/luong') ? 'bg-[oklch(93.2%_0.032_255.585)] text-[oklch(62.3%_0.214_259.815)] font-semibold' : 'text-slate-500 hover:bg-slate-100 bg-transparent font-medium'">
-          <div class="relative w-6 h-6 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute"
-                  :class="isActive('/luong') ? 'opacity-0 scale-50' : 'opacity-100 scale-100 text-slate-500 group-hover:text-slate-500'">
-              payments
-            </span>
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute" style="font-variation-settings: 'FILL' 1, 'wght' 600;"
-                  :class="isActive('/luong') ? 'bg-gradient-to-br from-[oklch(62.3%_0.214_259.815)] to-[oklch(45.5%_0.2_260)] bg-clip-text text-transparent opacity-100 scale-100' : 'opacity-0 scale-50 text-slate-400'">
-              payments
-            </span>
-          </div>
-          <span class="text-sm transition-colors duration-200">Tiền lương</span>
-        </router-link>
-
-        <div class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mt-6 mb-2 px-4">OTHER</div>
-
-        <router-link to="/dich-vu" class="group flex items-center gap-3 px-4 py-2.5 rounded-xl focus-visible:ring-2 focus-visible:ring-indigo-600 focus:outline-none transition-all no-underline" :class="isActive('/dich-vu') ? 'bg-[oklch(93.2%_0.032_255.585)] text-[oklch(62.3%_0.214_259.815)] font-semibold' : 'text-slate-500 hover:bg-slate-100 bg-transparent font-medium'">
-          <div class="relative w-6 h-6 flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute"
-                  :class="isActive('/dich-vu') ? 'opacity-0 scale-50' : 'opacity-100 scale-100 text-slate-500 group-hover:text-slate-500'">
-              support_agent
-            </span>
-            <span class="material-symbols-outlined text-[20px] transition-all duration-300 ease-out absolute" style="font-variation-settings: 'FILL' 1, 'wght' 600;"
-                  :class="isActive('/dich-vu') ? 'bg-gradient-to-br from-[oklch(62.3%_0.214_259.815)] to-[oklch(45.5%_0.2_260)] bg-clip-text text-transparent opacity-100 scale-100' : 'opacity-0 scale-50 text-slate-400'">
-              support_agent
-            </span>
-          </div>
-          <span class="text-sm transition-colors duration-200">Dịch vụ nội bộ</span>
-        </router-link>
+      <!-- Breadcrumb (center-left) -->
+      <nav class="hidden md:flex items-center gap-1 ml-4 text-sm">
+        <span
+          class="cursor-pointer transition-colors text-[var(--sys-text-secondary)] hover:text-[var(--sys-accent)]"
+        >Home</span>
+        <span
+          class="material-symbols-rounded text-[var(--sys-text-secondary)] opacity-50"
+          style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20"
+        >chevron_right</span>
+        <span
+          class="font-medium text-[var(--sys-text-primary)]"
+        >{{ currentPageLabel }}</span>
       </nav>
+
+      <div class="flex-1" />
+
+      <!-- Right actions -->
+      <div class="flex items-center gap-0.5">
+
+        <!-- Search -->
+        <div class="relative group hidden sm:flex items-center mr-1">
+          <span
+            class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] transition-colors text-[var(--sys-text-secondary)]"
+            style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20"
+          >search</span>
+          <input
+            type="text"
+            placeholder="Tìm kiếm..."
+            class="pl-9 pr-4 py-1.5 w-48 rounded-full text-sm transition-all duration-200 focus:outline-none focus:w-64 bg-[var(--sys-bg-page)] border border-[var(--sys-border)] text-[var(--sys-text-primary)] focus:border-[var(--sys-accent)] focus:ring-2 focus:ring-[var(--sys-accent)]/20"
+          />
+        </div>
+
+        <!-- Notification -->
+        <div class="relative" ref="notificationDropdownRef">
+          <button
+            @click="isNotificationOpen = !isNotificationOpen"
+            aria-label="Notifications"
+            class="relative flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)]"
+          >
+            <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">notifications</span>
+            <!-- M3 Badge dot -->
+            <span
+              class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5 rounded-full bg-[oklch(0.55_0.22_25)] items-center justify-center ring-2"
+              :class="isDark ? 'ring-[oklch(0.165_0.015_265)]' : 'ring-white'"
+            ></span>
+          </button>
+
+          <!-- Notification Dropdown -->
+          <transition name="m3-dropdown">
+            <div
+              v-if="isNotificationOpen"
+              class="absolute right-0 mt-3 w-80 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)]"
+              :class="isDark
+                ? 'bg-[oklch(0.2_0.018_265)] border border-[oklch(0.3_0.025_265)]'
+                : 'bg-white border border-[oklch(0.88_0.012_265)]'"
+            >
+              <div
+                class="flex justify-between items-center px-5 py-4 border-b"
+                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.92_0.008_265)]'"
+              >
+                <h6
+                  class="text-sm font-bold mb-0 text-[var(--sys-text-primary)]"
+                >Thông báo</h6>
+                <span class="text-[10px] font-bold text-[var(--sys-accent)] uppercase tracking-widest">3 Mới</span>
+              </div>
+              <div class="max-h-[300px] overflow-y-auto">
+                <div
+                  class="p-4 flex gap-3 transition-colors cursor-default border-b border-[var(--sys-border)] hover:bg-[var(--sys-bg-page)]"
+                >
+                  <div
+                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[var(--sys-accent)]/10 text-[var(--sys-accent)]"
+                  >
+                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">payments</span>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-semibold mb-0.5 text-[var(--sys-text-primary)]"
+                    >Phiếu lương tháng 10/2023 đã cập nhật</p>
+                    <p
+                      class="text-[10px] text-[var(--sys-text-secondary)]"
+                    >Tài chính · 10 phút trước</p>
+                  </div>
+                </div>
+                <div
+                  class="p-4 flex gap-3 transition-colors cursor-default hover:bg-[var(--sys-bg-page)]"
+                >
+                  <div
+                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[var(--sys-success-bg)] text-[var(--sys-success-text)]"
+                  >
+                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">task_alt</span>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-semibold mb-0.5 text-[var(--sys-text-primary)]"
+                    >Đơn xin nghỉ phép đã được duyệt</p>
+                    <p
+                      class="text-[10px] text-[var(--sys-text-secondary)]"
+                    >Nhân sự · 1 giờ trước</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </transition>
+        </div>
+
+        <!-- ── Dark Mode M3 Switch ── -->
+        <div class="mx-2 flex items-center gap-1.5">
+          <!-- Sun -->
+          <span
+            class="material-symbols-rounded transition-all duration-300"
+            style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
+            :class="isDark
+              ? 'text-[var(--sys-text-secondary)] opacity-40 scale-90'
+              : 'text-[oklch(0.62_0.14_75)] opacity-100 scale-100'"
+          >light_mode</span>
+
+          <!-- Switch track -->
+          <button
+            role="switch"
+            :aria-checked="isDark"
+            :aria-label="isDark ? 'Chuyển sang sáng' : 'Chuyển sang tối'"
+            @click="isDark = !isDark"
+            class="relative w-[52px] h-8 rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)]"
+            :class="isDark
+              ? 'bg-[var(--sys-accent)]'
+              : 'bg-[var(--sys-bg-page)] ring-2 ring-inset ring-[var(--sys-border)]'"
+          >
+            <span
+              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center shadow-[0_1px_3px_oklch(0_0_0/0.3)] transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
+              :class="isDark
+                ? 'left-[calc(100%-28px)] w-6 h-6 bg-[var(--sys-bg-page)]'
+                : 'left-1 w-5 h-5 bg-[var(--sys-text-secondary)]'"
+            >
+              <span
+                class="material-symbols-rounded transition-all duration-200"
+                style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
+                :class="isDark ? 'text-[var(--sys-accent)]' : 'text-white opacity-75'"
+              >{{ isDark ? 'dark_mode' : 'light_mode' }}</span>
+            </span>
+          </button>
+
+          <!-- Moon -->
+          <span
+            class="material-symbols-rounded transition-all duration-300"
+            style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
+            :class="isDark
+              ? 'text-[var(--sys-accent)] opacity-100 scale-100'
+              : 'text-[var(--sys-text-secondary)] opacity-40 scale-90'"
+          >dark_mode</span>
+        </div>
+
+        <div
+          class="h-6 w-px hidden md:block mx-1 bg-[var(--sys-border)]"
+        ></div>
+
+        <!-- Profile Dropdown -->
+        <div class="relative" ref="profileDropdownRef">
+          <button
+            @click="isProfileOpen = !isProfileOpen"
+            class="flex items-center gap-2 p-1 pl-1 pr-2 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-border)]"
+          >
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--sys-accent)]/10 text-[var(--sys-accent)] border border-[var(--sys-accent)]/20 text-sm font-bold shrink-0"
+            >A</div>
+            <div class="hidden lg:block text-left">
+              <p
+                class="text-xs font-bold leading-none mb-0.5"
+                :class="isDark ? 'text-[oklch(0.91_0.01_265)]' : 'text-[oklch(0.18_0.015_265)]'"
+              >Nguyễn Văn A</p>
+              <p
+                class="text-[9px] uppercase tracking-tight font-semibold"
+                :class="isDark ? 'text-[oklch(0.65_0.1_265)]' : 'text-[oklch(0.48_0.14_265)]'"
+              >Nhân viên</p>
+            </div>
+            <span
+              class="material-symbols-rounded text-sm transition-transform duration-200"
+              :class="[
+                isProfileOpen ? 'rotate-180' : '',
+                'text-[var(--sys-text-secondary)]'
+              ]"
+              style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20"
+            >expand_more</span>
+          </button>
+
+          <transition name="m3-dropdown">
+            <div
+              v-if="isProfileOpen"
+              class="absolute right-0 mt-3 w-60 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)] py-2 bg-[var(--sys-bg-surface)] border border-[var(--sys-border)]"
+            >
+              <div
+                class="px-5 py-3 border-b mb-1"
+                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.93_0.007_265)]'"
+              >
+                <p
+                  class="text-[9px] font-bold uppercase tracking-widest mb-1 text-[var(--sys-text-secondary)]"
+                >Cổng thông tin nhân sự</p>
+                <p
+                  class="text-xs font-semibold truncate mb-0"
+                  :class="isDark ? 'text-[oklch(0.91_0.01_265)]' : 'text-[oklch(0.18_0.015_265)]'"
+                >Creative Studio</p>
+              </div>
+              <router-link
+                to="/ho-so"
+                class="flex items-center gap-3 px-5 py-2.5 text-xs font-medium transition-colors text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)] hover:text-[var(--sys-text-primary)]"
+                @click="isProfileOpen = false"
+              >
+                <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">person</span>
+                Thông tin cá nhân
+              </router-link>
+              <button
+                @click="logout"
+                class="w-full flex items-center gap-3 px-5 py-2.5 text-xs font-medium text-left transition-colors border-t mt-1 text-[oklch(0.5_0.2_25)] hover:bg-[var(--sys-border)] border-[var(--sys-border)]"
+              >
+                <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">logout</span>
+                Đăng xuất hệ thống
+              </button>
+            </div>
+          </transition>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════
+         MOBILE SCRIM OVERLAY
+    ═══════════════════════════════════════════════ -->
+    <div
+      @click="isMobileSidebarOpen = false"
+      class="fixed inset-0 z-20 lg:hidden bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+      :class="isMobileSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"
+    ></div>
+
+    <!-- ═══════════════════════════════════════════════
+         M3 SIDEBAR — DRAWER ↔ RAIL
+    ═══════════════════════════════════════════════ -->
+    <aside
+      class="fixed top-16 left-0 bottom-0 z-30 flex flex-col overflow-hidden transition-[width,transform] duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
+      :class="[
+        sidebarExpanded ? 'w-[280px]' : 'w-20',
+        isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+        isDark
+          ? 'bg-[oklch(0.165_0.015_265)] border-r border-[oklch(0.3_0.025_265)]'
+          : 'bg-white border-r border-[oklch(0.88_0.012_265)]'
+      ]"
+    >
+      <!-- Sidebar header with collapse toggle (desktop) -->
+      <div
+        class="shrink-0 h-12 flex items-center px-3 border-b"
+        :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.88_0.012_265)]'"
+      >
+        <!-- Icon logo (always visible) -->
+        <span
+          class="material-symbols-rounded shrink-0 transition-colors duration-200"
+          style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24"
+          :class="isDark ? 'text-[oklch(0.75_0.14_265)]' : 'text-[oklch(0.48_0.195_265)]'"
+        >apps</span>
+
+        <!-- Label text: visible only when expanded -->
+        <span
+          class="overflow-hidden whitespace-nowrap text-xs font-bold uppercase tracking-[0.12em] transition-all duration-300 ml-2"
+          :class="[
+            sidebarExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0 ml-0 pointer-events-none',
+            isDark ? 'text-[oklch(0.6_0.025_265)]' : 'text-[oklch(0.62_0.025_265)]'
+          ]"
+        >Menu</span>
+
+        <!-- Chevron collapse toggle -->
+        <button
+          @click="sidebarExpanded = !sidebarExpanded"
+          class="hidden lg:flex ml-auto w-8 h-8 rounded-full items-center justify-center transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)] hover:text-[var(--sys-text-primary)]"
+          :aria-label="sidebarExpanded ? 'Thu gọn sidebar' : 'Mở rộng sidebar'"
+        >
+          <span
+            class="material-symbols-rounded transition-transform duration-300"
+            style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24"
+            :class="sidebarExpanded ? 'rotate-0' : 'rotate-180'"
+          >chevron_left</span>
+        </button>
+      </div>
+
+
+      <!-- Nav scrollable area -->
+      <nav
+        class="flex-1 overflow-y-auto overflow-x-hidden py-2 custom-scrollbar"
+        :style="{
+          scrollbarWidth: 'thin',
+          scrollbarColor: isDark ? 'oklch(0.3 0.025 265) transparent' : 'oklch(0.88 0.012 265) transparent'
+        }"
+      >
+
+        <div :class="sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'">
+          <SidebarItem
+            :expanded="sidebarExpanded"
+            :is-active="isExactActive('/')"
+            icon="home"
+            label="Trang chủ"
+            :is-dark="isDark"
+            to="/"
+            @click="handleNavClick"
+          />
+          
+          <SidebarItem 
+            :expanded="sidebarExpanded" 
+            :is-active="isActive('/cham-cong')" 
+            icon="schedule" 
+            label="Chấm công" 
+            :is-dark="isDark" 
+            to="/cham-cong" 
+            @click="handleNavClick" 
+          />
+
+          <SidebarItem 
+            :expanded="sidebarExpanded" 
+            :is-active="isActive('/nghi-phep')" 
+            icon="event_busy" 
+            label="Nghỉ phép" 
+            :is-dark="isDark" 
+            to="/nghi-phep" 
+            @click="handleNavClick" 
+            :badge="0" 
+          />
+
+          <SidebarItem 
+            :expanded="sidebarExpanded" 
+            :is-active="isActive('/luong')" 
+            icon="payments" 
+            label="Tiền lương" 
+            :is-dark="isDark" 
+            to="/luong" 
+            @click="handleNavClick" 
+          />
+
+          <NavSection label="Tiện ích" :expanded="sidebarExpanded" :is-dark="isDark" />
+
+          <SidebarItem 
+            :expanded="sidebarExpanded" 
+            :is-active="isActive('/dich-vu')" 
+            icon="support_agent" 
+            label="Dịch vụ nội bộ" 
+            :is-dark="isDark" 
+            to="/dich-vu" 
+            @click="handleNavClick" 
+          />
+        </div>
+      </nav>
+
     </aside>
 
-    <!-- Overlay for mobile sidebar -->
-    <div v-if="isSidebarOpen" class="fixed inset-0 bg-slate-900/50 z-30 lg:hidden backdrop-blur-sm transition-opacity" @click="isSidebarOpen = false"></div>
-
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
-      <!-- Navbar -->
-      <header class="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 lg:px-8 z-20">
-        <div class="flex items-center gap-4">
-          <button class="lg:hidden p-2 text-slate-500 hover:bg-slate-100 rounded-lg transition-colors flex items-center justify-center cursor-pointer" @click="toggleSidebar">
-            <span class="material-symbols-outlined">menu</span>
-          </button>
-          <div class="hidden sm:flex items-center relative">
-            <span class="material-symbols-outlined absolute left-3 text-slate-400 text-[20px] pointer-events-none">search</span>
-            <input type="text" class="pl-10 pr-4 py-2 w-64 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all placeholder:text-slate-400" placeholder="Tìm kiếm nhanh...">
-          </div>
-        </div>
-
-        <div class="flex items-center gap-3 sm:gap-5">
-          <!-- Notification Dropdown -->
-          <div class="relative" ref="notificationDropdownRef">
-            <button class="p-2 text-slate-500 hover:bg-slate-100 rounded-full relative transition-colors group flex items-center justify-center cursor-pointer" @click="isNotificationOpen = !isNotificationOpen" :class="{ 'bg-slate-100': isNotificationOpen }">
-              <span class="material-symbols-outlined group-hover:animate-wiggle group-hover:text-blue-600 transition-colors">notifications</span>
-              <span class="absolute top-2 right-2.5 flex h-2.5 w-2.5">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border-2 border-white"></span>
-              </span>
-            </button>
-            
-            <transition
-              enter-active-class="transition ease-out duration-200"
-              enter-from-class="opacity-0 translate-y-2 scale-95"
-              enter-to-class="opacity-100 translate-y-0 scale-100"
-              leave-active-class="transition ease-in duration-150"
-              leave-from-class="opacity-100 translate-y-0 scale-100"
-              leave-to-class="opacity-0 translate-y-2 scale-95"
-            >
-              <div v-if="isNotificationOpen" class="absolute right-0 mt-3 w-80 sm:w-96 bg-white/90 backdrop-blur-md rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 overflow-hidden z-50 origin-top-right">
-                <div class="px-5 py-4 flex justify-between items-center border-b border-slate-100 bg-white">
-                  <h6 class="font-bold text-slate-900 text-base m-0">Thông báo</h6>
-                  <span class="bg-blue-50 text-blue-600 text-xs font-bold px-2.5 py-1 rounded-full border border-blue-100">3 mới</span>
-                </div>
-                <div class="overflow-y-auto max-h-[350px]">
-                  <!-- UNREAD Item -->
-                  <a href="#" class="flex gap-4 p-4 border-b border-slate-50 bg-blue-50/50 hover:bg-blue-50 transition-colors relative group">
-                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600 rounded-r"></div>
-                    <div class="w-10 h-10 rounded-full bg-white text-blue-600 flex items-center justify-center shrink-0 shadow-sm border border-slate-200 group-hover:scale-105 transition-transform">
-                      <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1, 'wght' 600;">payments</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-slate-900 leading-tight mb-1">Phiếu lương tháng 10/2023 của bạn đã được cập nhật</p>
-                      <span class="text-xs font-medium text-blue-600">10 phút trước</span>
-                    </div>
-                  </a>
-                  <!-- READ Item -->
-                  <a href="#" class="flex gap-4 p-4 border-b border-slate-50 bg-white hover:bg-slate-50 transition-colors group">
-                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 border border-slate-200 group-hover:scale-105 transition-transform">
-                      <span class="material-symbols-outlined text-[20px]">event_busy</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-slate-700 leading-tight mb-1">Đơn xin nghỉ phép của bạn đã được duyệt</p>
-                      <span class="text-xs font-medium text-slate-400">Hôm qua lúc 14:30</span>
-                    </div>
-                  </a>
-                  <!-- READ Item -->
-                  <a href="#" class="flex gap-4 p-4 border-b border-slate-50 bg-white hover:bg-slate-50 transition-colors group">
-                    <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 border border-slate-200 group-hover:scale-105 transition-transform">
-                      <span class="material-symbols-outlined text-[20px]">campaign</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p class="text-sm font-medium text-slate-700 leading-tight mb-1">Họp toàn công ty vào sáng thứ 6 tuần này</p>
-                      <span class="text-xs font-medium text-slate-400">2 ngày trước</span>
-                    </div>
-                  </a>
-                </div>
-                <div class="p-3 text-center bg-slate-50 border-t border-slate-100">
-                  <router-link to="/thong-bao" class="text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors block" @click="isNotificationOpen = false">
-                    Xem tất cả thông báo
-                  </router-link>
-                </div>
-              </div>
-            </transition>
-          </div>
-          
-          <div class="hidden sm:block w-px h-6 bg-slate-200"></div>
-          
-          <!-- Profile Dropdown -->
-          <div class="relative" ref="profileDropdownRef">
-            <button class="flex items-center gap-3 p-1 rounded-full sm:rounded-lg hover:bg-slate-100 transition-colors cursor-pointer select-none" @click="isProfileOpen = !isProfileOpen">
-              <span class="hidden sm:block text-sm font-bold text-slate-700">Nguyễn Văn A</span>
-              <div class="w-9 h-9 rounded-full bg-blue-100 text-blue-600 font-bold flex items-center justify-center border border-blue-200">A</div>
-            </button>
-            
-            <transition
-              enter-active-class="transition ease-out duration-200"
-              enter-from-class="opacity-0 translate-y-2 scale-95"
-              enter-to-class="opacity-100 translate-y-0 scale-100"
-              leave-active-class="transition ease-in duration-150"
-              leave-from-class="opacity-100 translate-y-0 scale-100"
-              leave-to-class="opacity-0 translate-y-2 scale-95"
-            >
-              <div v-show="isProfileOpen" class="absolute right-0 mt-3 w-64 bg-white/90 backdrop-blur-md rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] border border-slate-100 overflow-hidden z-50 py-2 origin-top-right">
-                <div class="px-5 py-3">
-                  <h6 class="font-bold text-slate-900 text-sm mb-0.5">Xin chào, Nguyễn Văn A!</h6>
-                  <p class="text-xs text-slate-500 font-medium m-0">Nhân viên | Creative Studio</p>
-                </div>
-                <div class="h-px bg-slate-100 my-1"></div>
-                <router-link to="/ho-so" class="flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 hover:text-blue-600 transition-colors" @click="isProfileOpen = false">
-                  <span class="material-symbols-outlined text-[20px] text-slate-400">person</span>
-                  Thông tin cá nhân
-                </router-link>
-                <div class="h-px bg-slate-100 my-1"></div>
-                <button @click.prevent="logout" class="w-full flex items-center gap-3 px-5 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors text-left cursor-pointer">
-                  <span class="material-symbols-outlined text-[20px] text-red-500">logout</span>
-                  Đăng xuất
-                </button>
-              </div>
-            </transition>
-          </div>
-        </div>
-      </header>
-
-      <!-- Main Content Area -->
-      <main class="flex-1 overflow-auto bg-slate-50 p-4 md:p-6 lg:p-8">
-        <router-view></router-view>
-      </main>
-    </div>
+    <!-- ═══════════════════════════════════════════════
+         MAIN CONTENT
+    ═══════════════════════════════════════════════ -->
+    <main
+      class="pt-16 min-h-screen transition-[margin] duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
+      :class="sidebarExpanded ? 'lg:ml-[280px]' : 'lg:ml-20'"
+    >
+      <div class="p-6 lg:p-8 max-w-[1600px] mx-auto text-[var(--sys-text-primary)]">
+        <router-view />
+      </div>
+    </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, computed, watch, onMounted, onUnmounted, defineComponent, h, resolveComponent } from 'vue';
+import { useRoute, useRouter, RouterLink } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
-const isSidebarOpen = ref(false);
+
+// ── State ──────────────────────────────────────────────────────────────────
+const sidebarExpanded = ref(true);
+const isMobileSidebarOpen = ref(false);
+const isDark = ref(false);
 const isNotificationOpen = ref(false);
-const notificationDropdownRef = ref(null);
 const isProfileOpen = ref(false);
+
+const notificationDropdownRef = ref(null);
 const profileDropdownRef = ref(null);
 
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value;
-};
+// ── Dark mode effect ───────────────────────────────────────────────────────
+watch(isDark, (val) => {
+  document.documentElement.classList.toggle('dark', val);
+}, { immediate: true });
 
-const isActive = (path) => {
-  return route.path.startsWith(path) && path !== '/';
-};
+// ── Router helpers ─────────────────────────────────────────────────────────
+const isActive = (path) => route.path.startsWith(path) && path !== '/';
+const isExactActive = (path) => route.path === path;
 
-const isExactActive = (path) => {
-  return route.path === path;
-};
+const currentPageLabel = computed(() => {
+  const path = route.path;
+  if (path === '/') return 'Trang chủ';
+  if (path.startsWith('/cham-cong')) return 'Chấm công';
+  if (path.startsWith('/nghi-phep')) return 'Nghỉ phép';
+  if (path.startsWith('/luong')) return 'Tiền lương';
+  if (path.startsWith('/dich-vu')) return 'Dịch vụ nội bộ';
+  if (path.startsWith('/ho-so')) return 'Hồ sơ cá nhân';
+  return 'Trang chủ';
+});
 
-const handleClickOutside = (event) => {
-  if (notificationDropdownRef.value && !notificationDropdownRef.value.contains(event.target)) {
-    isNotificationOpen.value = false;
+// ── Sidebar / Menu toggle ──────────────────────────────────────────────────
+const handleMenuToggle = () => {
+  if (window.innerWidth < 1024) {
+    isMobileSidebarOpen.value = !isMobileSidebarOpen.value;
+  } else {
+    sidebarExpanded.value = !sidebarExpanded.value;
   }
+};
+
+const handleNavClick = () => {
+  isMobileSidebarOpen.value = false;
+};
+
+// ── Click outside to close dropdowns ──────────────────────────────────────
+const handleClickOutside = (event) => {
   if (profileDropdownRef.value && !profileDropdownRef.value.contains(event.target)) {
     isProfileOpen.value = false;
   }
+  if (notificationDropdownRef.value && !notificationDropdownRef.value.contains(event.target)) {
+    isNotificationOpen.value = false;
+  }
 };
 
+onMounted(() => document.addEventListener('click', handleClickOutside));
+onUnmounted(() => document.removeEventListener('click', handleClickOutside));
+
+// ── Logout ─────────────────────────────────────────────────────────────────
 const logout = () => {
-  isProfileOpen.value = false;
   localStorage.clear();
   sessionStorage.clear();
+  // Forcefully remove dark mode class
+  document.documentElement.classList.remove('dark');
   router.push('/login');
 };
+</script>
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
+<!-- ─── Sub-components (defineComponent inline) ─────────────────────────── -->
+<script>
+import { defineComponent, h, resolveComponent } from 'vue';
+
+// ── NavSection: section label / divider ──────────────────────────────────
+export const NavSection = defineComponent({
+  name: 'NavSection',
+  props: {
+    label: String,
+    expanded: Boolean,
+    isDark: Boolean,
+  },
+  setup(props) {
+    return () => {
+      if (props.expanded) {
+        return h('p', {
+          class: [
+            'px-5 pt-4 pb-1 text-[10px] font-bold uppercase tracking-[0.1em] whitespace-nowrap text-[var(--sys-text-secondary)]',
+          ].join(' '),
+        }, props.label);
+      } else {
+        return h('div', {
+          class: [
+            'mx-auto w-8 h-px my-3 bg-[var(--sys-border)]',
+          ].join(' '),
+        });
+      }
+    };
+  },
 });
 
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
+// ── SidebarItem ───────────────────────────────────────────────────────────
+export const SidebarItem = defineComponent({
+  name: 'SidebarItem',
+  props: {
+    expanded: Boolean,
+    isActive: Boolean,
+    icon: String,
+    label: String,
+    isDark: Boolean,
+    to: String,
+    badge: { type: Number, default: undefined },
+  },
+  emits: ['click'],
+  setup(props, { emit }) {
+    return () => {
+      const RouterLink = resolveComponent('RouterLink');
+
+      // Active pill bg
+      const activeBg = 'bg-[var(--sys-accent)]';
+      const hoverBg  = 'hover:bg-[var(--sys-border)]';
+      const activeText = 'text-[var(--sys-accent-text)]';
+      const inactiveText = 'text-[var(--sys-text-secondary)]';
+      const labelText = 'text-[var(--sys-text-primary)]';
+
+      // ── DRAWER (expanded) ──
+      if (props.expanded) {
+        return h(RouterLink, {
+          to: props.to,
+          class: [
+            'group relative flex items-center gap-3 w-full h-[52px] px-4 rounded-[26px]',
+            'transition-colors duration-150 outline-none text-left no-underline',
+            'focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]',
+            props.isActive ? activeBg : hoverBg,
+          ].join(' '),
+          onClick: () => emit('click'),
+        }, () => [
+          // State ripple
+          h('span', { class: 'absolute inset-0 rounded-[26px] opacity-0 group-active:opacity-10 bg-[oklch(0.22_0.12_265)] dark:bg-[oklch(0.9_0.09_265)] transition-opacity pointer-events-none' }),
+
+          // Icon (morphing)
+          h('span', { class: 'relative shrink-0 w-6 h-6 flex items-center justify-center' }, [
+            // Outline icon (inactive)
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-0 scale-50 ${activeText}` : `opacity-100 scale-100 ${inactiveText}`,
+              ].join(' '),
+              style: "font-size:22px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+            // Filled icon (active)
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-100 scale-100 ${activeText}` : `opacity-0 scale-150 ${inactiveText}`,
+              ].join(' '),
+              style: "font-size:22px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+          ]),
+
+          // Label
+          h('span', {
+            class: ['flex-1 text-sm whitespace-nowrap', props.isActive ? `${activeText} font-semibold` : labelText].join(' '),
+          }, props.label),
+
+          // Badge chip
+          props.badge !== undefined ? h('span', {
+            class: [
+              'shrink-0 min-w-[22px] h-[22px] px-1.5 rounded-full flex items-center justify-center',
+              props.isActive
+                ? 'bg-[var(--sys-bg-surface)] text-[var(--sys-accent)]'
+                : 'bg-[oklch(0.55_0.22_25)] text-white',
+            ].join(' '),
+            style: 'font-size:11px;font-weight:600',
+          }, props.badge > 99 ? '99+' : String(props.badge)) : null,
+        ]);
+      }
+
+      // ── RAIL (collapsed) ──
+      return h(RouterLink, {
+        to: props.to,
+        title: props.label,
+        class: [
+          'group relative flex flex-col items-center gap-1 w-full py-1 cursor-pointer outline-none',
+          'focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)] rounded-xl no-underline',
+        ].join(' '),
+        onClick: () => emit('click'),
+      }, () => [
+        // Pill
+        h('div', {
+          class: [
+            'relative flex items-center justify-center w-16 h-8 rounded-full transition-colors duration-150',
+            props.isActive ? activeBg : hoverBg,
+          ].join(' '),
+        }, [
+          // Badge dot
+          props.badge !== undefined ? h('span', {
+            class: [
+              'absolute -top-1 right-1.5 min-w-[17px] h-[17px] px-1 rounded-full',
+              'bg-[oklch(0.6_0.2_25)] text-white flex items-center justify-center',
+              'ring-2',
+              props.isDark ? 'ring-[oklch(0.22_0.015_265)]' : 'ring-white',
+            ].join(' '),
+            style: 'font-size:9px;font-weight:700',
+          }, props.badge > 9 ? '9+' : String(props.badge)) : null,
+
+          // Icon (morphing)
+          h('span', { class: 'relative w-5 h-5 flex items-center justify-center' }, [
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-0 scale-50 ${activeText}` : `opacity-100 scale-100 ${inactiveText}`,
+              ].join(' '),
+              style: "font-size:21px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-100 scale-100 ${activeText}` : `opacity-0 scale-150 ${inactiveText}`,
+              ].join(' '),
+              style: "font-size:21px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+          ]),
+        ]),
+
+        // Label below pill
+        h('span', {
+          class: [
+            'text-[10px] leading-tight px-1 text-center transition-colors',
+            props.isActive ? activeText : inactiveText,
+          ].join(' '),
+          style: `font-weight:${props.isActive ? 600 : 400}`,
+        }, props.label.length > 10 ? props.label.slice(0, 9) + '…' : props.label),
+      ]);
+    };
+  },
 });
 </script>
 
 <style scoped>
-@keyframes wiggle {
-  0%, 100% { transform: rotate(-3deg); }
-  50% { transform: rotate(3deg); }
+/* M3 Dropdown transition */
+.m3-dropdown-enter-active,
+.m3-dropdown-leave-active {
+  transition: all 0.22s cubic-bezier(0.2, 0, 0, 1);
 }
-.animate-wiggle {
-  animation: wiggle 0.3s ease-in-out infinite;
+.m3-dropdown-enter-from,
+.m3-dropdown-leave-to {
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+}
+
+/* Remove link underline */
+a,
+.router-link-active,
+.router-link-exact-active {
+  text-decoration: none !important;
+}
+
+/* Scrollbar */
+nav::-webkit-scrollbar { width: 4px; }
+nav::-webkit-scrollbar-track { background: transparent; }
+nav::-webkit-scrollbar-thumb { border-radius: 8px; }
+
+/* Global Table Fix: Prevent text wrapping in columns */
+:deep(table) th,
+:deep(table) td {
+  white-space: nowrap !important;
 }
 </style>

@@ -125,7 +125,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
@@ -135,6 +135,12 @@ const password = ref('');
 const showPassword = ref(false);
 const errorMsg = ref('');
 const isLoggingIn = ref(false);
+
+// Force Light Mode on Login Page
+onMounted(() => {
+  document.documentElement.classList.remove('dark');
+  localStorage.removeItem('theme'); // Fail-safe if a theme key is used
+});
 
 const handleLogin = () => {
   errorMsg.value = '';

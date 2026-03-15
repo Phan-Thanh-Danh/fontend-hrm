@@ -167,7 +167,7 @@
           </div>
 
           <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex gap-3">
-            <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest italic transition-all">Hủy</button>
+            <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest italic rounded-2xl transition-all">Hủy</button>
             <button @click="handleSave" class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 uppercase tracking-widest transition-all">Lưu thông tin</button>
           </div>
         </div>

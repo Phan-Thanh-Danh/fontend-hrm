@@ -8,7 +8,7 @@
       </div>
       <button 
         @click="saveAllSettings"
-        class="px-8 py-3.5 bg-slate-900 text-white rounded-2xl font-black hover:bg-slate-800 shadow-xl shadow-slate-200 transition-all flex items-center gap-2 active:scale-95"
+        class="px-8 py-3.5 bg-slate-900 text-white rounded-2xl font-black hover:bg-slate-800 transition-all flex items-center gap-2 active:scale-95 shadow-lg dark:shadow-none"
       >
         <span class="material-symbols-outlined">save</span>
         Lưu tất cả thay đổi

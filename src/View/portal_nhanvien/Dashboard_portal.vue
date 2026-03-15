@@ -261,7 +261,7 @@ onUnmounted(() => {
 <style scoped>
 /* Google Font inter-like, adjust as necessary */
 .dashboard-wrapper {
-  background-color: #F8FAFC;
+  background-color: var(--sys-bg-page);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
@@ -274,17 +274,18 @@ onUnmounted(() => {
 .bento-card {
   border: none;
   border-radius: 1.25rem; /* ~20px */
-  background: #ffffff;
+  background-color: var(--sys-bg-surface);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
   transition: box-shadow 0.2s ease;
+  color: var(--sys-text-primary);
 }
 
 /* Brand Colors */
 .text-brand-blue {
-  color: var(--primary-color) !important;
+  color: var(--sys-accent) !important;
 }
 .bg-brand-blue {
-  background-color: var(--primary-color) !important;
+  background-color: var(--sys-accent) !important;
 }
 .text-white-75 {
   color: rgba(255, 255, 255, 0.75) !important;
@@ -292,29 +293,27 @@ onUnmounted(() => {
 
 /* Big Buttons */
 .btn-checkin {
-  background-color: var(--success-color);
-  border-color: var(--success-color);
+  background-color: oklch(0.62 0.17 155);
+  border-color: oklch(0.62 0.17 155);
   border-radius: 0.75rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
   min-width: 140px;
 }
 .btn-checkin:hover {
-  background-color: #0d632e;
-  border-color: #0d632e;
+  background-color: oklch(0.55 0.17 155);
 }
 
 .btn-checkout {
-  background-color: var(--warning-color);
-  border-color: var(--warning-color);
+  background-color: oklch(0.75 0.15 75);
+  border-color: oklch(0.75 0.15 75);
   border-radius: 0.75rem;
   padding-top: 1rem;
   padding-bottom: 1rem;
   min-width: 140px;
 }
 .btn-checkout:hover {
-  background-color: #b87506;
-  border-color: #b87506;
+  background-color: oklch(0.68 0.15 75);
 }
 
 .icon-box-white {
@@ -325,23 +324,23 @@ onUnmounted(() => {
 /* Borders and lines */
 @media (min-width: 768px) {
   .border-end-md {
-    border-right: 1px solid #e9ecef !important;
+    border-right: 1px solid var(--sys-border) !important;
   }
 }
 
 .border-bottom-custom {
-  border-bottom: 1px solid #f8f9fa !important;
+  border-bottom: 1px solid var(--sys-border) !important;
 }
 
 /* Badge specific colors reproducing figma design closely */
 .status-success {
-  background-color: rgba(17, 124, 57, 0.15);
-  color: var(--success-color);
+  background-color: var(--sys-success-bg) !important;
+  color: var(--sys-success-text) !important;
 }
 
 .status-primary {
-  background-color: rgba(30, 64, 175, 0.15);
-  color: var(--primary-color);
+  background-color: var(--sys-accent-light, oklch(0.9 0.05 255));
+  color: var(--sys-accent);
 }
 
 .hover-opacity:hover {
@@ -351,7 +350,7 @@ onUnmounted(() => {
 /* Table styling fixes */
 th {
   font-weight: 700 !important;
-  color: #8E9BAE !important;
+  color: var(--sys-text-secondary) !important;
 }
 
 /* Text clamp for notifications if they get long */
@@ -361,5 +360,19 @@ th {
   line-clamp: 2;
   -webkit-box-orient: vertical;  
   overflow: hidden;
+}
+
+/* Dark mode overrides for specific helper classes */
+:global(html.dark) .text-dark {
+  color: var(--sys-text-primary) !important;
+}
+:global(html.dark) .text-secondary {
+  color: var(--sys-text-secondary) !important;
+}
+:global(html.dark) .bg-light {
+  background-color: var(--sys-bg-page) !important;
+}
+:global(html.dark) .border-top {
+  border-color: var(--sys-border) !important;
 }
 </style>

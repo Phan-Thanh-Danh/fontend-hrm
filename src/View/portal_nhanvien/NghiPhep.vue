@@ -184,7 +184,7 @@ const showModal = ref(false);
 
 <style scoped>
 .leave-wrapper {
-  background-color: #F8FAFC;
+  background-color: var(--sys-bg-page);
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
@@ -199,56 +199,56 @@ const showModal = ref(false);
 /* Base Card Styling - Soft UI/Bento Grid feel */
 .bento-card {
   border-radius: 1rem;
-  background: #ffffff;
+  background-color: var(--sys-bg-surface);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
+  color: var(--sys-text-primary);
 }
 
 /* Brand Colors */
-.text-brand-blue { color: #3B58E9 !important; }
-.bg-brand-blue { background-color: #3B58E9 !important; }
+.text-brand-blue { color: var(--sys-accent) !important; }
+.bg-brand-blue { background-color: var(--sys-accent) !important; }
 .btn-brand-blue {
-  background-color: #3B58E9;
-  border-color: #3B58E9;
-  color: white;
+  background-color: var(--sys-accent);
+  border-color: var(--sys-accent);
+  color: var(--sys-accent-text);
 }
 .btn-brand-blue:hover {
-  background-color: #2b45cf;
-  border-color: #2b45cf;
-  color: white;
+  background-color: var(--sys-accent);
+  filter: brightness(0.9);
 }
 
-.text-brand-orange { color: #DD7C37 !important; }
-.text-brand-blue-light { color: #5B75ED !important; }
+.text-brand-orange { color: oklch(0.68 0.15 75) !important; }
+.text-brand-blue-light { color: oklch(0.6 0.12 265) !important; }
 
 /* Status Badges */
 .status-success {
-  background-color: #E6F5EA !important;
+  background-color: var(--sys-success-bg) !important;
 }
 .text-success-emphasis {
-  color: #2D8A4E !important;
+  color: var(--sys-success-text) !important;
 }
 .status-primary {
-  background-color: #EAF0FF !important;
+  background-color: oklch(0.25 0.1 265) !important;
 }
 
 /* Inputs */
 .custom-input {
   border-radius: 0.5rem;
-  border: 1px solid #E2E8F0;
+  border: 1px solid var(--sys-border);
   font-size: 0.875rem;
-  background-color: #FAFCFF;
+  background-color: var(--sys-bg-page);
+  color: var(--sys-text-primary);
   padding: 0.6rem 0.75rem;
 }
 .custom-input:focus {
-  border-color: #3B58E9;
+  border-color: var(--sys-accent);
   box-shadow: 0 0 0 0.2rem rgba(59, 88, 233, 0.1);
   outline: none;
-  background-color: #ffffff;
 }
 
 /* Table overrides */
 .border-bottom-custom {
-  border-bottom: 1px solid #F1F5F9 !important;
+  border-bottom: 1px solid var(--sys-border) !important;
 }
 
 /* Helpers */
@@ -261,18 +261,8 @@ const showModal = ref(false);
 
 /* Info Box */
 .info-box {
-  background-color: #F1F4FF;
-  border: 1px solid #E5ECFF;
-}
-
-/* Make inputs inside form take appropriate sizes */
-textarea.custom-input {
-  resize: vertical;
-}
-
-input[type="date"].custom-input::-webkit-calendar-picker-indicator {
-  color: #64748B;
-  opacity: 0.6;
+  background-color: var(--sys-bg-page);
+  border: 1px solid var(--sys-border);
 }
 
 /* Modal Custom Styles */
@@ -282,7 +272,7 @@ input[type="date"].custom-input::-webkit-calendar-picker-indicator {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(15, 23, 42, 0.6);
+  background-color: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(4px);
   z-index: 1050;
 }
@@ -292,24 +282,30 @@ input[type="date"].custom-input::-webkit-calendar-picker-indicator {
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
+  background-color: var(--sys-bg-surface);
+  color: var(--sys-text-primary);
   animation: modal-pop 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-@keyframes modal-pop {
-  0% { transform: scale(0.95) translateY(20px); opacity: 0; }
-  100% { transform: scale(1) translateY(0); opacity: 1; }
-}
-
 .border-dashed {
-  border: 2px dashed #CBD5E1;
+  border: 2px dashed var(--sys-border);
 }
 
 .upload-zone:hover {
-  background-color: #F8FAFC !important;
-  border-color: #94A3B8;
+  background-color: var(--sys-bg-page) !important;
+  border-color: var(--sys-text-secondary);
 }
 
-.cursor-pointer {
-  cursor: pointer;
+.text-dark {
+  color: var(--sys-text-primary) !important;
+}
+.text-secondary {
+  color: var(--sys-text-secondary) !important;
+}
+.bg-white {
+  background-color: var(--sys-bg-surface) !important;
+}
+.bg-light {
+  background-color: var(--sys-bg-page) !important;
 }
 </style>

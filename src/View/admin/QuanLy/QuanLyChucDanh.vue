@@ -143,7 +143,7 @@
           </div>
         </div>
         <div class="px-4 py-3 bg-light border-top flex gap-2">
-          <button @click="showModal = false" class="btn btn-light flex-grow-1 fw-bold text-muted border rounded-3 py-2 text-xs uppercase tracking-widest">Hủy</button>
+          <button @click="showModal = false" class="btn btn-light flex-grow-1 fw-bold text-muted border rounded-2xl py-2 text-xs uppercase tracking-widest">Hủy</button>
           <button @click="saveJobTitle" class="btn bg-indigo-600 flex-grow-1 fw-bold text-white shadow-xl shadow-indigo-100 rounded-3 py-2 text-xs uppercase tracking-widest">Lưu thông tin</button>
         </div>
       </div>

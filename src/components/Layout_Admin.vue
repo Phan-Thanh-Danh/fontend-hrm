@@ -1,227 +1,413 @@
 <template>
-  <div class="flex h-screen bg-[#f8f9fa] font-sans text-slate-900 overflow-hidden">
-    <!-- Sidebar -->
-    <aside 
-      class="w-72 flex flex-col bg-white border-r border-slate-200 transition-all duration-300 z-40 h-full shrink-0"
-      :class="isSidebarOpen ? 'translate-x-0 fixed inset-y-0 left-0 shadow-2xl' : '-translate-x-full lg:translate-x-0 relative lg:static'"
+  <div
+    class="min-h-screen font-[Roboto,Inter,sans-serif] transition-colors duration-300 bg-[var(--sys-bg-page)]"
+  >
+
+    <!-- ═══════════════════════════════════════════════
+         M3 TOP APP BAR
+    ═══════════════════════════════════════════════ -->
+    <header
+      class="fixed top-0 left-0 right-0 z-40 flex items-center h-16 px-2 gap-1 transition-colors duration-300 bg-[var(--sys-bg-surface)] border-b border-[var(--sys-border)]"
+      :class="isDark
+        ? 'shadow-[0_1px_3px_oklch(0_0_0/0.4)]'
+        : 'shadow-[0_1px_2px_oklch(0_0_0/0.07),0_2px_4px_oklch(0_0_0/0.05)]'"
     >
-      <!-- Logo Section -->
-      <div class="h-20 flex items-center px-8 border-b border-slate-100 gap-3">
-        <span class="material-symbols-outlined text-indigo-600 text-3xl" style="font-variation-settings: 'FILL' 1, 'wght' 600;">corporate_fare</span>
-        <h2 class="text-xl font-bold text-slate-900 leading-tight m-0 tracking-tight">HRM Portal</h2>
+      <!-- Menu / Hamburger -->
+      <button
+        @click="handleMenuToggle"
+        aria-label="Toggle sidebar"
+        class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)]"
+      >
+        <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">menu</span>
+      </button>
+
+      <!-- Brand -->
+      <div class="flex items-center gap-2.5 ml-1">
+        <div
+          class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md bg-gradient-to-br from-[oklch(0.55_0.18_255)] to-[oklch(0.45_0.15_285)]"
+        >
+          <span class="material-symbols-rounded text-white" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 20">corporate_fare</span>
+        </div>
+        <span
+          class="hidden sm:block whitespace-nowrap font-medium text-[1.08rem] transition-colors duration-300 text-[var(--sys-text-primary)]"
+        >HRM Portal</span>
       </div>
 
-      <!-- Navigation -->
-      <nav class="flex-1 overflow-y-auto py-4 px-4 custom-scrollbar">
-        <!-- Dashboard Block -->
-        <router-link to="/admin" class="nav-item mb-4" :class="{ 'active': isExactActive('/admin') }">
-          <span class="material-symbols-outlined nav-icon">dashboard</span>
-          <span class="nav-text font-black">Dashboard</span>
-        </router-link>
-
-        <!-- Personnel Section -->
-        <div class="px-3 mb-2 font-black text-[10px] text-slate-400 uppercase tracking-widest">Quản lý Nhân sự</div>
-        <div class="space-y-0.5 mb-6">
-          <router-link to="/admin/nhan-su" class="nav-item" :class="{ 'active': isActive('/admin/nhan-su') }">
-            <span class="material-symbols-outlined nav-icon">groups</span>
-            <span class="nav-text">Nhân viên</span>
-          </router-link>
-          <router-link to="/admin/phong-ban" class="nav-item" :class="{ 'active': isActive('/admin/phong-ban') }">
-            <span class="material-symbols-outlined nav-icon">corporate_fare</span>
-            <span class="nav-text">Phòng ban</span>
-          </router-link>
-          <router-link to="/admin/hop-dong" class="nav-item" :class="{ 'active': isActive('/admin/hop-dong') }">
-            <span class="material-symbols-outlined nav-icon">description</span>
-            <span class="nav-text">Hợp đồng</span>
-          </router-link>
-          <router-link to="/admin/chuc-danh" class="nav-item" :class="{ 'active': isActive('/admin/chuc-danh') }">
-            <span class="material-symbols-outlined nav-icon">badge</span>
-            <span class="nav-text">Chức danh</span>
-          </router-link>
-        </div>
-
-        <!-- Operations Section -->
-        <div class="px-3 mb-2 font-black text-[10px] text-slate-400 uppercase tracking-widest">Nghiệp vụ hằng ngày</div>
-        <div class="space-y-0.5 mb-6">
-          <router-link to="/admin/cham-cong" class="nav-item" :class="{ 'active': isActive('/admin/cham-cong') }">
-            <span class="material-symbols-outlined nav-icon">schedule</span>
-            <span class="nav-text">Chấm công</span>
-          </router-link>
-          <router-link to="/admin/nghi-phep" class="nav-item" :class="{ 'active': isActive('/admin/nghi-phep') }">
-            <span class="material-symbols-outlined nav-icon">event_busy</span>
-            <span class="nav-text">Nghỉ phép</span>
-          </router-link>
-          <router-link to="/admin/tuyen-dung" class="nav-item" :class="{ 'active': isActive('/admin/tuyen-dung') }">
-            <span class="material-symbols-outlined nav-icon">person_search</span>
-            <span class="nav-text">Tuyển dụng</span>
-          </router-link>
-          <router-link to="/admin/lich-phong-van" class="nav-item" :class="{ 'active': isActive('/admin/lich-phong-van') }">
-            <span class="material-symbols-outlined nav-icon">calendar_today</span>
-            <span class="nav-text">Lịch phỏng vấn</span>
-          </router-link>
-          <router-link to="/admin/phe-duyet" class="nav-item" :class="{ 'active': isActive('/admin/phe-duyet') }">
-            <span class="material-symbols-outlined nav-icon">task_alt</span>
-            <span class="nav-text font-bold">Phê duyệt đơn</span>
-          </router-link>
-        </div>
-
-        <!-- Finance & Assets Section -->
-        <div class="px-3 mb-2 font-black text-[10px] text-slate-400 uppercase tracking-widest">Tài chính & Tài sản</div>
-        <div class="space-y-0.5 mb-6">
-          <router-link to="/admin/bang-luong" class="nav-item" :class="{ 'active': isActive('/admin/bang-luong') }">
-            <span class="material-symbols-outlined nav-icon">payments</span>
-            <span class="nav-text">Bảng lương</span>
-          </router-link>
-          <router-link to="/admin/tai-san" class="nav-item" :class="{ 'active': isActive('/admin/tai-san') }">
-            <span class="material-symbols-outlined nav-icon">category</span>
-            <span class="nav-text">Quản lý Tài sản</span>
-          </router-link>
-        </div>
+      <!-- Breadcrumb (center-left) -->
+      <nav class="hidden md:flex items-center gap-1 ml-4 text-sm">
+        <span
+          class="cursor-pointer transition-colors text-[var(--sys-text-secondary)] hover:text-[var(--sys-accent)]"
+        >Home</span>
+        <span
+          class="material-symbols-rounded text-[var(--sys-text-secondary)] opacity-50"
+          style="font-size:16px;font-variation-settings:'FILL' 0,'wght' 300,'GRAD' 0,'opsz' 20"
+        >chevron_right</span>
+        <span
+          class="font-medium text-[var(--sys-text-primary)]"
+        >{{ currentPageLabel }}</span>
       </nav>
 
-      <div class="mt-auto border-t border-slate-100 p-4">
-        <router-link to="/admin/cai-dat" class="nav-item" :class="{ 'active': isActive('/admin/cai-dat') }">
-          <span class="material-symbols-outlined nav-icon text-slate-400">settings</span>
-          <span class="nav-text font-bold">Cài đặt</span>
-        </router-link>
+      <div class="flex-1" />
+
+      <!-- Right actions -->
+      <div class="flex items-center gap-0.5">
+
+        <!-- Search -->
+        <div class="relative group hidden sm:flex items-center mr-1">
+          <span
+            class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] transition-colors text-[var(--sys-text-secondary)]"
+            style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20"
+          >search</span>
+          <input
+            type="text"
+            placeholder="Tìm kiếm..."
+            class="pl-9 pr-4 py-1.5 w-48 rounded-full text-sm transition-all duration-200 focus:outline-none focus:w-64 bg-[var(--sys-bg-page)] border border-[var(--sys-border)] text-[var(--sys-text-primary)] focus:border-[var(--sys-accent)] focus:ring-2 focus:ring-[var(--sys-accent)]/20"
+          />
+        </div>
+
+        <!-- Notification -->
+        <div class="relative" ref="notificationDropdownRef">
+          <button
+            @click="isNotificationOpen = !isNotificationOpen"
+            aria-label="Notifications"
+            class="relative flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150"
+            :class="isDark
+              ? 'text-[oklch(0.75_0.03_265)] hover:bg-[oklch(0.28_0.025_265)]'
+              : 'text-[oklch(0.46_0.03_265)] hover:bg-[oklch(0.93_0.012_265)]'"
+          >
+            <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">notifications</span>
+            <!-- M3 Badge dot -->
+            <span
+              class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5 rounded-full bg-[oklch(0.55_0.22_25)] items-center justify-center ring-2"
+              :class="isDark ? 'ring-[oklch(0.165_0.015_265)]' : 'ring-white'"
+            ></span>
+          </button>
+
+          <!-- Notification Dropdown -->
+          <transition name="m3-dropdown">
+            <div
+              v-if="isNotificationOpen"
+              class="absolute right-0 mt-3 w-80 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)]"
+              :class="isDark
+                ? 'bg-[oklch(0.2_0.018_265)] border border-[oklch(0.3_0.025_265)]'
+                : 'bg-white border border-[oklch(0.88_0.012_265)]'"
+            >
+              <div
+                class="flex justify-between items-center px-5 py-4 border-b"
+                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.92_0.008_265)]'"
+              >
+                <h6
+                  class="text-sm font-bold mb-0 text-[var(--sys-text-primary)]"
+                >Thông báo</h6>
+                <span class="text-[10px] font-bold text-[var(--sys-accent)] uppercase tracking-widest">2 Mới</span>
+              </div>
+              <div class="max-h-[300px] overflow-y-auto">
+                <div
+                  class="p-4 flex gap-3 transition-colors cursor-default border-b border-[var(--sys-border)] hover:bg-[var(--sys-bg-page)]"
+                >
+                  <div
+                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[var(--sys-accent)]/10 text-[var(--sys-accent)]"
+                  >
+                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">person_add</span>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-semibold mb-0.5 text-[var(--sys-text-primary)]"
+                    >3 Ứng viên mới nộp CV</p>
+                    <p
+                      class="text-[10px] text-[var(--sys-text-secondary)]"
+                    >Frontend Developer · 15 phút trước</p>
+                  </div>
+                </div>
+                <div
+                  class="p-4 flex gap-3 transition-colors cursor-default hover:bg-[var(--sys-bg-page)]"
+                >
+                  <div
+                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[var(--sys-success-bg)] text-[var(--sys-success-text)]"
+                  >
+                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">task_alt</span>
+                  </div>
+                  <div>
+                    <p
+                      class="text-xs font-semibold mb-0.5 text-[var(--sys-text-primary)]"
+                    >Đơn xin nghỉ phép đã được duyệt</p>
+                    <p
+                      class="text-[10px] text-[var(--sys-text-secondary)]"
+                    >Phê duyệt · 1 giờ trước</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </transition>
+        </div>
+
+        <!-- ── Dark Mode M3 Switch ── -->
+        <div class="mx-2 flex items-center gap-1.5">
+          <!-- Sun -->
+          <span
+            class="material-symbols-rounded transition-all duration-300"
+            style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
+            :class="isDark
+              ? 'text-[var(--sys-text-secondary)] opacity-40 scale-90'
+              : 'text-[oklch(0.62_0.14_75)] opacity-100 scale-100'"
+          >light_mode</span>
+
+          <!-- Switch track -->
+          <button
+            role="switch"
+            :aria-checked="isDark"
+            :aria-label="isDark ? 'Chuyển sang sáng' : 'Chuyển sang tối'"
+            @click="isDark = !isDark"
+            class="relative w-[52px] h-8 rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)]"
+            :class="isDark
+              ? 'bg-[var(--sys-accent)]'
+              : 'bg-[var(--sys-bg-page)] ring-2 ring-inset ring-[var(--sys-border)]'"
+          >
+            <span
+              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center shadow-[0_1px_3px_oklch(0_0_0/0.3)] transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
+              :class="isDark
+                ? 'left-[calc(100%-28px)] w-6 h-6 bg-[var(--sys-bg-page)]'
+                : 'left-1 w-5 h-5 bg-[var(--sys-text-secondary)]'"
+            >
+              <span
+                class="material-symbols-rounded transition-all duration-200"
+                style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
+                :class="isDark ? 'text-[var(--sys-accent)]' : 'text-white opacity-75'"
+              >{{ isDark ? 'dark_mode' : 'light_mode' }}</span>
+            </span>
+          </button>
+
+          <!-- Moon -->
+          <span
+            class="material-symbols-rounded transition-all duration-300"
+            style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
+            :class="isDark
+              ? 'text-[var(--sys-accent)] opacity-100 scale-100'
+              : 'text-[var(--sys-text-secondary)] opacity-40 scale-90'"
+          >dark_mode</span>
+        </div>
+
+        <div
+          class="h-6 w-px hidden md:block mx-1 bg-[var(--sys-border)]"
+        ></div>
+
+        <!-- Profile Dropdown -->
+        <div class="relative" ref="profileDropdownRef">
+          <button
+            @click="isProfileOpen = !isProfileOpen"
+            class="flex items-center gap-2 p-1 pl-1 pr-2 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-border)]"
+          >
+            <div
+              class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
+              style="background:linear-gradient(135deg,oklch(0.62 0.22 340),oklch(0.55 0.25 300))"
+            >L</div>
+            <div class="hidden lg:block text-left">
+              <p
+                class="text-xs font-bold leading-none mb-0.5 text-[var(--sys-text-primary)]"
+              >Lê Quản Trị</p>
+              <p
+                class="text-[9px] uppercase tracking-tight font-semibold text-[var(--sys-text-secondary)]"
+              >Admin</p>
+            </div>
+            <span
+              class="material-symbols-rounded text-sm transition-transform duration-200"
+              :class="[
+                isProfileOpen ? 'rotate-180' : '',
+                'text-[var(--sys-text-secondary)]'
+              ]"
+              style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20"
+            >expand_more</span>
+          </button>
+
+          <transition name="m3-dropdown">
+            <div
+              v-if="isProfileOpen"
+              class="absolute right-0 mt-3 w-60 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)] py-2 bg-[var(--sys-bg-surface)] border border-[var(--sys-border)]"
+            >
+              <div
+                class="px-5 py-3 border-b border-[var(--sys-border)] mb-1"
+              >
+                <p
+                  class="text-[9px] font-bold uppercase tracking-widest mb-1 text-[var(--sys-text-secondary)]"
+                >Tài khoản quản trị</p>
+                <p
+                  class="text-xs font-semibold truncate mb-0 text-[var(--sys-text-primary)]"
+                >admin@hrm.com</p>
+              </div>
+              <router-link
+                to="/admin/ho-so"
+                class="flex items-center gap-3 px-5 py-2.5 text-xs font-medium transition-colors text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)] hover:text-[var(--sys-text-primary)]"
+                @click="isProfileOpen = false"
+              >
+                <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">person</span>
+                Thông tin cá nhân
+              </router-link>
+              <button
+                @click="logout"
+                class="w-full flex items-center gap-3 px-5 py-2.5 text-xs font-medium text-left transition-colors border-t mt-1 text-[oklch(0.5_0.2_25)] hover:bg-[var(--sys-border)] border-[var(--sys-border)]"
+              >
+                <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">logout</span>
+                Đăng xuất hệ thống
+              </button>
+            </div>
+          </transition>
+        </div>
+      </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════
+         MOBILE SCRIM OVERLAY
+    ═══════════════════════════════════════════════ -->
+    <div
+      @click="isMobileSidebarOpen = false"
+      class="fixed inset-0 z-20 lg:hidden bg-black/40 backdrop-blur-sm transition-opacity duration-300"
+      :class="isMobileSidebarOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'"
+    ></div>
+
+    <!-- ═══════════════════════════════════════════════
+         M3 SIDEBAR — DRAWER ↔ RAIL
+    ═══════════════════════════════════════════════ -->
+    <aside
+      class="fixed top-16 left-0 bottom-0 z-30 flex flex-col overflow-hidden transition-[width,transform] duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
+      :class="[
+        sidebarExpanded ? 'w-[280px]' : 'w-20',
+        isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+        isDark
+          ? 'bg-[oklch(0.165_0.015_265)] border-r border-[oklch(0.3_0.025_265)]'
+          : 'bg-white border-r border-[oklch(0.88_0.012_265)]'
+      ]"
+    >
+      <!-- Sidebar header with collapse toggle (desktop) -->
+      <div
+        class="shrink-0 h-12 flex items-center px-3 border-b"
+        :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.88_0.012_265)]'"
+      >
+        <!-- Icon logo (always visible) -->
+        <span
+          class="material-symbols-rounded shrink-0 transition-colors duration-200"
+          style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24"
+          :class="isDark ? 'text-[oklch(0.75_0.14_265)]' : 'text-[oklch(0.48_0.195_265)]'"
+        >apps</span>
+
+        <!-- Label text: visible only when expanded -->
+        <span
+          class="overflow-hidden whitespace-nowrap text-xs font-bold uppercase tracking-[0.12em] transition-all duration-300 ml-2"
+          :class="[
+            sidebarExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0 ml-0 pointer-events-none',
+            isDark ? 'text-[oklch(0.6_0.025_265)]' : 'text-[oklch(0.62_0.025_265)]'
+          ]"
+        >Menu</span>
+
+        <!-- Chevron collapse toggle -->
+        <!-- Chevron collapse toggle -->
+        <button
+          @click="sidebarExpanded = !sidebarExpanded"
+          class="hidden lg:flex ml-auto w-8 h-8 rounded-full items-center justify-center transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)] hover:text-[var(--sys-text-primary)]"
+          :aria-label="sidebarExpanded ? 'Thu gọn sidebar' : 'Mở rộng sidebar'"
+        >
+          <span
+            class="material-symbols-rounded transition-transform duration-300"
+            style="font-size:20px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24"
+            :class="sidebarExpanded ? 'rotate-0' : 'rotate-180'"
+          >chevron_left</span>
+        </button>
+      </div>
+
+
+      <!-- Nav scrollable area -->
+      <nav
+        class="flex-1 overflow-y-auto overflow-x-hidden py-2 custom-scrollbar"
+      >
+
+        <!-- ── Dashboard (standalone) ── -->
+        <div :class="sidebarExpanded ? 'px-3' : 'px-2 flex flex-col items-center'">
+          <SidebarItem
+            :expanded="sidebarExpanded"
+            :is-active="isExactActive('/admin')"
+            icon="dashboard"
+            label="Dashboard"
+            :is-dark="isDark"
+            to="/admin"
+            @click="handleNavClick"
+          />
+        </div>
+
+        <!-- ── Quản lý Nhân sự ── -->
+        <NavSection label="Quản lý Nhân sự" :expanded="sidebarExpanded" :is-dark="isDark" />
+        <div :class="sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'">
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/nhan-su')" icon="groups" label="Nhân viên" :is-dark="isDark" to="/admin/nhan-su" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/phong-ban')" icon="corporate_fare" label="Phòng ban" :is-dark="isDark" to="/admin/phong-ban" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/hop-dong')" icon="description" label="Hợp đồng" :is-dark="isDark" to="/admin/hop-dong" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/chuc-danh')" icon="badge" label="Chức danh" :is-dark="isDark" to="/admin/chuc-danh" @click="handleNavClick" />
+        </div>
+
+        <!-- ── Nghiệp vụ hằng ngày ── -->
+        <NavSection label="Nghiệp vụ hằng ngày" :expanded="sidebarExpanded" :is-dark="isDark" />
+        <div :class="sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'">
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/cham-cong')" icon="schedule" label="Chấm công" :is-dark="isDark" to="/admin/cham-cong" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/nghi-phep')" icon="event_busy" label="Nghỉ phép" :is-dark="isDark" to="/admin/nghi-phep" @click="handleNavClick" :badge="3" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/tuyen-dung')" icon="person_search" label="Tuyển dụng" :is-dark="isDark" to="/admin/tuyen-dung" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/lich-phong-van')" icon="calendar_today" label="Lịch phỏng vấn" :is-dark="isDark" to="/admin/lich-phong-van" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/phe-duyet')" icon="task_alt" label="Phê duyệt đơn" :is-dark="isDark" to="/admin/phe-duyet" @click="handleNavClick" :badge="7" />
+        </div>
+
+        <!-- ── Tài chính & Tài sản ── -->
+        <NavSection label="Tài chính & Tài sản" :expanded="sidebarExpanded" :is-dark="isDark" />
+        <div :class="sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'">
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/bang-luong')" icon="payments" label="Bảng lương" :is-dark="isDark" to="/admin/bang-luong" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/tai-san')" icon="category" label="Quản lý Tài sản" :is-dark="isDark" to="/admin/tai-san" @click="handleNavClick" />
+        </div>
+
+      </nav>
+
+      <!-- Sidebar footer: Settings + User -->
+      <div
+        class="shrink-0 border-t border-[var(--sys-border)] py-2"
+        :class="[
+          sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'
+        ]"
+      >
+        <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/cai-dat')" icon="settings" label="Cài đặt" :is-dark="isDark" to="/admin/cai-dat" @click="handleNavClick" />
       </div>
     </aside>
 
-    <!-- Overlay for mobile -->
-    <div 
-      v-if="isSidebarOpen" 
-      class="fixed inset-0 bg-slate-900/40 z-30 lg:hidden backdrop-blur-sm transition-opacity"
-      @click="isSidebarOpen = false"
-    ></div>
-
-    <!-- Main Content -->
-    <div class="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
-      <!-- Navbar -->
-      <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 lg:px-10 sticky top-0 z-20">
-        <!-- Left: Breadcrumbs -->
-        <div class="flex items-center gap-4">
-          <button 
-            class="lg:hidden p-2 text-slate-500 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
-            @click="toggleSidebar"
-          >
-            <span class="material-symbols-outlined">menu</span>
-          </button>
-          
-          <nav class="flex items-center gap-2 text-sm font-medium">
-            <span class="text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer">Home</span>
-            <span class="text-slate-300">/</span>
-            <span class="text-slate-900 font-bold tracking-tight">{{ currentPageLabel }}</span>
-          </nav>
-        </div>
-
-        <!-- Right: Actions & Account -->
-        <div class="flex items-center gap-3 md:gap-6">
-          <!-- Search -->
-          <div class="relative group hidden sm:block">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg pointer-events-none group-focus-within:text-indigo-500 transition-colors">search</span>
-            <input 
-              type="text" 
-              class="pl-10 pr-4 py-2 w-48 md:w-64 bg-slate-50 border border-slate-200 rounded-full text-xs focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all placeholder:text-slate-400" 
-              placeholder="Tìm kiếm..."
-            >
-          </div>
-
-          <!-- Icons Circle Group -->
-          <div class="flex items-center gap-1 bg-slate-50 p-1 rounded-full border border-slate-100">
-            <button class="p-2 text-slate-500 hover:bg-white hover:text-indigo-600 rounded-full transition-all cursor-pointer">
-              <span class="material-symbols-outlined text-lg">light_mode</span>
-            </button>
-            <div class="relative" ref="notificationDropdownRef">
-              <button 
-                class="p-2 text-slate-500 hover:bg-white hover:text-blue-600 rounded-full relative transition-all group cursor-pointer" 
-                @click="isNotificationOpen = !isNotificationOpen"
-                :class="{ 'bg-white text-indigo-600 shadow-sm': isNotificationOpen }"
-              >
-                <span class="material-symbols-outlined text-lg group-hover:scale-110 transition-transform">notifications</span>
-                <span class="absolute top-1.5 right-1.5 flex h-2 w-2">
-                  <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500 border border-white"></span>
-                </span>
-              </button>
-              <transition name="dropdown">
-                <div v-if="isNotificationOpen" class="absolute right-0 mt-4 w-80 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 overflow-hidden z-50">
-                  <div class="px-6 py-4 border-b border-slate-100 bg-white flex justify-between items-center">
-                      <h6 class="font-bold text-slate-900 m-0 text-sm">Thông báo</h6>
-                      <span class="text-[10px] font-bold text-indigo-600 uppercase tracking-widest">2 Mới</span>
-                  </div>
-                  <div class="max-h-[300px] overflow-y-auto">
-                      <div class="p-4 hover:bg-slate-50 transition-colors flex gap-3 border-b border-slate-50">
-                          <div class="w-8 h-8 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
-                              <span class="material-symbols-outlined text-base">person_add</span>
-                          </div>
-                          <div>
-                              <p class="text-xs font-bold text-slate-800 mb-0.5">3 Ứng viên mới nộp CV</p>
-                              <p class="text-[10px] text-slate-500 mb-0">Frontend Developer • 15 phút trước</p>
-                          </div>
-                      </div>
-                  </div>
-                </div>
-              </transition>
-            </div>
-          </div>
-
-          <div class="h-8 w-px bg-slate-200 hidden md:block"></div>
-
-          <!-- Account Dropdown -->
-          <div class="relative" ref="profileDropdownRef">
-            <button 
-              class="flex items-center gap-3 p-1 rounded-full hover:bg-slate-50 transition-all cursor-pointer select-none border border-transparent hover:border-slate-100 shadow-sm hover:shadow-md"
-              @click="isProfileOpen = !isProfileOpen"
-            >
-              <div class="w-9 h-9 rounded-full bg-indigo-600 flex items-center justify-center text-white font-black text-sm shadow-inner">L</div>
-              <div class="hidden lg:block text-left mr-1">
-                <p class="text-xs font-bold text-slate-900 leading-none mb-0.5">Lê Quản Trị</p>
-                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">Admin</p>
-              </div>
-              <span class="material-symbols-outlined text-slate-400 text-sm mr-1 transition-transform" :class="{'rotate-180': isProfileOpen}">expand_more</span>
-            </button>
-            <transition name="dropdown">
-              <div v-if="isProfileOpen" class="absolute right-0 mt-4 w-60 bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] border border-slate-100 py-2 z-50 overflow-hidden">
-                <div class="px-5 py-3 border-b border-slate-50 mb-1">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Tài khoản quản trị</p>
-                    <p class="text-xs font-bold text-slate-900 truncate mb-0">admin@codedenngu.com</p>
-                </div>
-                <router-link to="/admin/ho-so" class="flex items-center gap-3 px-5 py-2.5 text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-indigo-600 transition-colors">
-                  <span class="material-symbols-outlined text-[18px]">person</span>
-                  Thông tin cá nhân
-                </router-link>
-                <button @click="logout" class="w-full flex items-center gap-3 px-5 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 transition-colors text-left border-t border-slate-50 mt-1">
-                  <span class="material-symbols-outlined text-[18px]">logout</span>
-                  Đăng xuất hệ thống
-                </button>
-              </div>
-            </transition>
-          </div>
-        </div>
-      </header>
-
-      <!-- Main Content Area -->
-      <main class="flex-1 overflow-y-auto p-6 lg:p-10 bg-[#f8f9fa]">
-        <div class="max-w-[1600px] mx-auto">
-          <router-view></router-view>
-        </div>
-      </main>
-    </div>
+    <!-- ═══════════════════════════════════════════════
+         MAIN CONTENT
+    ═══════════════════════════════════════════════ -->
+    <main
+      class="pt-16 min-h-screen transition-[margin] duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
+      :class="sidebarExpanded ? 'lg:ml-[280px]' : 'lg:ml-20'"
+    >
+      <div class="p-6 lg:p-8 max-w-[1600px] mx-auto">
+        <router-view />
+      </div>
+    </main>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { ref, computed, watch, onMounted, onUnmounted, defineComponent, h, resolveComponent } from 'vue';
+import { useRoute, useRouter, RouterLink } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
-const isSidebarOpen = ref(false);
+
+// ── State ──────────────────────────────────────────────────────────────────
+const sidebarExpanded = ref(true);
+const isMobileSidebarOpen = ref(false);
+const isDark = ref(false);
 const isNotificationOpen = ref(false);
 const isProfileOpen = ref(false);
 
 const notificationDropdownRef = ref(null);
 const profileDropdownRef = ref(null);
 
+// ── Dark mode effect ───────────────────────────────────────────────────────
+watch(isDark, (val) => {
+  document.documentElement.classList.toggle('dark', val);
+}, { immediate: true });
+
+// ── Router helpers ─────────────────────────────────────────────────────────
 const isActive = (path) => route.path.startsWith(path);
 const isExactActive = (path) => route.path === path;
 
@@ -240,13 +426,24 @@ const currentPageLabel = computed(() => {
   if (path.startsWith('/admin/bang-luong')) return 'Bảng lương';
   if (path.startsWith('/admin/tai-san')) return 'Quản lý Tài sản';
   if (path.startsWith('/admin/phe-duyet')) return 'Phê duyệt đơn';
+  if (path.startsWith('/admin/lich-phong-van')) return 'Lịch phỏng vấn';
   return 'Dashboard';
 });
 
-const toggleSidebar = () => {
-  isSidebarOpen.value = !isSidebarOpen.value;
+// ── Sidebar / Menu toggle ──────────────────────────────────────────────────
+const handleMenuToggle = () => {
+  if (window.innerWidth < 1024) {
+    isMobileSidebarOpen.value = !isMobileSidebarOpen.value;
+  } else {
+    sidebarExpanded.value = !sidebarExpanded.value;
+  }
 };
 
+const handleNavClick = () => {
+  isMobileSidebarOpen.value = false;
+};
+
+// ── Click outside to close dropdowns ──────────────────────────────────────
 const handleClickOutside = (event) => {
   if (profileDropdownRef.value && !profileDropdownRef.value.contains(event.target)) {
     isProfileOpen.value = false;
@@ -256,109 +453,214 @@ const handleClickOutside = (event) => {
   }
 };
 
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
+onMounted(() => document.addEventListener('click', handleClickOutside));
+onUnmounted(() => document.removeEventListener('click', handleClickOutside));
 
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
-
+// ── Logout ─────────────────────────────────────────────────────────────────
 const logout = () => {
   localStorage.clear();
   sessionStorage.clear();
+  // Forcefully remove dark mode class
+  document.documentElement.classList.remove('dark');
   router.push('/login');
 };
 </script>
 
+<!-- ─── Sub-components (defineComponent inline) ─────────────────────────── -->
+<script>
+import { defineComponent, h, resolveComponent } from 'vue';
+
+// ── NavSection: section label / divider ──────────────────────────────────
+export const NavSection = defineComponent({
+  name: 'NavSection',
+  props: {
+    label: String,
+    expanded: Boolean,
+    isDark: Boolean,
+  },
+  setup(props) {
+    return () => {
+      if (props.expanded) {
+        return h('p', {
+          class: [
+            'px-5 pt-4 pb-1 text-[10px] font-bold uppercase tracking-[0.1em] whitespace-nowrap text-[var(--sys-text-secondary)]',
+          ].join(' '),
+        }, props.label);
+      } else {
+        return h('div', {
+          class: [
+            'mx-auto w-8 h-px my-3 bg-[var(--sys-border)]',
+          ].join(' '),
+        });
+      }
+    };
+  },
+});
+
+// ── SidebarItem ───────────────────────────────────────────────────────────
+export const SidebarItem = defineComponent({
+  name: 'SidebarItem',
+  props: {
+    expanded: Boolean,
+    isActive: Boolean,
+    icon: String,
+    label: String,
+    isDark: Boolean,
+    to: String,
+    badge: { type: Number, default: undefined },
+  },
+  emits: ['click'],
+  setup(props, { emit }) {
+    return () => {
+      const RouterLink = resolveComponent('RouterLink');
+
+      // Active pill bg
+      const activeBg = 'bg-[var(--sys-accent)]';
+      const hoverBg  = 'hover:bg-[var(--sys-border)]';
+      const activeText = 'text-[var(--sys-accent-text)]';
+      const inactiveText = 'text-[var(--sys-text-secondary)]';
+      const labelText = 'text-[var(--sys-text-primary)]';
+
+      // ── DRAWER (expanded) ──
+      if (props.expanded) {
+        return h(RouterLink, {
+          to: props.to,
+          class: [
+            'group relative flex items-center gap-3 w-full h-[52px] px-4 rounded-[26px]',
+            'transition-colors duration-150 outline-none text-left no-underline',
+            'focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]',
+            props.isActive ? activeBg : hoverBg,
+          ].join(' '),
+          onClick: () => emit('click'),
+        }, () => [
+          // State ripple
+          h('span', { class: 'absolute inset-0 rounded-[26px] opacity-0 group-active:opacity-10 bg-[oklch(0.22_0.12_265)] dark:bg-[oklch(0.9_0.09_265)] transition-opacity pointer-events-none' }),
+
+          // Icon (morphing)
+          h('span', { class: 'relative shrink-0 w-6 h-6 flex items-center justify-center' }, [
+            // Outline icon (inactive)
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-0 scale-50 ${activeText}` : `opacity-100 scale-100 ${inactiveText}`,
+              ].join(' '),
+              style: "font-size:22px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+            // Filled icon (active)
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-100 scale-100 ${activeText}` : `opacity-0 scale-150 ${inactiveText}`,
+              ].join(' '),
+              style: "font-size:22px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+          ]),
+
+          // Label
+          h('span', {
+            class: ['flex-1 text-sm whitespace-nowrap', props.isActive ? `${activeText} font-semibold` : labelText].join(' '),
+          }, props.label),
+
+          // Badge chip
+          props.badge !== undefined ? h('span', {
+            class: [
+              'shrink-0 min-w-[22px] h-[22px] px-1.5 rounded-full flex items-center justify-center',
+              props.isActive
+                ? 'bg-[var(--sys-bg-surface)] text-[var(--sys-accent)]'
+                : 'bg-[var(--sys-accent-container)] text-[var(--sys-on-accent-container)]',
+            ].join(' '),
+            style: 'font-size:11px;font-weight:600',
+          }, props.badge > 99 ? '99+' : String(props.badge)) : null,
+        ]);
+      }
+
+      // ── RAIL (collapsed) ──
+      return h(RouterLink, {
+        to: props.to,
+        title: props.label,
+        class: [
+          'group relative flex flex-col items-center gap-1 w-full py-1 cursor-pointer outline-none',
+          'focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)] rounded-xl no-underline',
+        ].join(' '),
+        onClick: () => emit('click'),
+      }, () => [
+        // Pill
+        h('div', {
+          class: [
+            'relative flex items-center justify-center w-16 h-8 rounded-full transition-colors duration-150',
+            props.isActive ? activeBg : hoverBg,
+          ].join(' '),
+        }, [
+          // Badge for Rail
+        props.badge !== undefined ? h('span', {
+          class: [
+            'absolute -top-1 right-2 min-w-[14px] h-[14px] px-1 rounded-full flex items-center justify-center bg-[var(--sys-accent-container)] text-[var(--sys-on-accent-container)] shadow-sm',
+          ].join(' '),
+          style: 'font-size:8px;font-weight:700',
+        }, props.badge > 9 ? '9+' : String(props.badge)) : null,
+
+          // Active dot for Rail
+          h('div', {
+            class: [
+              'absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[var(--sys-accent)] transition-all duration-300',
+              props.isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0',
+            ].join(' '),
+          }),
+
+          // Icon (morphing)
+          h('span', { class: 'relative w-5 h-5 flex items-center justify-center' }, [
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-0 scale-50 ${activeText}` : `opacity-100 scale-100 ${inactiveText}`,
+              ].join(' '),
+              style: "font-size:21px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-100 scale-100 ${activeText}` : `opacity-0 scale-150 ${inactiveText}`,
+              ].join(' '),
+              style: "font-size:21px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+          ]),
+        ]),
+
+        // Label below pill
+        h('span', {
+          class: [
+            'text-[10px] leading-tight px-1 text-center transition-colors',
+            props.isActive ? activeText : inactiveText,
+          ].join(' '),
+          style: `font-weight:${props.isActive ? 600 : 400}`,
+        }, props.label.length > 10 ? props.label.slice(0, 9) + '…' : props.label),
+      ]);
+    };
+  },
+});
+</script>
+
 <style scoped>
-/* Navigation Item Styles */
-.nav-item {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.875rem 1.25rem;
-  border-radius: 0.75rem;
-  color: #4b5563;
-  font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  text-decoration: none;
-  position: relative;
-  overflow: hidden;
-  margin-bottom: 2px;
+/* M3 Dropdown transition */
+.m3-dropdown-enter-active,
+.m3-dropdown-leave-active {
+  transition: all 0.22s cubic-bezier(0.2, 0, 0, 1);
 }
-
-.nav-item:hover {
-  background-color: #f8fafc;
-  color: #0f172a;
-}
-
-.nav-item.active {
-  background-color: rgba(238, 242, 255, 0.8);
-  color: #6366f1;
-  font-weight: 700;
-}
-
-.nav-item.active::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 4px;
-  height: 2rem;
-  background-color: #6366f1;
-  border-radius: 0 4px 4px 0;
-  box-shadow: 2px 0 10px rgba(0, 97, 242, 0.3);
-}
-
-.nav-icon {
-  font-size: 22px;
-  color: #94a3b8;
-  transition: color 0.2s;
-  font-variation-settings: 'wght' 300, 'opsz' 24;
-}
-
-.nav-item:hover .nav-icon {
-  color: #64748b;
-}
-
-.nav-item.active .nav-icon {
-  color: #6366f1;
-  font-variation-settings: 'FILL' 0, 'wght' 500, 'opsz' 24;
-}
-
-.nav-text {
-  font-size: 0.9375rem;
-  letter-spacing: -0.01em;
-}
-
-/* Transitions */
-.dropdown-enter-active, .dropdown-leave-active {
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.dropdown-enter-from, .dropdown-leave-to {
+.m3-dropdown-enter-from,
+.m3-dropdown-leave-to {
   opacity: 0;
-  transform: translateY(10px) scale(0.95);
+  transform: translateY(8px) scale(0.96);
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
-  border-radius: 10px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: #cbd5e1;
+/* Remove link underline */
+a,
+.router-link-active,
+.router-link-exact-active {
+  text-decoration: none !important;
 }
 
-/* Material Symbols sizing */
-.material-symbols-outlined {
-  font-variation-settings: 'opsz' 24, 'wght' 300, 'FILL' 0, 'GRAD' 0;
-}
+/* Scrollbar */
+nav::-webkit-scrollbar { width: 4px; }
+nav::-webkit-scrollbar-track { background: transparent; }
+nav::-webkit-scrollbar-thumb { border-radius: 8px; }
 </style>

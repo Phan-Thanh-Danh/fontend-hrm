@@ -170,7 +170,7 @@
 
           <!-- Footer -->
           <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex gap-3">
-            <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 transition-all font-black uppercase tracking-widest">Hủy</button>
+            <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 transition-all font-black uppercase tracking-widest rounded-2xl">Hủy</button>
             <button @click="handleSave" class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all uppercase tracking-widest">
               {{ isEdit ? 'Cập nhật' : 'Lưu mới' }}
             </button>

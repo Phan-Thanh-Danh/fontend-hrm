@@ -94,7 +94,7 @@
               </span>
             </td>
             <td class="px-6 py-4 border-b border-slate-50 text-right">
-              <div class="flex items-center justify-end gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
+              <div class="flex items-center justify-end gap-1 transition-opacity">
                 <button @click="editEmployee(emp)" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
                   <span class="material-symbols-outlined text-[18px]">edit</span>
                 </button>
@@ -230,7 +230,7 @@
 
           <!-- Modal Footer -->
           <div class="px-10 py-8 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
-            <button @click="showModal = false" class="px-8 py-3.5 text-sm font-black text-slate-400 hover:text-slate-600 transition-all">Đóng</button>
+            <button @click="showModal = false" class="px-8 py-3.5 text-sm font-black text-slate-400 hover:text-slate-600 rounded-2xl transition-all">Đóng</button>
             <button @click="saveEmployee" class="px-10 py-3.5 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all">
               <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">save</span>

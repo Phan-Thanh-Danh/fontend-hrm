@@ -225,30 +225,68 @@ const getStatusClass = (status) => {
 .clock-unit {
   width: 80px;
   height: 96px;
+  background-color: var(--sys-bg-page) !important;
 }
 
 .shadow-inner {
   box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 }
 
+.bg-success-light {
+  background-color: var(--sys-success-bg) !important;
+}
+
 .bg-warning-light {
-  background-color: rgba(221, 142, 9, 0.1) !important;
+  background-color: oklch(0.25 0.1 75) !important;
 }
 
 .bg-danger-light {
-  background-color: rgba(212, 47, 47, 0.1) !important;
+  background-color: oklch(0.25 0.1 25) !important;
+}
+
+.bg-primary-light {
+  background-color: oklch(0.25 0.1 265) !important;
 }
 
 .text-warning {
-  color: var(--warning-color) !important;
+  color: oklch(0.88 0.18 75) !important;
 }
 
 .text-danger {
-  color: var(--danger-color) !important;
+  color: oklch(0.88 0.18 25) !important;
 }
 
 .page-link.active {
-  background-color: var(--primary-color);
-  color: white;
+  background-color: var(--sys-accent);
+  color: var(--sys-accent-text);
+}
+
+.card {
+  background-color: var(--sys-bg-surface) !important;
+  color: var(--sys-text-primary) !important;
+}
+
+.bg-white {
+  background-color: var(--sys-bg-surface) !important;
+}
+
+.text-dark {
+  color: var(--sys-text-primary) !important;
+}
+
+.text-muted, .text-secondary {
+  color: var(--sys-text-secondary) !important;
+}
+
+.bg-light {
+  background-color: var(--sys-bg-page) !important;
+}
+
+.border {
+  border-color: var(--sys-border) !important;
+}
+
+.table thead {
+  background-color: var(--sys-bg-page) !important;
 }
 </style>
