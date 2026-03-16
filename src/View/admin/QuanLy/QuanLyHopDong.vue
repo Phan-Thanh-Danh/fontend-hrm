@@ -3,17 +3,17 @@
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Hợp đồng</h1>
-        <p class="text-slate-500 text-sm font-medium italic">Quản lý thời hạn, điều khoản và phụ lục hợp đồng lao động.</p>
+        <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight">Quản lý Hợp đồng</h1>
+        <p class="text-[var(--sys-text-secondary)] text-sm font-medium italic">Quản lý thời hạn, điều khoản và phụ lục hợp đồng lao động.</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
         <div class="relative group hidden sm:block">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--sys-text-secondary)]">search</span>
           <input 
             v-model="searchQuery"
             type="text" 
             placeholder="Tìm số HĐ, tên NV..." 
-            class="pl-10 pr-4 py-2.5 w-64 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold"
+            class="pl-10 pr-4 py-2.5 w-64 bg-[var(--sys-bg-surface)] border border-[var(--sys-border)] rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[var(--sys-brand-solid)]/20 focus:border-[var(--sys-brand-solid)] transition-all font-bold text-[var(--sys-text-primary)]"
           >
         </div>
 
@@ -25,7 +25,7 @@
 
         <button 
           @click="openAddModal"
-          class="px-5 py-2.5 bg-indigo-600 rounded-xl font-black text-white hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all flex items-center gap-2"
+          class="px-5 py-2.5 bg-[var(--sys-brand-solid)] rounded-xl font-black text-white hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid)]/10 transition-all flex items-center gap-2"
         >
           <span class="material-symbols-outlined text-[20px]">add</span>
           Ký hợp đồng mới
@@ -34,47 +34,47 @@
     </div>
 
     <!-- Alert Box -->
-    <div v-if="expiringCount > 0" class="bg-amber-50 border border-amber-100 rounded-[2rem] p-6 flex flex-wrap items-center gap-4 shadow-sm">
-      <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center shrink-0">
+    <div v-if="expiringCount > 0" class="bg-[var(--sys-warning-soft)] border border-[var(--sys-warning-border)] rounded-[2rem] p-6 flex flex-wrap items-center gap-4 shadow-sm">
+      <div class="w-12 h-12 bg-[var(--sys-warning-solid)]/10 text-[var(--sys-warning-text)] rounded-2xl flex items-center justify-center shrink-0">
         <span class="material-symbols-outlined text-2xl animate-bounce">warning</span>
       </div>
       <div class="flex-1 min-w-[300px]">
-        <h4 class="text-amber-800 font-black text-sm uppercase tracking-wide">Cảnh báo: {{ expiringCount }} hợp đồng sắp hết hạn</h4>
-        <p class="text-amber-700 text-xs font-bold italic mt-0.5">Vui lòng kiểm tra và xử lý gia hạn trước 30 ngày để đảm bảo quyền lợi nhân viên.</p>
+        <h4 class="text-[var(--sys-warning-text)] font-black text-sm uppercase tracking-wide">Cảnh báo: {{ expiringCount }} hợp đồng sắp hết hạn</h4>
+        <p class="text-[var(--sys-warning-text)] opacity-80 text-xs font-bold italic mt-0.5">Vui lòng kiểm tra và xử lý gia hạn trước 30 ngày để đảm bảo quyền lợi nhân viên.</p>
       </div>
-      <button class="px-4 py-2 bg-amber-600 text-white rounded-xl text-xs font-black shadow-lg shadow-amber-200 transition-all">Xem ngay</button>
+      <button class="px-4 py-2 bg-[var(--sys-warning-solid)] text-white rounded-xl text-xs font-black shadow-lg shadow-[var(--sys-warning-solid)]/20 transition-all hover:brightness-110">Xem ngay</button>
     </div>
 
     <!-- Main List -->
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
       <!-- Left: History & Stats -->
       <div class="space-y-6 xl:col-span-1">
-        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm relative overflow-hidden">
-          <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full opacity-50"></div>
-          <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-blue-500"></span> Thống kê hiệu lực
+        <div class="bg-[var(--sys-bg-surface)] p-8 rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm relative overflow-hidden">
+          <div class="absolute -right-4 -top-4 w-24 h-24 bg-[var(--sys-brand-soft)] rounded-full opacity-50"></div>
+          <h3 class="text-xs font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[var(--sys-brand-solid)]"></span> Thống kê hiệu lực
           </h3>
           <div class="space-y-4">
-            <div v-for="stat in contractStats" :key="stat.label" class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-              <span class="text-sm font-bold text-slate-600">{{ stat.label }}</span>
-              <span class="text-lg font-black text-slate-900">{{ stat.value }}</span>
+            <div v-for="stat in contractStats" :key="stat.label" class="flex items-center justify-between p-4 bg-[var(--sys-bg-hover)] rounded-2xl">
+              <span class="text-sm font-bold text-[var(--sys-text-secondary)]">{{ stat.label }}</span>
+              <span class="text-lg font-black text-[var(--sys-text-primary)]">{{ stat.value }}</span>
             </div>
           </div>
         </div>
 
-        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
-          <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-slate-300"></span> Lịch sử thay đổi gần đây
+        <div class="bg-[var(--sys-bg-surface)] p-8 rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm">
+          <h3 class="text-xs font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-6 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-[var(--sys-border)]"></span> Lịch sử thay đổi gần đây
           </h3>
           <div class="space-y-6 relative">
-             <div class="absolute left-4 top-2 bottom-2 w-0.5 bg-slate-100"></div>
+             <div class="absolute left-4 top-2 bottom-2 w-0.5 bg-[var(--sys-border-subtle)]"></div>
              <div v-for="log in historyLogs" :key="log.id" class="flex gap-4 relative">
-                <div :class="`w-8 h-8 rounded-full border-2 border-white shadow-sm flex items-center justify-center shrink-0 z-10 ${log.bg}`">
+                <div :class="`w-8 h-8 rounded-full border-2 border-[var(--sys-bg-surface)] shadow-sm flex items-center justify-center shrink-0 z-10 ${log.bg}`">
                     <span class="material-symbols-outlined text-[14px] text-white">{{ log.icon }}</span>
                 </div>
                 <div>
-                   <p class="text-[13px] font-black text-slate-900 mb-0.5">{{ log.content }}</p>
-                   <p class="text-[10px] font-bold text-slate-400 italic">{{ log.time }} • {{ log.user }}</p>
+                   <p class="text-[13px] font-black text-[var(--sys-text-primary)] mb-0.5">{{ log.content }}</p>
+                   <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] italic">{{ log.time }} • {{ log.user }}</p>
                 </div>
              </div>
           </div>
@@ -82,37 +82,37 @@
       </div>
 
       <!-- Right: Main Table -->
-      <div class="xl:col-span-2 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden text-sm flex flex-col h-full">
+      <div class="xl:col-span-2 bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden text-sm flex flex-col h-full">
         <div class="overflow-x-auto flex-1">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50/30">
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Số HĐ</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Nhân viên</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Thời hạn</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Trạng thái</th>
-                <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-right">Thao tác</th>
+              <tr class="bg-[var(--sys-bg-surface-elevated)]/50">
+                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Số HĐ</th>
+                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Nhân viên</th>
+                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Thời hạn</th>
+                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trạng thái</th>
+                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-right">Thao tác</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="item in filteredContracts" :key="item.id" class="hover:bg-slate-50/50 transition-all group">
-                <td class="px-6 py-4 border-b border-slate-50 font-black text-slate-900">{{ item.contract_no }}</td>
-                <td class="px-6 py-4 border-b border-slate-50">
-                   <p class="font-bold text-slate-800 mb-0.5">{{ item.employee_name }}</p>
-                   <p class="text-[10px] text-slate-400 uppercase font-black">{{ item.contract_type }}</p>
+              <tr v-for="item in filteredContracts" :key="item.id" class="hover:bg-[var(--sys-bg-hover)] transition-all group">
+                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)] font-black text-[var(--sys-text-primary)]">{{ item.contract_no }}</td>
+                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)]">
+                   <p class="font-bold text-[var(--sys-text-primary)] mb-0.5">{{ item.employee_name }}</p>
+                   <p class="text-[10px] text-[var(--sys-text-secondary)] uppercase font-black">{{ item.contract_type }}</p>
                 </td>
-                <td class="px-6 py-4 border-b border-slate-50">
+                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)]">
                     <div class="flex flex-col gap-0.5">
-                        <span class="text-[10px] text-slate-400 font-bold italic">{{ item.start_date }} → {{ item.end_date || 'N/A' }}</span>
+                        <span class="text-[10px] text-[var(--sys-text-secondary)] font-bold italic">{{ item.start_date }} → {{ item.end_date || 'N/A' }}</span>
                     </div>
                 </td>
-                <td class="px-6 py-4 border-b border-slate-50">
+                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)]">
                   <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider whitespace-nowrap border d-inline-flex align-items-center gap-2 ${getStatusColor(item.status)}`">
                     <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotColor(item.status)"></span>
                     {{ item.status.replaceAll('_', ' ') }}
                   </div>
                 </td>
-                <td class="px-6 py-4 border-b border-slate-50 text-right">
+                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)] text-right">
                   <div class="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
                     <button @click="editContract(item)" class="btn-action-icon">
                       <span class="material-symbols-outlined">edit</span>
@@ -140,27 +140,27 @@
         leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
       >
         <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="closeModal"></div>
-          <div class="relative z-[10000] bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
-            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 text-left">
+          <div class="fixed inset-0 w-screen h-screen bg-black/40 z-[9999] overflow-hidden backdrop-blur-sm" @click="closeModal"></div>
+          <div class="relative z-[10000] bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)] w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+            <div class="px-8 py-6 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-surface-elevated)] text-left">
               <div class="text-left">
-                <h3 class="text-lg font-black text-slate-900 text-left">{{ editMode ? 'Cập nhật hợp đồng' : 'Soạn thảo hợp đồng mới' }}</h3>
-                <p class="text-xs text-slate-500 font-bold italic mt-0.5 text-left">Hệ thống sẽ tự động tính ngày hết hiệu lực</p>
+                <h3 class="text-lg font-black text-[var(--sys-text-primary)] text-left">{{ editMode ? 'Cập nhật hợp đồng' : 'Soạn thảo hợp đồng mới' }}</h3>
+                <p class="text-xs text-[var(--sys-text-secondary)] font-bold italic mt-0.5 text-left">Hệ thống sẽ tự động tính ngày hết hiệu lực</p>
               </div>
-              <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-md transition-all text-slate-400">
+              <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)]">
                 <span class="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <div class="p-8 space-y-5">
                <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Nhân viên thụ hưởng *</label>
-                  <input v-model="form.employee_name" type="text" placeholder="Tìm kiếm tên nhân viên..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left">
+                  <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Nhân viên thụ hưởng *</label>
+                  <input v-model="form.employee_name" type="text" placeholder="Tìm kiếm tên nhân viên..." class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-left text-[var(--sys-text-primary)]">
                </div>
 
                <div class="grid grid-cols-2 gap-4 text-left">
                  <div class="text-left">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Loại hợp đồng *</label>
+                    <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Loại hợp đồng *</label>
                     <Dropdown 
                       v-model="form.contract_type"
                       :options="contractTypeOptions"
@@ -168,38 +168,38 @@
                     />
                  </div>
                  <div class="text-left">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Số hợp đồng *</label>
-                    <input v-model="form.contract_no" type="text" placeholder="HD2023..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left text-sm">
+                    <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Số hợp đồng *</label>
+                    <input v-model="form.contract_no" type="text" placeholder="HD2023..." class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-left text-sm text-[var(--sys-text-primary)]">
                  </div>
                </div>
 
                <div class="grid grid-cols-2 gap-4 text-left">
                  <div class="text-left">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Ngày ký *</label>
-                    <input v-model="form.sign_date" type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left">
+                    <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Ngày ký *</label>
+                    <input v-model="form.sign_date" type="date" class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-left text-[var(--sys-text-primary)]">
                  </div>
                  <div class="text-left">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Ngày hiệu lực *</label>
-                    <input v-model="form.start_date" type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left">
+                    <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Ngày hiệu lực *</label>
+                    <input v-model="form.start_date" type="date" class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-left text-[var(--sys-text-primary)]">
                  </div>
                </div>
 
-               <div class="p-5 bg-blue-50/50 rounded-3xl border border-blue-100 border-dashed text-left">
-                  <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2 italic text-left">Ngày hết hạn dự kiến</p>
-                  <p class="text-xl font-black text-blue-900 tracking-wider text-left">
+               <div class="p-5 bg-[var(--sys-brand-soft)] rounded-3xl border border-[var(--sys-brand-solid)] border-dashed text-left">
+                  <p class="text-[10px] font-black text-[var(--sys-brand-soft-text)] uppercase tracking-widest mb-2 italic text-left">Ngày hết hạn dự kiến</p>
+                  <p class="text-xl font-black text-[var(--sys-brand-soft-text)] tracking-wider text-left">
                       {{ calculateEndDate() || 'N/A' }}
                   </p>
                </div>
 
                <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Mức lương thỏa thuận (VNĐ)</label>
-                  <input v-model="form.salary" type="number" placeholder="20.000.000" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left">
+                  <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Mức lương thỏa thuận (VNĐ)</label>
+                  <input v-model="form.salary" type="number" placeholder="20.000.000" class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-left text-[var(--sys-text-primary)]">
                </div>
             </div>
 
-            <div class="px-8 py-6 border-t border-slate-100 bg-slate-50/30 flex gap-3 text-left">
-              <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest italic rounded-2xl transition-all">Hủy</button>
-              <button @click="handleSave" class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 uppercase tracking-widest transition-all">
+            <div class="px-8 py-6 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface-elevated)] flex gap-3 text-left">
+              <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-[var(--sys-text-secondary)] hover:text-[var(--sys-text-primary)] uppercase tracking-widest italic rounded-2xl transition-all">Hủy</button>
+              <button @click="handleSave" class="flex-1 py-3 bg-[var(--sys-brand-solid)] text-white rounded-2xl text-sm font-black hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid)]/10 uppercase tracking-widest transition-all">
                 {{ editMode ? 'Cập nhật' : 'Ký Hợp đồng' }}
               </button>
             </div>
@@ -304,19 +304,19 @@ const closeModal = () => {
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'ĐANG_HIỆU_LỰC': return 'bg-green-50 text-green-700 border-green-100';
-    case 'SẮP_HẾT_HẠN': return 'bg-amber-50 text-amber-700 border-amber-100';
-    case 'ĐÃ_THANH_LÝ': return 'bg-red-50 text-red-700 border-red-100';
-    default: return 'bg-slate-50 text-slate-700 border-slate-100';
+    case 'ĐANG_HIỆU_LỰC': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
+    case 'SẮP_HẾT_HẠN': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
+    case 'ĐÃ_THANH_LÝ': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
+    default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
   }
 };
 
 const getStatusDotColor = (status) => {
   switch (status) {
-    case 'ĐANG_HIỆU_LỰC': return 'bg-green-500';
-    case 'SẮP_HẾT_HẠN': return 'bg-amber-500';
-    case 'ĐÃ_THANH_LÝ': return 'bg-red-500';
-    default: return 'bg-slate-500';
+    case 'ĐANG_HIỆU_LỰC': return 'bg-[var(--sys-success-solid)]';
+    case 'SẮP_HẾT_HẠN': return 'bg-[var(--sys-warning-solid)]';
+    case 'ĐÃ_THANH_LÝ': return 'bg-[var(--sys-danger-solid)]';
+    default: return 'bg-[var(--sys-icon-default)]';
   }
 };
 

@@ -51,27 +51,27 @@
         <div class="row g-4">
           <!-- Leave Balance Card -->
           <div class="col-sm-6">
-            <div class="card bento-card bg-brand-blue text-white p-4 h-100 position-relative overflow-hidden">
+            <div class="card bento-card bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] shadow-sm rounded-xl p-4 h-100 position-relative overflow-hidden">
               <div class="d-flex justify-content-between align-items-start mb-4">
-                <div class="icon-box-white rounded-3 d-flex align-items-center justify-content-center bg-white bg-opacity-25">
-                  <span class="material-symbols-outlined">calendar_month</span>
+                <div class="icon-box-white rounded-3 d-flex align-items-center justify-content-center bg-[var(--sys-brand-soft)]">
+                  <span class="material-symbols-outlined text-[var(--sys-brand-solid)]">calendar_month</span>
                 </div>
-                <span class="badge bg-white bg-opacity-25 py-2 px-3 rounded-2 fw-medium">Năm 2023</span>
+                <span class="badge bg-[var(--sys-brand-soft)] py-2 px-3 rounded-2 fw-black italic" style="color: var(--sys-brand-solid) !important;">Năm 2023</span>
               </div>
               
-              <p class="small fw-semibold text-white-75 mb-1 text-uppercase">QUỸ PHÉP NĂM CÒN LẠI</p>
+              <p class="small fw-semibold text-[var(--sys-text-secondary)] mb-1 text-uppercase">QUỸ PHÉP NĂM CÒN LẠI</p>
               <div class="d-flex align-items-baseline gap-2 mb-4">
-                <span class="display-3 fw-bold lh-1">12</span>
-                <span class="h5 fw-medium">ngày</span>
+                <span class="display-3 font-bold text-[var(--sys-text-primary)] lh-1">12</span>
+                <span class="h5 fw-medium text-[var(--sys-text-secondary)]">ngày</span>
               </div>
               
               <div class="mt-auto">
-                <div class="d-flex justify-content-between x-small text-white-75 fw-medium mb-2 text-uppercase">
+                <div class="d-flex justify-content-between x-small text-[var(--sys-text-secondary)] fw-medium mb-2 text-uppercase">
                   <span>ĐÃ DÙNG: 6</span>
                   <span>TỔNG: 18</span>
                 </div>
-                <div class="progress rounded-pill bg-white bg-opacity-25" style="height: 12px;">
-                  <div class="progress-bar bg-white rounded-pill" role="progressbar" style="width: 33%;"></div>
+                <div class="progress rounded-pill bg-[var(--sys-bg-hover)]" style="height: 12px;">
+                  <div class="progress-bar bg-[var(--sys-brand-solid)] rounded-pill" role="progressbar" style="width: 33%;"></div>
                 </div>
               </div>
             </div>

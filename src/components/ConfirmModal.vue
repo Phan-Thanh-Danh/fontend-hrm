@@ -22,8 +22,8 @@
           <div :class="[
             'w-20 h-20 rounded-full flex items-center justify-center mb-6 shadow-sm transition-all duration-300',
             state.type === 'confirm' 
-              ? 'bg-amber-50 dark:bg-amber-900/20 text-amber-500' 
-              : 'bg-[var(--sys-accent)]/10 text-[var(--sys-accent)]'
+              ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)]' 
+              : 'bg-[var(--sys-info-soft)] text-[var(--sys-info-text)]'
           ]">
             <span class="material-symbols-rounded text-[40px] transition-all" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 48">
               {{ state.type === 'confirm' ? 'help' : 'info' }}
@@ -42,7 +42,7 @@
             <button 
               v-if="state.type === 'confirm'"
               @click="confirmAction(false)" 
-              class="flex-1 py-3.5 rounded-2xl text-xs font-bold transition-all uppercase tracking-widest border border-[var(--sys-border)] text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)]/50 active:scale-95"
+              class="flex-1 py-3.5 rounded-2xl text-xs font-bold transition-all uppercase tracking-widest border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] active:scale-95"
             >
               Hủy bỏ
             </button>
@@ -50,11 +50,11 @@
             <!-- Primary Button (Confirm/OK) -->
             <button 
               @click="confirmAction(true)" 
-              class="flex-1 py-3.5 rounded-2xl text-xs font-bold text-white shadow-lg transition-all focus:outline-none uppercase tracking-widest active:scale-95"
+              class="flex-1 py-3.5 rounded-2xl text-xs font-bold transition-all focus:outline-none uppercase tracking-widest active:scale-95"
               :class="[
                 state.type === 'confirm' 
-                  ? 'bg-amber-500 hover:bg-amber-600 shadow-amber-500/20' 
-                  : 'bg-[var(--sys-accent)] hover:brightness-110 shadow-[var(--sys-accent)]/20'
+                  ? 'bg-[var(--sys-warning-solid)] text-white hover:bg-[var(--sys-warning-solid)]/90 shadow-lg shadow-[var(--sys-warning-solid)]/20' 
+                  : 'bg-[var(--sys-brand-solid)] text-white hover:bg-[var(--sys-brand-hover)] shadow-lg shadow-[var(--sys-brand-solid)]/20'
               ]"
             >
               {{ state.type === 'confirm' ? 'Xác nhận' : 'Đóng' }}

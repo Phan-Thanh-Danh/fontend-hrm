@@ -1,13 +1,13 @@
 <template>
   <div
-    class="min-h-screen font-[Roboto,Inter,sans-serif] transition-colors duration-300 bg-[var(--sys-bg-page)]"
+    class="min-h-screen font-[Roboto,Inter,sans-serif] transition-colors duration-300 bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)]"
   >
 
     <!-- ═══════════════════════════════════════════════
          M3 TOP APP BAR
     ═══════════════════════════════════════════════ -->
     <header
-      class="fixed top-0 left-0 right-0 z-40 flex items-center h-16 px-2 gap-1 transition-colors duration-300 bg-[var(--sys-bg-surface)] border-b border-[var(--sys-border)]"
+      class="fixed top-0 left-0 right-0 z-40 flex items-center h-16 px-2 gap-1 transition-colors duration-300 bg-[var(--sys-bg-surface)] border-b border-[var(--sys-border-subtle)]"
       :class="isDark
         ? 'shadow-[0_1px_3px_oklch(0_0_0/0.4)]'
         : 'shadow-[0_1px_2px_oklch(0_0_0/0.07),0_2px_4px_oklch(0_0_0/0.05)]'"
@@ -16,7 +16,7 @@
       <button
         @click="handleMenuToggle"
         aria-label="Toggle sidebar"
-        class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)]"
+        class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
       >
         <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">menu</span>
       </button>
@@ -285,29 +285,24 @@
       :class="[
         sidebarExpanded ? 'w-[280px]' : 'w-20',
         isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-        isDark
-          ? 'bg-[oklch(0.165_0.015_265)] border-r border-[oklch(0.3_0.025_265)]'
-          : 'bg-white border-r border-[oklch(0.88_0.012_265)]'
+        'bg-[var(--sys-bg-surface)] border-r border-[var(--sys-border-subtle)]'
       ]"
     >
       <!-- Sidebar header with collapse toggle (desktop) -->
       <div
-        class="shrink-0 h-12 flex items-center px-3 border-b"
-        :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.88_0.012_265)]'"
+        class="shrink-0 h-12 flex items-center px-3 border-b border-[var(--sys-border-subtle)]"
       >
         <!-- Icon logo (always visible) -->
         <span
-          class="material-symbols-rounded shrink-0 transition-colors duration-200"
+          class="material-symbols-rounded shrink-0 transition-colors duration-200 text-[var(--sys-brand-solid)]"
           style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24"
-          :class="isDark ? 'text-[oklch(0.75_0.14_265)]' : 'text-[oklch(0.48_0.195_265)]'"
         >apps</span>
 
         <!-- Label text: visible only when expanded -->
         <span
-          class="overflow-hidden whitespace-nowrap text-xs font-bold uppercase tracking-[0.12em] transition-all duration-300 ml-2"
+          class="overflow-hidden whitespace-nowrap text-xs font-bold uppercase tracking-[0.12em] transition-all duration-300 ml-2 text-[var(--sys-text-secondary)]"
           :class="[
-            sidebarExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0 ml-0 pointer-events-none',
-            isDark ? 'text-[oklch(0.6_0.025_265)]' : 'text-[oklch(0.62_0.025_265)]'
+            sidebarExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0 ml-0 pointer-events-none'
           ]"
         >Menu</span>
 
@@ -315,7 +310,7 @@
         <!-- Chevron collapse toggle -->
         <button
           @click="sidebarExpanded = !sidebarExpanded"
-          class="hidden lg:flex ml-auto w-8 h-8 rounded-full items-center justify-center transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)] hover:text-[var(--sys-text-primary)]"
+          class="hidden lg:flex ml-auto w-8 h-8 rounded-full items-center justify-center transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] hover:text-[var(--sys-text-primary)]"
           :aria-label="sidebarExpanded ? 'Thu gọn sidebar' : 'Mở rộng sidebar'"
         >
           <span
@@ -375,7 +370,7 @@
 
       <!-- Sidebar footer: Settings + User -->
       <div
-        class="shrink-0 border-t border-[var(--sys-border)] py-2"
+        class="shrink-0 border-t border-[var(--sys-border-subtle)] py-2"
         :class="[
           sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'
         ]"
@@ -534,10 +529,12 @@ export const SidebarItem = defineComponent({
       const RouterLink = resolveComponent('RouterLink');
 
       // Active pill bg
-      const activeBg = 'bg-[var(--sys-accent)]';
-      const hoverBg  = 'hover:bg-[var(--sys-border)]';
-      const activeText = 'text-[var(--sys-accent-text)]';
+      const activeBg = 'bg-[var(--sys-brand-soft)]';
+      const hoverBg  = 'hover:bg-[var(--sys-bg-hover)]';
+      const activeText = 'text-[var(--sys-brand-soft-text)]';
+      const activeIcon = 'text-[var(--sys-brand-solid)]';
       const inactiveText = 'text-[var(--sys-text-secondary)]';
+      const inactiveIcon = 'text-[var(--sys-icon-default)]';
       const labelText = 'text-[var(--sys-text-primary)]';
 
       // ── DRAWER (expanded) ──
@@ -561,7 +558,7 @@ export const SidebarItem = defineComponent({
             h('span', {
               class: [
                 'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-0 scale-50 ${activeText}` : `opacity-100 scale-100 ${inactiveText}`,
+                props.isActive ? `opacity-0 scale-50 ${activeIcon}` : `opacity-100 scale-100 ${inactiveIcon}`,
               ].join(' '),
               style: "font-size:22px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
             }, props.icon),
@@ -569,7 +566,7 @@ export const SidebarItem = defineComponent({
             h('span', {
               class: [
                 'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-100 scale-100 ${activeText}` : `opacity-0 scale-150 ${inactiveText}`,
+                props.isActive ? `opacity-100 scale-100 ${activeIcon}` : `opacity-0 scale-150 ${inactiveIcon}`,
               ].join(' '),
               style: "font-size:22px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
             }, props.icon),
@@ -621,7 +618,7 @@ export const SidebarItem = defineComponent({
           // Active dot for Rail
           h('div', {
             class: [
-              'absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[var(--sys-accent)] transition-all duration-300',
+              'absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[var(--sys-brand-solid)] transition-all duration-300',
               props.isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0',
             ].join(' '),
           }),
@@ -631,14 +628,14 @@ export const SidebarItem = defineComponent({
             h('span', {
               class: [
                 'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-0 scale-50 ${activeText}` : `opacity-100 scale-100 ${inactiveText}`,
+                props.isActive ? `opacity-0 scale-50 ${activeIcon}` : `opacity-100 scale-100 ${inactiveIcon}`,
               ].join(' '),
               style: "font-size:21px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
             }, props.icon),
             h('span', {
               class: [
                 'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-100 scale-100 ${activeText}` : `opacity-0 scale-150 ${inactiveText}`,
+                props.isActive ? `opacity-100 scale-100 ${activeIcon}` : `opacity-0 scale-150 ${inactiveIcon}`,
               ].join(' '),
               style: "font-size:21px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
             }, props.icon),

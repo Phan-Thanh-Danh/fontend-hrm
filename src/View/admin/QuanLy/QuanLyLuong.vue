@@ -3,23 +3,23 @@
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Chi trả Tiền lương</h1>
-        <p class="text-slate-500 text-sm font-medium italic">Bảng kê thu nhập, phụ cấp và các khoản khấu trừ nhân sự.</p>
+        <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight">Chi trả Tiền lương</h1>
+        <p class="text-[var(--sys-text-secondary)] text-sm font-medium italic">Bảng kê thu nhập, phụ cấp và các khoản khấu trừ nhân sự.</p>
       </div>
       <div class="flex items-center gap-3">
-        <div class="bg-white p-1 rounded-2xl border border-slate-100 flex items-center shadow-sm">
+        <div class="bg-[var(--sys-bg-surface)] p-1 rounded-2xl border border-[var(--sys-border-subtle)] flex items-center shadow-sm">
            <button 
              v-for="view in ['grid', 'list']" 
              :key="view"
              @click="viewMode = view"
-             :class="`p-2 rounded-xl transition-all ${viewMode === view ? 'bg-slate-100 text-indigo-600' : 'text-slate-400'}`"
+             :class="`p-2 rounded-xl transition-all ${viewMode === view ? 'bg-[var(--sys-bg-hover)] text-[var(--sys-brand-solid)]' : 'text-[var(--sys-text-secondary)]'}`"
            >
              <span class="material-symbols-outlined text-[20px]">{{ view === 'grid' ? 'grid_view' : 'format_list_bulleted' }}</span>
            </button>
         </div>
         <button 
           @click="showCreatePeriodModal = true"
-          class="px-5 py-2.5 bg-indigo-600 rounded-xl font-black text-white hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all flex items-center gap-2"
+          class="px-5 py-2.5 bg-[var(--sys-brand-solid)] rounded-xl font-black text-white hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid-lch-30)] transition-all flex items-center gap-2"
         >
           <span class="material-symbols-outlined text-[20px]">add_task</span>
           Chốt lương tháng {{ currentMonth }}
@@ -29,86 +29,86 @@
 
     <!-- Active Periods -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="period in periods" :key="period.id" class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col group hover:shadow-xl transition-all duration-300">
+      <div v-for="period in periods" :key="period.id" class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col group hover:shadow-xl transition-all duration-300">
         <div class="p-8">
           <div class="flex items-center justify-between mb-6">
-            <span :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusColor(period.status)} text-xs`">
+            <span :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusColor(period.status)}` text-xs`">
               {{ period.status.replace('_', ' ') }}
             </span>
-            <div class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+            <div class="w-8 h-8 rounded-full bg-[var(--sys-bg-hover)] flex items-center justify-center text-[var(--sys-text-secondary)] group-hover:bg-[var(--sys-brand-soft)] group-hover:text-[var(--sys-brand-solid)] transition-colors">
                <span class="material-symbols-outlined text-sm">more_vert</span>
             </div>
           </div>
-          <h3 class="text-xl font-black text-slate-900 mb-1">Tháng {{ period.month }}/{{ period.year }}</h3>
-          <p class="text-[11px] font-bold text-slate-400 tracking-widest uppercase mb-8 italic">Phạm vi: {{ period.range }}</p>
+          <h3 class="text-xl font-black text-[var(--sys-text-primary)] mb-1">Tháng {{ period.month }}/{{ period.year }}</h3>
+          <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] tracking-widest uppercase mb-8 italic">Phạm vi: {{ period.range }}</p>
           
           <div class="grid grid-cols-2 gap-4">
-            <div class="p-4 bg-slate-50/50 rounded-2xl">
-              <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Tổng quỹ</p>
-              <p class="text-sm font-black text-slate-900">{{ formatCurrency(period.total_fund) }}</p>
+            <div class="p-4 bg-[var(--sys-bg-hover)] rounded-2xl">
+              <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase mb-1">Tổng quỹ</p>
+              <p class="text-sm font-black text-[var(--sys-text-primary)]">{{ formatCurrency(period.total_fund) }}</p>
             </div>
-            <div class="p-4 bg-slate-50/50 rounded-2xl">
-              <p class="text-[10px] font-black text-slate-400 uppercase mb-1">Nhân sự</p>
-              <p class="text-sm font-black text-slate-900">{{ period.employee_count }} NV</p>
+            <div class="p-4 bg-[var(--sys-bg-hover)] rounded-2xl">
+              <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase mb-1">Nhân sự</p>
+              <p class="text-sm font-black text-[var(--sys-text-primary)]">{{ period.employee_count }} NV</p>
             </div>
           </div>
         </div>
-        <div class="mt-auto px-8 py-6 bg-slate-50/50 border-t border-slate-50 flex items-center justify-between">
-            <button @click="viewDetails(period)" class="text-xs font-black text-indigo-600 uppercase tracking-widest hover:tracking-[0.15em] transition-all">Chi tiết bảng lương</button>
-            <span class="text-[10px] font-bold text-slate-400 italic">Cập nhật: {{ period.updated_at }}</span>
+        <div class="mt-auto px-8 py-6 bg-[var(--sys-bg-hover)] border-t border-[var(--sys-border-subtle)] flex items-center justify-between">
+            <button @click="viewDetails(period)" class="text-xs font-black text-[var(--sys-brand-solid)] uppercase tracking-widest hover:tracking-[0.15em] transition-all">Chi tiết bảng lương</button>
+            <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] italic">Cập nhật: {{ period.updated_at }}</span>
         </div>
       </div>
     </div>
 
     <!-- Details Table (Visible when a period is selected) -->
-    <div v-if="selectedPeriod" class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden flex flex-col">
-       <div class="px-8 py-6 border-b border-slate-50 flex items-center justify-between bg-white sticky top-0 z-10">
+    <div v-if="selectedPeriod" class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col">
+       <div class="px-8 py-6 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-surface)] sticky top-0 z-10">
           <div class="flex items-center gap-3">
-             <div class="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+             <div class="w-10 h-10 rounded-2xl bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center">
                 <span class="material-symbols-outlined">payments</span>
              </div>
              <div>
-                <h3 class="font-black text-slate-900">Chi tiết lương tháng {{ selectedPeriod.month }}/{{ selectedPeriod.year }}</h3>
-                <p class="text-xs font-bold text-slate-400 italic">Double-click vào dòng để chỉnh sửa nhanh</p>
+                <h3 class="font-black text-[var(--sys-text-primary)]">Chi tiết lương tháng {{ selectedPeriod.month }}/{{ selectedPeriod.year }}</h3>
+                <p class="text-xs font-bold text-[var(--sys-text-secondary)] italic">Double-click vào dòng để chỉnh sửa nhanh</p>
              </div>
           </div>
           <div class="flex items-center gap-2">
-             <button class="px-4 py-2 bg-slate-100 text-slate-600 rounded-xl text-xs font-black hover:bg-slate-200 transition-all">Xuất File Excel</button>
-             <button v-if="selectedPeriod.status === 'ĐANG_XỬ_LÝ'" @click="approvePeriod" class="px-4 py-2 bg-green-600 text-white rounded-xl text-xs font-black shadow-lg shadow-green-100 transition-all">Phê duyệt & Chốt</button>
+             <button class="px-4 py-2 bg-[var(--sys-bg-hover)] text-[var(--sys-text-primary)] rounded-xl text-xs font-black hover:bg-[var(--sys-bg-hover)] transition-all">Xuất File Excel</button>
+             <button v-if="selectedPeriod.status === 'ĐANG_XỬ_LÝ'" @click="approvePeriod" class="px-4 py-2 bg-[var(--sys-success-solid)] text-white rounded-xl text-xs font-black shadow-lg shadow-[var(--sys-success-solid-lch-30)] transition-all">Phê duyệt & Chốt</button>
           </div>
        </div>
 
        <div class="overflow-x-auto text-sm">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="bg-slate-50/30">
-                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Nhân viên</th>
-                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Lương CB</th>
-                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Phụ cấp</th>
-                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Khấu trừ</th>
-                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Thực nhận</th>
-                <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-right">Thao tác</th>
+              <tr class="bg-[var(--sys-bg-hover)]">
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Nhân viên</th>
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Lương CB</th>
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Phụ cấp</th>
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Khấu trừ</th>
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Thực nhận</th>
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-right">Thao tác</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-50">
+            <tbody class="divide-y divide-[var(--sys-border-subtle)]">
               <tr v-for="item in salaryItems" :key="item.id" 
-                  class="group transition-all duration-200 border-b border-slate-50 bg-white hover:bg-slate-50">
+                  class="group transition-all duration-200 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]">
                 <td class="px-8 py-5 bg-transparent">
                    <div class="flex items-center gap-3 bg-transparent">
-                      <div class="w-8 h-8 rounded-full bg-transparent flex items-center justify-center font-black text-slate-400 text-xs border border-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
+                      <div class="w-8 h-8 rounded-full bg-transparent flex items-center justify-center font-black text-[var(--sys-text-secondary)] text-xs border border-[var(--sys-border-subtle)] group-hover:bg-[var(--sys-brand-soft)] group-hover:text-[var(--sys-brand-solid)] transition-colors">
                          {{ item.name.charAt(0) }}
                       </div>
                       <div class="bg-transparent">
-                         <p class="font-black text-slate-900 mb-0.5 bg-transparent">{{ item.name }}</p>
-                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest bg-transparent">{{ item.code }}</p>
+                         <p class="font-black text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ item.name }}</p>
+                         <p class="text-[10px] text-[var(--sys-text-secondary)] font-bold uppercase tracking-widest bg-transparent">{{ item.code }}</p>
                       </div>
                    </div>
                 </td>
-                <td class="px-8 py-5 font-bold text-slate-600 bg-transparent">{{ formatCurrency(item.base) }}</td>
-                <td class="px-8 py-5 font-bold text-green-600 bg-transparent">+{{ formatCurrency(item.bonus) }}</td>
-                <td class="px-8 py-5 font-bold text-red-500 bg-transparent">-{{ formatCurrency(item.deduction) }}</td>
+                <td class="px-8 py-5 font-bold text-[var(--sys-text-secondary)] bg-transparent">{{ formatCurrency(item.base) }}</td>
+                <td class="px-8 py-5 font-bold text-[var(--sys-success-text)] bg-transparent">+{{ formatCurrency(item.bonus) }}</td>
+                <td class="px-8 py-5 font-bold text-[var(--sys-danger-text)] bg-transparent">-{{ formatCurrency(item.deduction) }}</td>
                 <td class="px-8 py-5">
-                   <p class="font-black text-indigo-600 text-[15px]">{{ formatCurrency(item.base + item.bonus - item.deduction) }}</p>
+                   <p class="font-black text-[var(--sys-brand-solid)] text-[15px]">{{ formatCurrency(item.base + item.bonus - item.deduction) }}</p>
                 </td>
                 <td class="px-8 py-5 text-right">
                    <button @click="editSalary(item)" :disabled="selectedPeriod.status !== 'ĐANG_XỬ_LÝ'" class="btn-action-icon" title="Điều chỉnh thu nhập">
@@ -132,52 +132,52 @@
         leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
       >
         <div v-if="showEditModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="showEditModal = false"></div>
-          <div class="relative z-[10000] bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
-            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white text-left">
+          <div class="fixed inset-0 w-screen h-screen bg-black/40 z-[9999] overflow-hidden backdrop-blur-sm" @click="showEditModal = false"></div>
+          <div class="relative z-[10000] bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)] w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+            <div class="px-8 py-6 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-surface-elevated)] text-left">
               <div class="text-left">
-                <h3 class="text-xl font-black text-slate-900 text-left">Điều chỉnh thu nhập</h3>
-                <p class="text-xs text-slate-500 font-bold italic mt-0.5 text-left">Thay đổi sẽ áp dụng cho kỳ thanh toán hiện tại</p>
+                <h3 class="text-xl font-black text-[var(--sys-text-primary)] text-left">Điều chỉnh thu nhập</h3>
+                <p class="text-xs text-[var(--sys-text-secondary)] font-bold italic mt-0.5 text-left">Thay đổi sẽ áp dụng cho kỳ thanh toán hiện tại</p>
               </div>
-              <button @click="showEditModal = false" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all text-slate-400">
+              <button @click="showEditModal = false" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)]">
                 <span class="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <div class="p-8 space-y-5">
-               <div class="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center font-black text-blue-600">{{ editForm.name.charAt(0) }}</div>
+               <div class="mb-6 p-4 bg-[var(--sys-brand-soft)] rounded-2xl border border-[var(--sys-brand-border)] flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center font-black text-[var(--sys-brand-solid)]">{{ editForm.name.charAt(0) }}</div>
                   <div class="text-left">
-                    <p class="font-black text-blue-900 text-left">{{ editForm.name }}</p>
-                    <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest text-left">{{ editForm.code }}</p>
+                    <p class="font-black text-[var(--sys-brand-soft-text)] text-left">{{ editForm.name }}</p>
+                    <p class="text-[10px] text-[var(--sys-brand-soft-text)]/70 font-bold uppercase tracking-widest text-left">{{ editForm.code }}</p>
                   </div>
                </div>
 
-               <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Lương cơ bản (Theo HĐ)</label>
-                  <input v-model="editForm.base" type="number" disabled class="w-full px-4 py-3 bg-slate-100 border border-slate-100 rounded-xl text-sm font-bold text-slate-500 cursor-not-allowed text-left">
-               </div>
+                <div>
+                  <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Lương cơ bản (Theo HĐ)</label>
+                  <input v-model="editForm.base" type="number" disabled class="w-full px-4 py-3 bg-[var(--sys-bg-hover)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold text-[var(--sys-text-secondary)] cursor-not-allowed text-left">
+                </div>
 
-               <div class="grid grid-cols-2 gap-4 text-left">
+                <div class="grid grid-cols-2 gap-4 text-left">
                   <div class="text-left">
-                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Tổng phụ cấp (+)</label>
-                     <input v-model="editForm.bonus" type="number" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all font-black text-blue-600 text-left">
+                     <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Tổng phụ cấp (+)</label>
+                     <input v-model="editForm.bonus" type="number" class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all font-black text-[var(--sys-success-text)] text-left">
                   </div>
                   <div class="text-left">
-                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Tổng khấu trừ (-)</label>
-                     <input v-model="editForm.deduction" type="number" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-red-600/5 focus:border-red-600 transition-all font-black text-red-500 text-left">
+                     <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Tổng khấu trừ (-)</label>
+                     <input v-model="editForm.deduction" type="number" class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-danger-solid)]/5 focus:border-[var(--sys-danger-solid)] transition-all font-black text-[var(--sys-danger-text)] text-left">
                   </div>
                </div>
 
-               <div class="mt-6 p-6 bg-slate-900 rounded-[2rem] shadow-xl text-left">
-                   <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 italic text-left">Thực nhận dự kiến</p>
-                   <p class="text-2xl font-black text-white tracking-widest text-left">{{ formatCurrency(editForm.base + editForm.bonus - editForm.deduction) }}</p>
+                <div class="mt-6 p-6 bg-[var(--sys-bg-surface-elevated)] rounded-[2rem] shadow-xl text-left border border-[var(--sys-border-subtle)]">
+                   <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic text-left">Thực nhận dự kiến</p>
+                   <p class="text-2xl font-black text-[var(--sys-text-primary)] tracking-widest text-left">{{ formatCurrency(editForm.base + editForm.bonus - editForm.deduction) }}</p>
                </div>
             </div>
 
-            <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex justify-end gap-3 text-left">
-              <button @click="showEditModal = false" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all uppercase tracking-widest">Hủy</button>
-              <button @click="saveSalaryAdjustment" class="px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all uppercase tracking-widest">Lưu điều chỉnh</button>
+             <div class="px-8 py-6 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-hover)] flex justify-end gap-3 text-left">
+              <button @click="showEditModal = false" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] rounded-lg transition-all uppercase tracking-widest">Hủy</button>
+              <button @click="saveSalaryAdjustment" class="px-8 py-2.5 min-h-[44px] bg-[var(--sys-brand-solid)] text-white rounded-lg text-sm font-black hover:bg-[var(--sys-brand-hover)] shadow-lg shadow-[var(--sys-brand-solid-lch-30)] transition-all uppercase tracking-widest">Lưu điều chỉnh</button>
             </div>
           </div>
         </div>
@@ -217,10 +217,10 @@ const formatCurrency = (val) => {
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'ĐÃ_THANH_TOÁN': return 'bg-green-100 text-green-700';
-    case 'ĐANG_XỬ_LÝ': return 'bg-indigo-100 text-indigo-700';
-    case 'CHỜ_DUYỆT': return 'bg-amber-100 text-amber-700';
-    default: return 'bg-slate-100 text-slate-700';
+    case 'ĐÃ_THANH_TOÁN': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)]';
+    case 'ĐANG_XỬ_LÝ': return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)]';
+    case 'CHỜ_DUYỆT': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)]';
+    default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)]';
   }
 };
 
@@ -261,7 +261,7 @@ selectedPeriod.value = periods.value[1];
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: var(--sys-border-subtle);
   border-radius: 10px;
 }
 </style>

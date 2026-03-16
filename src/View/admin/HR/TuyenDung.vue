@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
       <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Tuyển dụng</h1>
-        <p class="text-slate-500 text-sm font-medium italic">Quản lý tin tuyển dụng, theo dõi ứng viên và đánh giá hồ sơ bằng AI.</p>
+        <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight">Quản lý Tuyển dụng</h1>
+        <p class="text-[var(--sys-text-secondary)] text-sm font-medium italic">Quản lý tin tuyển dụng, theo dõi ứng viên và đánh giá hồ sơ bằng AI.</p>
       </div>
     </div>
 
@@ -13,14 +13,14 @@
       <!-- Left Column: Filter & Table -->
       <div class="xl:col-span-7 space-y-4">
         <!-- Filters -->
-        <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
+        <div class="bg-[var(--sys-bg-surface)] p-4 rounded-3xl border border-[var(--sys-border-subtle)] shadow-sm">
           <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
             <div class="md:col-span-5 relative group">
-              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--sys-text-secondary)]">search</span>
               <input 
                 type="text" 
                 placeholder="Tìm tên, vị trí..." 
-                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold"
+                class="w-full pl-10 pr-4 py-2.5 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-[var(--sys-brand-solid)]/20 focus:border-[var(--sys-brand-solid)] transition-all font-bold text-[var(--sys-text-primary)]"
               >
             </div>
             <div class="md:col-span-4">
@@ -41,43 +41,43 @@
         </div>
 
         <!-- Candidate Table -->
-        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden text-sm">
+        <div class="bg-[var(--sys-bg-surface)] rounded-3xl border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden text-sm">
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="bg-slate-50/50">
-                  <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Ứng viên</th>
-                  <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Vị trí</th>
-                  <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-center">Điểm AI</th>
-                  <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Ngày nộp</th>
+                <tr class="bg-[var(--sys-bg-surface-elevated)]/50">
+                  <th class="px-6 py-4 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Ứng viên</th>
+                  <th class="px-6 py-4 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Vị trí</th>
+                  <th class="px-6 py-4 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-center">Điểm AI</th>
+                  <th class="px-6 py-4 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Ngày nộp</th>
                 </tr>
               </thead>
               <tbody>
                 <tr v-for="(candidate, index) in filteredCandidates" :key="candidate.id" 
                     @click="activeCandidateId = candidate.id"
-                    class="group transition-all duration-200 cursor-pointer border-b border-slate-50"
-                    :class="activeCandidateId === candidate.id ? 'bg-blue-50/50' : 'bg-white hover:bg-slate-50'">
+                    class="group transition-all duration-200 cursor-pointer border-b border-[var(--sys-border-subtle)]"
+                    :class="activeCandidateId === candidate.id ? 'bg-[var(--sys-brand-soft)]' : 'bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]'">
                   <td class="px-6 py-4 relative bg-transparent">
-                    <div v-if="activeCandidateId === candidate.id" class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600"></div>
+                    <div v-if="activeCandidateId === candidate.id" class="absolute left-0 top-0 bottom-0 w-1 bg-[var(--sys-brand-solid)]"></div>
                     <div class="flex items-center gap-3 bg-transparent">
-                      <div class="w-10 h-10 rounded-xl bg-transparent border border-slate-200 text-slate-900 font-bold flex items-center justify-center text-xs">
+                      <div class="w-10 h-10 rounded-xl bg-transparent border border-[var(--sys-border)] text-[var(--sys-text-primary)] font-bold flex items-center justify-center text-xs">
                         {{ candidate.initial }}
                       </div>
                       <div class="bg-transparent">
-                        <p class="text-sm font-black text-slate-900 bg-transparent">{{ candidate.name }}</p>
+                        <p class="text-sm font-black text-[var(--sys-text-primary)] bg-transparent">{{ candidate.name }}</p>
                       </div>
                     </div>
                   </td>
-                  <td class="px-6 py-4 text-slate-500 font-bold bg-transparent">{{ candidate.position }}</td>
+                  <td class="px-6 py-4 text-[var(--sys-text-secondary)] font-bold bg-transparent">{{ candidate.position }}</td>
                   <td class="px-6 py-4 text-center bg-transparent">
                     <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm transition-all" :style="getAiScoreStyle(candidate.aiScore)">
                       {{ candidate.aiScore }}/100
                     </span>
                   </td>
-                  <td class="px-6 py-4 text-slate-400 font-medium bg-transparent">{{ candidate.date }}</td>
+                  <td class="px-6 py-4 text-[var(--sys-text-disabled)] font-medium bg-transparent">{{ candidate.date }}</td>
                 </tr>
                 <tr v-if="filteredCandidates.length === 0">
-                  <td colspan="4" class="px-6 py-10 text-center text-slate-400 font-bold italic bg-white">
+                  <td colspan="4" class="px-6 py-10 text-center text-[var(--sys-text-disabled)] font-bold italic bg-[var(--sys-bg-surface)]">
                     Không có ứng viên nào thuộc danh sách này.
                   </td>
                 </tr>
@@ -89,15 +89,15 @@
 
       <!-- Right Column: CV Preview & AI -->
       <div class="xl:col-span-5 h-full">
-        <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm h-full overflow-hidden flex flex-col">
+        <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm h-full overflow-hidden flex flex-col">
           <!-- CV Preview Header -->
-          <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
-            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Xem trước CV: CV_NGUYENVANANH.PDF</span>
+          <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-surface)]">
+            <span class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic">Xem trước CV: CV_NGUYENVANANH.PDF</span>
             <div class="flex gap-2">
-              <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-slate-100 transition-all">
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-active)] transition-all">
                 <span class="material-symbols-outlined text-[18px]">zoom_in</span>
               </button>
-              <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-slate-100 transition-all">
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-active)] transition-all">
                 <span class="material-symbols-outlined text-[18px]">download</span>
               </button>
             </div>
@@ -120,43 +120,43 @@
             </div>
           </div>
 
-          <!-- Dynamic Assessment Panel -->
-          <div class="p-8 border-t border-slate-100 bg-white space-y-6">
+          <!-- Assessment -->
+          <div class="p-8 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] space-y-6">
             <div v-if="needsScheduling(activeCandidate)">
-              <h4 class="text-xs font-black text-blue-600 uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
+              <h4 class="text-xs font-black text-[var(--sys-brand-solid)] uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
                 <span class="material-symbols-outlined text-[20px]">calendar_month</span> Thiết lập lịch phỏng vấn
               </h4>
               <div class="grid grid-cols-2 gap-4 mb-6">
                 <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày</label>
-                  <input type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                  <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic">Ngày</label>
+                  <input type="date" class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)]">
                 </div>
                 <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Giờ</label>
-                  <input type="time" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                  <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic">Giờ</label>
+                  <input type="time" class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)]">
                 </div>
               </div>
-              <button class="w-full py-4 bg-indigo-600 text-white rounded-2xl text-xs font-black hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all uppercase tracking-[0.2em]">Lưu lịch & Gửi mail</button>
+              <button class="w-full py-4 bg-[var(--sys-brand-solid)] text-white rounded-2xl text-xs font-black hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid)]/20 transition-all uppercase tracking-[0.2em]">Lưu lịch & Gửi mail</button>
             </div>
 
             <div v-else>
-              <h4 class="text-xs font-black text-indigo-600 uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
+              <h4 class="text-xs font-black text-[var(--sys-brand-solid)] uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
                 <span class="material-symbols-outlined text-[20px]">rate_review</span> Phỏng vấn xong - Đánh giá
               </h4>
               <div class="mb-4">
-                <textarea class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all" rows="2" placeholder="Nhập nhận xét chi tiết..."></textarea>
+                <textarea class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)]" rows="2" placeholder="Nhập nhận xét chi tiết..."></textarea>
               </div>
               <div class="flex gap-6 mb-6 px-2">
-                <label class="flex items-center gap-2 cursor-pointer group">
-                  <input type="radio" :name="'result_' + activeCandidate.id" class="w-4 h-4 text-green-600 focus:ring-green-500 border-slate-200">
-                  <span class="text-sm font-black text-green-600 uppercase tracking-widest">PASS</span>
+                <label class="flex items-center gap-2 cursor-pointer group text-[var(--sys-success-text)]">
+                  <input type="radio" :name="'result_' + activeCandidate.id" class="w-4 h-4 text-[var(--sys-success-solid)] focus:ring-[var(--sys-success-solid)] border-[var(--sys-border)]">
+                  <span class="text-sm font-black uppercase tracking-widest">PASS</span>
                 </label>
-                <label class="flex items-center gap-2 cursor-pointer group">
-                  <input type="radio" :name="'result_' + activeCandidate.id" class="w-4 h-4 text-slate-400 focus:ring-slate-500 border-slate-200 border-2">
-                  <span class="text-sm font-black text-slate-400 uppercase tracking-widest">FAIL</span>
+                <label class="flex items-center gap-2 cursor-pointer group text-[var(--sys-danger-text)]">
+                  <input type="radio" :name="'result_' + activeCandidate.id" class="w-4 h-4 text-[var(--sys-danger-solid)] focus:ring-[var(--sys-danger-solid)] border-[var(--sys-border)] border-2">
+                  <span class="text-sm font-black uppercase tracking-widest">FAIL</span>
                 </label>
               </div>
-              <button class="w-full py-4 bg-slate-900 text-white rounded-2xl text-xs font-black hover:bg-slate-800 shadow-xl shadow-slate-200 transition-all uppercase tracking-[0.2em]">Lưu kết quả thao tác</button>
+              <button class="w-full py-4 bg-[var(--sys-text-primary)] text-[var(--sys-bg-surface)] rounded-2xl text-xs font-black hover:opacity-90 shadow-xl shadow-[var(--sys-text-primary)]/10 transition-all uppercase tracking-[0.2em]">Lưu kết quả thao tác</button>
             </div>
           </div>
         </div>
@@ -164,13 +164,13 @@
     </div>
 
     <!-- Bottom List -->
-    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+    <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden">
       <!-- Tabs -->
-      <div class="flex p-1 bg-slate-50 border-b border-slate-100">
-        <button class="flex-1 py-3 text-[11px] font-black uppercase tracking-widest text-blue-600 bg-white rounded-2xl shadow-sm transition-all">
+      <div class="flex p-1 bg-[var(--sys-bg-page)] border-b border-[var(--sys-border-subtle)]">
+        <button class="flex-1 py-3 text-[11px] font-black uppercase tracking-widest text-[var(--sys-brand-solid)] bg-[var(--sys-bg-surface)] rounded-2xl shadow-sm transition-all">
           Danh sách Trúng tuyển (12)
         </button>
-        <button class="flex-1 py-3 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-all">
+        <button class="flex-1 py-3 text-[11px] font-black uppercase tracking-widest text-[var(--sys-text-secondary)] hover:text-[var(--sys-text-primary)] transition-all">
           Danh sách Từ chối (45)
         </button>
       </div>
@@ -178,28 +178,28 @@
       <!-- Horizontal candidate list -->
       <div class="p-6">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          <div v-for="i in 4" :key="i" class="p-4 rounded-3xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50/30 transition-all flex items-center justify-between group">
+          <div v-for="i in 4" :key="i" class="p-4 rounded-3xl border border-[var(--sys-border-subtle)] hover:border-[var(--sys-brand-soft)] hover:bg-[var(--sys-brand-soft)] transition-all flex items-center justify-between group">
             <div class="flex items-center gap-3">
-              <div class="w-10 h-10 rounded-xl bg-green-50 text-green-600 font-black flex items-center justify-center text-xs border border-green-100">
+              <div class="w-10 h-10 rounded-xl bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] font-black flex items-center justify-center text-xs border border-[var(--sys-success-border)]">
                 {{ i === 1 ? 'PT' : (i === 2 ? 'HM' : (i === 3 ? 'VD' : 'KL')) }}
               </div>
               <div>
-                <h6 class="text-sm font-black text-slate-900">
+                <h6 class="text-sm font-black text-[var(--sys-text-primary)]">
                   {{ i === 1 ? 'Phan Thành' : (i === 2 ? 'Hoàng My' : (i === 3 ? 'Vũ Duy' : 'Khánh Linh')) }}
                 </h6>
-                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-tighter">
                   {{ i === 1 ? 'iOS Developer' : (i === 2 ? 'Product Owner' : (i === 3 ? 'Data Scientist' : 'QA Engineer')) }}
                 </span>
               </div>
             </div>
-            <button class="text-slate-300 group-hover:text-slate-500 transition-colors">
+            <button class="text-[var(--sys-text-disabled)] group-hover:text-[var(--sys-text-secondary)] transition-colors">
               <span class="material-symbols-outlined">more_vert</span>
             </button>
           </div>
         </div>
 
-        <div class="text-center pt-6 border-t border-slate-50">
-          <a href="#" class="text-[11px] font-black text-blue-600 uppercase tracking-widest hover:underline decoration-2 underline-offset-4">Xem toàn bộ 12 ứng viên trúng tuyển</a>
+        <div class="text-center pt-6 border-t border-[var(--sys-border-subtle)]">
+          <a href="#" class="text-[11px] font-black text-[var(--sys-brand-solid)] uppercase tracking-widest hover:underline decoration-2 underline-offset-4">Xem toàn bộ 12 ứng viên trúng tuyển</a>
         </div>
       </div>
     </div>
@@ -271,9 +271,9 @@ const filteredCandidates = computed(() => {
 });
 
 const getAiScoreStyle = (score) => {
-  if (score >= 80) return 'background-color: #dcfce7; color: #16a34a; border-color: #bbf7d0;'; // Xanh lá
-  if (score >= 70) return 'background-color: #fef08a; color: #ca8a04; border-color: #fef08a;'; // Vàng
-  return 'background-color: #fee2e2; color: #ef4444; border-color: #fecaca;'; // Đỏ
+  if (score >= 80) return 'background-color: var(--sys-success-soft); color: var(--sys-success-text); border-color: var(--sys-success-border);';
+  if (score >= 70) return 'background-color: var(--sys-warning-soft); color: var(--sys-warning-text); border-color: var(--sys-warning-border);';
+  return 'background-color: var(--sys-danger-soft); color: var(--sys-danger-text); border-color: var(--sys-danger-border);';
 };
 </script>
 

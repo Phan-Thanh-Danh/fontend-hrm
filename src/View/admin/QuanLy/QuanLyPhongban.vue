@@ -3,17 +3,17 @@
     <!-- Header -->
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 text-left">
       <div class="text-left">
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight text-left">Quản lý Phòng ban</h1>
-        <p class="text-slate-500 text-sm font-medium italic text-left">Cấu trúc sơ đồ tổ chức và quản lý nhân sự theo đơn vị.</p>
+        <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight text-left">Quản lý Phòng ban</h1>
+        <p class="text-[var(--sys-text-secondary)] text-sm font-medium italic text-left">Cấu trúc sơ đồ tổ chức và quản lý nhân sự theo đơn vị.</p>
       </div>
       <div class="flex flex-wrap items-center gap-3 text-sm text-left">
         <div class="relative group hidden sm:block">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--sys-icon-default)]">search</span>
           <input 
             v-model="searchQuery"
             type="text" 
             placeholder="Tìm mã hoặc tên phòng..." 
-            class="pl-10 pr-4 py-2.5 w-64 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all font-bold"
+            class="pl-10 pr-4 py-2.5 w-64 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all font-bold text-[var(--sys-text-primary)] placeholder:text-[var(--sys-text-secondary)]"
           >
         </div>
 
@@ -25,7 +25,7 @@
 
         <button 
           @click="openModal('add')" 
-          class="px-6 py-2.5 min-h-[44px] bg-blue-600 rounded-lg font-black text-white hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all flex items-center gap-2"
+          class="px-6 py-2.5 min-h-[44px] bg-[var(--sys-brand-solid)] rounded-lg font-black text-white hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid-lch-30)] transition-all flex items-center gap-2"
         >
           <span class="material-symbols-outlined text-[20px]">add_business</span>
           Thêm đơn vị
@@ -35,66 +35,66 @@
 
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div v-for="stat in stats" :key="stat.label" class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm flex items-center gap-5">
+      <div v-for="stat in stats" :key="stat.label" class="bg-[var(--sys-bg-surface)] p-6 rounded-[2rem] border border-[var(--sys-border-subtle)] shadow-sm flex items-center gap-5">
         <div :class="`w-14 h-14 rounded-2xl flex items-center justify-center ${stat.bg} ${stat.color} shadow-inner`">
           <span class="material-symbols-outlined text-3xl">{{ stat.icon }}</span>
         </div>
         <div>
-          <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 italic">{{ stat.label }}</p>
-          <p class="text-2xl font-black text-slate-900 leading-none">{{ stat.value }}</p>
+          <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">{{ stat.label }}</p>
+          <p class="text-2xl font-black text-[var(--sys-text-primary)] leading-none">{{ stat.value }}</p>
         </div>
       </div>
     </div>
 
     <!-- List -->
-    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden text-sm">
+    <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden text-sm">
       <table class="w-full text-left border-collapse">
         <thead>
-          <tr class="bg-slate-50/50">
-            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Tên đơn vị / Mã phòng</th>
-            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Trưởng phòng</th>
-            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-center">Nhân sự</th>
-            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Trạng thái</th>
-            <th class="px-8 py-5 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-right">Thao tác</th>
+          <tr class="bg-[var(--sys-bg-hover)]">
+            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Tên đơn vị / Mã phòng</th>
+            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trưởng phòng</th>
+            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-center">Nhân sự</th>
+            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trạng thái</th>
+            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-right">Thao tác</th>
           </tr>
         </thead>
-        <tbody class="divide-y divide-slate-50">
+        <tbody class="divide-y divide-[var(--sys-border-subtle)]">
           <tr v-for="dept in filteredDepartments" :key="dept.id" 
-              class="group transition-all duration-200 border-b border-slate-50 bg-white hover:bg-slate-50">
+              class="group transition-all duration-200 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]">
             <td class="px-8 py-5 bg-transparent">
               <div class="flex items-center gap-4 bg-transparent">
-                <div class="w-10 h-10 rounded-xl bg-transparent text-slate-500 flex items-center justify-center transition-colors border border-slate-200 group-hover:bg-indigo-100 group-hover:text-indigo-600 group-hover:border-indigo-200">
+                <div class="w-10 h-10 rounded-xl bg-transparent text-[var(--sys-text-secondary)] flex items-center justify-center transition-colors border border-[var(--sys-border-subtle)] group-hover:bg-[var(--sys-brand-soft)] group-hover:text-[var(--sys-brand-solid)] group-hover:border-[var(--sys-brand-border)]">
                   <span class="material-symbols-outlined text-xl">{{ dept.icon || 'corporate_fare' }}</span>
                 </div>
                 <div class="bg-transparent">
-                  <p class="font-black text-slate-900 mb-0.5 bg-transparent">{{ dept.name }}</p>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter bg-transparent">{{ dept.code }}</p>
+                  <p class="font-black text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ dept.name }}</p>
+                  <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-tighter bg-transparent">{{ dept.code }}</p>
                 </div>
               </div>
             </td>
-            <td class="px-8 py-5 text-sm font-bold text-slate-600">
+            <td class="px-8 py-5 text-sm font-bold text-[var(--sys-text-secondary)]">
               <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-slate-300"></div>
+                <div class="w-2 h-2 rounded-full bg-[var(--sys-border-subtle)]"></div>
                 {{ dept.manager || 'Chưa bổ nhiệm' }}
               </div>
             </td>
             <td class="px-8 py-5 text-center">
-              <span class="px-3 py-1 bg-slate-100 rounded-lg font-black text-slate-600 text-[11px]">
+              <span class="px-3 py-1 bg-[var(--sys-bg-hover)] rounded-lg font-black text-[var(--sys-text-primary)] text-[11px]">
                 {{ dept.employee_count }} NV
               </span>
             </td>
             <td class="px-8 py-5">
-              <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider d-inline-flex align-items-center gap-2 border ${dept.active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`">
-                <span :class="`w-1.5 h-1.5 rounded-full ${dept.active ? 'bg-green-500' : 'bg-red-500'}`"></span>
+              <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider d-inline-flex align-items-center gap-2 border ${dept.active ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]'}`">
+                <span :class="`w-1.5 h-1.5 rounded-full ${dept.active ? 'bg-[var(--sys-success-solid)]' : 'bg-[var(--sys-danger-solid)]'}`"></span>
                 {{ dept.active ? 'Đang hoạt động' : 'Đã giải thể' }}
               </div>
             </td>
             <td class="px-8 py-5 text-right">
               <div class="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                <button @click="openModal('edit', dept)" class="btn-action-icon">
+                <button @click="openModal('edit', dept)" class="btn-action-icon text-[var(--sys-icon-default)] hover:text-[var(--sys-brand-solid)]">
                   <span class="material-symbols-outlined">edit</span>
                 </button>
-                <button @click="confirmDissolve(dept)" class="btn-action-icon btn-danger-action">
+                <button @click="confirmDissolve(dept)" class="btn-action-icon text-[var(--sys-icon-default)] hover:text-[var(--sys-danger-solid)]">
                   <span class="material-symbols-outlined">domain_disabled</span>
                 </button>
               </div>
@@ -115,29 +115,29 @@
         leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
       >
         <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="closeModal"></div>
-          <div class="relative z-[10000] bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+          <div class="fixed inset-0 w-screen h-screen bg-black/40 z-[9999] overflow-hidden backdrop-blur-sm" @click="closeModal"></div>
+          <div class="relative z-[10000] bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)] w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
             <!-- Modal Header -->
-            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white text-left">
+            <div class="px-8 py-6 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-surface-elevated)] text-left">
               <div class="text-left">
-                <h3 class="text-xl font-black text-slate-900 text-left">{{ isEdit ? 'Cập nhật phòng ban' : 'Thêm phòng ban mới' }}</h3>
-                <p class="text-xs text-slate-500 font-bold italic mt-0.5 text-left">Vui lòng điền đủ thông tin để lưu</p>
+                <h3 class="text-xl font-black text-[var(--sys-text-primary)] text-left">{{ isEdit ? 'Cập nhật phòng ban' : 'Thêm phòng ban mới' }}</h3>
+                <p class="text-xs text-[var(--sys-text-secondary)] font-bold italic mt-0.5 text-left">Vui lòng điền đủ thông tin để lưu</p>
               </div>
-              <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all text-slate-400">
+              <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)]">
                 <span class="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <!-- Body -->
-            <div class="p-8 space-y-5 custom-scrollbar max-h-[70vh] overflow-y-auto">
+            <div class="p-8 space-y-5 custom-scrollbar max-h-[70vh] overflow-y-auto bg-[var(--sys-bg-hover)]">
               <div class="space-y-4">
                 <div class="grid grid-cols-5 gap-4">
                   <div class="col-span-2">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Mã phòng *</label>
-                    <input v-model="form.code" type="text" placeholder="VD: IT-01" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+                    <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic">Mã phòng *</label>
+                    <input v-model="form.code" type="text" placeholder="VD: IT-01" class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)]">
                   </div>
                   <div class="col-span-3">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Icon hiển thị</label>
+                    <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic">Icon hiển thị</label>
                     <Dropdown 
                       v-model="form.icon"
                       :options="iconOptionsList"
@@ -147,12 +147,12 @@
                 </div>
 
                 <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Tên phòng ban *</label>
-                  <input v-model="form.name" type="text" placeholder="Nhập tên đơn vị..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+                  <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic">Tên phòng ban *</label>
+                  <input v-model="form.name" type="text" placeholder="Nhập tên đơn vị..." class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)]">
                 </div>
 
                 <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Phòng ban cha (Cấp trên)</label>
+                  <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic">Phòng ban cha (Cấp trên)</label>
                   <Dropdown 
                     v-model="form.parent_id"
                     :options="parentDeptOptions"
@@ -161,32 +161,32 @@
                 </div>
 
                 <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trưởng phòng / Người quản lý</label>
-                  <input v-model="form.manager" type="text" placeholder="Tìm kiếm hoặc nhập tên..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+                  <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic">Trưởng phòng / Người quản lý</label>
+                  <input v-model="form.manager" type="text" placeholder="Tìm kiếm hoặc nhập tên..." class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)]">
                 </div>
 
                 <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Trạng thái hoạt động</label>
+                  <label class="block text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5 ml-1 italic text-left">Trạng thái hoạt động</label>
                   <div class="flex items-center gap-3 text-left">
                       <button 
                           @click="form.active = !form.active"
                           type="button"
                           class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 outline-none"
-                          :class="form.active ? 'bg-blue-600' : 'bg-slate-200'"
+                          :class="form.active ? 'bg-[var(--sys-brand-solid)]' : 'bg-[var(--sys-border-subtle)]'"
                       >
                           <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200"
                                 :class="form.active ? 'translate-x-5' : 'translate-x-0'"></span>
                       </button>
-                      <span class="text-xs font-bold" :class="form.active ? 'text-blue-600' : 'text-slate-400'">{{ form.active ? 'ĐANG HOẠT ĐỘNG' : 'TẠM NGƯNG' }}</span>
+                      <span class="text-xs font-bold" :class="form.active ? 'text-[var(--sys-brand-solid)]' : 'text-[var(--sys-text-secondary)]'">{{ form.active ? 'ĐANG HOẠT ĐỘNG' : 'TẠM NGƯNG' }}</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- Footer -->
-            <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex justify-end gap-3 text-left">
-              <button @click="closeModal" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all uppercase tracking-widest">Hủy</button>
-              <button @click="handleSave" class="px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all uppercase tracking-widest">
+            <div class="px-8 py-6 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface-elevated)] flex justify-end gap-3 text-left">
+              <button @click="closeModal" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] rounded-lg transition-all uppercase tracking-widest italic">Hủy</button>
+              <button @click="handleSave" class="px-8 py-2.5 min-h-[44px] bg-[var(--sys-brand-solid)] text-white rounded-lg text-sm font-black hover:bg-[var(--sys-brand-hover)] shadow-lg shadow-[var(--sys-brand-solid-lch-30)] transition-all uppercase tracking-widest">
                 {{ isEdit ? 'Cập nhật' : 'Lưu thông tin' }}
               </button>
             </div>
@@ -238,9 +238,9 @@ const filteredDepartments = computed(() => {
 });
 
 const stats = ref([
-  { label: 'Tổng phòng ban', value: '12', icon: 'account_tree', bg: 'bg-indigo-50', color: 'text-indigo-600' },
-  { label: 'Đang hoạt động', value: '10', icon: 'check_circle', bg: 'bg-green-50', color: 'text-green-600' },
-  { label: 'Cơ cấu tổ chức', value: '3 Cấp', icon: 'schema', bg: 'bg-amber-50', color: 'text-amber-600' }
+  { label: 'Tổng phòng ban', value: '12', icon: 'account_tree', bg: 'bg-[var(--sys-brand-soft)]', color: 'text-[var(--sys-brand-solid)]' },
+  { label: 'Đang hoạt động', value: '10', icon: 'check_circle', bg: 'bg-[var(--sys-success-soft)]', color: 'text-[var(--sys-success-text)]' },
+  { label: 'Cơ cấu tổ chức', value: '3 Cấp', icon: 'schema', bg: 'bg-[var(--sys-warning-soft)]', color: 'text-[var(--sys-warning-text)]' }
 ]);
 
 const iconOptions = ['corporate_fare', 'engineering', 'groups', 'web', 'payments', 'hub', 'apartment', 'meeting_room'];
@@ -318,7 +318,7 @@ const confirmDissolve = async (dept) => {
   background: transparent;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: var(--sys-border-subtle);
   border-radius: 10px;
 }
 

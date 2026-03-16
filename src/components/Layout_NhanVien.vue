@@ -7,7 +7,7 @@
          M3 TOP APP BAR
     ═══════════════════════════════════════════════ -->
     <header
-      class="fixed top-0 left-0 right-0 z-40 flex items-center h-16 px-2 gap-1 transition-colors duration-300 bg-[var(--sys-bg-surface)] border-b border-[var(--sys-border)]"
+      class="fixed top-0 left-0 right-0 z-40 flex items-center h-16 px-2 gap-1 transition-colors duration-300 bg-[var(--sys-bg-surface)] border-b border-[var(--sys-border-subtle)]"
       :class="isDark
         ? 'shadow-[0_1px_3px_oklch(0_0_0/0.4)]'
         : 'shadow-[0_1px_2px_oklch(0_0_0/0.07),0_2px_4px_oklch(0_0_0/0.05)]'"
@@ -16,7 +16,7 @@
       <button
         @click="handleMenuToggle"
         aria-label="Toggle sidebar"
-        class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)]"
+        class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
       >
         <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">menu</span>
       </button>
@@ -71,7 +71,7 @@
           <button
             @click="isNotificationOpen = !isNotificationOpen"
             aria-label="Notifications"
-            class="relative flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)]"
+            class="relative flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
           >
             <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">notifications</span>
             <!-- M3 Badge dot -->
@@ -87,12 +87,12 @@
               v-if="isNotificationOpen"
               class="absolute right-0 mt-3 w-80 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)]"
               :class="isDark
-                ? 'bg-[oklch(0.2_0.018_265)] border border-[oklch(0.3_0.025_265)]'
-                : 'bg-white border border-[oklch(0.88_0.012_265)]'"
+                ? 'bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)]'
+                : 'bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)]'"
             >
               <div
                 class="flex justify-between items-center px-5 py-4 border-b"
-                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.92_0.008_265)]'"
+                :class="isDark ? 'border-[var(--sys-border-subtle)]' : 'border-[var(--sys-border-subtle)]'"
               >
                 <h6
                   class="text-sm font-bold mb-0 text-[var(--sys-text-primary)]"
@@ -138,7 +138,7 @@
               <!-- Custom Xem Tất Cả Thông Báo Link -->
               <div
                 class="border-t p-2 text-center"
-                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[var(--sys-border)]'"
+                :class="isDark ? 'border-[var(--sys-border-subtle)]' : 'border-[var(--sys-border-subtle)]'"
               >
                 <router-link
                   to="/thong-bao"
@@ -206,7 +206,7 @@
         <div class="relative" ref="profileDropdownRef">
           <button
             @click="isProfileOpen = !isProfileOpen"
-            class="flex items-center gap-2.5 p-1 pr-3 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]"
+            class="flex items-center gap-2.5 p-1 pr-3 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-bg-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-brand-solid)]"
           >
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--sys-accent)]/10 text-[var(--sys-accent)] border border-[var(--sys-accent)]/20 text-sm font-bold shrink-0"
@@ -234,11 +234,10 @@
           <transition name="m3-dropdown">
             <div
               v-if="isProfileOpen"
-              class="absolute right-0 mt-3 w-60 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)] py-2 bg-[var(--sys-bg-surface)] border border-[var(--sys-border)]"
+              class="absolute right-0 mt-3 w-60 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)] py-2 bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)]"
             >
               <div
-                class="px-5 py-3 border-b mb-1"
-                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.93_0.007_265)]'"
+                class="px-5 py-3 border-b mb-1 border-[var(--sys-border-subtle)]"
               >
                 <p
                   class="text-[9px] font-bold uppercase tracking-widest mb-1 text-[var(--sys-text-secondary)]"
@@ -250,7 +249,7 @@
               </div>
               <router-link
                 to="/ho-so"
-                class="flex items-center gap-3 px-5 py-2.5 text-xs font-medium transition-colors text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)] hover:text-[var(--sys-text-primary)]"
+                class="flex items-center gap-3 px-5 py-2.5 text-xs font-medium transition-colors text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] hover:text-[var(--sys-text-primary)]"
                 @click="isProfileOpen = false"
               >
                 <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">person</span>
@@ -258,7 +257,7 @@
               </router-link>
               <button
                 @click="logout"
-                class="w-full flex items-center gap-3 px-5 py-2.5 text-xs font-medium text-left transition-colors border-t mt-1 text-[oklch(0.5_0.2_25)] hover:bg-[var(--sys-border)] border-[var(--sys-border)]"
+                class="w-full flex items-center gap-3 px-5 py-2.5 text-xs font-medium text-left transition-colors border-t mt-1 text-[var(--sys-danger-solid)] hover:bg-[var(--sys-bg-hover)] border-[var(--sys-border-subtle)]"
               >
                 <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">logout</span>
                 Đăng xuất hệ thống
@@ -286,36 +285,31 @@
       :class="[
         sidebarExpanded ? 'w-[280px]' : 'w-20',
         isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
-        isDark
-          ? 'bg-[oklch(0.165_0.015_265)] border-r border-[oklch(0.3_0.025_265)]'
-          : 'bg-white border-r border-[oklch(0.88_0.012_265)]'
+        'bg-[var(--sys-bg-surface)] border-r border-[var(--sys-border-subtle)]'
       ]"
     >
       <!-- Sidebar header with collapse toggle (desktop) -->
       <div
-        class="shrink-0 h-12 flex items-center px-3 border-b"
-        :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.88_0.012_265)]'"
+        class="shrink-0 h-12 flex items-center px-3 border-b border-[var(--sys-border-subtle)]"
       >
         <!-- Icon logo (always visible) -->
         <span
-          class="material-symbols-rounded shrink-0 transition-colors duration-200"
+          class="material-symbols-rounded shrink-0 transition-colors duration-200 text-[var(--sys-brand-solid)]"
           style="font-size:22px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 24"
-          :class="isDark ? 'text-[oklch(0.75_0.14_265)]' : 'text-[oklch(0.48_0.195_265)]'"
         >apps</span>
 
         <!-- Label text: visible only when expanded -->
         <span
-          class="overflow-hidden whitespace-nowrap text-xs font-bold uppercase tracking-[0.12em] transition-all duration-300 ml-2"
+          class="overflow-hidden whitespace-nowrap text-xs font-bold uppercase tracking-[0.12em] transition-all duration-300 ml-2 text-[var(--sys-text-secondary)]"
           :class="[
-            sidebarExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0 ml-0 pointer-events-none',
-            isDark ? 'text-[oklch(0.6_0.025_265)]' : 'text-[oklch(0.62_0.025_265)]'
+            sidebarExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0 ml-0 pointer-events-none'
           ]"
         >Menu</span>
 
         <!-- Chevron collapse toggle -->
         <button
           @click="sidebarExpanded = !sidebarExpanded"
-          class="hidden lg:flex ml-auto w-8 h-8 rounded-full items-center justify-center transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)] hover:text-[var(--sys-text-primary)]"
+          class="hidden lg:flex ml-auto w-8 h-8 rounded-full items-center justify-center transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] hover:text-[var(--sys-text-primary)]"
           :aria-label="sidebarExpanded ? 'Thu gọn sidebar' : 'Mở rộng sidebar'"
         >
           <span
@@ -330,10 +324,6 @@
       <!-- Nav scrollable area -->
       <nav
         class="flex-1 overflow-y-auto overflow-x-hidden py-2 custom-scrollbar"
-        :style="{
-          scrollbarWidth: 'thin',
-          scrollbarColor: isDark ? 'oklch(0.3 0.025 265) transparent' : 'oklch(0.88 0.012 265) transparent'
-        }"
       >
 
         <div :class="sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'">
@@ -536,10 +526,12 @@ export const SidebarItem = defineComponent({
       const RouterLink = resolveComponent('RouterLink');
 
       // Active pill bg
-      const activeBg = 'bg-[var(--sys-accent)]';
-      const hoverBg  = 'hover:bg-[var(--sys-border)]';
-      const activeText = 'text-[var(--sys-accent-text)]';
+      const activeBg = 'bg-[var(--sys-brand-soft)]';
+      const hoverBg  = 'hover:bg-[var(--sys-bg-hover)]';
+      const activeText = 'text-[var(--sys-brand-soft-text)]';
+      const activeIcon = 'text-[var(--sys-brand-solid)]';
       const inactiveText = 'text-[var(--sys-text-secondary)]';
+      const inactiveIcon = 'text-[var(--sys-icon-default)]';
       const labelText = 'text-[var(--sys-text-primary)]';
 
       // ── DRAWER (expanded) ──
@@ -563,7 +555,7 @@ export const SidebarItem = defineComponent({
             h('span', {
               class: [
                 'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-0 scale-50 ${activeText}` : `opacity-100 scale-100 ${inactiveText}`,
+                props.isActive ? `opacity-0 scale-50 ${activeIcon}` : `opacity-100 scale-100 ${inactiveIcon}`,
               ].join(' '),
               style: "font-size:22px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
             }, props.icon),
@@ -571,7 +563,7 @@ export const SidebarItem = defineComponent({
             h('span', {
               class: [
                 'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-100 scale-100 ${activeText}` : `opacity-0 scale-150 ${inactiveText}`,
+                props.isActive ? `opacity-100 scale-100 ${activeIcon}` : `opacity-0 scale-150 ${inactiveIcon}`,
               ].join(' '),
               style: "font-size:22px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
             }, props.icon),
@@ -587,8 +579,8 @@ export const SidebarItem = defineComponent({
             class: [
               'shrink-0 min-w-[22px] h-[22px] px-1.5 rounded-full flex items-center justify-center',
               props.isActive
-                ? 'bg-[var(--sys-bg-surface)] text-[var(--sys-accent)]'
-                : 'bg-[oklch(0.55_0.22_25)] text-white',
+                ? 'bg-[var(--sys-bg-surface)] text-[var(--sys-brand-solid)]'
+                : 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-soft-text)]',
             ].join(' '),
             style: 'font-size:11px;font-weight:600',
           }, props.badge > 99 ? '99+' : String(props.badge)) : null,
@@ -612,30 +604,35 @@ export const SidebarItem = defineComponent({
             props.isActive ? activeBg : hoverBg,
           ].join(' '),
         }, [
-          // Badge dot
+          // Badge for Rail
           props.badge !== undefined ? h('span', {
             class: [
-              'absolute -top-1 right-1.5 min-w-[17px] h-[17px] px-1 rounded-full',
-              'bg-[oklch(0.6_0.2_25)] text-white flex items-center justify-center',
-              'ring-2',
-              props.isDark ? 'ring-[oklch(0.22_0.015_265)]' : 'ring-white',
+              'absolute -top-1 right-2 min-w-[14px] h-[14px] px-1 rounded-full flex items-center justify-center bg-[var(--sys-brand-soft)] text-[var(--sys-brand-soft-text)] shadow-sm',
             ].join(' '),
-            style: 'font-size:9px;font-weight:700',
+            style: 'font-size:8px;font-weight:700',
           }, props.badge > 9 ? '9+' : String(props.badge)) : null,
+
+          // Active dot for Rail
+          h('div', {
+            class: [
+              'absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[var(--sys-brand-solid)] transition-all duration-300',
+              props.isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0',
+            ].join(' '),
+          }),
 
           // Icon (morphing)
           h('span', { class: 'relative w-5 h-5 flex items-center justify-center' }, [
             h('span', {
               class: [
                 'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-0 scale-50 ${activeText}` : `opacity-100 scale-100 ${inactiveText}`,
+                props.isActive ? `opacity-0 scale-50 ${activeIcon}` : `opacity-100 scale-100 ${inactiveIcon}`,
               ].join(' '),
               style: "font-size:21px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
             }, props.icon),
             h('span', {
               class: [
                 'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-100 scale-100 ${activeText}` : `opacity-0 scale-150 ${inactiveText}`,
+                props.isActive ? `opacity-100 scale-100 ${activeIcon}` : `opacity-0 scale-150 ${inactiveIcon}`,
               ].join(' '),
               style: "font-size:21px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
             }, props.icon),

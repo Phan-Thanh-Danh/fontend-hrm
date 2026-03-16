@@ -1,56 +1,56 @@
 <template>
   <div class="nghi-phep-page space-y-6">
     <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Nghỉ Phép</h1>
-      <p class="text-slate-500 text-sm font-medium italic">Quản lý và phê duyệt các yêu cầu nghỉ phép của toàn hệ thống.</p>
+    <div class="mb-8 text-left bg-transparent">
+      <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight text-left italic uppercase">Quản lý Nghỉ Phép</h1>
+      <p class="text-[var(--sys-text-secondary)] text-sm font-medium italic text-left bg-transparent">Quản lý và phê duyệt các yêu cầu nghỉ phép của toàn hệ thống.</p>
     </div>
 
     <!-- Main Content -->
-    <div class="row g-4">
+    <div class="flex flex-col xl:flex-row gap-6 bg-transparent">
       <!-- Left List -->
-      <div :class="activeRequest ? 'col-xl-8' : 'col-12'" class="transition-all">
-        <div class="card border-0 shadow-sm rounded-4 h-100">
+      <div :class="activeRequest ? 'xl:w-2/3' : 'w-full'" class="transition-all duration-500 bg-transparent text-left">
+        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] shadow-sm rounded-[2.5rem] overflow-hidden flex flex-col min-h-[600px]">
           <!-- Tabs -->
-          <div class="card-header bg-white border-bottom p-0 pt-3 px-4 rounded-top-4">
-            <ul class="nav nav-tabs border-bottom-0 pb-0 gap-4" style="margin-bottom: -1px;">
-              <li class="nav-item">
-                <a class="nav-link active px-0 pb-3 fw-bold border-0 border-bottom border-primary border-2 text-primary" href="#">Tất cả (42)</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link px-0 pb-3 fw-medium border-0 text-muted" href="#">Chờ duyệt (12)</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link px-0 pb-3 fw-medium border-0 text-muted" href="#">Đã duyệt (25)</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link px-0 pb-3 fw-medium border-0 text-muted" href="#">Từ chối (5)</a>
-              </li>
-            </ul>
+          <div class="bg-transparent border-b border-[var(--sys-border-subtle)] px-8 pt-6">
+            <div class="flex gap-8 items-end">
+              <button class="pb-3 text-xs font-black uppercase tracking-widest border-b-2 border-[var(--sys-brand-solid)] text-[var(--sys-brand-solid)] transition-all">
+                Tất cả <span class="ml-1 opacity-40 font-bold">(42)</span>
+              </button>
+              <button class="pb-3 text-xs font-black uppercase tracking-widest border-b-2 border-transparent text-[var(--sys-text-secondary)]/50 hover:text-[var(--sys-text-secondary)] transition-all">
+                Chờ duyệt <span class="ml-1 opacity-40 font-bold">(12)</span>
+              </button>
+              <button class="pb-3 text-xs font-black uppercase tracking-widest border-b-2 border-transparent text-[var(--sys-text-secondary)]/50 hover:text-[var(--sys-text-secondary)] transition-all">
+                Đã duyệt <span class="ml-1 opacity-40 font-bold">(25)</span>
+              </button>
+              <button class="pb-3 text-xs font-black uppercase tracking-widest border-b-2 border-transparent text-[var(--sys-text-secondary)]/50 hover:text-[var(--sys-text-secondary)] transition-all">
+                Từ chối <span class="ml-1 opacity-40 font-bold">(5)</span>
+              </button>
+            </div>
           </div>
 
           <!-- Filters -->
-          <div class="p-4 border-bottom">
-            <div class="row g-3 align-items-end">
-              <div class="col-md-4">
-                <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Phòng ban</label>
+          <div class="px-8 py-6 border-b border-[var(--sys-border-subtle)] bg-transparent">
+            <div class="flex flex-wrap items-end gap-6 bg-transparent">
+              <div class="flex-1 min-w-[200px] bg-transparent text-left">
+                <label class="block text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest mb-2 ml-1 italic bg-transparent text-left">Phòng ban</label>
                 <Dropdown 
                   v-model="filterDept"
                   :options="deptOptions"
                   placeholder="Tất cả phòng ban"
                 />
               </div>
-              <div class="col-md-5">
-                <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Khoảng thời gian</label>
+              <div class="flex-1 min-w-[200px] bg-transparent text-left">
+                <label class="block text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest mb-2 ml-1 italic bg-transparent text-left">Khoảng thời gian</label>
                 <Dropdown 
                   v-model="filterRange"
                   :options="rangeOptions"
                   placeholder="Tháng này"
                 />
               </div>
-              <div class="col-md-3">
-                <button class="w-full h-[46px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-black transition-all d-flex align-items-center justify-content-center gap-2 border-0">
-                  <span class="material-symbols-outlined" style="font-size: 20px;">filter_alt</span> 
+              <div class="bg-transparent text-left">
+                <button class="px-8 h-[48px] bg-[var(--sys-bg-hover)] hover:bg-[var(--sys-brand-soft)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] rounded-2xl text-xs font-black transition-all flex items-center justify-center gap-2 border border-[var(--sys-border-subtle)] uppercase tracking-widest">
+                  <span class="material-symbols-outlined text-[20px]">filter_alt</span> 
                   Lọc dữ liệu
                 </button>
               </div>
@@ -58,41 +58,41 @@
           </div>
 
           <!-- Table -->
-          <div class="table-responsive flex-grow-1">
-            <table class="table align-middle text-nowrap mb-0 table-hover">
-              <thead class="bg-white">
-                <tr>
-                  <th class="border-bottom py-3 px-4 text-muted fw-bold small text-uppercase" style="font-size: 0.7rem;">Nhân viên</th>
-                  <th class="border-bottom py-3 text-muted fw-bold small text-uppercase" style="font-size: 0.7rem;">Phòng ban</th>
-                  <th class="border-bottom py-3 text-muted fw-bold small text-uppercase" style="font-size: 0.7rem;">Loại nghỉ</th>
-                  <th class="border-bottom py-3 text-muted fw-bold small text-uppercase" style="font-size: 0.7rem;">Thời gian</th>
-                  <th class="border-bottom py-3 text-muted fw-bold small text-uppercase text-center" style="font-size: 0.7rem;">Tổng ngày</th>
-                  <th class="border-bottom py-3 text-muted fw-bold small text-uppercase" style="font-size: 0.7rem;">Trạng thái</th>
+          <div class="overflow-x-auto flex-grow bg-transparent">
+            <table class="w-full text-left border-collapse bg-transparent">
+              <thead>
+                <tr class="bg-[var(--sys-bg-hover)]/30 bg-transparent text-left">
+                  <th class="px-8 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Nhân viên</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Phòng ban</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Loại nghỉ</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Thời gian</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-center">Tổng ngày</th>
+                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trạng thái</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody class="bg-transparent text-left">
                 <tr v-for="req in requests" :key="req.id" @click="activeRequestId = req.id" 
-                    class="group cursor-pointer transition-all duration-200 border-b border-slate-50" 
-                    :class="activeRequestId === req.id ? 'bg-[#EFF6FF] hover:bg-[#DBEAFE]' : 'bg-white hover:bg-slate-50'">
-                  <td class="px-4 py-3 bg-transparent" :class="activeRequestId === req.id ? 'ps-[12px] border-l-4 border-blue-600' : 'border-l-4 border-transparent'">
-                    <div class="d-flex align-items-center gap-3 bg-transparent">
-                      <div class="avatar-circle-sm bg-transparent text-dark fw-bold border" style="font-size: 0.75rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{ req.initial }}</div>
-                      <div>
-                        <span class="fw-bold text-dark d-block" style="font-size: 0.95rem;">{{ req.name }}</span>
-                        <span class="text-muted small">MSNV: {{ req.msnv }}</span>
+                    class="group cursor-pointer transition-all duration-300 border-b border-[var(--sys-border-subtle)] bg-transparent text-left" 
+                    :class="activeRequestId === req.id ? 'bg-[var(--sys-brand-soft)] hover:bg-[var(--sys-brand-soft)]/80' : 'hover:bg-[var(--sys-bg-hover)]/40'">
+                  <td class="px-8 py-4 bg-transparent text-left" :class="activeRequestId === req.id ? 'border-l-4 border-[var(--sys-brand-solid)]' : 'border-l-4 border-transparent'">
+                    <div class="flex items-center gap-4 bg-transparent">
+                      <div class="w-10 h-10 rounded-full bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] flex items-center justify-center text-xs font-black text-[var(--sys-text-primary)] shadow-sm">{{ req.initial }}</div>
+                      <div class="bg-transparent text-left">
+                        <span class="block text-sm font-black text-[var(--sys-text-primary)] mb-0.5">{{ req.name }}</span>
+                        <span class="block text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-widest italic">MSNV: {{ req.msnv }}</span>
                       </div>
                     </div>
                   </td>
-                  <td class="text-dark font-medium bg-transparent">{{ req.department }}</td>
-                  <td class="bg-transparent">
-                    <span class="badge rounded-1 px-2 py-1 fw-bold text-uppercase border-transparent border" :class="getLeaveTypeClass(req.type)" style="font-size: 0.65rem;">{{ req.type }}</span>
+                  <td class="px-6 py-4 text-sm font-bold text-[var(--sys-text-primary)] bg-transparent text-left">{{ req.department }}</td>
+                  <td class="px-6 py-4 bg-transparent text-left">
+                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border shadow-sm transition-all" :class="getLeaveTypeClass(req.type)">{{ req.type }}</span>
                   </td>
-                  <td class="text-dark font-medium bg-transparent">{{ req.dateRange }}</td>
-                  <td class="text-dark font-bold text-center fw-bold bg-transparent">{{ req.days }}</td>
-                  <td class="bg-transparent">
-                    <div class="d-flex align-items-center gap-2 bg-transparent">
-                      <span class="rounded-circle" style="width: 8px; height: 8px;" :class="getStatusDotClass(req.status)"></span>
-                      <span class="fw-medium text-dark small" :style="getStatusTextColor(req.status)">{{ req.statusText }}</span>
+                  <td class="px-6 py-4 text-sm font-bold text-[var(--sys-text-secondary)] italic bg-transparent text-left">{{ req.dateRange }}</td>
+                  <td class="px-6 py-4 text-sm font-black text-[var(--sys-text-primary)] text-center bg-transparent">{{ req.days }}</td>
+                  <td class="px-6 py-4 bg-transparent text-left">
+                    <div class="flex items-center gap-2 bg-transparent text-left">
+                      <span class="w-2 h-2 rounded-full shadow-sm" :class="getStatusDotClass(req.status)"></span>
+                      <span class="text-[10px] font-black uppercase tracking-widest italic" :style="getStatusTextColor(req.status)">{{ req.statusText }}</span>
                     </div>
                   </td>
                 </tr>
@@ -101,15 +101,15 @@
           </div>
 
           <!-- Pagination -->
-          <div class="card-footer bg-white border-top p-4 d-flex justify-content-between align-items-center rounded-bottom-4 mt-auto">
-            <span class="text-muted small font-medium">Hiển thị 3 trên tổng số 42 đơn nghỉ phép</span>
-            <div class="d-flex gap-2">
-              <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all text-slate-400 border bg-transparent">
-                <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
+          <div class="bg-[var(--sys-bg-hover)] border-t border-[var(--sys-border-subtle)] px-8 py-5 flex justify-between items-center mt-auto bg-transparent">
+            <span class="text-[var(--sys-text-secondary)]/50 text-xs font-bold italic bg-transparent">Hiển thị 3 trên tổng số 42 đơn nghỉ phép</span>
+            <div class="flex gap-2 bg-transparent">
+              <button class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border border-[var(--sys-border-subtle)] hover:text-[var(--sys-brand-solid)] transition-all">
+                <span class="material-symbols-outlined text-[20px]">chevron_left</span>
               </button>
-              <button class="h-8 px-3 flex items-center justify-center rounded-lg bg-blue-600 text-white text-xs font-black shadow-lg shadow-blue-100 transition-all border-0">1</button>
-              <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all text-slate-400 border bg-transparent">
-                <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
+              <button class="px-5 h-10 flex items-center justify-center rounded-xl bg-[var(--sys-brand-solid)] text-white text-xs font-black shadow-lg shadow-[var(--sys-brand-solid-lch-30)] transition-all border-0">1</button>
+              <button class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border border-[var(--sys-border-subtle)] hover:text-[var(--sys-brand-solid)] transition-all">
+                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
               </button>
             </div>
           </div>
@@ -117,90 +117,94 @@
       </div>
 
       <!-- Right Detail Panel -->
-      <div v-show="activeRequest" class="col-xl-4 transition-all">
-        <div class="card border-0 shadow-sm rounded-4 h-100 d-flex flex-column" v-if="activeRequest">
-          <div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center rounded-top-4">
-            <h6 class="fw-bold mb-0 text-dark">Chi tiết Phê duyệt</h6>
-            <button @click="activeRequestId = null" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all text-slate-400 border-0 bg-transparent">
-              <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+      <div v-show="activeRequest" class="xl:w-1/3 transition-all duration-500 bg-transparent text-left">
+        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] shadow-sm rounded-[2.5rem] overflow-hidden flex flex-col h-full min-h-[600px]" v-if="activeRequest">
+          <div class="bg-transparent border-b border-[var(--sys-border-subtle)] px-8 py-6 flex justify-between items-center text-left bg-transparent">
+            <h6 class="text-sm font-black text-[var(--sys-text-primary)] uppercase tracking-widest italic bg-transparent">Chi tiết Phê duyệt</h6>
+            <button @click="activeRequestId = null" class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] transition-all bg-transparent">
+              <span class="material-symbols-outlined text-[20px] bg-transparent">close</span>
             </button>
           </div>
           
-          <div class="card-body p-4 flex-grow-1 overflow-auto d-flex flex-column gap-4">
+          <div class="p-8 flex-grow flex flex-col gap-8 bg-transparent text-left">
             <!-- User info -->
-            <div class="bg-light p-3 rounded-4 d-flex align-items-center gap-3 border shadow-sm" style="border-color: #f1f5f9;">
-              <div class="avatar-circle-sm bg-primary bg-opacity-10 text-primary fw-bold" style="font-size: 0.9rem; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{ activeRequest.initial }}</div>
-              <div>
-                <h6 class="fw-bold mb-0 text-dark" style="font-size: 0.95rem;">{{ activeRequest.name }}</h6>
-                <span class="text-muted" style="font-size: 0.8rem;">{{ activeRequest.role }}</span>
+            <div class="bg-[var(--sys-bg-hover)] p-6 rounded-3xl flex items-center gap-4 border border-[var(--sys-border-subtle)] shadow-sm text-left">
+              <div class="w-14 h-14 rounded-full bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center text-lg font-black bg-transparent">{{ activeRequest.initial }}</div>
+              <div class="bg-transparent text-left">
+                <h6 class="text-base font-black text-[var(--sys-text-primary)] mb-1 bg-transparent">{{ activeRequest.name }}</h6>
+                <span class="text-xs font-bold text-[var(--sys-text-secondary)]/60 bg-transparent">{{ activeRequest.role }}</span>
               </div>
             </div>
 
             <!-- Stats -->
-            <div class="row g-3 px-1">
-              <div class="col-6">
-                <p class="text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Loại nghỉ</p>
-                <span class="fw-bold text-dark font-medium text-wrap" style="font-size: 0.9rem;">{{ activeRequest.typeDetail }}</span>
+            <div class="grid grid-cols-2 gap-6 px-1 bg-transparent text-left">
+              <div class="bg-transparent text-left">
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-2 italic bg-transparent text-left">Loại nghỉ</p>
+                <span class="text-sm font-black text-[var(--sys-text-primary)] bg-transparent text-left">{{ activeRequest.typeDetail }}</span>
               </div>
-              <div class="col-6">
-                <p class="text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Tổng số ngày</p>
-                <span class="fw-bold text-dark font-medium" style="font-size: 0.9rem;">{{ activeRequest.days }} ngày</span>
+              <div class="bg-transparent text-left">
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-2 italic bg-transparent text-left">Tổng số ngày</p>
+                <span class="text-sm font-black text-[var(--sys-text-primary)] bg-transparent text-left">{{ activeRequest.days }} ngày</span>
               </div>
-              <div class="col-12 mt-3">
-                <p class="text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.65rem; letter-spacing: 0.5px;">Thời gian</p>
-                <div class="d-flex align-items-center gap-2 text-dark font-bold font-medium" style="font-size: 0.9rem;">
-                  <span class="material-symbols-outlined text-primary fs-5">calendar_month</span>
-                  {{ activeRequest.fullDateRange }}
-                </div>
+            </div>
+
+            <div class="px-1 bg-transparent text-left">
+              <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-2 italic bg-transparent text-left">Thời gian</p>
+              <div class="flex items-center gap-3 text-sm font-black text-[var(--sys-text-primary)] bg-transparent text-left">
+                <span class="material-symbols-outlined text-[var(--sys-brand-solid)] bg-transparent">calendar_month</span>
+                {{ activeRequest.fullDateRange }}
               </div>
             </div>
 
             <!-- Reason -->
-            <div class="px-1">
-              <p class="text-muted small fw-bold text-uppercase mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Lý do nghỉ</p>
-              <div class="bg-light bg-opacity-50 p-3 rounded-3 border fst-italic text-secondary" style="font-size: 0.9rem; line-height: 1.5; border-color: #f1f5f9;">
+            <div class="px-1 bg-transparent text-left">
+              <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-3 italic bg-transparent text-left">Lý do nghỉ</p>
+              <div class="bg-[var(--sys-bg-hover)]/50 p-5 rounded-3xl border border-[var(--sys-border-subtle)] text-sm font-bold italic text-[var(--sys-text-secondary)] bg-transparent text-left" style="line-height: 1.6;">
                 "{{ activeRequest.reason }}"
               </div>
             </div>
 
             <!-- Balance -->
-            <div class="d-flex justify-content-between align-items-center p-3 rounded-3 mt-1 mx-1" style="background-color: #ecfdf5; border: 1px solid #a7f3d0;">
-              <div class="d-flex align-items-center gap-2 text-success" style="color: #059669 !important;">
-                <span class="material-symbols-outlined fs-5">account_balance_wallet</span>
-                <span class="fw-bold small">Số dư phép năm</span>
+            <div class="flex justify-between items-center p-5 rounded-3xl mt-1 mx-1 bg-[var(--sys-success-soft)] border border-[var(--sys-success-border)] text-left">
+              <div class="flex items-center gap-3 text-[var(--sys-success-text)] font-black bg-transparent">
+                <span class="material-symbols-outlined text-lg bg-transparent">account_balance_wallet</span>
+                <span class="text-xs uppercase tracking-widest bg-transparent">Số dư phép năm</span>
               </div>
-              <span class="fw-bold small" style="color: #059669;">Còn lại: {{ activeRequest.balance }} ngày</span>
+              <span class="text-xs font-black text-[var(--sys-success-text)] uppercase tracking-widest bg-transparent">Còn lại: {{ activeRequest.balance }} ngày</span>
             </div>
 
             <!-- Warnings -->
-            <div v-if="activeRequest.warnings && activeRequest.warnings.length" class="p-3 rounded-3 mt-1 mx-1" style="background-color: #fef2f2; border: 1px solid #fecaca;">
-              <div class="d-flex align-items-center gap-2 mb-2" style="color: #dc2626;">
-                <span class="material-symbols-outlined fs-5">warning</span>
-                <span class="fw-bold small">Cảnh báo xung đột</span>
+            <div v-if="activeRequest.warnings && activeRequest.warnings.length" class="p-5 rounded-3xl mt-1 mx-1 bg-[var(--sys-danger-soft)] border border-[var(--sys-danger-border)] text-left">
+              <div class="flex items-center gap-3 mb-3 text-[var(--sys-danger-text)] font-black bg-transparent">
+                <span class="material-symbols-outlined text-lg bg-transparent">warning</span>
+                <span class="text-xs uppercase tracking-widest bg-transparent">Cảnh báo xung đột</span>
               </div>
-              <ul class="mb-0 ps-3 small" style="color: #dc2626; opacity: 0.9;">
-                <li v-for="(warn, idx) in activeRequest.warnings" :key="idx" class="mb-1">{{ warn }}</li>
+              <ul class="space-y-2 bg-transparent">
+                <li v-for="(warn, idx) in activeRequest.warnings" :key="idx" class="text-xs font-bold text-[var(--sys-danger-text)]/80 italic flex items-start gap-2 bg-transparent text-left">
+                  <span class="w-1.5 h-1.5 rounded-full bg-[var(--sys-danger-text)] mt-1 shrink-0 bg-transparent"></span>
+                  {{ warn }}
+                </li>
               </ul>
             </div>
 
             <!-- Reject Reason -->
-            <div v-if="activeRequest.status === 'pending'" class="mt-2 px-1">
-              <p class="text-muted small fw-bold text-uppercase mb-2" style="font-size: 0.65rem; letter-spacing: 0.5px;">Lý do từ chối (nếu có)</p>
-              <textarea class="form-control bg-white shadow-sm" style="border: 1px solid #e2e8f0; font-size: 0.9rem;" rows="3" placeholder="Nhập lý do nếu bạn từ chối đơn này..."></textarea>
+            <div v-if="activeRequest.status === 'pending'" class="mt-2 px-1 bg-transparent text-left">
+              <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-3 italic bg-transparent text-left">Lý do từ chối (nếu có)</p>
+              <textarea class="w-full px-5 py-4 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl text-sm font-black text-[var(--sys-text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all resize-none placeholder:text-[var(--sys-text-secondary)]/40 bg-transparent text-left" rows="4" placeholder="Nhập lý do nếu bạn từ chối đơn này..."></textarea>
             </div>
             
              <!-- Actions form disabled if already decided -->
-            <div v-else class="mt-2 p-3 bg-light rounded-3 text-center border mx-1">
-              <span class="text-muted small fw-medium">Đơn này đã được xử lý ({{ activeRequest.statusText }}).</span>
+            <div v-else class="mt-2 p-5 bg-[var(--sys-bg-hover)]/40 rounded-3xl text-center border border-[var(--sys-border-subtle)] mx-1 bg-transparent">
+              <span class="text-[var(--sys-text-secondary)]/50 text-xs font-black uppercase tracking-widest italic bg-transparent">Đơn này đã được xử lý ({{ activeRequest.statusText }})</span>
             </div>
 
           </div>
 
           <!-- Actions -->
-          <div v-if="activeRequest.status === 'pending'" class="card-footer bg-white border-t p-4 flex gap-3 mt-auto text-left">
-            <button class="flex-1 px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all border uppercase tracking-widest">Từ chối</button>
-            <button class="flex-1 px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
-              <span class="material-symbols-outlined">check_circle</span> 
+          <div v-if="activeRequest.status === 'pending'" class="p-8 border-t border-[var(--sys-border-subtle)] flex gap-4 mt-auto bg-transparent">
+            <button class="flex-1 px-6 py-4 bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] rounded-2xl text-xs font-black hover:bg-[var(--sys-danger-soft)] hover:text-[var(--sys-danger-text)] transition-all border border-[var(--sys-border-subtle)] uppercase tracking-widest italic">Từ chối</button>
+            <button class="flex-1 px-6 py-4 bg-[var(--sys-brand-solid)] text-white rounded-2xl text-xs font-black hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid-lch-30)] transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined text-[20px]">check_circle</span> 
               Duyệt đơn
             </button>
           </div>
@@ -297,21 +301,21 @@ const activeRequest = computed(() => {
 });
 
 const getLeaveTypeClass = (type) => {
-  if (type.includes('Nghỉ phép')) return 'bg-primary bg-opacity-10 text-primary border-primary border-opacity-25';
-  if (type.includes('ốm')) return 'bg-success bg-opacity-10 text-success border-success border-opacity-25';
-  return 'bg-purple-100 text-purple border-purple-200'; // For Việc riêng
+  if (type.includes('Nghỉ phép')) return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]';
+  if (type.includes('ốm')) return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
+  return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]'; // For Việc riêng
 };
 
 const getStatusDotClass = (status) => {
-  if (status === 'pending') return 'bg-warning border border-white';
-  if (status === 'approved') return 'bg-success border border-white';
-  return 'bg-secondary border border-white';
+  if (status === 'pending') return 'bg-[var(--sys-warning-solid)]';
+  if (status === 'approved') return 'bg-[var(--sys-success-solid)]';
+  return 'bg-[var(--sys-text-secondary)]/30';
 };
 
 const getStatusTextColor = (status) => {
-  if (status === 'pending') return 'color: #d97706;'; // warning (darker orange)
-  if (status === 'approved') return 'color: #16a34a;'; // success
-  return 'color: #6b7280;'; // secondary
+  if (status === 'pending') return 'color: var(--sys-warning-text);';
+  if (status === 'approved') return 'color: var(--sys-success-text);';
+  return 'color: color-mix(in srgb, var(--sys-text-secondary) 50%, transparent);';
 };
 
 </script>
