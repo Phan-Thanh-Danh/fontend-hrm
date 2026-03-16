@@ -91,27 +91,28 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
-              <tr v-for="item in salaryItems" :key="item.id" class="hover:bg-slate-50/50 transition-all group">
-                <td class="px-8 py-5">
-                   <div class="flex items-center gap-3">
-                      <div class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-400 text-xs">
+              <tr v-for="item in salaryItems" :key="item.id" 
+                  class="group transition-all duration-200 border-b border-slate-50 bg-white hover:bg-slate-50">
+                <td class="px-8 py-5 bg-transparent">
+                   <div class="flex items-center gap-3 bg-transparent">
+                      <div class="w-8 h-8 rounded-full bg-transparent flex items-center justify-center font-black text-slate-400 text-xs border border-slate-100 group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">
                          {{ item.name.charAt(0) }}
                       </div>
-                      <div>
-                         <p class="font-black text-slate-900 mb-0.5">{{ item.name }}</p>
-                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{{ item.code }}</p>
+                      <div class="bg-transparent">
+                         <p class="font-black text-slate-900 mb-0.5 bg-transparent">{{ item.name }}</p>
+                         <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest bg-transparent">{{ item.code }}</p>
                       </div>
                    </div>
                 </td>
-                <td class="px-8 py-5 font-bold text-slate-600">{{ formatCurrency(item.base) }}</td>
-                <td class="px-8 py-5 font-bold text-green-600">+{{ formatCurrency(item.bonus) }}</td>
-                <td class="px-8 py-5 font-bold text-red-500">-{{ formatCurrency(item.deduction) }}</td>
+                <td class="px-8 py-5 font-bold text-slate-600 bg-transparent">{{ formatCurrency(item.base) }}</td>
+                <td class="px-8 py-5 font-bold text-green-600 bg-transparent">+{{ formatCurrency(item.bonus) }}</td>
+                <td class="px-8 py-5 font-bold text-red-500 bg-transparent">-{{ formatCurrency(item.deduction) }}</td>
                 <td class="px-8 py-5">
                    <p class="font-black text-indigo-600 text-[15px]">{{ formatCurrency(item.base + item.bonus - item.deduction) }}</p>
                 </td>
                 <td class="px-8 py-5 text-right">
-                   <button @click="editSalary(item)" :disabled="selectedPeriod.status !== 'ĐANG_XỬ_LÝ'" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-white rounded-xl shadow-sm transition-all disabled:opacity-30">
-                      <span class="material-symbols-outlined text-[18px]">edit_note</span>
+                   <button @click="editSalary(item)" :disabled="selectedPeriod.status !== 'ĐANG_XỬ_LÝ'" class="btn-action-icon" title="Điều chỉnh thu nhập">
+                      <span class="material-symbols-outlined">edit_note</span>
                    </button>
                 </td>
               </tr>
@@ -121,59 +122,75 @@
     </div>
 
     <!-- Edit Salary Modal -->
-    <transition name="modal">
-      <div v-if="showEditModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showEditModal = false"></div>
-        <div class="relative bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all">
-          <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-            <h3 class="text-lg font-black text-slate-900">Điều chỉnh thu nhập</h3>
-            <button @click="showEditModal = false" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-md transition-all text-slate-400">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+        enter-to-class="opacity-100 scale-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 scale-100 translate-y-0"
+        leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      >
+        <div v-if="showEditModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="showEditModal = false"></div>
+          <div class="relative z-[10000] bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white text-left">
+              <div class="text-left">
+                <h3 class="text-xl font-black text-slate-900 text-left">Điều chỉnh thu nhập</h3>
+                <p class="text-xs text-slate-500 font-bold italic mt-0.5 text-left">Thay đổi sẽ áp dụng cho kỳ thanh toán hiện tại</p>
+              </div>
+              <button @click="showEditModal = false" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all text-slate-400">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
 
-          <div class="p-8 space-y-4">
-             <div class="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center font-black text-blue-600">{{ editForm.name.charAt(0) }}</div>
-                <div>
-                  <p class="font-black text-blue-900">{{ editForm.name }}</p>
-                  <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest">{{ editForm.code }}</p>
-                </div>
-             </div>
+            <div class="p-8 space-y-5">
+               <div class="mb-6 p-4 bg-blue-50 rounded-2xl border border-blue-100 flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center font-black text-blue-600">{{ editForm.name.charAt(0) }}</div>
+                  <div class="text-left">
+                    <p class="font-black text-blue-900 text-left">{{ editForm.name }}</p>
+                    <p class="text-[10px] text-blue-500 font-bold uppercase tracking-widest text-left">{{ editForm.code }}</p>
+                  </div>
+               </div>
 
-             <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Lương cơ bản (Theo HĐ)</label>
-                <input v-model="editForm.base" type="number" disabled class="w-full px-4 py-3 bg-slate-100 border border-slate-100 rounded-xl text-sm font-bold text-slate-500 cursor-not-allowed">
-             </div>
+               <div>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Lương cơ bản (Theo HĐ)</label>
+                  <input v-model="editForm.base" type="number" disabled class="w-full px-4 py-3 bg-slate-100 border border-slate-100 rounded-xl text-sm font-bold text-slate-500 cursor-not-allowed text-left">
+               </div>
 
-             <div class="grid grid-cols-2 gap-4">
-                <div>
-                   <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Tổng phụ cấp (+)</label>
-                   <input v-model="editForm.bonus" type="number" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-green-600/5 focus:border-green-600 transition-all font-black text-green-600">
-                </div>
-                <div>
-                   <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Tổng khấu trừ (-)</label>
-                   <input v-model="editForm.deduction" type="number" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-red-600/5 focus:border-red-600 transition-all font-black text-red-500">
-                </div>
-             </div>
+               <div class="grid grid-cols-2 gap-4 text-left">
+                  <div class="text-left">
+                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Tổng phụ cấp (+)</label>
+                     <input v-model="editForm.bonus" type="number" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all font-black text-blue-600 text-left">
+                  </div>
+                  <div class="text-left">
+                     <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Tổng khấu trừ (-)</label>
+                     <input v-model="editForm.deduction" type="number" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-red-600/5 focus:border-red-600 transition-all font-black text-red-500 text-left">
+                  </div>
+               </div>
 
-             <div class="mt-6 p-6 bg-slate-900 rounded-[2rem] shadow-xl">
-                 <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 italic">Thực nhận dự kiến</p>
-                 <p class="text-2xl font-black text-white tracking-widest">{{ formatCurrency(editForm.base + editForm.bonus - editForm.deduction) }}</p>
-             </div>
-          </div>
+               <div class="mt-6 p-6 bg-slate-900 rounded-[2rem] shadow-xl text-left">
+                   <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-1 italic text-left">Thực nhận dự kiến</p>
+                   <p class="text-2xl font-black text-white tracking-widest text-left">{{ formatCurrency(editForm.base + editForm.bonus - editForm.deduction) }}</p>
+               </div>
+            </div>
 
-          <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30">
-            <button @click="saveSalaryAdjustment" class="w-full py-4 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 uppercase tracking-widest transition-all">Lưu điều chỉnh</button>
+            <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex justify-end gap-3 text-left">
+              <button @click="showEditModal = false" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all uppercase tracking-widest">Hủy</button>
+              <button @click="saveSalaryAdjustment" class="px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all uppercase tracking-widest">Lưu điều chỉnh</button>
+            </div>
           </div>
         </div>
-      </div>
-    </transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showConfirm } = useConfirm();
 
 const currentMonth = new Date().getMonth() + 1;
 const viewMode = ref('grid');
@@ -224,8 +241,9 @@ const saveSalaryAdjustment = () => {
     showEditModal.value = false;
 };
 
-const approvePeriod = () => {
-    if (confirm(`Bạn có chắc muốn phê duyệt bảng lương tháng ${selectedPeriod.value.month}/${selectedPeriod.value.year}? Sau khi duyệt, dữ liệu sẽ được khóa.`)) {
+const approvePeriod = async () => {
+    const ok = await showConfirm('Phê duyệt bảng lương', `Bạn có chắc muốn phê duyệt bảng lương tháng ${selectedPeriod.value.month}/${selectedPeriod.value.year}? Sau khi duyệt, dữ liệu sẽ được khóa.`);
+    if (ok) {
         selectedPeriod.value.status = 'ĐÃ_THANH_TOÁN';
         selectedPeriod.value.updated_at = new Date().toLocaleDateString('vi-VN');
     }
@@ -245,14 +263,5 @@ selectedPeriod.value = periods.value[1];
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #e2e8f0;
   border-radius: 10px;
-}
-
-/* Modal Transitions */
-.modal-enter-active, .modal-leave-active {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.modal-enter-from, .modal-leave-to {
-  opacity: 0;
-  transform: scale(0.95) translateY(20px);
 }
 </style>

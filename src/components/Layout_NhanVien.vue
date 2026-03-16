@@ -411,6 +411,9 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, defineComponent, h, resolveComponent } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showConfirm } = useConfirm();
 
 const route = useRoute();
 const router = useRouter();
@@ -472,12 +475,15 @@ onMounted(() => document.addEventListener('click', handleClickOutside));
 onUnmounted(() => document.removeEventListener('click', handleClickOutside));
 
 // ── Logout ─────────────────────────────────────────────────────────────────
-const logout = () => {
-  localStorage.clear();
-  sessionStorage.clear();
-  // Forcefully remove dark mode class
-  document.documentElement.classList.remove('dark');
-  router.push('/login');
+const logout = async () => {
+  const ok = await showConfirm('Xác nhận đăng xuất', 'Bạn có chắc chắn muốn thoát khỏi hệ thống không?');
+  if (ok) {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Forcefully remove dark mode class
+    document.documentElement.classList.remove('dark');
+    router.push('/login');
+  }
 };
 </script>
 

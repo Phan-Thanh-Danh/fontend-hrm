@@ -63,7 +63,7 @@
           </div>
           
           <div class="table-responsive">
-            <table class="table table-borderless align-middle mb-0 custom-table">
+            <table class="table table-hover align-middle mb-0">
               <thead class="bg-transparent border-bottom-custom">
                 <tr>
                   <th class="py-3 px-4 text-secondary small fw-bold tracking-wider">LOẠI PHÉP</th>
@@ -73,27 +73,27 @@
                 </tr>
               </thead>
               <tbody class="fw-medium text-dark">
-                <tr class="border-bottom-custom text-nowrap">
-                  <td class="py-4 px-4 fw-bold text-dark">Nghỉ phép<br>năm</td>
-                  <td class="py-4 px-2 text-secondary">15/10/2023 -<br>16/10/2023</td>
-                  <td class="py-4 px-2 text-dark">2 ngày</td>
-                  <td class="py-4 px-4 text-end">
+                <tr class="border-bottom-custom text-nowrap transition-all duration-200">
+                  <td class="py-4 px-4 fw-bold text-dark bg-transparent">Nghỉ phép<br>năm</td>
+                  <td class="py-4 px-2 text-secondary bg-transparent">15/10/2023 -<br>16/10/2023</td>
+                  <td class="py-4 px-2 text-dark bg-transparent">2 ngày</td>
+                  <td class="py-4 px-4 text-end bg-transparent">
                     <span class="badge status-success text-uppercase rounded-1 px-2 py-1 user-select-none">ĐÃ DUYỆT</span>
                   </td>
                 </tr>
-                <tr class="border-bottom-custom text-nowrap">
-                  <td class="py-4 px-4 fw-bold text-dark">Nghỉ ốm</td>
-                  <td class="py-4 px-2 text-secondary">05/11/2023</td>
-                  <td class="py-4 px-2 text-dark">1 ngày</td>
-                  <td class="py-4 px-4 text-end">
+                <tr class="border-bottom-custom text-nowrap transition-all duration-200">
+                  <td class="py-4 px-4 fw-bold text-dark bg-transparent">Nghỉ ốm</td>
+                  <td class="py-4 px-2 text-secondary bg-transparent">05/11/2023</td>
+                  <td class="py-4 px-2 text-dark bg-transparent">1 ngày</td>
+                  <td class="py-4 px-4 text-end bg-transparent">
                     <span class="badge status-success text-uppercase rounded-1 px-2 py-1 user-select-none">ĐÃ DUYỆT</span>
                   </td>
                 </tr>
-                <tr class="text-nowrap">
-                  <td class="py-4 px-4 fw-bold text-dark">Nghỉ phép<br>năm</td>
-                  <td class="py-4 px-2 text-secondary">20/11/2023 -<br>21/11/2023</td>
-                  <td class="py-4 px-2 text-dark">2 ngày</td>
-                  <td class="py-4 px-4 text-end">
+                <tr class="text-nowrap transition-all duration-200">
+                  <td class="py-4 px-4 fw-bold text-dark bg-transparent">Nghỉ phép<br>năm</td>
+                  <td class="py-4 px-2 text-secondary bg-transparent">20/11/2023 -<br>21/11/2023</td>
+                  <td class="py-4 px-2 text-dark bg-transparent">2 ngày</td>
+                  <td class="py-4 px-4 text-end bg-transparent">
                     <span class="badge status-primary text-uppercase rounded-1 px-2 py-1 user-select-none">CHỜ DUYỆT</span>
                   </td>
                 </tr>
@@ -105,7 +105,16 @@
     </div>
 
     <!-- Modal Tạo Đơn Nghỉ Phép -->
-    <div v-if="showModal" class="modal-backdrop-custom d-flex justify-content-center align-items-center">
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+        enter-to-class="opacity-100 scale-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 scale-100 translate-y-0"
+        leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      >
+        <div v-if="showModal" class="modal-backdrop-custom d-flex justify-content-center align-items-center">
       <div class="modal-content-custom bg-white rounded-4 shadow-lg p-4">
         
         <form @submit.prevent="showModal = false" class="d-flex flex-column gap-4">
@@ -172,6 +181,8 @@
         </form>
       </div>
     </div>
+      </Transition>
+    </Teleport>
 
   </div>
 </template>

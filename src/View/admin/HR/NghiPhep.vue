@@ -34,21 +34,25 @@
             <div class="row g-3 align-items-end">
               <div class="col-md-4">
                 <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Phòng ban</label>
-                <select class="form-select border py-2 text-dark font-medium cursor-pointer" style="border-color: #e2e8f0;">
-                  <option>Tất cả phòng ban</option>
-                  <option>Kỹ thuật</option>
-                  <option>Nhân sự</option>
-                  <option>Marketing</option>
-                </select>
+                <Dropdown 
+                  v-model="filterDept"
+                  :options="deptOptions"
+                  placeholder="Tất cả phòng ban"
+                />
               </div>
               <div class="col-md-5">
                 <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Khoảng thời gian</label>
-                <select class="form-select border py-2 text-dark font-medium cursor-pointer" style="border-color: #e2e8f0;">
-                  <option>Tháng này</option>
-                </select>
+                <Dropdown 
+                  v-model="filterRange"
+                  :options="rangeOptions"
+                  placeholder="Tháng này"
+                />
               </div>
               <div class="col-md-3">
-                <button class="btn btn-light w-100 fw-medium d-flex align-items-center justify-content-center gap-2 py-2 text-dark border"><span class="material-symbols-outlined fs-6">filter_alt</span> Lọc dữ liệu</button>
+                <button class="w-full h-[46px] bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-sm font-black transition-all d-flex align-items-center justify-content-center gap-2 border-0">
+                  <span class="material-symbols-outlined" style="font-size: 20px;">filter_alt</span> 
+                  Lọc dữ liệu
+                </button>
               </div>
             </div>
           </div>
@@ -67,24 +71,26 @@
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="req in requests" :key="req.id" @click="activeRequestId = req.id" class="cursor-pointer transition-colors" :class="{'active-row': activeRequestId === req.id, 'bg-light bg-opacity-50': activeRequestId === req.id}">
-                  <td class="px-4 py-3">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="avatar-circle-sm bg-light text-dark fw-bold border" style="font-size: 0.75rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{ req.initial }}</div>
+                <tr v-for="req in requests" :key="req.id" @click="activeRequestId = req.id" 
+                    class="group cursor-pointer transition-all duration-200 border-b border-slate-50" 
+                    :class="activeRequestId === req.id ? 'bg-[#EFF6FF] hover:bg-[#DBEAFE]' : 'bg-white hover:bg-slate-50'">
+                  <td class="px-4 py-3 bg-transparent" :class="activeRequestId === req.id ? 'ps-[12px] border-l-4 border-blue-600' : 'border-l-4 border-transparent'">
+                    <div class="d-flex align-items-center gap-3 bg-transparent">
+                      <div class="avatar-circle-sm bg-transparent text-dark fw-bold border" style="font-size: 0.75rem; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">{{ req.initial }}</div>
                       <div>
                         <span class="fw-bold text-dark d-block" style="font-size: 0.95rem;">{{ req.name }}</span>
                         <span class="text-muted small">MSNV: {{ req.msnv }}</span>
                       </div>
                     </div>
                   </td>
-                  <td class="text-dark font-medium">{{ req.department }}</td>
-                  <td>
+                  <td class="text-dark font-medium bg-transparent">{{ req.department }}</td>
+                  <td class="bg-transparent">
                     <span class="badge rounded-1 px-2 py-1 fw-bold text-uppercase border-transparent border" :class="getLeaveTypeClass(req.type)" style="font-size: 0.65rem;">{{ req.type }}</span>
                   </td>
-                  <td class="text-dark font-medium">{{ req.dateRange }}</td>
-                  <td class="text-dark font-bold text-center fw-bold">{{ req.days }}</td>
-                  <td>
-                    <div class="d-flex align-items-center gap-2">
+                  <td class="text-dark font-medium bg-transparent">{{ req.dateRange }}</td>
+                  <td class="text-dark font-bold text-center fw-bold bg-transparent">{{ req.days }}</td>
+                  <td class="bg-transparent">
+                    <div class="d-flex align-items-center gap-2 bg-transparent">
                       <span class="rounded-circle" style="width: 8px; height: 8px;" :class="getStatusDotClass(req.status)"></span>
                       <span class="fw-medium text-dark small" :style="getStatusTextColor(req.status)">{{ req.statusText }}</span>
                     </div>
@@ -97,10 +103,14 @@
           <!-- Pagination -->
           <div class="card-footer bg-white border-top p-4 d-flex justify-content-between align-items-center rounded-bottom-4 mt-auto">
             <span class="text-muted small font-medium">Hiển thị 3 trên tổng số 42 đơn nghỉ phép</span>
-            <div class="d-flex gap-1">
-              <button class="btn btn-sm btn-light border p-1 rounded d-flex align-items-center"><span class="material-symbols-outlined fs-6 d-block">chevron_left</span></button>
-              <button class="btn btn-sm btn-light border px-3 rounded fw-medium text-dark d-flex align-items-center">1</button>
-              <button class="btn btn-sm btn-light border p-1 rounded d-flex align-items-center"><span class="material-symbols-outlined fs-6 d-block">chevron_right</span></button>
+            <div class="d-flex gap-2">
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all text-slate-400 border bg-transparent">
+                <span class="material-symbols-outlined" style="font-size: 18px;">chevron_left</span>
+              </button>
+              <button class="h-8 px-3 flex items-center justify-center rounded-lg bg-blue-600 text-white text-xs font-black shadow-lg shadow-blue-100 transition-all border-0">1</button>
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all text-slate-400 border bg-transparent">
+                <span class="material-symbols-outlined" style="font-size: 18px;">chevron_right</span>
+              </button>
             </div>
           </div>
         </div>
@@ -111,7 +121,9 @@
         <div class="card border-0 shadow-sm rounded-4 h-100 d-flex flex-column" v-if="activeRequest">
           <div class="card-header bg-white border-bottom p-4 d-flex justify-content-between align-items-center rounded-top-4">
             <h6 class="fw-bold mb-0 text-dark">Chi tiết Phê duyệt</h6>
-            <button @click="activeRequestId = null" class="btn btn-sm btn-link text-muted p-0 d-flex align-items-center"><span class="material-symbols-outlined fs-5">close</span></button>
+            <button @click="activeRequestId = null" class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all text-slate-400 border-0 bg-transparent">
+              <span class="material-symbols-outlined" style="font-size: 20px;">close</span>
+            </button>
           </div>
           
           <div class="card-body p-4 flex-grow-1 overflow-auto d-flex flex-column gap-4">
@@ -185,9 +197,12 @@
           </div>
 
           <!-- Actions -->
-          <div v-if="activeRequest.status === 'pending'" class="card-footer bg-white border-top p-4 d-flex gap-3 rounded-bottom-4 mt-auto">
-            <button class="btn btn-white flex-grow-1 fw-bold py-2 border shadow-sm text-dark font-medium">Từ chối</button>
-            <button class="btn flex-grow-1 fw-bold py-2 d-flex align-items-center justify-content-center gap-2 shadow-sm text-white" style="background-color: #6366f1; border-color: #6366f1;"><span class="material-symbols-outlined fs-5">check_circle</span> Duyệt đơn</button>
+          <div v-if="activeRequest.status === 'pending'" class="card-footer bg-white border-t p-4 flex gap-3 mt-auto text-left">
+            <button class="flex-1 px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all border uppercase tracking-widest">Từ chối</button>
+            <button class="flex-1 px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+              <span class="material-symbols-outlined">check_circle</span> 
+              Duyệt đơn
+            </button>
           </div>
         </div>
       </div>
@@ -197,6 +212,21 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
+
+const filterDept = ref('ALL');
+const filterRange = ref('month');
+
+const deptOptions = [
+  { label: 'Tất cả phòng ban', value: 'ALL' },
+  { label: 'Kỹ thuật', value: 'Kỹ thuật' },
+  { label: 'Nhân sự', value: 'Nhân sự' },
+  { label: 'Marketing', value: 'Marketing' }
+];
+
+const rangeOptions = [
+  { label: 'Tháng này', value: 'month' }
+];
 
 const requests = ref([
   {
@@ -287,11 +317,9 @@ const getStatusTextColor = (status) => {
 </script>
 
 <style scoped>
-.active-row td {
-    background-color: #f8fafc;
-}
+/* Global active-row styles are handled safely in style.css */
 .active-row td:first-child {
-    box-shadow: inset 4px 0 0 0 #3b82f6;
+    box-shadow: none; /* Moved to Tailwind border-l-4 for better sync */
 }
 
 .cursor-pointer {

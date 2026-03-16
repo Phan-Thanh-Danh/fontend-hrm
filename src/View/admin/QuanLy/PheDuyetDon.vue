@@ -1,10 +1,10 @@
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Phê duyệt Trung tâm</h1>
-        <p class="text-slate-500 text-sm font-medium italic">Xử lý các yêu cầu nghỉ phép, tăng ca và công tác từ nhân sự.</p>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 text-left">
+      <div class="text-left">
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight text-left">Phê duyệt Trung tâm</h1>
+        <p class="text-slate-500 text-sm font-medium italic text-left">Xử lý các yêu cầu nghỉ phép, tăng ca và công tác từ nhân sự.</p>
       </div>
       <div class="flex flex-wrap items-center gap-3">
          <div class="relative group hidden sm:block">
@@ -16,12 +16,11 @@
               class="pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 transition-all w-64"
             >
          </div>
-         <select v-model="filterType" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-500 outline-none hover:border-blue-300 transition-all">
-            <option value="ALL">Tất cả loại đơn</option>
-            <option value="event_busy">Nghỉ phép</option>
-            <option value="schedule">Tăng ca (OT)</option>
-            <option value="flight">Công tác</option>
-         </select>
+         <Dropdown 
+            v-model="filterType"
+            :options="typeOptions"
+            placeholder="Tất cả loại đơn"
+         />
       </div>
     </div>
 
@@ -60,12 +59,13 @@
                 <h4 class="text-sm font-black text-indigo-600 uppercase tracking-wide">{{ request.title }}</h4>
               </div>
               
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 text-left">
                 <template v-if="request.status === 'pending'">
-                  <button @click="handleReject(request)" class="px-6 py-3 bg-red-50 text-red-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-red-600 hover:text-white transition-all shadow-sm">Từ chối</button>
-                  <button @click="handleApprove(request)" class="px-6 py-3 bg-green-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-green-700 transition-all shadow-xl shadow-green-100">Duyệt nhanh</button>
+                  <button @click="handleReject(request)" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all border uppercase tracking-widest">Từ chối</button>
+                  <button @click="handleApprove(request)" class="px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all uppercase tracking-widest">Duyệt nhanh</button>
                 </template>
-                <div v-else :class="`px-5 py-2 rounded-2xl text-[10px] font-black uppercase tracking-widest ${request.status === 'approved' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`">
+                <div v-else :class="`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest border d-flex align-items-center gap-2 ${request.status === 'approved' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`">
+                  <span :class="`w-1.5 h-1.5 rounded-full ${request.status === 'approved' ? 'bg-green-500' : 'bg-red-500'}`"></span>
                   {{ request.status === 'approved' ? 'Đã duyệt' : 'Đã từ chối' }}
                 </div>
               </div>
@@ -117,15 +117,75 @@
          <p class="text-xs font-black text-slate-400 uppercase tracking-widest italic">Không có yêu cầu nào trong danh sách này</p>
       </div>
     </div>
+
+    <!-- Modal Từ chối -->
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+        enter-to-class="opacity-100 scale-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 scale-100 translate-y-0"
+        leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      >
+        <div v-if="showRejectModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="closeRejectModal"></div>
+          <div class="relative z-[10000] bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/30 text-left">
+              <div class="text-left">
+                <h3 class="text-xl font-black text-slate-900 text-left">Từ chối yêu cầu</h3>
+                <p class="text-xs text-slate-500 font-bold italic mt-0.5 text-left italic">Phản hồi lý do cho nhân viên</p>
+              </div>
+              <button @click="closeRejectModal" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white hover:shadow-md transition-all text-slate-400">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div class="p-8 space-y-4">
+               <div>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Lý do từ chối *</label>
+                  <textarea 
+                    v-model="rejectReason" 
+                    rows="4" 
+                    placeholder="VD: Hiện tại dự án đang bận, bạn vui lòng dời sang tuần sau..." 
+                    class="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-red-600/5 focus:border-red-600 transition-all text-left resize-none"
+                  ></textarea>
+               </div>
+            </div>
+
+            <div class="px-8 py-6 border-t border-slate-100 bg-slate-50/30 flex gap-3 text-left">
+              <button @click="closeRejectModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest italic rounded-2xl transition-all">Hủy</button>
+              <button @click="confirmReject" class="flex-1 py-3 bg-red-600 text-white rounded-2xl text-sm font-black hover:bg-red-700 shadow-xl shadow-red-100 uppercase tracking-widest transition-all">
+                Xác nhận từ chối
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showAlert } = useConfirm();
 
 const activeTab = ref('pending');
 const searchQuery = ref('');
 const filterType = ref('ALL');
+const showRejectModal = ref(false);
+const rejectReason = ref('');
+const selectedRequest = ref(null);
+
+const typeOptions = [
+  { label: 'Tất cả loại đơn', value: 'ALL' },
+  { label: 'Nghỉ phép', value: 'event_busy' },
+  { label: 'Tăng ca (OT)', value: 'schedule' },
+  { label: 'Công tác', value: 'flight' }
+];
 
 const tabs = ref([
   { id: 'pending', label: 'Chờ phê duyệt' },
@@ -204,17 +264,30 @@ const getLeftBorder = (icon) => {
 };
 
 const handleApprove = (request) => {
-    if (confirm(`Phê duyệt đơn của ${request.employeeName}? Nhân viên sẽ nhận được thông báo ngay.`)) {
-        request.status = 'approved';
-    }
+    request.status = 'approved';
 };
 
 const handleReject = (request) => {
-    const reason = prompt(`Nhập lý do từ chối cho ${request.employeeName}:`);
-    if (reason !== null) {
-        request.status = 'rejected';
-        request.reason = `[TỪ CHỐI]: ${reason} | [LÝ DO GỐC]: ${request.reason}`;
+    selectedRequest.value = request;
+    showRejectModal.value = true;
+};
+
+const confirmReject = async () => {
+    if (!rejectReason.value) {
+        await showAlert('Thiếu lý do', 'Vui lòng nhập lý do từ chối!');
+        return;
     }
+    if (selectedRequest.value) {
+        selectedRequest.value.status = 'rejected';
+        selectedRequest.value.reason = `[LÝ DO TỪ CHỐI]: ${rejectReason.value} | [NỘI DUNG GỐC]: ${selectedRequest.value.reason}`;
+        closeRejectModal();
+    }
+};
+
+const closeRejectModal = () => {
+    showRejectModal.value = false;
+    rejectReason.value = '';
+    selectedRequest.value = null;
 };
 </script>
 

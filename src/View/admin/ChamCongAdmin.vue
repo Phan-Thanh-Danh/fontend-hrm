@@ -1,21 +1,22 @@
 <template>
   <div class="cham-cong-admin-page space-y-6">
     <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-    <div class="mb-8">
-      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Chấm công & Thống kê</h1>
-      <p class="text-slate-500 text-sm font-medium italic">Theo dõi chuyên cần, phê duyệt bảng công và quản lý dữ liệu nhân sự.</p>
-    </div>
-      <div class="d-flex align-items-center gap-3">
-        <div class="d-flex align-items-center gap-2 bg-white px-3 py-2 rounded-3 border">
-            <span class="text-muted small fw-medium">TRẠNG THÁI THÁNG 10/2023</span>
-            <span class="d-flex align-items-center gap-1 text-success fw-bold small">
-                <span class="rounded-circle bg-success" style="width: 8px; height: 8px;"></span>
-                Đang mở
+    <div class="flex items-center justify-between mb-8 text-left">
+      <div class="text-left">
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight text-left">Quản lý Chấm công & Thống kê</h1>
+        <p class="text-slate-500 text-sm font-medium italic text-left">Theo dõi chuyên cần, phê duyệt bảng công và quản lý dữ liệu nhân sự.</p>
+      </div>
+      <div class="flex items-center gap-3 text-left">
+        <div class="flex items-center gap-2 bg-white px-4 py-2.5 rounded-lg border text-left">
+            <span class="text-slate-400 text-[10px] font-black uppercase tracking-widest text-left">TRẠNG THÁI THÁNG 10/2023</span>
+            <span class="flex items-center gap-1.5 text-green-600 font-black text-xs text-left">
+                <span class="w-2 h-2 rounded-full bg-green-500 shadow-sm shadow-green-200"></span>
+                ĐANG MỞ
             </span>
         </div>
-        <button class="btn btn-warning text-white fw-bold px-3 py-2 rounded-3 d-flex align-items-center gap-2 shadow-sm" style="background-color: #f59e0b; border: none;">
-          <span class="material-symbols-outlined fs-5">lock</span> Khóa bảng công
+        <button class="px-6 py-2.5 min-h-[44px] bg-amber-500 rounded-lg font-black text-white hover:bg-amber-600 shadow-xl shadow-amber-100 transition-all flex items-center gap-2">
+          <span class="material-symbols-outlined text-[20px]">lock</span> 
+          Khóa bảng công
         </button>
       </div>
     </div>
@@ -135,12 +136,16 @@
             <div class="input-group input-group-sm">
                 <input type="date" class="form-control border-light-subtle" value="2023-10-05">
             </div>
-            <select class="form-select form-select-sm border-light-subtle">
-                <option>Tất cả phòng ban</option>
-            </select>
-            <select class="form-select form-select-sm border-light-subtle">
-                <option>Tất cả trạng thái</option>
-            </select>
+            <Dropdown 
+                v-model="filterDept"
+                :options="deptOptions"
+                placeholder="Tất cả phòng ban"
+            />
+            <Dropdown 
+                v-model="filterStatus"
+                :options="statusOptions"
+                placeholder="Tất cả trạng thái"
+            />
         </div>
       </div>
       <div class="table-responsive">
@@ -171,7 +176,9 @@
                 <span class="badge border-0 rounded-pill px-3 py-1 fw-bold text-uppercase" :class="record.statusClass" style="font-size: 0.65rem;">{{ record.statusText }}</span>
               </td>
               <td class="px-4 py-3 text-end text-nowrap">
-                <button class="btn btn-link text-primary text-decoration-none fw-bold small p-0">Chỉnh sửa</button>
+                <button class="btn-action-icon" title="Chỉnh sửa">
+                  <span class="material-symbols-outlined">edit</span>
+                </button>
               </td>
             </tr>
           </tbody>
@@ -185,6 +192,22 @@
 
 <script setup>
 import { ref } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
+
+const filterDept = ref('ALL');
+const filterStatus = ref('ALL');
+
+const deptOptions = [
+  { label: 'Tất cả phòng ban', value: 'ALL' },
+  { label: 'Kỹ thuật', value: 'IT' },
+  { label: 'Nhân sự', value: 'HR' }
+];
+
+const statusOptions = [
+  { label: 'Tất cả trạng thái', value: 'ALL' },
+  { label: 'Đúng giờ', value: 'NORMAL' },
+  { label: 'Đi muộn', value: 'LATE' }
+];
 
 const topLateUsers = ref([
     { name: 'Nguyễn Văn A', minutes: 85, percent: 85 },

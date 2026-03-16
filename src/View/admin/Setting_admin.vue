@@ -165,6 +165,9 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showAlert } = useConfirm();
 
 const activeTab = ref('general');
 
@@ -191,9 +194,9 @@ const notificationOptions = ref([
   { id: 3, label: 'Tin nhắn SMS', desc: 'Gửi mã xác thực OTP và thông báo khẩn cấp (Phí 500đ/tin)', icon: 'sms', bg: 'bg-orange-50', color: 'text-orange-600', enabled: false },
 ]);
 
-const saveAllSettings = () => {
+const saveAllSettings = async () => {
   // Logic lưu vào localStorage hoặc API
-  alert('Đã lưu tất cả các cấu hình hệ thống thành công!');
+  await showAlert('Cấu hình đã lưu', 'Đã lưu tất cả các cấu hình hệ thống thành công!');
 };
 </script>
 

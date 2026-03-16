@@ -87,10 +87,10 @@
           <transition name="m3-dropdown">
             <div
               v-if="isNotificationOpen"
-              class="absolute right-0 mt-3 w-80 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)]"
+              class="absolute right-0 mt-3 w-80 rounded-xl overflow-hidden z-50 shadow-lg"
               :class="isDark
                 ? 'bg-[oklch(0.2_0.018_265)] border border-[oklch(0.3_0.025_265)]'
-                : 'bg-white border border-[oklch(0.88_0.012_265)]'"
+                : 'bg-white border border-slate-200'"
             >
               <div
                 class="flex justify-between items-center px-5 py-4 border-b"
@@ -103,36 +103,36 @@
               </div>
               <div class="max-h-[300px] overflow-y-auto">
                 <div
-                  class="p-4 flex gap-3 transition-colors cursor-default border-b border-[var(--sys-border)] hover:bg-[var(--sys-bg-page)]"
+                  class="p-4 flex gap-3 transition-colors cursor-default border-b border-slate-100 hover:bg-slate-50"
                 >
                   <div
-                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[var(--sys-accent)]/10 text-[var(--sys-accent)]"
+                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-blue-50 text-blue-600"
                   >
                     <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">person_add</span>
                   </div>
                   <div>
                     <p
-                      class="text-xs font-semibold mb-0.5 text-[var(--sys-text-primary)]"
+                      class="text-xs font-semibold mb-0.5 text-slate-900"
                     >3 Ứng viên mới nộp CV</p>
                     <p
-                      class="text-[10px] text-[var(--sys-text-secondary)]"
+                      class="text-[10px] text-slate-400 font-bold"
                     >Frontend Developer · 15 phút trước</p>
                   </div>
                 </div>
                 <div
-                  class="p-4 flex gap-3 transition-colors cursor-default hover:bg-[var(--sys-bg-page)]"
+                  class="p-4 flex gap-3 transition-colors cursor-default hover:bg-slate-50"
                 >
                   <div
-                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-[var(--sys-success-bg)] text-[var(--sys-success-text)]"
+                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-green-50 text-green-600"
                   >
                     <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">task_alt</span>
                   </div>
                   <div>
                     <p
-                      class="text-xs font-semibold mb-0.5 text-[var(--sys-text-primary)]"
+                      class="text-xs font-semibold mb-0.5 text-slate-900"
                     >Đơn xin nghỉ phép đã được duyệt</p>
                     <p
-                      class="text-[10px] text-[var(--sys-text-secondary)]"
+                      class="text-[10px] text-slate-400 font-bold"
                     >Phê duyệt · 1 giờ trước</p>
                   </div>
                 </div>
@@ -235,7 +235,7 @@
           <transition name="m3-dropdown">
             <div
               v-if="isProfileOpen"
-              class="absolute right-0 mt-3 w-60 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)] py-2 bg-[var(--sys-bg-surface)] border border-[var(--sys-border)]"
+              class="absolute right-0 mt-3 w-60 rounded-xl overflow-hidden z-50 shadow-lg py-2 bg-white border border-slate-100"
             >
               <div
                 class="px-5 py-3 border-b border-[var(--sys-border)] mb-1"
@@ -249,7 +249,7 @@
               </div>
               <router-link
                 to="/admin/ho-so"
-                class="flex items-center gap-3 px-5 py-2.5 text-xs font-medium transition-colors text-[var(--sys-text-secondary)] hover:bg-[var(--sys-border)] hover:text-[var(--sys-text-primary)]"
+                class="flex items-center gap-3 px-5 py-2.5 text-[13px] font-bold transition-colors text-slate-600 hover:bg-slate-50 hover:text-indigo-700"
                 @click="isProfileOpen = false"
               >
                 <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">person</span>
@@ -257,7 +257,7 @@
               </router-link>
               <button
                 @click="logout"
-                class="w-full flex items-center gap-3 px-5 py-2.5 text-xs font-medium text-left transition-colors border-t mt-1 text-[oklch(0.5_0.2_25)] hover:bg-[var(--sys-border)] border-[var(--sys-border)]"
+                class="w-full flex items-center gap-3 px-5 py-2.5 text-[13px] font-bold text-left transition-colors border-t border-slate-50 text-red-500 hover:bg-slate-50"
               >
                 <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">logout</span>
                 Đăng xuất hệ thống
@@ -401,6 +401,9 @@
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, defineComponent, h, resolveComponent } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showConfirm } = useConfirm();
 
 const route = useRoute();
 const router = useRouter();
@@ -470,12 +473,15 @@ onMounted(() => document.addEventListener('click', handleClickOutside));
 onUnmounted(() => document.removeEventListener('click', handleClickOutside));
 
 // ── Logout ─────────────────────────────────────────────────────────────────
-const logout = () => {
-  localStorage.clear();
-  sessionStorage.clear();
-  // Forcefully remove dark mode class
-  document.documentElement.classList.remove('dark');
-  router.push('/login');
+const logout = async () => {
+  const ok = await showConfirm('Xác nhận đăng xuất', 'Bạn có chắc chắn muốn thoát khỏi hệ thống không?');
+  if (ok) {
+    localStorage.clear();
+    sessionStorage.clear();
+    // Forcefully remove dark mode class
+    document.documentElement.classList.remove('dark');
+    router.push('/login');
+  }
 };
 </script>
 

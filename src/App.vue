@@ -1,8 +1,10 @@
 <script setup>
+import ConfirmModal from '@/components/ConfirmModal.vue';
 </script>
 
 <template>
   <router-view />
+  <ConfirmModal />
 </template>
 
 <style>

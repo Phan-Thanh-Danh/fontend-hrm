@@ -160,10 +160,16 @@
                 </span>
               </td>
               <td class="px-6 py-4">
-                <div class="flex items-center justify-center gap-1 text-slate-400">
-                  <button @click="openViewModal(item, index)" class="p-1.5 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Xem chi tiết phiếu lương"><span class="material-symbols-outlined text-[18px]">visibility</span></button>
-                  <button @click="openEditModal(item, index)" class="p-1.5 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors" title="Chỉnh sửa chi tiết"><span class="material-symbols-outlined text-[18px]">edit</span></button>
-                  <button @click="openDeleteModal(item, index)" class="p-1.5 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Xóa bản ghi"><span class="material-symbols-outlined text-[18px]">delete</span></button>
+                <div class="flex items-center justify-center gap-1">
+                  <button @click="openViewModal(item, index)" class="btn-action-icon" title="Xem chi tiết phiếu lương">
+                    <span class="material-symbols-outlined">visibility</span>
+                  </button>
+                  <button @click="openEditModal(item, index)" class="btn-action-icon" title="Chỉnh sửa chi tiết">
+                    <span class="material-symbols-outlined">edit</span>
+                  </button>
+                  <button @click="openDeleteModal(item, index)" class="btn-action-icon btn-danger-action" title="Xóa bản ghi">
+                    <span class="material-symbols-outlined">delete</span>
+                  </button>
                 </div>
               </td>
             </tr>
@@ -191,126 +197,155 @@
     </div>
 
     <!-- Modal Thêm/Xem/Sửa Bảng lương -->
-    <div v-if="isAddEditModalOpen" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in slide-in-from-bottom-4 duration-300">
-        <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white">
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-inner">
-              <span class="material-symbols-outlined text-2xl">{{ modalMode === 'add' ? 'add_box' : (modalMode === 'edit' ? 'edit_document' : 'visibility') }}</span>
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+        enter-to-class="opacity-100 scale-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 scale-100 translate-y-0"
+        leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      >
+        <div v-if="isAddEditModalOpen" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="closeModal"></div>
+          <div class="relative z-[10000] bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col max-h-[90vh] text-left transform transition-all">
+            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white text-left">
+              <div class="flex items-center gap-3 text-left">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shadow-inner">
+                  <span class="material-symbols-outlined text-2xl font-black">{{ modalMode === 'add' ? 'add_box' : (modalMode === 'edit' ? 'edit_document' : 'visibility') }}</span>
+                </div>
+                <div class="text-left">
+                  <h3 class="text-xl font-black text-slate-900 text-left">{{ modalMode === 'add' ? 'Tạo bảng lương mới' : (modalMode === 'edit' ? 'Cập nhật bảng lương' : 'Chi tiết bảng lương') }}</h3>
+                  <p class="text-xs font-bold text-slate-400 mt-0.5 text-left italic">{{ modalMode === 'add' ? 'Nhập thông tin cho nhân viên mới' : (modalMode === 'edit' ? 'Sửa đổi chi tiết thanh toán' : 'Xem thông tin chi tiết thanh toán') }}</p>
+                </div>
+              </div>
+              <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all text-slate-400">
+                <span class="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <div>
-              <h3 class="text-xl font-black text-slate-800">{{ modalMode === 'add' ? 'Tạo bảng lương mới' : (modalMode === 'edit' ? 'Cập nhật bảng lương' : 'Chi tiết bảng lương') }}</h3>
-              <p class="text-xs font-bold text-slate-400 mt-0.5">{{ modalMode === 'add' ? 'Nhập thông tin cho nhân viên mới' : (modalMode === 'edit' ? 'Sửa đổi chi tiết thanh toán' : 'Xem thông tin chi tiết thanh toán') }}</p>
+
+            <div class="p-8 space-y-6 overflow-y-auto custom-scrollbar bg-slate-50/30">
+              <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2 italic">
+                  <span class="material-symbols-outlined text-blue-400 text-[18px]">person</span> THÔNG TIN CƠ BẢN
+                </h4>
+                <div class="grid grid-cols-2 gap-5">
+                  <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Họ tên nhân viên *</label>
+                    <input v-model="formData.name" :disabled="modalMode === 'view'" type="text" placeholder="VD: Nguyễn Văn A..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left disabled:bg-slate-100/50">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Kỳ lương *</label>
+                    <input v-model="formData.period" :disabled="modalMode === 'view'" type="text" placeholder="VD: 10/2023..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left disabled:bg-slate-100/50">
+                  </div>
+                </div>
+              </div>
+
+              <div class="bg-white p-6 rounded-[2rem] border border-slate-100 shadow-sm space-y-4">
+                <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2 italic">
+                  <span class="material-symbols-outlined text-emerald-400 text-[18px]">payments</span> CHI TIẾT ĐỊNH MỨC
+                </h4>
+                <div class="grid grid-cols-2 gap-5">
+                  <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Lương cơ bản (VND)</label>
+                    <input v-model="formData.baseSalary" :disabled="modalMode === 'view'" type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left disabled:bg-slate-100/50">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Tổng thu nhập (VND)</label>
+                    <input v-model="formData.totalIncome" :disabled="modalMode === 'view'" type="text" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-emerald-600/5 focus:border-emerald-600 transition-all text-left font-black text-emerald-600 disabled:bg-slate-100/50">
+                  </div>
+                  <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Khấu trừ (VND)</label>
+                    <input v-model="formData.deduction" :disabled="modalMode === 'view'" type="text" class="w-full px-4 py-3 bg-red-50/30 border border-red-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-red-600/5 focus:border-red-600 transition-all text-left font-black text-red-600 disabled:bg-slate-100/50">
+                  </div>
+                  <div class="flex flex-col justify-end">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Trạng thái thanh toán</label>
+                    <Dropdown 
+                      v-model="formData.status"
+                      :options="payrollStatusOptions"
+                      :disabled="modalMode === 'view'"
+                      class="w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div class="p-8 bg-slate-900 rounded-[2.5rem] shadow-2xl text-left border-4 border-slate-800 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-600/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-blue-600/20 transition-all duration-700"></div>
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em] mb-2 italic text-left">THỰC NHẬN DỰ KIẾN</p>
+                <div class="flex items-end justify-between relative z-10">
+                  <p class="text-4xl font-black text-white tracking-tighter text-left">
+                    {{ formData.netSalary }} <span class="text-lg text-blue-400 font-bold ml-1">VNĐ</span>
+                  </p>
+                  <div class="flex flex-col items-end">
+                    <span class="px-4 py-1.5 bg-blue-600/20 border border-blue-500/30 rounded-full text-[9px] font-black text-blue-400 uppercase tracking-widest mb-1">AUTOMATED SYSTEM</span>
+                    <span class="text-[10px] font-bold text-slate-500 italic">Verify by FoxHRM </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="px-8 py-6 border-t border-slate-100 flex justify-end gap-3 bg-white text-left">
+              <button @click="closeModal" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all uppercase tracking-widest italic">Hủy bỏ</button>
+              
+              <button v-if="modalMode === 'view'" @click="modalMode = 'edit'" type="button" class="px-8 py-2.5 min-h-[44px] bg-amber-500 text-white rounded-lg text-sm font-black hover:bg-amber-600 shadow-lg shadow-amber-100 transition-all uppercase tracking-widest flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">edit</span>
+                Chỉnh sửa
+              </button>
+              
+              <button v-else @click="saveData" type="button" class="px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all uppercase tracking-widest flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                {{ modalMode === 'add' ? 'Tạo mới' : 'Lưu cập nhật' }}
+              </button>
             </div>
           </div>
-          <button @click="closeModal" class="text-slate-400 hover:text-slate-600 hover:bg-slate-100 p-2 rounded-xl transition-all">
-            <span class="material-symbols-outlined">close</span>
-          </button>
         </div>
-        <div class="p-8 overflow-y-auto flex-1 bg-slate-50/50">
-          <form @submit.prevent="saveData" class="space-y-6">
-            
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4 transition-all" :class="{'focus-within:border-blue-200 focus-within:shadow-md': modalMode !== 'view'}">
-              <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-blue-400 text-[18px]">person</span> THÔNG TIN CƠ BẢN
-              </h4>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-2">Họ tên nhân viên</label>
-                  <input v-model="formData.name" :disabled="modalMode === 'view'" type="text" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:font-medium placeholder:text-slate-400 disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-slate-100" placeholder="VD: Nguyễn Văn A">
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-2">Kỳ lương</label>
-                  <input v-model="formData.period" :disabled="modalMode === 'view'" type="text" required class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:font-medium placeholder:text-slate-400 disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-slate-100" placeholder="VD: 10/2023">
-                </div>
-              </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4 transition-all" :class="{'focus-within:border-emerald-200 focus-within:shadow-md': modalMode !== 'view'}">
-              <h4 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-emerald-400 text-[18px]">payments</span> CHI TIẾT ĐỊNH MỨC
-              </h4>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-2">Lương cơ bản (đ)</label>
-                  <div class="relative group">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold group-focus-within:text-blue-500">₫</span>
-                    <input v-model="formData.baseSalary" :disabled="modalMode === 'view'" type="text" required class="w-full pl-8 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-slate-100" placeholder="20.000.000">
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-2">Tổng thu nhập (đ)</label>
-                  <div class="relative group">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold group-focus-within:text-emerald-500">₫</span>
-                    <input v-model="formData.totalIncome" :disabled="modalMode === 'view'" type="text" required class="w-full pl-8 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-slate-100" placeholder="25.000.000">
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-2">Khấu trừ (đ)</label>
-                  <div class="relative group">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-red-400 font-bold group-focus-within:text-red-600">-</span>
-                    <input v-model="formData.deduction" :disabled="modalMode === 'view'" type="text" required class="w-full pl-8 pr-4 py-3 bg-red-50/50 border border-red-100 rounded-xl text-sm font-bold text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-slate-100" placeholder="1.500.000">
-                  </div>
-                </div>
-                <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-2">Thực nhận (đ)</label>
-                  <div class="relative group">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-blue-500 font-bold">₫</span>
-                    <input v-model="formData.netSalary" :disabled="modalMode === 'view'" type="text" required class="w-full pl-8 pr-4 py-3 bg-blue-50 border border-blue-200 rounded-xl text-lg font-black text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-slate-100" placeholder="23.500.000">
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm space-y-4">
-               <div>
-                  <label class="block text-xs font-bold text-slate-600 mb-2">Trạng thái thanh toán</label>
-                  <select v-model="formData.status" :disabled="modalMode === 'view'" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:bg-slate-100 cursor-pointer">
-                    <option value="Đã thanh toán">✅ Đã thanh toán</option>
-                    <option value="Chờ thanh toán">⏳ Chờ thanh toán</option>
-                    <option value="Tạm khóa">🔒 Tạm khóa</option>
-                  </select>
-                </div>
-            </div>
-          </form>
-        </div>
-        <div class="px-8 py-5 border-t border-slate-100 flex justify-end gap-3 bg-white">
-          <button @click="closeModal" class="px-6 py-3 text-sm font-bold text-slate-600 hover:bg-slate-100 bg-white border border-slate-200 rounded-xl transition-all">Đóng</button>
-          
-          <button v-if="modalMode === 'view'" @click="modalMode = 'edit'" type="button" class="px-6 py-3 text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 rounded-xl transition-all shadow-[0_4px_12px_rgba(245,158,11,0.3)] hover:-translate-y-0.5 flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">edit</span>
-            Chỉnh sửa
-          </button>
-          
-          <button v-else @click="saveData" type="button" class="px-6 py-3 text-sm font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-all shadow-[0_4px_12px_rgba(37,99,235,0.3)] hover:shadow-[0_6px_16px_rgba(37,99,235,0.4)] hover:-translate-y-0.5 flex items-center gap-2">
-            <span class="material-symbols-outlined text-[18px]">check_circle</span>
-            {{ modalMode === 'add' ? 'Tạo mới' : 'Lưu cập nhật' }}
-          </button>
-        </div>
-      </div>
-    </div>
+      </transition>
+    </Teleport>
 
     <!-- Modal Xác nhận Xóa -->
-    <div v-if="isDeleteModalOpen" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div class="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden text-center p-8 animate-in zoom-in-95 duration-200">
-        <div class="w-20 h-20 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-5 border-8 border-red-50/50">
-          <span class="material-symbols-outlined text-4xl">delete_forever</span>
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+        enter-to-class="opacity-100 scale-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 scale-100 translate-y-0"
+        leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      >
+        <div v-if="isDeleteModalOpen" class="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="isDeleteModalOpen = false"></div>
+          <div class="relative z-[10001] bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl overflow-hidden p-8 text-left transform transition-all flex flex-col items-center text-center">
+            <div class="w-20 h-20 bg-red-50 text-red-500 rounded-3xl flex items-center justify-center mb-6 border border-red-100 shadow-inner">
+              <span class="material-symbols-outlined text-4xl font-black">delete_forever</span>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-2">Xác nhận xóa bản ghi?</h3>
+            <p class="text-slate-500 text-sm mb-8 leading-relaxed max-w-[280px]">
+              Hệ thống sẽ xóa vĩnh viễn dữ liệu lương của nhân viên <span class="font-bold text-slate-900 uppercase underline decoration-red-200">{{ selectedItem?.name }}</span>.
+            </p>
+            <div class="flex flex-col w-full gap-3">
+              <button @click="confirmDelete" class="w-full py-4 bg-red-600 text-white rounded-2xl text-sm font-black hover:bg-red-700 shadow-xl shadow-red-100 transition-all uppercase tracking-widest flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">delete</span>
+                Xác nhận xóa ngay
+              </button>
+              <button @click="isDeleteModalOpen = false" class="w-full py-3 text-xs font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest transition-all italic">Hủy bỏ</button>
+            </div>
+          </div>
         </div>
-        <h3 class="text-2xl font-black text-slate-800 mb-2">Xóa bản ghi?</h3>
-        <p class="text-slate-500 text-sm mb-8 leading-relaxed">Bạn có chắc chắn muốn xóa bản ghi của nhân viên <br><span class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded">{{ selectedItem?.name }}</span>?<br>Hành động này không thể hoàn tác.</p>
-        <div class="flex gap-3 justify-center">
-          <button @click="isDeleteModalOpen = false" class="px-6 py-3 text-sm font-bold text-slate-600 hover:bg-slate-100 bg-white border border-slate-200 rounded-xl transition-all w-full">Hủy bỏ</button>
-          <button @click="confirmDelete" class="px-6 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition-all shadow-lg shadow-red-600/20 w-full flex justify-center items-center gap-2">
-             Xóa ngay
-          </button>
-        </div>
-      </div>
-    </div>
+      </transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
+
+const payrollStatusOptions = [
+  { label: 'Đã thanh toán', value: 'Đã thanh toán' },
+  { label: 'Chờ thanh toán', value: 'Chờ thanh toán' },
+  { label: 'Tạm khóa', value: 'Tạm khóa' }
+];
 
 const employees = ref([
   {

@@ -18,17 +18,17 @@
         </div>
         
         <div class="flex items-center gap-2">
-          <select v-model="filterDepartment" class="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-[11px] font-black text-slate-500 outline-none hover:border-blue-300 transition-all">
-            <option value="ALL">Tất cả phòng ban</option>
-            <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
-          </select>
+          <Dropdown 
+            v-model="filterDepartment"
+            :options="departmentOptions"
+            placeholder="Tất cả phòng ban"
+          />
 
-          <select v-model="filterStatus" class="px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-[11px] font-black text-slate-500 outline-none hover:border-blue-300 transition-all">
-            <option value="ALL">Tất cả trạng thái</option>
-            <option value="ĐANG_LÀM_VIỆC">Đang làm việc</option>
-            <option value="THỬ_VIỆC">Thử việc</option>
-            <option value="ĐÃ_NGHỈ_VIỆC">Đã nghỉ việc</option>
-          </select>
+          <Dropdown 
+            v-model="filterStatus"
+            :options="statusOptions"
+            placeholder="Tất cả trạng thái"
+          />
         </div>
 
         <button 
@@ -69,37 +69,39 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="emp in filteredEmployees" :key="emp.id" class="hover:bg-slate-50/50 transition-all group">
-            <td class="px-6 py-4 border-b border-slate-50">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 font-black flex items-center justify-center text-sm border border-blue-200">
+          <tr v-for="emp in filteredEmployees" :key="emp.id" 
+              class="group transition-all duration-200 border-b border-slate-50 bg-white hover:bg-slate-50">
+            <td class="px-6 py-4 bg-transparent">
+              <div class="flex items-center gap-3 bg-transparent">
+                <div class="w-10 h-10 rounded-xl bg-transparent text-blue-600 font-black flex items-center justify-center text-sm border border-blue-200 group-hover:border-blue-300 transition-colors">
                   {{ emp.full_name.charAt(0) }}
                 </div>
-                <div>
-                  <p class="text-sm font-black text-slate-900 mb-0.5">{{ emp.full_name }}</p>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ emp.employee_code }}</p>
+                <div class="bg-transparent">
+                  <p class="text-sm font-black text-slate-900 mb-0.5 bg-transparent">{{ emp.full_name }}</p>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter bg-transparent">{{ emp.employee_code }}</p>
                 </div>
               </div>
             </td>
-            <td class="px-6 py-4 border-b border-slate-50">
-              <p class="text-xs font-bold text-slate-700 mb-0.5">{{ emp.department }}</p>
-              <p class="text-[10px] font-medium text-slate-500">{{ emp.position }}</p>
+            <td class="px-6 py-4 bg-transparent">
+              <p class="text-xs font-bold text-slate-700 mb-0.5 bg-transparent">{{ emp.department }}</p>
+              <p class="text-[10px] font-medium text-slate-500 bg-transparent">{{ emp.position }}</p>
             </td>
-            <td class="px-6 py-4 border-b border-slate-50 text-center">
-              <p class="text-[11px] font-bold text-slate-500">{{ emp.hire_date }}</p>
+            <td class="px-6 py-4 text-center bg-transparent">
+              <p class="text-[11px] font-bold text-slate-500 bg-transparent">{{ emp.hire_date }}</p>
             </td>
-            <td class="px-6 py-4 border-b border-slate-50">
-              <span :class="`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusColor(emp.status)} shadow-sm font-bold`">
+            <td class="px-6 py-4 bg-transparent">
+              <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusColor(emp.status)} border d-inline-flex align-items-center gap-2 shadow-sm transition-all`" style="background-color: transparent !important;">
+                <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotColor(emp.status)"></span>
                 {{ emp.status.replace('_', ' ') }}
-              </span>
+              </div>
             </td>
-            <td class="px-6 py-4 border-b border-slate-50 text-right">
-              <div class="flex items-center justify-end gap-1 transition-opacity">
-                <button @click="editEmployee(emp)" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all">
-                  <span class="material-symbols-outlined text-[18px]">edit</span>
+            <td class="px-6 py-4 text-right bg-transparent">
+              <div class="flex items-center justify-end gap-1 transition-opacity bg-transparent">
+                <button @click="editEmployee(emp)" class="btn-action-icon">
+                  <span class="material-symbols-outlined">edit</span>
                 </button>
-                <button @click="confirmResign(emp)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Chuyển trạng thái nghỉ việc">
-                  <span class="material-symbols-outlined text-[18px]">person_off</span>
+                <button @click="confirmResign(emp)" class="btn-action-icon btn-danger-action" title="Chuyển trạng thái nghỉ việc">
+                  <span class="material-symbols-outlined">person_off</span>
                 </button>
               </div>
             </td>
@@ -109,143 +111,160 @@
     </div>
 
     <!-- Add/Edit Modal -->
-    <transition name="modal">
-      <div v-if="showModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="showModal = false"></div>
-        <div class="relative bg-white w-full max-w-4xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col">
-          <!-- Modal Header -->
-          <div class="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-            <div>
-              <h3 class="text-xl font-black text-slate-900">{{ editMode ? 'Cập nhật hồ sơ' : 'Thêm nhân viên mới' }}</h3>
-              <p class="text-sm text-slate-500 font-medium italic">Vui lòng điền các thông tin bắt buộc (*)</p>
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+        enter-to-class="opacity-100 scale-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 scale-100 translate-y-0"
+        leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      >
+        <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="showModal = false"></div>
+          <div class="relative z-[10000] bg-white w-full max-w-5xl max-h-[90vh] rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+            <!-- Modal Header -->
+            <div class="px-10 py-8 border-b border-slate-100 flex items-center justify-between bg-white text-left">
+              <div class="text-left">
+                <h3 class="text-xl font-black text-slate-900 text-left">{{ editMode ? 'Cập nhật hồ sơ' : 'Thêm nhân viên mới' }}</h3>
+                <p class="text-sm text-slate-500 font-medium italic text-left">Vui lòng điền các thông tin bắt buộc (*)</p>
+              </div>
+              <button @click="showModal = false" class="w-12 h-12 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all text-slate-400">
+                <span class="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <button @click="showModal = false" class="w-12 h-12 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-md transition-all text-slate-400">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
 
-          <!-- Modal Body (Scrollable) -->
-          <div class="flex-1 overflow-y-auto p-10 custom-scrollbar">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <!-- Left: Personal Info -->
-              <div class="space-y-6">
-                <h4 class="text-xs font-black text-blue-600 uppercase tracking-[0.2em] flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span> Thông tin cá nhân
-                </h4>
-                
-                <div class="space-y-4">
-                  <div class="group">
-                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Họ và tên *</label>
-                    <input v-model="form.full_name" type="text" placeholder="VD: Nguyễn Văn A" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                  </div>
+            <!-- Modal Body (Scrollable) -->
+            <div class="flex-1 overflow-y-auto p-10 custom-scrollbar">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                <!-- Left: Personal Info -->
+                <div class="space-y-6">
+                  <h4 class="text-xs font-black text-blue-600 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span> Thông tin cá nhân
+                  </h4>
                   
-                  <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-4">
+                    <div class="group">
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Họ và tên *</label>
+                      <input v-model="form.full_name" type="text" placeholder="VD: Nguyễn Văn A" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày sinh</label>
+                        <input v-model="form.date_of_birth" type="date" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Giới tính</label>
+                        <Dropdown 
+                          v-model="form.gender"
+                          :options="genderOptions"
+                          class="w-full"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                       <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Số điện thoại *</label>
+                        <input v-model="form.phone_number" type="tel" placeholder="09xxx..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                      </div>
+                       <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Số CCCD *</label>
+                        <input v-model="form.id_card" type="text" placeholder="001..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                      </div>
+                    </div>
+
                     <div>
-                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày sinh</label>
-                      <input v-model="form.date_of_birth" type="date" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Email cá nhân</label>
+                      <input v-model="form.personal_email" type="email" placeholder="user@gmail.com" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
                     </div>
+
                     <div>
-                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Giới tính</label>
-                      <select v-model="form.gender" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                        <option value="NAM">Nam</option>
-                        <option value="NỮ">Nữ</option>
-                        <option value="KHÁC">Khác</option>
-                      </select>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Địa chỉ thường trú</label>
+                      <textarea v-model="form.permanent_address" rows="1" placeholder="Số nhà, đường, phường/xã..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"></textarea>
                     </div>
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-4">
-                     <div>
-                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Số điện thoại *</label>
-                      <input v-model="form.phone_number" type="tel" placeholder="09xxx..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                    </div>
-                     <div>
-                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Số CCCD *</label>
-                      <input v-model="form.id_card" type="text" placeholder="001..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                    </div>
-                  </div>
-
-                  <div>
-                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Email cá nhân</label>
-                    <input v-model="form.personal_email" type="email" placeholder="user@gmail.com" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                  </div>
-
-                  <div>
-                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Địa chỉ thường trú</label>
-                    <textarea v-model="form.permanent_address" rows="1" placeholder="Số nhà, đường, phường/xã..." class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all"></textarea>
                   </div>
                 </div>
-              </div>
 
-              <!-- Right: Job Info -->
-              <div class="space-y-6">
-                <h4 class="text-xs font-black text-green-600 uppercase tracking-[0.2em] flex items-center gap-2">
-                  <span class="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span> Thông tin công việc
-                </h4>
-                
-                <div class="space-y-4">
-                  <div class="grid grid-cols-2 gap-4">
+                <!-- Right: Job Info -->
+                <div class="space-y-6">
+                  <h4 class="text-xs font-black text-green-600 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span> Thông tin công việc
+                  </h4>
+                  
+                  <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                       <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Phòng ban *</label>
+                        <Dropdown 
+                          v-model="form.department"
+                          :options="departmentFormOptions"
+                          class="w-full"
+                        />
+                      </div>
+                       <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Chức vụ *</label>
+                        <Dropdown 
+                          v-model="form.position"
+                          :options="positionOptionsList"
+                          class="w-full"
+                        />
+                      </div>
+                    </div>
+
                      <div>
-                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Phòng ban *</label>
-                      <select v-model="form.department" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                        <option v-for="dept in departments" :key="dept" :value="dept">{{ dept }}</option>
-                      </select>
+                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Email công ty *</label>
+                      <input v-model="form.company_email" type="email" placeholder="user@company.com" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
                     </div>
-                     <div>
-                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Chức vụ *</label>
-                      <select v-model="form.position" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                        <option v-for="pos in positions" :key="pos" :value="pos">{{ pos }}</option>
-                      </select>
-                    </div>
-                  </div>
 
-                   <div>
-                    <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Email công ty *</label>
-                    <input v-model="form.company_email" type="email" placeholder="user@company.com" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                  </div>
-
-                  <div class="grid grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày vào làm *</label>
-                      <input v-model="form.hire_date" type="date" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                    <div class="grid grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày vào làm *</label>
+                        <input v-model="form.hire_date" type="date" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                      </div>
+                      <div>
+                        <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trạng thái</label>
+                        <Dropdown 
+                          v-model="form.status"
+                          :options="statusOptionsForm"
+                          class="w-full"
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <label class="block text-[11px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trạng thái</label>
-                      <select v-model="form.status" class="w-full px-5 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                        <option value="ĐANG_LÀM_VIỆC">Đang làm việc</option>
-                        <option value="THỬ_VIỆC">Thử việc</option>
-                        <option value="ĐÃ_NGHỈ_VIỆC">Đã nghỉ việc</option>
-                      </select>
-                    </div>
-                  </div>
 
-                  <div class="p-5 bg-blue-50/50 rounded-3xl border border-blue-100 shadow-inner">
-                    <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2 italic">Mã nhân viên (Hệ thống tự tạo)</p>
-                    <p class="text-xl font-black text-blue-900 tracking-wider">{{ form.employee_code || 'EMP-XXXX-XXX' }}</p>
+                    <div class="p-5 bg-blue-50/50 rounded-3xl border border-blue-100 shadow-inner">
+                      <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2 italic">Mã nhân viên (Hệ thống tự tạo)</p>
+                      <p class="text-xl font-black text-blue-900 tracking-wider">{{ form.employee_code || 'EMP-XXXX-XXX' }}</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Modal Footer -->
-          <div class="px-10 py-8 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
-            <button @click="showModal = false" class="px-8 py-3.5 text-sm font-black text-slate-400 hover:text-slate-600 rounded-2xl transition-all">Đóng</button>
-            <button @click="saveEmployee" class="px-10 py-3.5 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">save</span>
-                {{ editMode ? 'Cập nhật hồ sơ' : 'Lưu nhân viên' }}
-              </div>
-            </button>
+            <!-- Modal Footer -->
+            <div class="px-10 py-8 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
+              <button @click="showModal = false" class="px-8 py-3.5 text-sm font-black text-slate-400 hover:text-slate-600 rounded-2xl transition-all">Đóng</button>
+              <button @click="saveEmployee" class="px-10 py-3.5 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-sm">save</span>
+                  {{ editMode ? 'Cập nhật hồ sơ' : 'Lưu nhân viên' }}
+                </div>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showAlert, showConfirm } = useConfirm();
 
 // Initial Mock Data
 const employees = ref([
@@ -297,7 +316,34 @@ const stats = ref([
 ]);
 
 const departments = ['Công nghệ thông tin', 'Nhân sự', 'Tài chính - Kế toán', 'Marketing', 'Kinh doanh', 'Vận hành'];
+const departmentOptions = computed(() => [
+  { label: 'Tất cả phòng ban', value: 'ALL' },
+  ...departments.map(dept => ({ label: dept, value: dept }))
+]);
+
+const statusOptions = [
+  { label: 'Tất cả trạng thái', value: 'ALL' },
+  { label: 'Đang làm việc', value: 'ĐANG_LÀM_VIỆC' },
+  { label: 'Thử việc', value: 'THỬ_VIỆC' },
+  { label: 'Đã nghỉ việc', value: 'ĐÃ_NGHỈ_VIỆC' }
+];
+
 const positions = ['Frontend Developer', 'Backend Developer', 'UI/UX Designer', 'HR Manager', 'HR Executive', 'Accountant', 'Sales Lead'];
+
+const genderOptions = [
+  { label: 'Nam', value: 'NAM' },
+  { label: 'Nữ', value: 'NỮ' },
+  { label: 'Khác', value: 'KHÁC' }
+];
+
+const departmentFormOptions = departments.map(dept => ({ label: dept, value: dept }));
+const positionOptionsList = positions.map(pos => ({ label: pos, value: pos }));
+
+const statusOptionsForm = [
+  { label: 'Đang làm việc', value: 'ĐANG_LÀM_VIỆC' },
+  { label: 'Thử việc', value: 'THỬ_VIỆC' },
+  { label: 'Đã nghỉ việc', value: 'ĐÃ_NGHỈ_VIỆC' }
+];
 
 const emptyForm = {
   full_name: '',
@@ -341,10 +387,19 @@ const filteredEmployees = computed(() => {
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'ĐANG_LÀM_VIỆC': return 'bg-green-100 text-green-700';
-    case 'THỬ_VIỆC': return 'bg-blue-100 text-blue-700';
-    case 'ĐÃ_NGHỈ_VIỆC': return 'bg-red-100 text-red-700';
-    default: return 'bg-slate-100 text-slate-700';
+    case 'ĐANG_LÀM_VIỆC': return 'bg-green-50 text-green-700 border-green-100';
+    case 'THỬ_VIỆC': return 'bg-blue-50 text-blue-700 border-blue-100';
+    case 'ĐÃ_NGHỈ_VIỆC': return 'bg-red-50 text-red-700 border-red-100';
+    default: return 'bg-slate-50 text-slate-700 border-slate-100';
+  }
+};
+
+const getStatusDotColor = (status) => {
+  switch (status) {
+    case 'ĐANG_LÀM_VIỆC': return 'bg-green-500';
+    case 'THỬ_VIỆC': return 'bg-blue-500';
+    case 'ĐÃ_NGHỈ_VIỆC': return 'bg-red-500';
+    default: return 'bg-slate-500';
   }
 };
 
@@ -366,9 +421,9 @@ const editEmployee = (emp) => {
   showModal.value = true;
 };
 
-const saveEmployee = () => {
+const saveEmployee = async () => {
   if (!form.value.full_name || !form.value.company_email) {
-    alert('Vui lòng nhập đầy đủ các trường bắt buộc (*)');
+    await showAlert('Thiếu thông tin', 'Vui lòng nhập đầy đủ các trường bắt buộc (*)');
     return;
   }
 
@@ -387,8 +442,9 @@ const saveEmployee = () => {
   showModal.value = false;
 };
 
-const confirmResign = (emp) => {
-  if (confirm(`Bạn có chắc muốn chuyển trạng thái nghỉ việc cho nhân viên ${emp.full_name}?`)) {
+const confirmResign = async (emp) => {
+  const ok = await showConfirm('Xác nhận nghỉ việc', `Bạn có chắc muốn chuyển trạng thái nghỉ việc cho nhân viên ${emp.full_name}?`);
+  if (ok) {
     emp.status = 'ĐÃ_NGHỈ_VIỆC';
   }
 };
@@ -404,14 +460,5 @@ const confirmResign = (emp) => {
 .custom-scrollbar::-webkit-scrollbar-thumb {
   background: #e2e8f0;
   border-radius: 10px;
-}
-
-/* Modal Transitions */
-.modal-enter-active, .modal-leave-active {
-  transition: all 0.3s ease;
-}
-.modal-enter-from, .modal-leave-to {
-  opacity: 0;
-  transform: scale(0.95) translateY(20px);
 }
 </style>

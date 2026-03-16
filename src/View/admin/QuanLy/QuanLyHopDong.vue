@@ -17,12 +17,11 @@
           >
         </div>
 
-        <select v-model="filterStatus" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-500 outline-none hover:border-blue-300 transition-all">
-          <option value="ALL">Tất cả trạng thái</option>
-          <option value="ĐANG_HIỆU_LỰC">Đang hiệu lực</option>
-          <option value="SẮP_HẾT_HẠN">Sắp hết hạn</option>
-          <option value="ĐÃ_THANH_LÝ">Đã thanh lý</option>
-        </select>
+        <Dropdown 
+          v-model="filterStatus"
+          :options="statusOptions"
+          placeholder="Tất cả trạng thái"
+        />
 
         <button 
           @click="openAddModal"
@@ -108,17 +107,18 @@
                     </div>
                 </td>
                 <td class="px-6 py-4 border-b border-slate-50">
-                  <span :class="`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider whitespace-nowrap ${getStatusColor(item.status)}`">
+                  <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider whitespace-nowrap border d-inline-flex align-items-center gap-2 ${getStatusColor(item.status)}`">
+                    <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotColor(item.status)"></span>
                     {{ item.status.replaceAll('_', ' ') }}
-                  </span>
+                  </div>
                 </td>
                 <td class="px-6 py-4 border-b border-slate-50 text-right">
                   <div class="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                    <button @click="editContract(item)" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all">
-                      <span class="material-symbols-outlined text-[20px]">edit</span>
+                    <button @click="editContract(item)" class="btn-action-icon">
+                      <span class="material-symbols-outlined">edit</span>
                     </button>
-                    <button @click="extendContract(item)" class="p-2 text-slate-400 hover:text-green-600 hover:bg-green-50 rounded-xl transition-all" title="Gia hạn HĐ">
-                      <span class="material-symbols-outlined text-[20px]">restore</span>
+                    <button @click="extendContract(item)" class="btn-action-icon btn-success-action" title="Gia hạn HĐ">
+                      <span class="material-symbols-outlined">restore</span>
                     </button>
                   </div>
                 </td>
@@ -130,85 +130,111 @@
     </div>
 
     <!-- Modal -->
-    <transition name="modal">
-      <div v-if="showModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="closeModal"></div>
-        <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all">
-          <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-            <div>
-              <h3 class="text-lg font-black text-slate-900">{{ editMode ? 'Cập nhật hợp đồng' : 'Soạn thảo hợp đồng mới' }}</h3>
-              <p class="text-xs text-slate-500 font-bold italic mt-0.5 italic">Hệ thống sẽ tự động tính ngày hết hiệu lực</p>
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+        enter-to-class="opacity-100 scale-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 scale-100 translate-y-0"
+        leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      >
+        <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="closeModal"></div>
+          <div class="relative z-[10000] bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 text-left">
+              <div class="text-left">
+                <h3 class="text-lg font-black text-slate-900 text-left">{{ editMode ? 'Cập nhật hợp đồng' : 'Soạn thảo hợp đồng mới' }}</h3>
+                <p class="text-xs text-slate-500 font-bold italic mt-0.5 text-left">Hệ thống sẽ tự động tính ngày hết hiệu lực</p>
+              </div>
+              <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-md transition-all text-slate-400">
+                <span class="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-md transition-all text-slate-400">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
 
-          <div class="p-8 space-y-4 custom-scrollbar max-h-[70vh] overflow-y-auto">
-             <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Nhân viên thụ hưởng *</label>
-                <input v-model="form.employee_name" type="text" placeholder="Tìm kiếm tên nhân viên..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-             </div>
-
-             <div class="grid grid-cols-2 gap-4">
+            <div class="p-8 space-y-5">
                <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Loại hợp đồng *</label>
-                  <select v-model="form.contract_type" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-                     <option value="THỬ_VIỆC">Thử việc (2 tháng)</option>
-                     <option value="XÁC_ĐỊNH_THỜI_HẠN_1_NĂM">Lao động (1 năm)</option>
-                     <option value="XÁC_ĐỊNH_THỜI_HẠN_3_NĂM">Lao động (3 năm)</option>
-                     <option value="KHÔNG_XÁC_ĐỊNH_THỜI_HẠN">Không xác định thời hạn</option>
-                  </select>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Nhân viên thụ hưởng *</label>
+                  <input v-model="form.employee_name" type="text" placeholder="Tìm kiếm tên nhân viên..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left">
                </div>
+
+               <div class="grid grid-cols-2 gap-4 text-left">
+                 <div class="text-left">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Loại hợp đồng *</label>
+                    <Dropdown 
+                      v-model="form.contract_type"
+                      :options="contractTypeOptions"
+                      class="w-full"
+                    />
+                 </div>
+                 <div class="text-left">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Số hợp đồng *</label>
+                    <input v-model="form.contract_no" type="text" placeholder="HD2023..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left text-sm">
+                 </div>
+               </div>
+
+               <div class="grid grid-cols-2 gap-4 text-left">
+                 <div class="text-left">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Ngày ký *</label>
+                    <input v-model="form.sign_date" type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left">
+                 </div>
+                 <div class="text-left">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Ngày hiệu lực *</label>
+                    <input v-model="form.start_date" type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left">
+                 </div>
+               </div>
+
+               <div class="p-5 bg-blue-50/50 rounded-3xl border border-blue-100 border-dashed text-left">
+                  <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2 italic text-left">Ngày hết hạn dự kiến</p>
+                  <p class="text-xl font-black text-blue-900 tracking-wider text-left">
+                      {{ calculateEndDate() || 'N/A' }}
+                  </p>
+               </div>
+
                <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Số hợp đồng *</label>
-                  <input v-model="form.contract_no" type="text" placeholder="HD2023..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Mức lương thỏa thuận (VNĐ)</label>
+                  <input v-model="form.salary" type="number" placeholder="20.000.000" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left">
                </div>
-             </div>
+            </div>
 
-             <div class="grid grid-cols-2 gap-4">
-               <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày ký *</label>
-                  <input v-model="form.sign_date" type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-               </div>
-               <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày hiệu lực *</label>
-                  <input v-model="form.start_date" type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-               </div>
-             </div>
-
-             <div class="p-5 bg-blue-50/50 rounded-3xl border border-blue-100 border-dashed">
-                <p class="text-[10px] font-black text-blue-600 uppercase tracking-widest mb-2 italic">Ngày hết hạn dự kiến</p>
-                <p class="text-xl font-black text-blue-900 tracking-wider">
-                    {{ calculateEndDate() || 'N/A' }}
-                </p>
-             </div>
-
-             <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Mức lương thỏa thuận (VNĐ)</label>
-                <input v-model="form.salary" type="number" placeholder="20.000.000" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
-             </div>
-          </div>
-
-          <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex gap-3">
-            <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest italic rounded-2xl transition-all">Hủy</button>
-            <button @click="handleSave" class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 uppercase tracking-widest transition-all">
-              {{ editMode ? 'Cập nhật' : 'Ký Hợp đồng' }}
-            </button>
+            <div class="px-8 py-6 border-t border-slate-100 bg-slate-50/30 flex gap-3 text-left">
+              <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest italic rounded-2xl transition-all">Hủy</button>
+              <button @click="handleSave" class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 uppercase tracking-widest transition-all">
+                {{ editMode ? 'Cập nhật' : 'Ký Hợp đồng' }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showAlert, showConfirm } = useConfirm();
 
 const showModal = ref(false);
 const editMode = ref(false);
 const searchQuery = ref('');
 const filterStatus = ref('ALL');
+
+const statusOptions = [
+  { label: 'Tất cả trạng thái', value: 'ALL' },
+  { label: 'Đang hiệu lực', value: 'ĐANG_HIỆU_LỰC' },
+  { label: 'Sắp hết hạn', value: 'SẮP_HẾT_HẠN' },
+  { label: 'Đã thanh lý', value: 'ĐÃ_THANH_LÝ' }
+];
+
+const contractTypeOptions = [
+  { label: 'Thử việc (2 tháng)', value: 'THỬ_VIỆC' },
+  { label: 'Lao động (1 năm)', value: 'XÁC_ĐỊNH_THỜI_HẠN_1_NƠM' },
+  { label: 'Lao động (3 năm)', value: 'XÁC_ĐỊNH_THỜI_HẠN_3_NĂM' },
+  { label: 'Không xác định thời hạn', value: 'KHÔNG_XÁC_ĐỊNH_THỜI_HẠN' }
+];
 
 const contracts = ref([
   { id: 1, contract_no: 'HD-2023-1001', employee_name: 'Nguyễn Văn An', contract_type: 'THỬ_VIỆC', start_date: '10/10/2023', end_date: '10/12/2023', status: 'ĐANG_HIỆU_LỰC', salary: 15000000 },
@@ -278,10 +304,19 @@ const closeModal = () => {
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'ĐANG_HIỆU_LỰC': return 'bg-green-100 text-green-700';
-    case 'SẮP_HẾT_HẠN': return 'bg-amber-100 text-amber-700';
-    case 'ĐÃ_THANH_LÝ': return 'bg-red-100 text-red-700';
-    default: return 'bg-slate-100 text-slate-700';
+    case 'ĐANG_HIỆU_LỰC': return 'bg-green-50 text-green-700 border-green-100';
+    case 'SẮP_HẾT_HẠN': return 'bg-amber-50 text-amber-700 border-amber-100';
+    case 'ĐÃ_THANH_LÝ': return 'bg-red-50 text-red-700 border-red-100';
+    default: return 'bg-slate-50 text-slate-700 border-slate-100';
+  }
+};
+
+const getStatusDotColor = (status) => {
+  switch (status) {
+    case 'ĐANG_HIỆU_LỰC': return 'bg-green-500';
+    case 'SẮP_HẾT_HẠN': return 'bg-amber-500';
+    case 'ĐÃ_THANH_LÝ': return 'bg-red-500';
+    default: return 'bg-slate-500';
   }
 };
 
@@ -297,9 +332,9 @@ const calculateEndDate = () => {
     return start.toLocaleDateString('vi-VN');
 };
 
-const handleSave = () => {
+const handleSave = async () => {
     if (!form.value.employee_name || !form.value.contract_no) {
-        alert('Vui lòng nhập tên nhân viên và số hợp đồng!');
+        await showAlert('Thiếu thông tin', 'Vui lòng nhập tên nhân viên và số hợp đồng!');
         return;
     }
     
@@ -318,11 +353,12 @@ const handleSave = () => {
     closeModal();
 };
 
-const extendContract = (item) => {
-    if (confirm(`Thực hiện quy trình gia hạn cho hợp đồng ${item.contract_no}? Hệ thống sẽ tạo phụ lục hợp đồng mới.`)) {
+const extendContract = async (item) => {
+    const ok = await showConfirm('Gia hạn hợp đồng', `Thực hiện quy trình gia hạn cho hợp đồng ${item.contract_no}? Hệ thống sẽ tạo phụ lục hợp đồng mới.`);
+    if (ok) {
         openAddModal();
         form.value.employee_name = item.employee_name;
-        form.value.contract_type = 'XÁC_ĐỊNH_THỜI_HẠN_1_NĂM'; // Default extension
+        form.value.contract_type = 'XÁC_ĐỊNH_THỜI_HẠN_1_NƠM'; // Default extension
     }
 };
 </script>
@@ -339,12 +375,5 @@ const extendContract = (item) => {
   border-radius: 10px;
 }
 
-/* Modal Transitions */
-.modal-enter-active, .modal-leave-active {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.modal-enter-from, .modal-leave-to {
-  opacity: 0;
-  transform: scale(0.95) translateY(20px);
-}
 </style>
+

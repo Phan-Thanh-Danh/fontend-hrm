@@ -1,67 +1,83 @@
 <template>
-  <div class="tuyen-dung-page space-y-6">
+  <div class="space-y-6">
     <!-- Header -->
-    <div class="mb-8">
-      <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Tuyển dụng</h1>
-      <p class="text-slate-500 text-sm font-medium italic">Quản lý tin tuyển dụng, theo dõi ứng viên và đánh giá hồ sơ bằng AI.</p>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Tuyển dụng</h1>
+        <p class="text-slate-500 text-sm font-medium italic">Quản lý tin tuyển dụng, theo dõi ứng viên và đánh giá hồ sơ bằng AI.</p>
+      </div>
     </div>
 
     <!-- Main Content Split -->
-    <div class="row g-4 mb-4">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
       <!-- Left Column: Filter & Table -->
-      <div class="col-xl-7">
+      <div class="xl:col-span-7 space-y-4">
         <!-- Filters -->
-        <div class="card border-0 shadow-sm rounded-4 mb-3">
-          <div class="card-body p-3">
-            <div class="row g-3">
-              <div class="col-md-5">
-                <div class="input-group">
-                  <span class="input-group-text bg-light border-0"><span class="material-symbols-outlined fs-5 text-muted">search</span></span>
-                  <input type="text" class="form-control bg-light border-0 text-muted" placeholder="Tìm tên, vị trí...">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <select class="form-select border-0 bg-light text-muted fw-medium py-2">
-                  <option>Vị trí: Tất cả</option>
-                </select>
-              </div>
-              <div class="col-md-3">
-                <select class="form-select border-0 bg-light text-muted fw-medium py-2">
-                  <option>Điểm AI: > 80</option>
-                </select>
-              </div>
+        <div class="bg-white p-4 rounded-3xl border border-slate-100 shadow-sm">
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+            <div class="md:col-span-5 relative group">
+              <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+              <input 
+                type="text" 
+                placeholder="Tìm tên, vị trí..." 
+                class="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-bold"
+              >
+            </div>
+            <div class="md:col-span-4">
+              <Dropdown 
+                v-model="filterPosition"
+                :options="positionOptions"
+                placeholder="Vị trí: Tất cả"
+              />
+            </div>
+            <div class="md:col-span-3">
+              <Dropdown 
+                v-model="filterAiScore"
+                :options="aiScoreOptions"
+                placeholder="Điểm AI: > 80"
+              />
             </div>
           </div>
         </div>
 
         <!-- Candidate Table -->
-        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-          <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-              <thead class="table-light text-muted" style="font-size: 0.75rem; letter-spacing: 0.5px;">
-                <tr>
-                  <th class="border-0 px-4 py-3 text-uppercase fw-bold">Ứng viên</th>
-                  <th class="border-0 py-3 text-uppercase fw-bold">Vị trí</th>
-                  <th class="border-0 py-3 text-uppercase fw-bold text-center">Điểm AI</th>
-                  <th class="border-0 py-3 text-uppercase fw-bold">Ngày nộp</th>
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden text-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50/50">
+                  <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Ứng viên</th>
+                  <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Vị trí</th>
+                  <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic text-center">Điểm AI</th>
+                  <th class="px-6 py-4 text-[11px] font-black text-slate-400 uppercase tracking-widest border-b border-slate-100 italic">Ngày nộp</th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="(candidate, index) in filteredCandidates" :key="candidate.id" :class="{'active-row': activeCandidateId === candidate.id, 'border-top': index > 0}">
-                  <td class="px-4 py-3 border-bottom-0 cursor-pointer" @click="activeCandidateId = candidate.id">
-                    <div class="d-flex align-items-center gap-3">
-                      <div class="avatar-circle-sm bg-light text-dark fw-bold border" style="font-size: 0.75rem;">{{ candidate.initial }}</div>
-                      <span class="fw-bold text-dark" style="font-size: 0.95rem;">{{ candidate.name }}</span>
+                <tr v-for="(candidate, index) in filteredCandidates" :key="candidate.id" 
+                    @click="activeCandidateId = candidate.id"
+                    class="group transition-all duration-200 cursor-pointer border-b border-slate-50"
+                    :class="activeCandidateId === candidate.id ? 'bg-blue-50/50' : 'bg-white hover:bg-slate-50'">
+                  <td class="px-6 py-4 relative bg-transparent">
+                    <div v-if="activeCandidateId === candidate.id" class="absolute left-0 top-0 bottom-0 w-1 bg-blue-600"></div>
+                    <div class="flex items-center gap-3 bg-transparent">
+                      <div class="w-10 h-10 rounded-xl bg-transparent border border-slate-200 text-slate-900 font-bold flex items-center justify-center text-xs">
+                        {{ candidate.initial }}
+                      </div>
+                      <div class="bg-transparent">
+                        <p class="text-sm font-black text-slate-900 bg-transparent">{{ candidate.name }}</p>
+                      </div>
                     </div>
                   </td>
-                  <td class="text-muted fw-medium border-bottom-0 cursor-pointer" @click="activeCandidateId = candidate.id">{{ candidate.position }}</td>
-                  <td class="text-center border-bottom-0 cursor-pointer" @click="activeCandidateId = candidate.id">
-                    <span class="badge" :style="getAiScoreStyle(candidate.aiScore)">{{ candidate.aiScore }}/100</span>
+                  <td class="px-6 py-4 text-slate-500 font-bold bg-transparent">{{ candidate.position }}</td>
+                  <td class="px-6 py-4 text-center bg-transparent">
+                    <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm transition-all" :style="getAiScoreStyle(candidate.aiScore)">
+                      {{ candidate.aiScore }}/100
+                    </span>
                   </td>
-                  <td class="text-muted small border-bottom-0 cursor-pointer" @click="activeCandidateId = candidate.id">{{ candidate.date }}</td>
+                  <td class="px-6 py-4 text-slate-400 font-medium bg-transparent">{{ candidate.date }}</td>
                 </tr>
                 <tr v-if="filteredCandidates.length === 0">
-                  <td colspan="4" class="text-center text-muted py-5">
+                  <td colspan="4" class="px-6 py-10 text-center text-slate-400 font-bold italic bg-white">
                     Không có ứng viên nào thuộc danh sách này.
                   </td>
                 </tr>
@@ -72,170 +88,148 @@
       </div>
 
       <!-- Right Column: CV Preview & AI -->
-      <div class="col-xl-5">
-        <div class="card border-0 shadow-sm rounded-4 h-100 placeholder-glow overflow-hidden d-flex flex-column bg-light pb-0">
-            <div class="d-flex justify-content-between align-items-center p-3 border-bottom bg-white">
-                <span class="text-muted fw-bold small text-uppercase" style="letter-spacing: 0.5px;">Xem trước CV: CV_NGUYENVANANH.PDF</span>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-sm btn-light text-muted p-1 d-flex"><span class="material-symbols-outlined fs-5">zoom_in</span></button>
-                    <button class="btn btn-sm btn-light text-muted p-1 d-flex"><span class="material-symbols-outlined fs-5">download</span></button>
-                </div>
+      <div class="xl:col-span-5 h-full">
+        <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm h-full overflow-hidden flex flex-col">
+          <!-- CV Preview Header -->
+          <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
+            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Xem trước CV: CV_NGUYENVANANH.PDF</span>
+            <div class="flex gap-2">
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-slate-100 transition-all">
+                <span class="material-symbols-outlined text-[18px]">zoom_in</span>
+              </button>
+              <button class="w-8 h-8 flex items-center justify-center rounded-lg bg-slate-50 text-slate-400 hover:bg-slate-100 transition-all">
+                <span class="material-symbols-outlined text-[18px]">download</span>
+              </button>
             </div>
-            
-            <div class="flex-grow-1 p-3 d-flex justify-content-center align-items-center" style="background-color: #eff6ff;">
-                <div class="bg-white rounded p-4 shadow-sm w-75 h-100 d-flex flex-column gap-3">
-                    <!-- Fake CV lines -->
-                    <div class="bg-light rounded" style="width: 25%; height: 80px;"></div>
-                    <div class="bg-light rounded mt-3" style="width: 50%; height: 16px;"></div>
-                    
-                    <div class="space-y-2 mt-4">
-                        <div class="bg-light rounded" style="width: 100%; height: 12px;"></div>
-                        <div class="bg-light rounded" style="width: 100%; height: 12px; margin-top: 6px;"></div>
-                        <div class="bg-light rounded" style="width: 70%; height: 12px; margin-top: 6px;"></div>
-                    </div>
-                    
-                    <div class="space-y-2 mt-4 mt-auto">
-                        <div class="bg-light rounded" style="width: 100%; height: 12px;"></div>
-                        <div class="bg-light rounded" style="width: 100%; height: 12px; margin-top: 6px;"></div>
-                    </div>
+          </div>
+          
+          <!-- CV Preview Body -->
+          <div class="flex-grow p-6 flex flex-col items-center justify-center bg-blue-50/30">
+            <div class="bg-white rounded-3xl p-10 shadow-xl shadow-blue-900/5 w-full max-w-sm h-[300px] flex flex-col gap-4 border border-blue-100/50">
+              <div class="w-20 h-20 bg-slate-50 rounded-2xl border border-slate-100"></div>
+              <div class="w-1/2 h-4 bg-slate-50 rounded-lg"></div>
+              <div class="space-y-2 pt-4">
+                <div class="w-full h-3 bg-slate-50 rounded-lg"></div>
+                <div class="w-full h-3 bg-slate-50 rounded-lg"></div>
+                <div class="w-3/4 h-3 bg-slate-50 rounded-lg"></div>
+              </div>
+              <div class="space-y-2 mt-auto">
+                <div class="w-full h-3 bg-slate-50 rounded-lg"></div>
+                <div class="w-full h-3 bg-slate-50 rounded-lg"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dynamic Assessment Panel -->
+          <div class="p-8 border-t border-slate-100 bg-white space-y-6">
+            <div v-if="needsScheduling(activeCandidate)">
+              <h4 class="text-xs font-black text-blue-600 uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-[20px]">calendar_month</span> Thiết lập lịch phỏng vấn
+              </h4>
+              <div class="grid grid-cols-2 gap-4 mb-6">
+                <div>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Ngày</label>
+                  <input type="date" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
                 </div>
+                <div>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Giờ</label>
+                  <input type="time" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                </div>
+              </div>
+              <button class="w-full py-4 bg-indigo-600 text-white rounded-2xl text-xs font-black hover:bg-indigo-700 shadow-xl shadow-indigo-200 transition-all uppercase tracking-[0.2em]">Lưu lịch & Gửi mail</button>
             </div>
 
-            <!-- Dynamic Assessment/Schedule Panel Inside CV View -->
-            <div class="bg-white p-4 border-top" style="z-index: 10; box-shadow: 0 -4px 6px -1px rgba(0,0,0,0.05);">
-                <!-- Case 1: Needs Scheduling (Future or None) -->
-                <div v-if="needsScheduling(activeCandidate)">
-                    <h6 class="fw-bold text-dark mb-3">
-                        <span class="material-symbols-outlined fs-5 align-middle text-primary me-1">calendar_month</span> 
-                        Thiết lập lịch phỏng vấn
-                    </h6>
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Ngày</label>
-                            <input type="date" class="form-control bg-light border-0 py-2 text-dark font-medium">
-                        </div>
-                        <div class="col-6">
-                            <label class="form-label text-muted small fw-bold text-uppercase mb-1" style="font-size: 0.7rem;">Giờ</label>
-                            <input type="time" class="form-control bg-light border-0 py-2 text-dark font-medium">
-                        </div>
-                    </div>
-                    <button class="bg-indigo-600 text-white w-100 fw-bold py-2.5 rounded-xl mt-1 shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all uppercase tracking-widest text-xs">Lưu lịch & Gửi mail</button>
-                </div>
-
-                <!-- Case 2: Past Interview (Ready for Pass/Fail) -->
-                <div v-else>
-                    <h6 class="fw-bold text-dark mb-3">
-                        <span class="material-symbols-outlined fs-5 align-middle text-primary me-1">rate_review</span> 
-                        Phỏng vấn xong - Đánh giá kết quả
-                    </h6>
-                    <div class="mb-3">
-                        <textarea class="form-control bg-light border-0 py-2 text-dark" rows="2" placeholder="Nhập nhận xét chi tiết..."></textarea>
-                    </div>
-                    <div class="d-flex gap-4 mb-4 px-2">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" :name="'result_' + activeCandidate.id" id="resultPass" style="border-color: #cbd5e1;">
-                            <label class="form-check-label fw-bold text-success" for="resultPass" style="font-size: 0.85rem;">PASS</label>
-                        </div>
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" :name="'result_' + activeCandidate.id" id="resultFail" style="border-color: #cbd5e1;">
-                            <label class="form-check-label fw-bold" style="color: #475569; font-size: 0.85rem;" for="resultFail">FAIL</label>
-                        </div>
-                    </div>
-                    <button class="btn btn-dark w-100 fw-medium py-2 rounded-3">Lưu kết quả thao tác</button>
-                </div>
+            <div v-else>
+              <h4 class="text-xs font-black text-indigo-600 uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
+                <span class="material-symbols-outlined text-[20px]">rate_review</span> Phỏng vấn xong - Đánh giá
+              </h4>
+              <div class="mb-4">
+                <textarea class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all" rows="2" placeholder="Nhập nhận xét chi tiết..."></textarea>
+              </div>
+              <div class="flex gap-6 mb-6 px-2">
+                <label class="flex items-center gap-2 cursor-pointer group">
+                  <input type="radio" :name="'result_' + activeCandidate.id" class="w-4 h-4 text-green-600 focus:ring-green-500 border-slate-200">
+                  <span class="text-sm font-black text-green-600 uppercase tracking-widest">PASS</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer group">
+                  <input type="radio" :name="'result_' + activeCandidate.id" class="w-4 h-4 text-slate-400 focus:ring-slate-500 border-slate-200 border-2">
+                  <span class="text-sm font-black text-slate-400 uppercase tracking-widest">FAIL</span>
+                </label>
+              </div>
+              <button class="w-full py-4 bg-slate-900 text-white rounded-2xl text-xs font-black hover:bg-slate-800 shadow-xl shadow-slate-200 transition-all uppercase tracking-[0.2em]">Lưu kết quả thao tác</button>
             </div>
+          </div>
         </div>
       </div>
     </div>
-
-
 
     <!-- Bottom List -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-      <div class="card-body p-0">
-        <!-- Inner tabs -->
-        <div class="d-flex border-bottom bg-light rounded-top-4" style="padding: 2px;">
-            <div class="flex-grow-1 text-center bg-white rounded-3 shadow-sm py-2 text-primary fw-medium small m-1 cursor-pointer">
-                Danh sách Trúng tuyển (12)
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden">
+      <!-- Tabs -->
+      <div class="flex p-1 bg-slate-50 border-b border-slate-100">
+        <button class="flex-1 py-3 text-[11px] font-black uppercase tracking-widest text-blue-600 bg-white rounded-2xl shadow-sm transition-all">
+          Danh sách Trúng tuyển (12)
+        </button>
+        <button class="flex-1 py-3 text-[11px] font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-all">
+          Danh sách Từ chối (45)
+        </button>
+      </div>
+
+      <!-- Horizontal candidate list -->
+      <div class="p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div v-for="i in 4" :key="i" class="p-4 rounded-3xl border border-slate-100 hover:border-blue-100 hover:bg-blue-50/30 transition-all flex items-center justify-between group">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-green-50 text-green-600 font-black flex items-center justify-center text-xs border border-green-100">
+                {{ i === 1 ? 'PT' : (i === 2 ? 'HM' : (i === 3 ? 'VD' : 'KL')) }}
+              </div>
+              <div>
+                <h6 class="text-sm font-black text-slate-900">
+                  {{ i === 1 ? 'Phan Thành' : (i === 2 ? 'Hoàng My' : (i === 3 ? 'Vũ Duy' : 'Khánh Linh')) }}
+                </h6>
+                <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">
+                  {{ i === 1 ? 'iOS Developer' : (i === 2 ? 'Product Owner' : (i === 3 ? 'Data Scientist' : 'QA Engineer')) }}
+                </span>
+              </div>
             </div>
-            <div class="flex-grow-1 text-center py-2 text-muted fw-medium small m-1 cursor-pointer">
-                Danh sách Từ chối (45)
-            </div>
+            <button class="text-slate-300 group-hover:text-slate-500 transition-colors">
+              <span class="material-symbols-outlined">more_vert</span>
+            </button>
+          </div>
         </div>
 
-        <!-- Horizontal candidate list -->
-        <div class="p-4">
-            <div class="row g-3 d-flex align-items-center mb-3">
-                <div class="col-md-3">
-                    <div class="border rounded-4 p-3 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="avatar-circle-sm bg-success bg-opacity-10 text-success fw-bold p-2 rounded-circle" style="font-size: 0.75rem; width: 36px; height: 36px;">PT</div>
-                            <div>
-                                <h6 class="mb-0 fw-bold text-dark text-nowrap" style="font-size: 0.85rem;">Phan Thành</h6>
-                                <span class="text-muted" style="font-size: 0.7rem;">iOS Developer</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-link text-muted p-0"><span class="material-symbols-outlined fs-5">more_vert</span></button>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="border rounded-4 p-3 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="avatar-circle-sm bg-success bg-opacity-10 text-success fw-bold p-2 rounded-circle" style="font-size: 0.75rem; width: 36px; height: 36px;">HM</div>
-                            <div>
-                                <h6 class="mb-0 fw-bold text-dark text-nowrap" style="font-size: 0.85rem;">Hoàng My</h6>
-                                <span class="text-muted" style="font-size: 0.7rem;">Product Owner</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-link text-muted p-0"><span class="material-symbols-outlined fs-5">more_vert</span></button>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="border rounded-4 p-3 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="avatar-circle-sm bg-success bg-opacity-10 text-success fw-bold p-2 rounded-circle" style="font-size: 0.75rem; width: 36px; height: 36px;">VD</div>
-                            <div>
-                                <h6 class="mb-0 fw-bold text-dark text-nowrap" style="font-size: 0.85rem;">Vũ Duy</h6>
-                                <span class="text-muted" style="font-size: 0.7rem;">Data Scientist</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-link text-muted p-0"><span class="material-symbols-outlined fs-5">more_vert</span></button>
-                    </div>
-                </div>
-
-                <div class="col-md-3">
-                    <div class="border rounded-4 p-3 d-flex justify-content-between align-items-center">
-                        <div class="d-flex align-items-center gap-3">
-                            <div class="avatar-circle-sm bg-success bg-opacity-10 text-success fw-bold p-2 rounded-circle" style="font-size: 0.75rem; width: 36px; height: 36px;">KL</div>
-                            <div>
-                                <h6 class="mb-0 fw-bold text-dark text-nowrap" style="font-size: 0.85rem;">Khánh Linh</h6>
-                                <span class="text-muted" style="font-size: 0.7rem;">QA Engineer</span>
-                            </div>
-                        </div>
-                        <button class="btn btn-link text-muted p-0"><span class="material-symbols-outlined fs-5">more_vert</span></button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Expand btn -->
-            <div class="text-center mt-3 pt-3 border-top border-light">
-                <a href="#" class="text-decoration-none fw-bold small text-primary">Xem toàn bộ 12 ứng viên trúng tuyển</a>
-            </div>
+        <div class="text-center pt-6 border-t border-slate-50">
+          <a href="#" class="text-[11px] font-black text-blue-600 uppercase tracking-widest hover:underline decoration-2 underline-offset-4">Xem toàn bộ 12 ứng viên trúng tuyển</a>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
+import Dropdown from '@/components/Dropdown.vue';
+import { useConfirm } from '@/composables/useConfirm';
 
+const { showAlert, showConfirm } = useConfirm();
 const route = useRoute();
 const activeCandidateId = ref(1);
+const filterPosition = ref('');
+const filterAiScore = ref('');
+
+const positionOptions = [
+  { label: 'Vị trí: Tất cả', value: '' },
+  { label: 'Senior Frontend', value: 'Senior Frontend' },
+  { label: 'UI/UX Designer', value: 'UI/UX Designer' },
+  { label: 'Backend Dev', value: 'Backend Dev' }
+];
+
+const aiScoreOptions = [
+  { label: 'Tất cả điểm', value: '' },
+  { label: 'Điểm AI: > 80', value: '80' },
+  { label: 'Điểm AI: > 90', value: '90' }
+];
 
 const candidates = ref([
   { id: 1, name: 'Nguyễn Văn Anh', position: 'Senior Frontend', aiScore: 95, date: '12/10/2023', status: 'pass', initial: 'NA', interviewDate: '2023-10-15' },
@@ -257,40 +251,32 @@ const needsScheduling = (candidate) => {
 
 const filteredCandidates = computed(() => {
   const currentStatus = route.query.status;
+  let list = candidates.value;
+
   if (currentStatus === 'pass') {
-    return candidates.value.filter(c => c.status === 'pass');
+    list = list.filter(c => c.status === 'pass');
   } else if (currentStatus === 'fail') {
-    return candidates.value.filter(c => c.status === 'fail');
+    list = list.filter(c => c.status === 'fail');
   }
-  return candidates.value; // 'all'
+
+  if (filterAiScore.value) {
+    list = list.filter(c => c.aiScore >= parseInt(filterAiScore.value));
+  }
+
+  if (filterPosition.value) {
+    list = list.filter(c => c.position === filterPosition.value);
+  }
+
+  return list;
 });
 
 const getAiScoreStyle = (score) => {
-  if (score >= 80) return 'background-color: #dcfce7; color: #16a34a;'; // Xanh lá
-  if (score >= 70) return 'background-color: #fef08a; color: #ca8a04;'; // Vàng
-  return 'background-color: #fee2e2; color: #ef4444;'; // Đỏ
+  if (score >= 80) return 'background-color: #dcfce7; color: #16a34a; border-color: #bbf7d0;'; // Xanh lá
+  if (score >= 70) return 'background-color: #fef08a; color: #ca8a04; border-color: #fef08a;'; // Vàng
+  return 'background-color: #fee2e2; color: #ef4444; border-color: #fecaca;'; // Đỏ
 };
 </script>
 
 <style scoped>
-.avatar-circle-sm {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-}
-
-.active-row {
-    background-color: rgba(59, 130, 246, 0.05);
-}
-
-.active-row td:first-child {
-    box-shadow: inset 4px 0 0 0 #0d6efd;
-}
-
-.cursor-pointer {
-    cursor: pointer;
-}
+/* Any specific local styles */
 </style>

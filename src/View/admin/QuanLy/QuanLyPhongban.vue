@@ -1,34 +1,34 @@
 <template>
   <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản lý Phòng ban</h1>
-        <p class="text-slate-500 text-sm font-medium italic">Cấu trúc sơ đồ tổ chức và quản lý nhân sự theo đơn vị.</p>
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 text-left">
+      <div class="text-left">
+        <h1 class="text-2xl font-black text-slate-900 tracking-tight text-left">Quản lý Phòng ban</h1>
+        <p class="text-slate-500 text-sm font-medium italic text-left">Cấu trúc sơ đồ tổ chức và quản lý nhân sự theo đơn vị.</p>
       </div>
-      <div class="flex flex-wrap items-center gap-3 text-sm">
+      <div class="flex flex-wrap items-center gap-3 text-sm text-left">
         <div class="relative group hidden sm:block">
           <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
           <input 
             v-model="searchQuery"
             type="text" 
             placeholder="Tìm mã hoặc tên phòng..." 
-            class="pl-10 pr-4 py-2.5 w-64 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all font-bold"
+            class="pl-10 pr-4 py-2.5 w-64 bg-white border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-blue-600/20 focus:border-blue-600 transition-all font-bold"
           >
         </div>
 
-        <select v-model="filterActive" class="px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-slate-500 outline-none hover:border-indigo-300 transition-all">
-          <option value="ALL">Tất cả trạng thái</option>
-          <option :value="true">Đang hoạt động</option>
-          <option :value="false">Đã giải thể</option>
-        </select>
+        <Dropdown 
+          v-model="filterActive"
+          :options="activeOptions"
+          placeholder="Tất cả trạng thái"
+        />
 
         <button 
           @click="openModal('add')" 
-          class="px-5 py-2.5 bg-indigo-600 rounded-xl font-black text-white hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all flex items-center gap-2"
+          class="px-6 py-2.5 min-h-[44px] bg-blue-600 rounded-lg font-black text-white hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all flex items-center gap-2"
         >
           <span class="material-symbols-outlined text-[20px]">add_business</span>
-          Thêm phòng ban
+          Thêm đơn vị
         </button>
       </div>
     </div>
@@ -59,15 +59,16 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-50">
-          <tr v-for="dept in filteredDepartments" :key="dept.id" class="hover:bg-slate-50/50 transition-all group">
-            <td class="px-8 py-5">
-              <div class="flex items-center gap-4">
-                <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center group-hover:bg-indigo-100 group-hover:text-indigo-600 transition-colors border border-slate-200 group-hover:border-indigo-200">
+          <tr v-for="dept in filteredDepartments" :key="dept.id" 
+              class="group transition-all duration-200 border-b border-slate-50 bg-white hover:bg-slate-50">
+            <td class="px-8 py-5 bg-transparent">
+              <div class="flex items-center gap-4 bg-transparent">
+                <div class="w-10 h-10 rounded-xl bg-transparent text-slate-500 flex items-center justify-center transition-colors border border-slate-200 group-hover:bg-indigo-100 group-hover:text-indigo-600 group-hover:border-indigo-200">
                   <span class="material-symbols-outlined text-xl">{{ dept.icon || 'corporate_fare' }}</span>
                 </div>
-                <div>
-                  <p class="font-black text-slate-900 mb-0.5">{{ dept.name }}</p>
-                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">{{ dept.code }}</p>
+                <div class="bg-transparent">
+                  <p class="font-black text-slate-900 mb-0.5 bg-transparent">{{ dept.name }}</p>
+                  <p class="text-[10px] font-black text-slate-400 uppercase tracking-tighter bg-transparent">{{ dept.code }}</p>
                 </div>
               </div>
             </td>
@@ -83,17 +84,18 @@
               </span>
             </td>
             <td class="px-8 py-5">
-              <span :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${dept.active ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`">
+              <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider d-inline-flex align-items-center gap-2 border ${dept.active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-700 border-red-200'}`">
+                <span :class="`w-1.5 h-1.5 rounded-full ${dept.active ? 'bg-green-500' : 'bg-red-500'}`"></span>
                 {{ dept.active ? 'Đang hoạt động' : 'Đã giải thể' }}
-              </span>
+              </div>
             </td>
             <td class="px-8 py-5 text-right">
               <div class="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                <button @click="openModal('edit', dept)" class="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
-                  <span class="material-symbols-outlined text-[20px]">edit</span>
+                <button @click="openModal('edit', dept)" class="btn-action-icon">
+                  <span class="material-symbols-outlined">edit</span>
                 </button>
-                <button @click="confirmDissolve(dept)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
-                  <span class="material-symbols-outlined text-[20px]">domain_disabled</span>
+                <button @click="confirmDissolve(dept)" class="btn-action-icon btn-danger-action">
+                  <span class="material-symbols-outlined">domain_disabled</span>
                 </button>
               </div>
             </td>
@@ -103,91 +105,115 @@
     </div>
 
     <!-- Modal -->
-    <transition name="modal">
-      <div v-if="showModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="closeModal"></div>
-        <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all">
-          <!-- Modal Header -->
-          <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-            <div>
-              <h3 class="text-lg font-black text-slate-900">{{ isEdit ? 'Cập nhật phòng ban' : 'Thêm phòng ban mới' }}</h3>
-              <p class="text-xs text-slate-500 font-bold italic mt-0.5">Vui lòng điền đủ thông tin để lưu</p>
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+        enter-to-class="opacity-100 scale-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 scale-100 translate-y-0"
+        leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      >
+        <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="closeModal"></div>
+          <div class="relative z-[10000] bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+            <!-- Modal Header -->
+            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white text-left">
+              <div class="text-left">
+                <h3 class="text-xl font-black text-slate-900 text-left">{{ isEdit ? 'Cập nhật phòng ban' : 'Thêm phòng ban mới' }}</h3>
+                <p class="text-xs text-slate-500 font-bold italic mt-0.5 text-left">Vui lòng điền đủ thông tin để lưu</p>
+              </div>
+              <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all text-slate-400">
+                <span class="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-md transition-all text-slate-400">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
 
-          <!-- Body -->
-          <div class="p-8 space-y-5 custom-scrollbar max-h-[70vh] overflow-y-auto">
-            <div class="space-y-4">
-              <div class="grid grid-cols-5 gap-4">
-                <div class="col-span-2">
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Mã phòng *</label>
-                  <input v-model="form.code" type="text" placeholder="VD: IT-01" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+            <!-- Body -->
+            <div class="p-8 space-y-5 custom-scrollbar max-h-[70vh] overflow-y-auto">
+              <div class="space-y-4">
+                <div class="grid grid-cols-5 gap-4">
+                  <div class="col-span-2">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Mã phòng *</label>
+                    <input v-model="form.code" type="text" placeholder="VD: IT-01" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+                  </div>
+                  <div class="col-span-3">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Icon hiển thị</label>
+                    <Dropdown 
+                      v-model="form.icon"
+                      :options="iconOptionsList"
+                      class="w-full"
+                    />
+                  </div>
                 </div>
-                <div class="col-span-3">
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Icon hiển thị</label>
-                  <select v-model="form.icon" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
-                    <option v-for="icon in iconOptions" :key="icon" :value="icon">{{ icon.toUpperCase().replace('_', ' ') }}</option>
-                  </select>
+
+                <div>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Tên phòng ban *</label>
+                  <input v-model="form.name" type="text" placeholder="Nhập tên đơn vị..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
                 </div>
-              </div>
 
-              <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Tên phòng ban *</label>
-                <input v-model="form.name" type="text" placeholder="Nhập tên đơn vị..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
-              </div>
+                <div>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Phòng ban cha (Cấp trên)</label>
+                  <Dropdown 
+                    v-model="form.parent_id"
+                    :options="parentDeptOptions"
+                    class="w-full"
+                  />
+                </div>
 
-              <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Phòng ban cha (Cấp trên)</label>
-                <select v-model="form.parent_id" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
-                  <option :value="null">-- Là cấp quản lý cao nhất --</option>
-                  <option v-for="d in departments" :key="d.id" :value="d.id" :disabled="d.id === form.id">{{ d.name }}</option>
-                </select>
-              </div>
+                <div>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trưởng phòng / Người quản lý</label>
+                  <input v-model="form.manager" type="text" placeholder="Tìm kiếm hoặc nhập tên..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
+                </div>
 
-              <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trưởng phòng / Người quản lý</label>
-                <input v-model="form.manager" type="text" placeholder="Tìm kiếm hoặc nhập tên..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-indigo-600/5 focus:border-indigo-600 transition-all">
-              </div>
-
-              <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trạng thái hoạt động</label>
-                <div class="flex items-center gap-3">
-                    <button 
-                        @click="form.active = !form.active"
-                        type="button"
-                        :class="`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 outline-none ${form.active ? 'bg-indigo-600' : 'bg-slate-200'}`"
-                    >
-                        <span :class="`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ${form.active ? 'translate-x-5' : 'translate-x-0'}`"></span>
-                    </button>
-                    <span class="text-xs font-bold" :class="form.active ? 'text-indigo-600' : 'text-slate-400'">{{ form.active ? 'ĐANG HOẠT ĐỘNG' : 'TẠM NGƯNG' }}</span>
+                <div>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Trạng thái hoạt động</label>
+                  <div class="flex items-center gap-3 text-left">
+                      <button 
+                          @click="form.active = !form.active"
+                          type="button"
+                          class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 outline-none"
+                          :class="form.active ? 'bg-blue-600' : 'bg-slate-200'"
+                      >
+                          <span class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200"
+                                :class="form.active ? 'translate-x-5' : 'translate-x-0'"></span>
+                      </button>
+                      <span class="text-xs font-bold" :class="form.active ? 'text-blue-600' : 'text-slate-400'">{{ form.active ? 'ĐANG HOẠT ĐỘNG' : 'TẠM NGƯNG' }}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- Footer -->
-          <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex gap-3">
-            <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 transition-all font-black uppercase tracking-widest rounded-2xl">Hủy</button>
-            <button @click="handleSave" class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all uppercase tracking-widest">
-              {{ isEdit ? 'Cập nhật' : 'Lưu mới' }}
-            </button>
+            <!-- Footer -->
+            <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex justify-end gap-3 text-left">
+              <button @click="closeModal" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all uppercase tracking-widest">Hủy</button>
+              <button @click="handleSave" class="px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all uppercase tracking-widest">
+                {{ isEdit ? 'Cập nhật' : 'Lưu thông tin' }}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    </transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showAlert, showConfirm } = useConfirm();
 
 const showModal = ref(false);
 const isEdit = ref(false);
 const searchQuery = ref('');
 const filterActive = ref('ALL');
+
+const activeOptions = [
+  { label: 'Tất cả trạng thái', value: 'ALL' },
+  { label: 'Đang hoạt động', value: true },
+  { label: 'Đã giải thể', value: false }
+];
 
 const departments = ref([
   { id: 1, name: 'Khối Điều Hành (HO)', code: 'HO-ADMIN', manager: 'Nguyễn Văn A', active: true, employee_count: 5, icon: 'corporate_fare', parent_id: null },
@@ -218,6 +244,12 @@ const stats = ref([
 ]);
 
 const iconOptions = ['corporate_fare', 'engineering', 'groups', 'web', 'payments', 'hub', 'apartment', 'meeting_room'];
+const iconOptionsList = iconOptions.map(icon => ({ label: icon.toUpperCase().replace('_', ' '), value: icon }));
+
+const parentDeptOptions = computed(() => [
+  { label: '-- Là cấp quản lý cao nhất --', value: null },
+  ...departments.value.map(d => ({ label: d.name, value: d.id }))
+]);
 
 const emptyForm = {
   id: null,
@@ -245,9 +277,9 @@ const closeModal = () => {
   showModal.value = false;
 };
 
-const handleSave = () => {
+const handleSave = async () => {
   if (!form.value.name || !form.value.code) {
-    alert('Vui lòng nhập tên và mã phòng ban!');
+    await showAlert('Thiếu thông tin', 'Vui lòng nhập tên và mã phòng ban!');
     return;
   }
 
@@ -266,12 +298,13 @@ const handleSave = () => {
   closeModal();
 };
 
-const confirmDissolve = (dept) => {
+const confirmDissolve = async (dept) => {
   if (dept.employee_count > 0) {
-    alert(`Không thể giải thể phòng ${dept.name} vì đang có ${dept.employee_count} nhân viên. Hãy điều chuyển nhân sự trước!`);
+    await showAlert('Không thể giải thể', `Phòng ${dept.name} đang có ${dept.employee_count} nhân viên. Hãy điều chuyển nhân sự trước!`);
     return;
   }
-  if (confirm(`Bạn có chắc muốn giải thể phòng ban ${dept.name}? Action này không thể hoàn tác.`)) {
+  const ok = await showConfirm('Giải thể phòng ban', `Bạn có chắc muốn giải thể phòng ban ${dept.name}? Action này không thể hoàn tác.`);
+  if (ok) {
     dept.active = false;
   }
 };
@@ -289,12 +322,4 @@ const confirmDissolve = (dept) => {
   border-radius: 10px;
 }
 
-/* Modal Transitions */
-.modal-enter-active, .modal-leave-active {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.modal-enter-from, .modal-leave-to {
-  opacity: 0;
-  transform: scale(0.9) translateY(30px);
-}
 </style>

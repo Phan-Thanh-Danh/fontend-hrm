@@ -6,13 +6,13 @@
         <h1 class="text-2xl font-black text-slate-900 tracking-tight">Quản trị Tài sản</h1>
         <p class="text-slate-500 text-sm font-medium italic">Cấp phát, theo dõi vòng đời và bảo trì thiết bị công ty.</p>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-3 text-left">
         <button 
           @click="openAddModal"
-          class="px-5 py-2.5 bg-indigo-600 rounded-xl font-black text-white hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all flex items-center gap-2"
+          class="px-6 py-2.5 min-h-[44px] bg-blue-600 rounded-lg font-black text-white hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all flex items-center gap-2"
         >
           <span class="material-symbols-outlined text-[20px]">add_task</span>
-          Nhập kho tài sản
+          Bàn giao tài sản
         </button>
       </div>
     </div>
@@ -42,17 +42,16 @@
             class="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-100 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-slate-500/10 transition-all"
           >
         </div>
-        <select v-model="filterCategory" class="px-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[11px] font-black text-slate-500 outline-none hover:border-slate-300 transition-all">
-           <option value="ALL">Tất cả danh mục</option>
-           <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-        </select>
-        <select v-model="filterStatus" class="px-4 py-2.5 bg-white border border-slate-100 rounded-xl text-[11px] font-black text-slate-500 outline-none hover:border-slate-300 transition-all">
-           <option value="ALL">Tất cả trạng thái</option>
-           <option value="SẴN_SÀNG">Sẵn sàng</option>
-           <option value="ĐANG_SỬ_DỤNG">Đang sử dụng</option>
-           <option value="ĐANG_SỬA_CHỮA">Đang sửa chữa</option>
-           <option value="ĐÃ_THANH_LÝ">Đã thanh lý</option>
-        </select>
+        <Dropdown 
+          v-model="filterCategory"
+          :options="categoryOptions"
+          placeholder="Tất cả danh mục"
+        />
+        <Dropdown 
+          v-model="filterStatus"
+          :options="statusOptions"
+          placeholder="Tất cả trạng thái"
+        />
       </div>
 
       <div class="overflow-x-auto flex-1">
@@ -67,10 +66,11 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
-            <tr v-for="asset in filteredAssets" :key="asset.id" class="hover:bg-slate-50/50 transition-all group">
-              <td class="px-8 py-5">
-                <div class="flex items-center gap-4">
-                  <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-all">
+            <tr v-for="asset in filteredAssets" :key="asset.id" 
+                class="group transition-all duration-200 border-b border-slate-50 bg-white hover:bg-slate-50">
+              <td class="px-8 py-5 bg-transparent">
+                <div class="flex items-center gap-4 bg-transparent">
+                  <div class="w-10 h-10 rounded-xl bg-transparent text-slate-500 flex items-center justify-center border border-slate-200 group-hover:bg-slate-900 group-hover:text-white transition-all">
                     <span class="material-symbols-outlined text-xl">{{ getIcon(asset.category) }}</span>
                   </div>
                   <div>
@@ -90,23 +90,24 @@
                 <span v-else class="text-[11px] font-bold text-slate-300 italic">Sẵn sàng cấp phát</span>
               </td>
               <td class="px-8 py-5">
-                <span :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusColor(asset.status)} shadow-sm font-bold`">
+                <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusColor(asset.status)} border d-inline-flex align-items-center gap-2`">
+                  <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotColor(asset.status)"></span>
                   {{ asset.status.replace('_', ' ') }}
-                </span>
+                </div>
               </td>
               <td class="px-8 py-5 text-right">
                 <div class="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                  <button @click="editAsset(asset)" class="p-2 text-slate-400 hover:text-blue-600 hover:bg-white rounded-xl shadow-sm transition-all">
-                    <span class="material-symbols-outlined text-[18px]">edit</span>
+                  <button @click="editAsset(asset)" class="btn-action-icon">
+                    <span class="material-symbols-outlined">edit</span>
                   </button>
-                  <button v-if="!asset.user" @click="assignAsset(asset)" class="p-2 text-slate-400 hover:text-green-600 hover:bg-white rounded-xl shadow-sm transition-all" title="Bàn giao TS">
-                    <span class="material-symbols-outlined text-[18px]">person_add</span>
+                  <button v-if="!asset.user" @click="assignAsset(asset)" class="btn-action-icon btn-success-action" title="Bàn giao TS">
+                    <span class="material-symbols-outlined">person_add</span>
                   </button>
-                  <button v-else @click="recoverAsset(asset)" class="p-2 text-slate-400 hover:text-orange-600 hover:bg-white rounded-xl shadow-sm transition-all" title="Thu hồi TS">
-                    <span class="material-symbols-outlined text-[18px]">assignment_return</span>
+                  <button v-else @click="recoverAsset(asset)" class="btn-action-icon btn-success-action" title="Thu hồi TS">
+                    <span class="material-symbols-outlined">assignment_return</span>
                   </button>
-                  <button @click="confirmLiquidate(asset)" class="p-2 text-slate-400 hover:text-red-500 hover:bg-white rounded-xl shadow-sm transition-all" title="Thanh lý TS">
-                    <span class="material-symbols-outlined text-[18px]">delete_sweep</span>
+                  <button @click="confirmLiquidate(asset)" class="btn-action-icon btn-danger-action" title="Thanh lý TS">
+                    <span class="material-symbols-outlined">delete_sweep</span>
                   </button>
                 </div>
               </td>
@@ -117,67 +118,81 @@
     </div>
 
     <!-- Modal -->
-    <transition name="modal">
-      <div v-if="showModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" @click="closeModal"></div>
-        <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all">
-          <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-            <div>
-              <h3 class="text-lg font-black text-slate-900">{{ editMode ? 'Cập nhật tài sản' : 'Nhập tài sản mới' }}</h3>
-              <p class="text-xs text-slate-500 font-bold italic mt-0.5">Hệ thống sẽ ghi nhận lịch sử bàn giao</p>
+    <Teleport to="body">
+      <Transition
+        enter-active-class="transition ease-out duration-300"
+        enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+        enter-to-class="opacity-100 scale-100 translate-y-0"
+        leave-active-class="transition ease-in duration-200"
+        leave-from-class="opacity-100 scale-100 translate-y-0"
+        leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      >
+        <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="closeModal"></div>
+          <div class="relative z-[10000] bg-white w-full max-w-4xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white text-left">
+              <div class="text-left">
+                <h3 class="text-xl font-black text-slate-900 text-left">{{ editMode ? 'Cập nhật tài sản' : 'Nhập tài sản mới' }}</h3>
+                <p class="text-xs text-slate-500 font-bold italic mt-0.5 text-left">Hệ thống sẽ ghi nhận lịch sử bàn giao</p>
+              </div>
+              <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all text-slate-400">
+                <span class="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <button @click="closeModal" class="w-10 h-10 flex items-center justify-center rounded-2xl hover:bg-white hover:shadow-md transition-all text-slate-400">
-              <span class="material-symbols-outlined">close</span>
-            </button>
-          </div>
 
-          <div class="p-8 space-y-4">
-             <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Tên tài sản *</label>
-                <input v-model="form.name" type="text" placeholder="VD: MacBook Pro 14 inch..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 transition-all">
-             </div>
-
-             <div class="grid grid-cols-2 gap-4">
+            <div class="p-8 space-y-4">
                <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Mã tài sản *</label>
-                  <input v-model="form.code" type="text" placeholder="TS-001..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 transition-all text-sm">
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Tên tài sản *</label>
+                  <input v-model="form.name" type="text" placeholder="VD: MacBook Pro 14 inch..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
                </div>
+
+               <div class="grid grid-cols-2 gap-4">
+                 <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Mã tài sản *</label>
+                    <input v-model="form.code" type="text" placeholder="TS-001..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all">
+                 </div>
+                 <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic text-left">Danh mục *</label>
+                    <Dropdown 
+                      v-model="form.category"
+                      :options="categoryOptionsForm"
+                      class="w-full"
+                    />
+                 </div>
+               </div>
+
                <div>
-                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Danh mục *</label>
-                  <select v-model="form.category" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 transition-all">
-                    <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
-                  </select>
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trạng thái thiết bị</label>
+                  <Dropdown 
+                    v-model="form.status"
+                    :options="statusOptionsForm"
+                    class="w-full"
+                  />
                </div>
-             </div>
 
-             <div>
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 ml-1 italic">Trạng thái thiết bị</label>
-                <select v-model="form.status" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-slate-900/5 focus:border-slate-900 transition-all">
-                  <option value="SẴN_SÀNG">Sẵn sàng cấp phát</option>
-                  <option value="ĐANG_SỬ_DỤNG">Đang sử dụng</option>
-                  <option value="ĐANG_SỬA_CHỮA">Đang sửa chữa</option>
-                  <option value="CẦN_THANH_LÝ">Cần thanh lý</option>
-                </select>
-             </div>
+               <div v-if="form.status === 'ĐANG_SỬ_DỤNG'" class="p-6 bg-slate-900 rounded-[2rem] shadow-xl">
+                   <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 italic">Người đang nắm giữ</label>
+                   <input v-model="form.user" type="text" placeholder="Nhập tên nhân viên..." class="w-full bg-transparent border-0 border-b border-slate-700 text-white font-black text-lg focus:outline-none focus:border-blue-500 transition-all">
+               </div>
+            </div>
 
-             <div v-if="form.status === 'ĐANG_SỬ_DỤNG'" class="p-6 bg-slate-900 rounded-[2rem] shadow-xl">
-                 <label class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2 italic">Người đang nắm giữ</label>
-                 <input v-model="form.user" type="text" placeholder="Nhập tên nhân viên..." class="w-full bg-transparent border-0 border-b border-slate-700 text-white font-black text-lg focus:outline-none focus:border-blue-500 transition-all">
-             </div>
-          </div>
-
-          <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex gap-3">
-            <button @click="closeModal" class="flex-1 py-3 text-sm font-black text-slate-400 hover:text-slate-600 uppercase tracking-widest italic rounded-2xl transition-all">Hủy</button>
-            <button @click="handleSave" class="flex-1 py-3 bg-indigo-600 text-white rounded-2xl text-sm font-black hover:bg-indigo-700 shadow-xl shadow-indigo-100 uppercase tracking-widest transition-all">Lưu thông tin</button>
+            <div class="px-8 py-6 border-t border-slate-50 bg-slate-50/30 flex justify-end gap-3 text-left">
+              <button @click="closeModal" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all uppercase tracking-widest">Hủy</button>
+              <button @click="handleSave" class="px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all uppercase tracking-widest">Lưu thông tin</button>
+            </div>
           </div>
         </div>
-      </div>
-    </transition>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showAlert, showConfirm } = useConfirm();
 
 const searchQuery = ref('');
 const filterCategory = ref('ALL');
@@ -186,6 +201,26 @@ const showModal = ref(false);
 const editMode = ref(false);
 
 const categories = ['Thiết bị IT', 'Nội thất', 'Phương tiện', 'Dụng cụ văn phòng'];
+const categoryOptions = computed(() => [
+  { label: 'Tất cả danh mục', value: 'ALL' },
+  ...categories.map(cat => ({ label: cat, value: cat }))
+]);
+
+const statusOptions = [
+  { label: 'Tất cả trạng thái', value: 'ALL' },
+  { label: 'Sẵn sàng', value: 'SẴN_SÀNG' },
+  { label: 'Đang sử dụng', value: 'ĐANG_SỬ_DỤNG' },
+  { label: 'Đang sửa chữa', value: 'ĐANG_SỬA_CHỮA' },
+  { label: 'Đã thanh lý', value: 'ĐÃ_THANH_LÝ' }
+];
+
+const categoryOptionsForm = categories.map(cat => ({ label: cat, value: cat }));
+const statusOptionsForm = [
+  { label: 'Sẵn sàng cấp phát', value: 'SẴN_SÀNG' },
+  { label: 'Đang sử dụng', value: 'ĐANG_SỬ_DỤNG' },
+  { label: 'Đang sửa chữa', value: 'ĐANG_SỬA_CHỮA' },
+  { label: 'Cần thanh lý', value: 'CẦN_THANH_LÝ' }
+];
 
 const stats = ref([
   { label: 'Tổng tài sản', value: '1,240', icon: 'devices', bg: 'bg-slate-900', color: 'text-white' },
@@ -234,11 +269,21 @@ const filteredAssets = computed(() => {
 
 const getStatusColor = (status) => {
   switch (status) {
-    case 'ĐANG_SỬ_DỤNG': return 'bg-blue-100 text-blue-700';
-    case 'SẴN_SÀNG': return 'bg-green-100 text-green-700';
-    case 'ĐANG_SỬA_CHỮA': return 'bg-orange-100 text-orange-700';
-    case 'ĐÃ_THANH_LÝ': return 'bg-red-100 text-red-700';
-    default: return 'bg-slate-100 text-slate-700';
+    case 'ĐANG_SỬ_DỤNG': return 'bg-blue-50 text-blue-700 border-blue-100';
+    case 'SẴN_SÀNG': return 'bg-green-50 text-green-700 border-green-100';
+    case 'ĐANG_SỬA_CHỮA': return 'bg-orange-50 text-orange-700 border-orange-100';
+    case 'ĐÃ_THANH_LÝ': return 'bg-red-50 text-red-700 border-red-100';
+    default: return 'bg-slate-50 text-slate-700 border-slate-100';
+  }
+};
+
+const getStatusDotColor = (status) => {
+  switch (status) {
+    case 'ĐANG_SỬ_DỤNG': return 'bg-blue-500';
+    case 'SẴN_SÀNG': return 'bg-green-500';
+    case 'ĐANG_SỬA_CHỮA': return 'bg-orange-500';
+    case 'ĐÃ_THANH_LÝ': return 'bg-red-500';
+    default: return 'bg-slate-500';
   }
 };
 
@@ -264,9 +309,9 @@ const editAsset = (asset) => {
 
 const closeModal = () => { showModal.value = false; };
 
-const handleSave = () => {
+const handleSave = async () => {
     if (!form.value.name || !form.value.code) {
-        alert('Vui lòng nhập tên và mã tài sản!');
+        await showAlert('Thiếu thông tin', 'Vui lòng nhập tên và mã tài sản!');
         return;
     }
     if (editMode.value) {
@@ -279,22 +324,20 @@ const handleSave = () => {
 };
 
 const assignAsset = (asset) => {
-    const userName = prompt(`Nhập tên nhân viên nhận bàn giao cho ${asset.name}:`);
-    if (userName) {
-        asset.user = userName;
-        asset.status = 'ĐANG_SỬ_DỤNG';
-    }
+    editAsset(asset);
 };
 
-const recoverAsset = (asset) => {
-    if (confirm(`Xác nhận thu hồi tài sản ${asset.name} từ nhân viên ${asset.user}?`)) {
+const recoverAsset = async (asset) => {
+    const ok = await showConfirm('Thu hồi tài sản', `Xác nhận thu hồi tài sản ${asset.name} từ nhân viên ${asset.user}?`);
+    if (ok) {
         asset.user = null;
         asset.status = 'SẴN_SÀNG';
     }
 };
 
-const confirmLiquidate = (asset) => {
-    if (confirm(`Bạn có chắc muốn thanh lý tài sản ${asset.name}? Action này sẽ gỡ bỏ tài sản khỏi danh sách sử dụng.`)) {
+    const confirmLiquidate = async (asset) => {
+    const ok = await showConfirm('Thanh lý tài sản', `Bạn có chắc muốn thanh lý tài sản ${asset.name}? Action này sẽ gỡ bỏ tài sản khỏi danh sách sử dụng.`);
+    if (ok) {
         asset.status = 'ĐÃ_THANH_LÝ';
         asset.user = null;
     }
@@ -313,12 +356,4 @@ const confirmLiquidate = (asset) => {
   border-radius: 10px;
 }
 
-/* Modal Transitions */
-.modal-enter-active, .modal-leave-active {
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.modal-enter-from, .modal-leave-to {
-  opacity: 0;
-  transform: scale(0.95) translateY(20px);
-}
 </style>

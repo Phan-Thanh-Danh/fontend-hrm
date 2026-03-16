@@ -321,9 +321,9 @@
             Lời nhắc của bạn
           </p>
           <p class="reminder-text">"Tổ chức buổi tiệc tri ân nhân viên xuất sắc vào thứ Sáu này."</p>
-          <button class="reminder-edit">
-            <span class="material-symbols-rounded" style="font-size:14px">edit</span>
-            Chỉnh sửa
+          <button class="btn-action-icon" style="gap: 4px; padding: 4px 12px !important; width: auto; height: auto;">
+            <span class="material-symbols-rounded" style="font-size:16px">edit</span>
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase;">Chỉnh sửa</span>
           </button>
         </div>
       </div>
