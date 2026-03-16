@@ -9,7 +9,7 @@
         <h1 class="page-title">Bảng Điều Khiển Chiến Lược</h1>
         <p class="page-subtitle">
           <span class="material-symbols-rounded" style="font-size:15px;vertical-align:-3px;margin-right:4px">wb_sunny</span>
-          Chào buổi sáng, Thưa Giám đốc — Dữ liệu cập nhật lúc 08:30
+          Chào buổi sáng, Dữ liệu được cập nhật mới nhất. 
         </p>
       </div>
       <div class="page-header-actions">
@@ -30,7 +30,7 @@
     ══════════════════════════════════════════════ -->
     <div class="kpi-grid">
       <!-- Card: Tổng nhân sự -->
-      <div class="kpi-card">
+      <div class="kpi-card" @click="$router.push('/giam-doc/nhan-su')">
         <div class="kpi-card-header">
           <div class="kpi-icon kpi-icon--blue">
             <span class="material-symbols-rounded">group</span>
@@ -80,7 +80,7 @@
       </div>
 
       <!-- Card: Quỹ lương -->
-      <div class="kpi-card">
+      <div class="kpi-card" @click="$router.push('/giam-doc/bang-luong')">
         <div class="kpi-card-header">
           <div class="kpi-icon kpi-icon--green">
             <span class="material-symbols-rounded">payments</span>
@@ -356,6 +356,7 @@ const donutData = [
 .dashboard {
   max-width: 1600px;
   margin: 0 auto;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 24px;

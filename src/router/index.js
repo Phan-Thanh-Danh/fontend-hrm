@@ -141,6 +141,16 @@ const routes = [
                         path: '',
                         name: 'dashboard-giam-doc',
                         component: () => import('../View/admin/GiamDoc/Dashboard_GiamDoc.vue')
+                  },
+                  {
+                        path: 'nhan-su',
+                        name: 'giam-doc-nhan-su',
+                        component: () => import('../View/admin/GiamDoc/DBGD_NhanSu.vue')
+                  },
+                  {
+                        path: 'bang-luong',
+                        name: 'giam-doc-bang-luong',
+                        component: () => import('../View/admin/GiamDoc/DBGD_BangLuong.vue')
                   }
             ]
       }

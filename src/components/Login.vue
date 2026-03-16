@@ -8,31 +8,13 @@
         <!-- Left Side Content -->
         <div class="relative z-10 flex flex-col justify-between p-12 h-full text-white w-full">
           <div class="flex items-center gap-2">
-            <h1 class="text-2xl font-bold tracking-tight text-white">HRM Connect</h1>
+            <h1 class="text-2xl font-bold tracking-tight text-white">HRM Portal</h1>
           </div>
           <div class="mb-12">
             <h2 class="text-4xl font-bold mb-6 leading-tight">Quản lý nhân sự <br/>với sự tự tin.</h2>
             <p class="text-lg text-blue-100 max-w-md leading-relaxed">
               Hợp lý hóa quy trình nhân sự, trao quyền cho nhân viên và xây dựng văn hóa làm việc tốt hơn với nền tảng tất cả trong một của chúng tôi.
             </p>
-            <div class="flex gap-4 mt-8">
-              <div class="flex -space-x-3">
-                <img alt="User avatar" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm" src="https://ui-avatars.com/api/?name=Admin&background=2563EB&color=fff"/>
-                <img alt="User avatar" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm" src="https://ui-avatars.com/api/?name=User&background=2563EB&color=fff"/>
-                <img alt="User avatar" class="w-10 h-10 rounded-full border-2 border-white object-cover shadow-sm" src="https://ui-avatars.com/api/?name=HR&background=2563EB&color=fff"/>
-                <div class="w-10 h-10 rounded-full border-2 border-white bg-slate-800 text-white flex items-center justify-center text-xs font-bold shadow-sm">+2k</div>
-              </div>
-              <div class="flex flex-col justify-center">
-                <span class="text-sm font-semibold text-white">Được tin dùng bởi các công ty hàng đầu</span>
-                <div class="flex gap-1 text-yellow-400 text-xs mt-1">
-                  <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                  <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                  <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                  <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                  <span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -106,13 +88,6 @@
               <span v-else class="material-symbols-outlined text-[20px] animate-spin">refresh</span>
             </button>
           </form>
-          
-          <div class="mt-8 text-center bg-slate-50/50 dark:bg-slate-50/50 p-4 rounded-xl">
-            <p class="text-sm text-slate-500 dark:text-slate-500">
-              Chưa có tài khoản? 
-              <a class="font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-600 dark:hover:text-blue-700 transition-colors" href="#">Liên hệ Quản trị viên</a>
-            </p>
-          </div>
         </div>
         
         <div class="absolute bottom-6 text-center w-full">
