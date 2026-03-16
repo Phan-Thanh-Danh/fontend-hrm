@@ -1063,4 +1063,72 @@ html.dark .material-symbols-outlined.text-slate-400 {
   opacity: 1 !important; /* Force them to be visible */
 }
 
-
+
+/* ═══════════════════════════════════════════════════════════════════
+   HRM DASHBOARD — GLOBAL CSS CUSTOM PROPERTIES
+   Light mode tokens at :root, Dark mode tokens at html.dark
+   These power Layout_GiamDoc & Dashboard_GiamDoc via var()
+═══════════════════════════════════════════════════════════════════ */
+:root {
+  --bg-page:        #F8FAFC;
+  --bg-card:        #FFFFFF;
+  --bg-sidebar:     #FFFFFF;
+  --bg-topbar:      #FFFFFF;
+  --bg-hover:       #F1F5F9;
+  --bg-active:      #EFF6FF;
+  --border:         #E5E7EB;
+  --border-light:   #F3F4F6;
+  --text-title:     #111827;
+  --text-body:      #374151;
+  --text-muted:     #6B7280;
+  --icon-default:   #4B5563;
+  --icon-active:    #3B82F6;
+  --brand:          #3B82F6;
+  --brand-hover:    #2563EB;
+  --brand-light:    #DBEAFE;
+  --brand-text:     #1D4ED8;
+  --success:        #22C55E;
+  --success-light:  #DCFCE7;
+  --success-text:   #15803D;
+  --warning:        #F59E0B;
+  --warning-light:  #FEF3C7;
+  --warning-text:   #B45309;
+  --danger:         #EF4444;
+  --danger-light:   #FEE2E2;
+  --danger-text:    #B91C1C;
+  --shadow-sm:      0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-card:    0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-hover:   0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+}
+
+html.dark {
+  --bg-page:        #0F172A;
+  --bg-card:        #1E293B;
+  --bg-sidebar:     #020617;
+  --bg-topbar:      #0F172A;
+  --bg-hover:       #1E293B;
+  --bg-active:      #1E3A5F;
+  --border:         #334155;
+  --border-light:   #1E293B;
+  --text-title:     #F1F5F9;
+  --text-body:      #CBD5F5;
+  --text-muted:     #94A3B8;
+  --icon-default:   #CBD5F5;
+  --icon-active:    #60A5FA;
+  --brand:          #60A5FA;
+  --brand-hover:    #3B82F6;
+  --brand-light:    #1E3A5F;
+  --brand-text:     #93C5FD;
+  --success:        #4ADE80;
+  --success-light:  #052e16;
+  --success-text:   #4ADE80;
+  --warning:        #FBBF24;
+  --warning-light:  #1c1300;
+  --warning-text:   #FBBF24;
+  --danger:         #F87171;
+  --danger-light:   #1a0505;
+  --danger-text:    #F87171;
+  --shadow-sm:      0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
+  --shadow-card:    0 4px 16px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.3);
+  --shadow-hover:   0 12px 32px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.35);
+}

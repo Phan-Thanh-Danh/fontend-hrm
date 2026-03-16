@@ -202,7 +202,7 @@
               <td class="py-3 px-2 text-secondary">Chấm công vào (Check-in)</td>
               <td class="py-3 px-2 text-secondary">08:02 AM</td>
               <td class="py-3 pe-0 text-end">
-                <span class="badge status-success text-uppercase rounded-1 px-2 py-1 user-select-none">THÀNH CÔNG</span>
+                <span class="badge status-success text-uppercase px-2 py-1 user-select-none">THÀNH CÔNG</span>
               </td>
             </tr>
             <tr class="border-bottom-custom">
@@ -210,7 +210,7 @@
               <td class="py-3 px-2 text-secondary">Chấm công ra (Check-out)</td>
               <td class="py-3 px-2 text-secondary">17:35 PM</td>
               <td class="py-3 pe-0 text-end">
-                <span class="badge status-success text-uppercase rounded-1 px-2 py-1 user-select-none">THÀNH CÔNG</span>
+                <span class="badge status-success text-uppercase px-2 py-1 user-select-none">THÀNH CÔNG</span>
               </td>
             </tr>
             <tr>
@@ -218,7 +218,7 @@
               <td class="py-3 px-2 text-secondary">Gửi đơn nghỉ phép</td>
               <td class="py-3 px-2 text-secondary">14:20 PM</td>
               <td class="py-3 pe-0 text-end">
-                <span class="badge status-primary text-uppercase rounded-1 px-2 py-1 user-select-none">ĐÃ DUYỆT</span>
+                <span class="badge status-primary text-uppercase px-2 py-1 user-select-none">ĐÃ DUYỆT</span>
               </td>
             </tr>
           </tbody>
@@ -334,13 +334,15 @@ onUnmounted(() => {
 
 /* Badge specific colors reproducing figma design closely */
 .status-success {
-  background-color: var(--sys-success-bg) !important;
-  color: var(--sys-success-text) !important;
+  background-color: #E6F4EA !important; /* Green light */
+  color: #137333 !important; /* Green dark */
+  border-radius: 4px;
 }
 
 .status-primary {
-  background-color: var(--sys-accent-light, oklch(0.9 0.05 255));
-  color: var(--sys-accent);
+  background-color: #111827 !important; /* Dark navy */
+  color: #3B82F6 !important; /* Bright blue */
+  border-radius: 4px;
 }
 
 .hover-opacity:hover {

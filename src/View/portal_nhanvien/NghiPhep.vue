@@ -78,7 +78,7 @@
                   <td class="py-4 px-2 text-secondary">15/10/2023 -<br>16/10/2023</td>
                   <td class="py-4 px-2 text-dark">2 ngày</td>
                   <td class="py-4 px-4 text-end">
-                    <span class="badge status-success text-success-emphasis rounded-pill px-3 py-1 fw-bold x-small user-select-none">Đã duyệt</span>
+                    <span class="badge status-success text-uppercase rounded-1 px-2 py-1 user-select-none">ĐÃ DUYỆT</span>
                   </td>
                 </tr>
                 <tr class="border-bottom-custom text-nowrap">
@@ -86,7 +86,7 @@
                   <td class="py-4 px-2 text-secondary">05/11/2023</td>
                   <td class="py-4 px-2 text-dark">1 ngày</td>
                   <td class="py-4 px-4 text-end">
-                    <span class="badge status-success text-success-emphasis rounded-pill px-3 py-1 fw-bold x-small user-select-none">Đã duyệt</span>
+                    <span class="badge status-success text-uppercase rounded-1 px-2 py-1 user-select-none">ĐÃ DUYỆT</span>
                   </td>
                 </tr>
                 <tr class="text-nowrap">
@@ -94,7 +94,7 @@
                   <td class="py-4 px-2 text-secondary">20/11/2023 -<br>21/11/2023</td>
                   <td class="py-4 px-2 text-dark">2 ngày</td>
                   <td class="py-4 px-4 text-end">
-                    <span class="badge status-primary text-brand-blue rounded-pill px-3 py-1 fw-bold x-small user-select-none text-wrap text-center d-inline-block" style="width: 80px; line-height: 1.2;">Chờ<br>duyệt</span>
+                    <span class="badge status-primary text-uppercase rounded-1 px-2 py-1 user-select-none">CHỜ DUYỆT</span>
                   </td>
                 </tr>
               </tbody>
@@ -222,13 +222,13 @@ const showModal = ref(false);
 
 /* Status Badges */
 .status-success {
-  background-color: var(--sys-success-bg) !important;
+  background-color: #E6F4EA !important; /* Green light */
+  color: #137333 !important; /* Green dark */
 }
-.text-success-emphasis {
-  color: var(--sys-success-text) !important;
-}
+
 .status-primary {
-  background-color: oklch(0.25 0.1 265) !important;
+  background-color: #111827 !important; /* Dark navy */
+  color: #3B82F6 !important; /* Bright blue */
 }
 
 /* Inputs */

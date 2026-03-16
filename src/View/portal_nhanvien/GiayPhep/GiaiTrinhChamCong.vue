@@ -132,7 +132,7 @@
                   <p class="fw-bold text-dark mb-0">08:00 - --:--</p>
                 </div>
                 <div class="text-end">
-                  <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-1 fw-bold x-small text-uppercase mb-1 border border-danger border-opacity-25">THIẾU CÔNG</span>
+                  <span class="badge bg-danger bg-opacity-10 text-danger rounded-1 px-3 py-1 fw-bold x-small text-uppercase mb-1 border border-danger border-opacity-25">THIẾU CÔNG</span>
                   <p class="x-small text-danger fw-semibold fst-italic mb-0 mt-1">Cần giải trình</p>
                 </div>
               </div>
@@ -146,7 +146,7 @@
                   <p class="fw-bold text-dark mb-0">09:15 - 18:30</p>
                 </div>
                 <div class="text-end">
-                  <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-1 fw-bold x-small text-uppercase mb-1 border border-danger border-opacity-25 shadow-sm">SAI LỆCH</span>
+                  <span class="badge bg-danger bg-opacity-10 text-danger rounded-1 px-3 py-1 fw-bold x-small text-uppercase mb-1 border border-danger border-opacity-25 shadow-sm">SAI LỆCH</span>
                   <p class="x-small text-danger fw-semibold fst-italic mb-0 mt-1">Đi muộn</p>
                 </div>
               </div>
@@ -160,7 +160,7 @@
                   <p class="fw-bold text-dark mb-0">08:00 - 17:30</p>
                 </div>
                 <div class="text-end">
-                  <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-3 py-1 fw-bold x-small text-uppercase mb-0 border border-success border-opacity-25 shadow-sm">ĐẦY ĐỦ</span>
+                  <span class="badge bg-success bg-opacity-10 text-success rounded-1 px-3 py-1 fw-bold x-small text-uppercase mb-0 border border-success border-opacity-25 shadow-sm">ĐẦY ĐỦ</span>
                 </div>
               </div>
             </div>

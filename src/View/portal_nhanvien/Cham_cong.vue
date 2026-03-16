@@ -139,7 +139,7 @@
               <td class="px-4 py-3">{{ item.checkOut }}</td>
               <td class="px-4 py-3 text-center fw-medium">{{ item.total }}</td>
               <td class="px-4 py-3 text-end">
-                <span :class="getStatusClass(item.status)" class="badge x-small fw-bold text-uppercase px-2.5 py-1.5 rounded-pill">
+                <span :class="getStatusClass(item.status)" class="badge x-small fw-bold text-uppercase px-2.5 py-1.5 custom-rounded-badge">
                   {{ item.status }}
                 </span>
               </td>
@@ -233,27 +233,32 @@ const getStatusClass = (status) => {
 }
 
 .bg-success-light {
-  background-color: var(--sys-success-bg) !important;
+  background-color: #E6F4EA !important;
+}
+.text-success {
+  color: #137333 !important;
 }
 
 .bg-warning-light {
-  background-color: oklch(0.25 0.1 75) !important;
+  background-color: #FEF3C7 !important;
+}
+.text-warning {
+  color: #B45309 !important;
 }
 
 .bg-danger-light {
-  background-color: oklch(0.25 0.1 25) !important;
+  background-color: #FEE2E2 !important;
+}
+.text-danger {
+  color: #B91C1C !important;
 }
 
 .bg-primary-light {
-  background-color: oklch(0.25 0.1 265) !important;
+  background-color: rgba(59, 130, 246, 0.1) !important;
 }
 
-.text-warning {
-  color: oklch(0.88 0.18 75) !important;
-}
-
-.text-danger {
-  color: oklch(0.88 0.18 25) !important;
+.custom-rounded-badge {
+  border-radius: 4px !important;
 }
 
 .page-link.active {
