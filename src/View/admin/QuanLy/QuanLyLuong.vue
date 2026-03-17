@@ -67,53 +67,62 @@
              <div class="w-10 h-10 rounded-2xl bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center">
                 <span class="material-symbols-outlined">payments</span>
              </div>
-             <div>
-                <h3 class="font-black text-[var(--sys-text-primary)]">Chi tiết lương tháng {{ selectedPeriod.month }}/{{ selectedPeriod.year }}</h3>
-                <p class="text-xs font-bold text-[var(--sys-text-secondary)] italic">Double-click vào dòng để chỉnh sửa nhanh</p>
+             <div class="text-left">
+                <h3 class="font-black text-[var(--sys-text-primary)] text-left">Chi tiết lương tháng {{ selectedPeriod.month }}/{{ selectedPeriod.year }}</h3>
+                <p class="text-xs font-bold text-[var(--sys-text-secondary)] italic text-left">Double-click vào dòng để chỉnh sửa nhanh</p>
              </div>
           </div>
           <div class="flex items-center gap-2">
-             <button class="px-4 py-2 bg-[var(--sys-bg-hover)] text-[var(--sys-text-primary)] rounded-xl text-xs font-black hover:bg-[var(--sys-bg-hover)] transition-all">Xuất File Excel</button>
-             <button v-if="selectedPeriod.status === 'ĐANG_XỬ_LÝ'" @click="approvePeriod" class="px-4 py-2 bg-[var(--sys-success-solid)] text-white rounded-xl text-xs font-black shadow-lg shadow-[var(--sys-success-solid-lch-30)] transition-all">Phê duyệt & Chốt</button>
+             <button class="px-4 py-2 bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] border border-[var(--sys-border-subtle)] rounded-xl text-xs font-black hover:bg-[var(--sys-bg-hover)] transition-all uppercase tracking-widest">Xuất File Excel</button>
+             <button v-if="selectedPeriod.status === 'ĐANG_XỬ_LÝ'" @click="approvePeriod" class="px-4 py-2 bg-[var(--sys-success-solid)] text-white rounded-xl text-xs font-black shadow-lg shadow-[var(--sys-success-solid-lch-30)] transition-all uppercase tracking-widest">Phê duyệt & Chốt</button>
           </div>
        </div>
 
-       <div class="overflow-x-auto text-sm">
-          <table class="w-full text-left border-collapse">
+       <div class="overflow-x-auto text-sm custom-scrollbar">
+          <table class="w-full text-left border-separate border-spacing-0">
             <thead>
-              <tr class="bg-[var(--sys-bg-hover)]">
-                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Nhân viên</th>
-                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Lương CB</th>
-                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Phụ cấp</th>
-                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Khấu trừ</th>
-                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Thực nhận</th>
-                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-right">Thao tác</th>
+              <tr>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Nhân viên</th>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Lương CB</th>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Phụ cấp</th>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Khấu trừ</th>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Thực nhận</th>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-right">Thao tác</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-[var(--sys-border-subtle)]">
+            <tbody class="bg-transparent">
               <tr v-for="item in salaryItems" :key="item.id" 
-                  class="group transition-all duration-200 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]">
-                <td class="px-8 py-5 bg-transparent">
-                   <div class="flex items-center gap-3 bg-transparent">
-                      <div class="w-8 h-8 rounded-full bg-transparent flex items-center justify-center font-black text-[var(--sys-text-secondary)] text-xs border border-[var(--sys-border-subtle)] group-hover:bg-[var(--sys-brand-soft)] group-hover:text-[var(--sys-brand-solid)] transition-colors">
-                         {{ item.name.charAt(0) }}
-                      </div>
-                      <div class="bg-transparent">
-                         <p class="font-black text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ item.name }}</p>
-                         <p class="text-[10px] text-[var(--sys-text-secondary)] font-bold uppercase tracking-widest bg-transparent">{{ item.code }}</p>
-                      </div>
-                   </div>
+                  class="group transition-all duration-200 bg-transparent hover:bg-[var(--sys-bg-hover)]">
+                <td class="px-6 py-5 border-b border-[var(--sys-border-subtle)] bg-transparent">
+                    <div class="flex flex-col bg-transparent">
+                        <span class="font-black text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ item.name }}</span>
+                        <span class="text-[10px] text-[var(--sys-brand-solid)] font-bold uppercase tracking-widest bg-transparent">{{ item.code }}</span>
+                    </div>
                 </td>
-                <td class="px-8 py-5 font-bold text-[var(--sys-text-secondary)] bg-transparent">{{ formatCurrency(item.base) }}</td>
-                <td class="px-8 py-5 font-bold text-[var(--sys-success-text)] bg-transparent">+{{ formatCurrency(item.bonus) }}</td>
-                <td class="px-8 py-5 font-bold text-[var(--sys-danger-text)] bg-transparent">-{{ formatCurrency(item.deduction) }}</td>
-                <td class="px-8 py-5">
-                   <p class="font-black text-[var(--sys-brand-solid)] text-[15px]">{{ formatCurrency(item.base + item.bonus - item.deduction) }}</p>
+                <td class="px-6 py-5 font-black text-[var(--sys-text-secondary)] bg-transparent border-b border-[var(--sys-border-subtle)]">{{ formatCurrency(item.base) }}</td>
+                <td class="px-6 py-5 font-black text-[var(--sys-success-text)] bg-transparent border-b border-[var(--sys-border-subtle)]">+{{ formatCurrency(item.bonus) }}</td>
+                <td class="px-6 py-5 font-black text-[var(--sys-danger-text)] bg-transparent border-b border-[var(--sys-border-subtle)]">-{{ formatCurrency(item.deduction) }}</td>
+                <td class="px-6 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                   <p class="font-black text-[var(--sys-brand-solid)] text-base tracking-tight bg-transparent">{{ formatCurrency(item.base + item.bonus - item.deduction) }}</p>
                 </td>
-                <td class="px-8 py-5 text-right">
-                   <button @click="editSalary(item)" :disabled="selectedPeriod.status !== 'ĐANG_XỬ_LÝ'" class="btn-action-icon" title="Điều chỉnh thu nhập">
-                      <span class="material-symbols-outlined">edit_note</span>
-                   </button>
+                <td class="px-6 py-5 border-b border-[var(--sys-border-subtle)] text-right bg-transparent">
+                    <div class="flex items-center justify-end gap-2 bg-transparent text-right">
+                        <button 
+                            @click="viewPayslip(item)"
+                            class="w-8 h-8 rounded-lg flex items-center justify-center transition-all bg-transparent text-[var(--sys-icon-default)] hover:text-[var(--sys-brand-solid)] hover:bg-[var(--sys-brand-solid)]/10 active:scale-95" 
+                            title="Xem phiếu lương"
+                        >
+                            <span class="material-symbols-outlined text-lg">visibility</span>
+                        </button>
+                        <button 
+                            @click="editSalary(item)" 
+                            :disabled="selectedPeriod.status !== 'ĐANG_XỬ_LÝ'" 
+                            class="w-8 h-8 rounded-lg flex items-center justify-center transition-all bg-transparent text-[var(--sys-icon-default)] hover:text-[var(--sys-brand-solid)] hover:bg-[var(--sys-brand-solid)]/10 disabled:opacity-30 disabled:cursor-not-allowed active:scale-95" 
+                            title="Điều chỉnh thu nhập"
+                        >
+                            <span class="material-symbols-outlined text-lg">edit_note</span>
+                        </button>
+                    </div>
                 </td>
               </tr>
             </tbody>
@@ -239,6 +248,13 @@ const saveSalaryAdjustment = () => {
         salaryItems.value[idx] = { ...editForm.value };
     }
     showEditModal.value = false;
+};
+
+const viewPayslip = (item) => {
+    // Navigate to employee payslip view or show modal
+    // For now, let's assume we navigate or just log it
+    console.log('Viewing payslip for:', item.name);
+    // In a real app, this might navigate to /admin/phieu-luong/:id
 };
 
 const approvePeriod = async () => {

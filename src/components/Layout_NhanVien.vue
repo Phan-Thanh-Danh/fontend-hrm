@@ -169,21 +169,21 @@
             :aria-checked="isDark"
             :aria-label="isDark ? 'Chuyển sang sáng' : 'Chuyển sang tối'"
             @click="isDark = !isDark"
-            class="relative w-[52px] h-8 rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)]"
+            class="relative w-[52px] h-8 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)] border border-[var(--sys-border-subtle)]"
             :class="isDark
-              ? 'bg-[var(--sys-accent)]'
-              : 'bg-[var(--sys-bg-page)] ring-2 ring-inset ring-[var(--sys-border)]'"
+              ? 'bg-[#0f172a] ring-2 ring-white/10'
+              : 'bg-[var(--sys-bg-hover)]'"
           >
             <span
-              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center shadow-[0_1px_3px_oklch(0_0_0/0.3)] transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
+              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] shadow-md"
               :class="isDark
-                ? 'left-[calc(100%-28px)] w-6 h-6 bg-[var(--sys-bg-page)]'
+                ? 'left-[calc(100%-28px)] w-6 h-6 bg-white shadow-[0_0_12px_var(--sys-accent)]'
                 : 'left-1 w-5 h-5 bg-[var(--sys-text-secondary)]'"
             >
               <span
                 class="material-symbols-rounded transition-all duration-200"
                 style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
-                :class="isDark ? 'text-[var(--sys-accent)]' : 'text-white opacity-75'"
+                :class="isDark ? 'text-[var(--sys-accent)]' : 'text-white'"
               >{{ isDark ? 'dark_mode' : 'light_mode' }}</span>
             </span>
           </button>
@@ -391,8 +391,12 @@
       class="pt-16 min-h-screen transition-[margin] duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
       :class="sidebarExpanded ? 'lg:ml-[280px]' : 'lg:ml-20'"
     >
-      <div class="p-6 lg:p-8 max-w-[1600px] mx-auto text-[var(--sys-text-primary)]">
-        <router-view />
+      <div class="p-6 lg:p-8 max-w-[1600px] mx-auto text-[var(--sys-text-primary)] overflow-hidden">
+        <router-view v-slot="{ Component }">
+          <transition :name="transitionName" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </div>
     </main>
   </div>
@@ -407,6 +411,16 @@ const { showConfirm } = useConfirm();
 
 const route = useRoute();
 const router = useRouter();
+
+// ── Transition Logic ───────────────────────────────────────────────────────
+const transitionName = ref('fade');
+watch(() => route.meta.index, (toIndex, fromIndex) => {
+  if (toIndex === undefined || fromIndex === undefined) {
+    transitionName.value = 'fade';
+    return;
+  }
+  transitionName.value = toIndex > fromIndex ? 'slide-up' : 'slide-down';
+});
 
 // ── State ──────────────────────────────────────────────────────────────────
 const sidebarExpanded = ref(true);
@@ -663,6 +677,39 @@ export const SidebarItem = defineComponent({
 .m3-dropdown-leave-to {
   opacity: 0;
   transform: translateY(8px) scale(0.96);
+}
+
+/* Page Transitions */
+.slide-up-enter-active,
+.slide-up-leave-active,
+.slide-down-enter-active,
+.slide-down-leave-active,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 /* Remove link underline */

@@ -14,7 +14,7 @@
                 ĐANG MỞ
             </span>
         </div>
-        <button class="px-6 py-2.5 min-h-[44px] bg-[var(--sys-warning-solid)] rounded-xl font-black text-white hover:bg-[var(--sys-warning-hover)] shadow-xl shadow-[var(--sys-warning-solid-lch-30)] transition-all flex items-center gap-2">
+        <button class="px-6 py-2.5 min-h-[44px] bg-[var(--sys-warning-solid)] rounded-xl font-black text-white hover:bg-[var(--sys-warning-hover)] active:scale-95 shadow-xl shadow-[var(--sys-warning-solid-lch-30)] transition-all flex items-center gap-2">
           <span class="material-symbols-outlined text-[20px]">lock_open</span> 
           Khóa bảng công
         </button>
@@ -114,14 +114,14 @@
         </div>
         <div class="col-xl-5">
             <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] shadow-sm rounded-[2.5rem] p-8 h-100">
-                <h6 class="text-base font-black text-[var(--sys-text-primary)] mb-8 tracking-tight italic uppercase">Top nhân viên đi muộn nhiều nhất</h6>
+                <h6 class="text-base font-black text-[var(--sys-text-primary)] mb-8 tracking-tight italic uppercase">Top nhân viên đi sớm nhất</h6>
                 <div class="flex flex-col gap-6 bg-transparent">
-                    <div v-for="user in topLateUsers" :key="user.name" class="flex items-center gap-4 bg-transparent group">
+                    <div v-for="user in topEarlyUsers" :key="user.name" class="flex items-center gap-4 bg-transparent group">
                         <span class="text-[var(--sys-text-secondary)] text-[11px] font-black uppercase tracking-widest bg-transparent w-24">{{ user.name }}</span>
                         <div class="flex-grow bg-[var(--sys-bg-hover)] rounded-full h-3 overflow-hidden">
-                            <div class="bg-[var(--sys-danger-solid)] h-full transition-all rounded-full group-hover:shadow-lg group-hover:shadow-[var(--sys-danger-solid-lch-30)]" :style="{ width: user.percent + '%' }"></div>
+                            <div class="bg-[var(--sys-success-solid)] h-full transition-all rounded-full group-hover:shadow-lg group-hover:shadow-[var(--sys-success-solid-lch-30)]" :style="{ width: user.percent + '%' }"></div>
                         </div>
-                        <span class="text-[var(--sys-danger-text)] text-[11px] font-black tracking-widest bg-transparent w-10">{{ user.minutes }}p</span>
+                        <span class="text-[var(--sys-success-text)] text-[11px] font-black tracking-widest bg-transparent w-10">{{ user.earlyMinutes }}p</span>
                     </div>
                 </div>
             </div>
@@ -130,57 +130,82 @@
 
     <!-- Table -->
     <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden mb-4">
-      <div class="px-8 py-6 border-b border-[var(--sys-border-subtle)] flex flex-wrap justify-between items-center gap-4 rounded-t-[2.5rem] bg-[var(--sys-bg-surface)]">
+      <div class="px-8 py-5 border-b border-[var(--sys-border-subtle)] flex flex-col md:flex-row justify-between items-center gap-4 rounded-t-[2.5rem] bg-[var(--sys-bg-surface)]">
         <h6 class="text-base font-black text-[var(--sys-text-primary)] mb-0 italic uppercase tracking-tight">Danh sách Chấm công Theo Ngày</h6>
-        <div class="flex gap-3">
-            <div class="flex items-center gap-2 bg-[var(--sys-bg-hover)] px-4 py-2 rounded-xl border border-[var(--sys-border-subtle)]">
-                <input type="date" class="bg-transparent border-none text-xs font-black text-[var(--sys-text-primary)] focus:ring-0" value="2023-10-05">
+        <div class="flex items-center gap-2 w-full md:w-auto overflow-x-auto scrollbar-hide">
+            <div class="flex items-center gap-2 bg-[var(--sys-bg-hover)] px-4 h-11 rounded-xl border border-[var(--sys-border-subtle)] shrink-0">
+                <span class="material-symbols-outlined text-[18px] text-[var(--sys-text-secondary)] opacity-50">calendar_month</span>
+                <input type="date" class="bg-transparent border-none text-[11px] font-black text-[var(--sys-text-primary)] focus:ring-0 outline-none" value="2023-10-05">
             </div>
             <Dropdown 
                 v-model="filterDept"
                 :options="deptOptions"
-                placeholder="Tất cả phòng ban"
+                placeholder="Phòng ban"
             />
             <Dropdown 
                 v-model="filterStatus"
                 :options="statusOptions"
-                placeholder="Tất cả trạng thái"
+                placeholder="Trạng thái"
             />
         </div>
       </div>
       <div class="overflow-x-auto custom-scrollbar">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full text-left border-separate border-spacing-0">
           <thead>
-            <tr class="bg-[var(--sys-bg-hover)]">
-              <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Nhân viên</th>
-              <th class="px-4 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Ca làm</th>
-              <th class="px-4 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Check-in</th>
-              <th class="px-4 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Check-out</th>
-              <th class="px-4 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-center">Đi muộn</th>
-              <th class="px-4 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-center">Về sớm</th>
-              <th class="px-4 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-center">Giờ OT</th>
-              <th class="px-4 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trạng thái</th>
-              <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-end">Thao tác</th>
+            <tr>
+              <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Nhân viên</th>
+              <th class="px-4 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Ca làm</th>
+              <th class="px-4 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Check-in</th>
+              <th class="px-4 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Check-out</th>
+              <th class="px-4 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] text-center">Đi muộn</th>
+              <th class="px-4 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] text-center">Về sớm</th>
+              <th class="px-4 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] text-center">Giờ OT</th>
+              <th class="px-4 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Trạng thái</th>
+              <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-[var(--sys-border-subtle)]">
-            <tr v-for="record in timeRecords" :key="record.id" class="group transition-all hover:bg-[var(--sys-bg-hover)]">
-              <td class="px-8 py-5 font-black text-[var(--sys-text-primary)] bg-transparent">{{ record.name }}</td>
-              <td class="px-4 py-5 text-[var(--sys-text-secondary)] font-bold bg-transparent italic">{{ record.shift }}</td>
-              <td class="px-4 py-5 text-[var(--sys-text-primary)] font-black bg-transparent">{{ record.checkIn }}</td>
-              <td class="px-4 py-5 text-[var(--sys-text-primary)] font-black bg-transparent">{{ record.checkOut }}</td>
-              <td class="px-4 py-5 text-center bg-transparent" :class="record.late > 0 ? 'text-[var(--sys-danger-text)] font-black' : 'text-[var(--sys-text-secondary)] font-bold'">{{ record.late > 0 ? record.late + 'p' : '0p' }}</td>
-              <td class="px-4 py-5 text-center text-[var(--sys-text-secondary)] font-bold bg-transparent">{{ record.early > 0 ? record.early + 'p' : '0p' }}</td>
-              <td class="px-4 py-5 text-center bg-transparent" :class="record.ot > 0 ? 'text-[var(--sys-brand-solid)] font-black' : 'text-[var(--sys-text-secondary)] font-bold'">{{ record.ot > 0 ? record.ot + 'h' : '0h' }}</td>
-              <td class="px-4 py-5 bg-transparent">
-                <span :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest ${getStatusClass(record.statusText)}`">
+          <tbody class="text-sm">
+            <tr v-for="record in timeRecords" :key="record.id" 
+                class="group transition-colors duration-200 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]">
+              <td class="px-6 py-5 font-black text-[var(--sys-text-primary)] bg-transparent border-b border-[var(--sys-border-subtle)]">
+                {{ record.name }}
+              </td>
+              <td class="px-4 py-5 font-medium text-[var(--sys-text-secondary)] italic bg-transparent border-b border-[var(--sys-border-subtle)]">
+                {{ record.shift }}
+              </td>
+              <td class="px-4 py-5 font-black text-[var(--sys-text-primary)] bg-transparent border-b border-[var(--sys-border-subtle)]">
+                {{ record.checkIn }}
+              </td>
+              <td class="px-4 py-5 font-black text-[var(--sys-text-primary)] bg-transparent border-b border-[var(--sys-border-subtle)]">
+                {{ record.checkOut }}
+              </td>
+              <td class="px-4 py-5 text-center bg-transparent border-b border-[var(--sys-border-subtle)]" :class="record.late > 0 ? 'text-[var(--sys-danger-text)] font-black' : 'text-[var(--sys-text-secondary)] font-bold'">
+                {{ record.late > 0 ? record.late + 'p' : '0p' }}
+              </td>
+              <td class="px-4 py-5 text-center text-[var(--sys-text-secondary)] font-medium bg-transparent border-b border-[var(--sys-border-subtle)]">
+                {{ record.early > 0 ? record.early + 'p' : '0p' }}
+              </td>
+              <td class="px-4 py-5 text-center bg-transparent border-b border-[var(--sys-border-subtle)]" :class="record.ot > 0 ? 'text-[var(--sys-brand-solid)] font-black' : 'text-[var(--sys-text-secondary)] font-bold'">
+                {{ record.ot > 0 ? record.ot + 'h' : '0h' }}
+              </td>
+              <td class="px-4 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <span :class="[
+                  'px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 border transition-all',
+                  getStatusBadgeClass(record.statusText)
+                ]">
+                  <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotClass(record.statusText)"></span>
                    {{ record.statusText }}
                 </span>
               </td>
-              <td class="px-8 py-5 text-end bg-transparent">
-                <button class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] hover:bg-[var(--sys-brand-soft)] hover:text-[var(--sys-brand-solid)] transition-all" title="Chỉnh sửa">
-                  <span class="material-symbols-outlined text-[20px]">edit</span>
-                </button>
+              <td class="px-6 py-5 text-right bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div class="flex items-center justify-end gap-2 bg-transparent">
+                  <button 
+                    class="w-8 h-8 rounded-lg flex items-center justify-center transition-colors bg-transparent text-[var(--sys-icon-default)] hover:text-[var(--sys-brand-solid)] hover:bg-[var(--sys-brand-solid)]/10" 
+                    title="Chỉnh sửa"
+                  >
+                    <span class="material-symbols-outlined text-lg">edit</span>
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -211,20 +236,29 @@ const statusOptions = [
   { label: 'Đi muộn', value: 'LATE' }
 ];
 
-const getStatusClass = (status) => {
+const getStatusBadgeClass = (status) => {
   switch (status) {
-    case 'ĐỦ CÔNG': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)]';
-    case 'ĐI MUỘN': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)]';
-    case 'VẮNG MẶT': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)]';
-    default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)]';
+    case 'ĐỦ CÔNG': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
+    case 'ĐI MUỘN': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
+    case 'VẮNG MẶT': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
+    default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
   }
 };
 
-const topLateUsers = ref([
-    { name: 'Nguyễn Văn A', minutes: 85, percent: 85 },
-    { name: 'Trần Thị B', minutes: 60, percent: 65 },
-    { name: 'Lê Văn C', minutes: 45, percent: 45 },
-    { name: 'Phạm Đạt', minutes: 30, percent: 25 },
+const getStatusDotClass = (status) => {
+  switch (status) {
+    case 'ĐỦ CÔNG': return 'bg-[var(--sys-success-solid)]';
+    case 'ĐI MUỘN': return 'bg-[var(--sys-warning-solid)]';
+    case 'VẮNG MẶT': return 'bg-[var(--sys-danger-solid)]';
+    default: return 'bg-[var(--sys-icon-default)]';
+  }
+};
+
+const topEarlyUsers = ref([
+    { name: 'Nguyễn Văn A', earlyMinutes: 45, percent: 85 },
+    { name: 'Trần Thị B', earlyMinutes: 30, percent: 65 },
+    { name: 'Lê Văn C', earlyMinutes: 20, percent: 45 },
+    { name: 'Phạm Đạt', earlyMinutes: 15, percent: 25 },
 ]);
 
 const timeRecords = ref([

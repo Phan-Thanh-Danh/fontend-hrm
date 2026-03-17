@@ -6,102 +6,115 @@
         <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight text-left">Quản lý Phòng ban</h1>
         <p class="text-[var(--sys-text-secondary)] text-sm font-medium italic text-left">Cấu trúc sơ đồ tổ chức và quản lý nhân sự theo đơn vị.</p>
       </div>
-      <div class="flex flex-wrap items-center gap-3 text-sm text-left">
-        <div class="relative group hidden sm:block">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--sys-icon-default)]">search</span>
+      <div class="flex flex-col md:flex-row items-center gap-3 flex-1 w-full">
+        <!-- Search Bar (flex-1 - Co giãn tối đa) -->
+        <div class="relative flex-1 w-full group">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-[var(--sys-text-secondary)] opacity-50 group-focus-within:text-[var(--sys-brand-solid)] group-focus-within:opacity-100 transition-all">search</span>
           <input 
             v-model="searchQuery"
             type="text" 
             placeholder="Tìm mã hoặc tên phòng..." 
-            class="pl-10 pr-4 py-2.5 w-64 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-xs font-bold focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all font-bold text-[var(--sys-text-primary)] placeholder:text-[var(--sys-text-secondary)]"
+            class="w-full h-11 pl-11 pr-4 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:border-[var(--sys-brand-solid)] focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 transition-all text-[var(--sys-text-primary)]"
           >
         </div>
 
-        <Dropdown 
-          v-model="filterActive"
-          :options="activeOptions"
-          placeholder="Tất cả trạng thái"
-        />
+        <!-- Action Group (Cụm Dropdown & Button) -->
+        <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
+          <Dropdown 
+            v-model="filterActive"
+            :options="activeOptions"
+            placeholder="Trạng thái"
+            class="h-11"
+          />
 
-        <button 
-          @click="openModal('add')" 
-          class="px-6 py-2.5 min-h-[44px] bg-[var(--sys-brand-solid)] rounded-lg font-black text-white hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid-lch-30)] transition-all flex items-center gap-2"
-        >
-          <span class="material-symbols-outlined text-[20px]">add_business</span>
-          Thêm đơn vị
-        </button>
+          <button 
+            @click="openModal('add')" 
+            class="h-11 px-6 bg-[var(--sys-brand-solid)] rounded-xl font-bold text-white hover:brightness-110 active:scale-95 shadow-sm shadow-[var(--sys-brand-solid)]/20 transition-all flex items-center gap-2 uppercase tracking-widest text-[11px] whitespace-nowrap"
+          >
+            <span class="material-symbols-outlined text-[18px]">add_business</span>
+            Thêm đơn vị
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Stats -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-      <div v-for="stat in stats" :key="stat.label" class="bg-[var(--sys-bg-surface)] p-6 rounded-[2rem] border border-[var(--sys-border-subtle)] shadow-sm flex items-center gap-5">
-        <div :class="`w-14 h-14 rounded-2xl flex items-center justify-center ${stat.bg} ${stat.color} shadow-inner`">
+      <div v-for="stat in stats" :key="stat.label" class="bg-[var(--sys-bg-surface)] p-6 rounded-[2rem] border border-[var(--sys-border-subtle)] shadow-sm hover:shadow-xl transition-all duration-300 flex items-center gap-5">
+        <div :class="`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner ${stat.bg} ${stat.color}`">
           <span class="material-symbols-outlined text-3xl">{{ stat.icon }}</span>
         </div>
         <div>
-          <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">{{ stat.label }}</p>
-          <p class="text-2xl font-black text-[var(--sys-text-primary)] leading-none">{{ stat.value }}</p>
+          <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic opacity-70">{{ stat.label }}</p>
+          <p class="text-2xl font-black text-[var(--sys-text-primary)] leading-none tracking-tight">{{ stat.value }}</p>
         </div>
       </div>
     </div>
 
     <!-- List -->
-    <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden text-sm">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-[var(--sys-bg-hover)]">
-            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Tên đơn vị / Mã phòng</th>
-            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trưởng phòng</th>
-            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-center">Nhân sự</th>
-            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trạng thái</th>
-            <th class="px-8 py-5 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-right">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-[var(--sys-border-subtle)]">
-          <tr v-for="dept in filteredDepartments" :key="dept.id" 
-              class="group transition-all duration-200 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]">
-            <td class="px-8 py-5 bg-transparent">
-              <div class="flex items-center gap-4 bg-transparent">
-                <div class="w-10 h-10 rounded-xl bg-transparent text-[var(--sys-text-secondary)] flex items-center justify-center transition-colors border border-[var(--sys-border-subtle)] group-hover:bg-[var(--sys-brand-soft)] group-hover:text-[var(--sys-brand-solid)] group-hover:border-[var(--sys-brand-border)]">
-                  <span class="material-symbols-outlined text-xl">{{ dept.icon || 'corporate_fare' }}</span>
+    <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden">
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-separate border-spacing-0">
+          <thead>
+            <tr>
+              <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Tên đơn vị / Mã phòng</th>
+              <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Trưởng phòng</th>
+              <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-center">Nhân sự</th>
+              <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Trạng thái</th>
+              <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-right">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="dept in filteredDepartments" :key="dept.id" 
+                class="group transition-all duration-200 bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]">
+              <td class="px-8 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div class="flex flex-col bg-transparent">
+                  <span class="text-sm font-black text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ dept.name }}</span>
+                  <span class="text-[10px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-tight bg-transparent">{{ dept.code }}</span>
                 </div>
-                <div class="bg-transparent">
-                  <p class="font-black text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ dept.name }}</p>
-                  <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-tighter bg-transparent">{{ dept.code }}</p>
+              </td>
+              <td class="px-8 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div class="flex items-center gap-2 bg-transparent text-left">
+                  <div class="w-1.5 h-1.5 rounded-full bg-[var(--sys-border-subtle)] group-hover:bg-[var(--sys-brand-solid)] transition-colors"></div>
+                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-tight opacity-60 italic bg-transparent text-left">{{ dept.manager || 'Chưa bổ nhiệm' }}</span>
                 </div>
-              </div>
-            </td>
-            <td class="px-8 py-5 text-sm font-bold text-[var(--sys-text-secondary)]">
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-[var(--sys-border-subtle)]"></div>
-                {{ dept.manager || 'Chưa bổ nhiệm' }}
-              </div>
-            </td>
-            <td class="px-8 py-5 text-center">
-              <span class="px-3 py-1 bg-[var(--sys-bg-hover)] rounded-lg font-black text-[var(--sys-text-primary)] text-[11px]">
-                {{ dept.employee_count }} NV
-              </span>
-            </td>
-            <td class="px-8 py-5">
-              <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider d-inline-flex align-items-center gap-2 border ${dept.active ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]'}`">
-                <span :class="`w-1.5 h-1.5 rounded-full ${dept.active ? 'bg-[var(--sys-success-solid)]' : 'bg-[var(--sys-danger-solid)]'}`"></span>
-                {{ dept.active ? 'Đang hoạt động' : 'Đã giải thể' }}
-              </div>
-            </td>
-            <td class="px-8 py-5 text-right">
-              <div class="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                <button @click="openModal('edit', dept)" class="btn-action-icon text-[var(--sys-icon-default)] hover:text-[var(--sys-brand-solid)]">
-                  <span class="material-symbols-outlined">edit</span>
-                </button>
-                <button @click="confirmDissolve(dept)" class="btn-action-icon text-[var(--sys-icon-default)] hover:text-[var(--sys-danger-solid)]">
-                  <span class="material-symbols-outlined">domain_disabled</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td class="px-8 py-5 text-center bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <span class="px-3 py-1 bg-[var(--sys-bg-page)] rounded-lg font-black text-[var(--sys-text-primary)] text-[10px] border border-[var(--sys-border-subtle)] transition-colors group-hover:bg-[var(--sys-bg-surface)]">
+                  {{ dept.employee_count }} NV
+                </span>
+              </td>
+              <td class="px-8 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div :class="[
+                  'px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex items-center gap-1.5 border transition-all shadow-sm',
+                  dept.active ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]'
+                ]">
+                  <span class="w-1.5 h-1.5 rounded-full" :class="dept.active ? 'bg-[var(--sys-success-solid)]' : 'bg-[var(--sys-danger-solid)]'"></span>
+                  {{ dept.active ? 'Đang hoạt động' : 'Đã giải thể' }}
+                </div>
+              </td>
+              <td class="px-8 py-5 text-right bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div class="flex items-center justify-end gap-3 bg-transparent">
+                  <button 
+                    @click="openModal('edit', dept)" 
+                    class="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--sys-bg-page)]/50 border border-[var(--sys-border-subtle)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] hover:border-[var(--sys-brand-solid)] shadow-sm active:scale-95"
+                    title="Chỉnh sửa phòng ban"
+                  >
+                    <span class="material-symbols-outlined text-lg">edit_note</span>
+                  </button>
+                  <button 
+                    @click="confirmDissolve(dept)" 
+                    class="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--sys-bg-page)]/50 border border-[var(--sys-border-subtle)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-danger-solid)] hover:border-[var(--sys-danger-border)] shadow-sm active:scale-95" 
+                    title="Giải thể đơn vị"
+                  >
+                    <span class="material-symbols-outlined text-lg">domain_disabled</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Modal -->

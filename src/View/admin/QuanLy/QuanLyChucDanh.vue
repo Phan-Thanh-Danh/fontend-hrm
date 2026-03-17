@@ -1,13 +1,13 @@
 <template>
   <div class="quản-lý-chức-danh-page space-y-6">
     <!-- Header -->
-    <div class="flex items-center justify-between mb-8 text-left">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 text-left">
       <div class="text-left">
-        <h1 class="text-2xl font-black text-slate-900 tracking-tight text-left">Quản lý Chức danh</h1>
-        <p class="text-slate-500 text-sm font-medium italic text-left">Thiết lập và phân loại các vị trí công việc chính thức trong tổ chức.</p>
+        <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight text-left">Quản lý Chức danh</h1>
+        <p class="text-[var(--sys-text-secondary)] text-sm font-medium italic text-left">Thiết lập và phân loại các vị trí công việc chính thức trong tổ chức.</p>
       </div>
       <div class="text-left">
-        <button @click="openModal('add')" class="px-6 py-2.5 min-h-[44px] bg-blue-600 rounded-lg font-black text-white hover:bg-blue-700 shadow-xl shadow-blue-100 transition-all flex items-center gap-2">
+        <button @click="openModal('add')" class="px-6 py-2.5 min-h-[44px] bg-[var(--sys-brand-solid)] rounded-lg font-black text-white hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid-lch-30)] transition-all flex items-center gap-2">
           <span class="material-symbols-outlined text-[20px]">add</span> 
           Thêm mới chức danh
         </button>
@@ -15,94 +15,112 @@
     </div>
 
     <!-- Filters Card -->
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-      <div class="card-body p-3">
-        <div class="row g-3">
-          <div class="col-md-7">
-            <div class="input-group">
-              <span class="input-group-text bg-light border-0 ps-3">
-                <span class="material-symbols-outlined fs-5 text-muted">search</span>
-              </span>
-              <input type="text" class="form-control bg-light border-0 py-2 ps-1" placeholder="Tìm kiếm theo mã hoặc tên chức danh...">
+    <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] shadow-sm rounded-3xl overflow-hidden">
+      <div class="p-4 flex flex-col md:flex-row items-center gap-3 w-full">
+        <div class="relative flex-1 w-full group">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[var(--sys-text-secondary)] transition-colors group-focus-within:text-[var(--sys-brand-solid)]">search</span>
+          <input 
+            v-model="searchQuery"
+            type="text" 
+            placeholder="Tìm kiếm theo mã hoặc tên chức danh..." 
+            class="pl-12 pr-5 h-11 w-full bg-[var(--sys-bg-hover)] border border-[var(--sys-border-subtle)] rounded-2xl text-sm font-black focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)] placeholder:text-[var(--sys-text-secondary)]/40"
+          >
         </div>
-          </div>
-          <div class="col-md-2">
-            <Dropdown 
-              v-model="filterGroup"
-              :options="groupOptions"
-              placeholder="Tất cả nhóm"
-            />
-          </div>
-          <div class="col-md-2">
-            <Dropdown 
-              v-model="filterStatus"
-              :options="statusOptions"
-              placeholder="Tất cả trạng thái"
-            />
-          </div>
-          <div class="col-md-1">
-            <button class="btn btn-light w-100 h-100 border-0 d-flex align-items-center justify-content-center text-muted">
-              <span class="material-symbols-outlined fs-5">filter_list</span>
-          </button>
-          </div>
+        <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
+          <Dropdown 
+            v-model="filterGroup"
+            :options="groupOptions"
+            placeholder="Tất cả nhóm"
+          />
+          <Dropdown 
+            v-model="filterStatus"
+            :options="statusOptions"
+            placeholder="Tất cả trạng thái"
+          />
         </div>
       </div>
     </div>
 
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-      <div class="table-responsive">
-        <table class="table align-middle mb-0">
-          <thead class="table-light text-muted" style="font-size: 0.75rem; letter-spacing: 0.5px;">
+    <!-- Table Card -->
+    <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden">
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-separate border-spacing-0">
+          <thead>
             <tr>
-              <th class="border-0 px-4 py-3 text-uppercase fw-bold">Mã chức danh</th>
-              <th class="border-0 py-3 text-uppercase fw-bold">Tên chức danh</th>
-              <th class="border-0 py-3 text-uppercase fw-bold">Nhóm</th>
-              <th class="border-0 py-3 text-uppercase fw-bold">Cấp bậc</th>
-              <th class="border-0 py-3 text-uppercase fw-bold">Trạng thái</th>
-              <th class="border-0 px-4 py-3 text-uppercase fw-bold text-end">Hành động</th>
+              <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Mã chức danh</th>
+              <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Tên chức danh</th>
+              <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Nhóm</th>
+              <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Cấp bậc</th>
+              <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-center">Trạng thái</th>
+              <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-right">Thao tác</th>
             </tr>
           </thead>
-          <tbody>
-            <tr v-for="job in filteredJobTitles" :key="job.code" class="border-top transition-colors">
-              <td class="px-4 py-3 fw-bold text-primary" style="font-size: 0.85rem;">{{ job.code }}</td>
-              <td class="py-3 fw-bold text-dark" style="font-size: 0.9rem;">{{ job.title }}</td>
-              <td class="py-3">
-                <span class="badge bg-light text-muted border px-2 py-1 fw-medium" style="font-size: 0.7rem;">{{ job.group }}</span>
+          <tbody class="bg-transparent">
+            <tr v-for="job in filteredJobTitles" :key="job.code" 
+                class="group transition-all duration-200 border-b border-[var(--sys-border-subtle)] bg-transparent hover:bg-[var(--sys-bg-hover)]">
+              <td class="px-8 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <span class="text-sm font-black text-[var(--sys-brand-solid)] uppercase tracking-tight">{{ job.code }}</span>
               </td>
-              <td class="py-3 text-muted fw-medium" style="font-size: 0.85rem;">{{ job.level }}</td>
-              <td class="py-3">
-                <span class="rounded-pill px-3 py-2 d-inline-flex align-items-center gap-2 border shadow-sm transition-all" 
-                  :class="job.status === 'active' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-slate-50 text-slate-500 border-slate-200'"
-                  style="font-size: 0.725rem; font-weight: 800; letter-spacing: 0.025em;">
-                  <span class="rounded-circle" :style="{ width: '7px', height: '7px', backgroundColor: job.status === 'active' ? '#16a34a' : '#64748b' }"></span>
+              <td class="px-6 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <span class="text-sm font-black text-[var(--sys-text-primary)] transition-colors">{{ job.title }}</span>
+              </td>
+              <td class="px-6 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <span class="px-3 py-1.5 bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border border-[var(--sys-border-subtle)] rounded-xl text-[10px] font-black uppercase tracking-widest">{{ job.group }}</span>
+              </td>
+              <td class="px-6 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-tight opacity-60 italic">{{ job.level }}</span>
+              </td>
+              <td class="px-6 py-5 text-center bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div :class="[
+                  'px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex items-center gap-1.5 border transition-all shadow-sm',
+                  job.status === 'active' ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]'
+                ]">
+                  <span class="w-1.5 h-1.5 rounded-full" :class="job.status === 'active' ? 'bg-[var(--sys-success-solid)]' : 'bg-[var(--sys-text-secondary)]'"></span>
                   {{ job.status === 'active' ? 'Đang sử dụng' : 'Ngưng sử dụng' }}
-                </span>
+                </div>
               </td>
-              <td class="px-4 py-3 text-end">
-                <div class="d-flex justify-content-end gap-1">
-                  <button @click="openModal('edit', job)" class="btn-action-icon">
-                    <span class="material-symbols-outlined">edit</span>
+              <td class="px-8 py-5 text-right bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div class="flex items-center justify-end gap-3 bg-transparent">
+                  <button 
+                    @click="openModal('edit', job)" 
+                    class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--sys-bg-surface)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] hover:border-[var(--sys-brand-solid)] transition-all border border-[var(--sys-border-subtle)] shadow-sm active:scale-95"
+                    title="Chỉnh sửa"
+                  >
+                    <span class="material-symbols-outlined text-lg">edit_note</span>
                   </button>
-                  <button @click="deleteJobTitle(job)" class="btn-action-icon btn-danger-action">
-                    <span class="material-symbols-outlined">delete</span>
+                  <button 
+                    @click="deleteJobTitle(job)" 
+                    class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--sys-bg-surface)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-danger-text)] hover:border-[var(--sys-danger-border)] transition-all border border-[var(--sys-border-subtle)] shadow-sm active:scale-95" 
+                    title="Xóa"
+                  >
+                    <span class="material-symbols-outlined text-lg">delete_sweep</span>
                   </button>
                 </div>
               </td>
             </tr>
             <tr v-if="filteredJobTitles.length === 0">
-              <td colspan="6" class="text-center py-5 text-muted italic">Không tìm thấy chức danh phù hợp</td>
+              <td colspan="6" class="px-8 py-20 text-center text-[var(--sys-text-secondary)] font-bold italic bg-transparent">
+                <div class="flex flex-col items-center gap-4 opacity-30">
+                  <span class="material-symbols-outlined text-6xl">search_off</span>
+                  <p class="text-xs uppercase tracking-[0.2em]">Không tìm thấy chức danh phù hợp</p>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Footer/Pagination -->
-      <div class="card-footer bg-white border-top p-4 d-flex justify-content-between align-items-center">
-        <span class="text-muted small">Hiển thị {{ filteredJobTitles.length }} trong tổng số 42 bản ghi</span>
-        <div class="d-flex gap-1">
-          <button class="btn btn-sm btn-light border p-1 rounded d-flex align-items-center"><span class="material-symbols-outlined fs-6">chevron_left</span></button>
-          <button class="btn btn-sm btn-primary px-3 rounded fw-medium">1</button>
-          <button class="btn btn-sm btn-light border p-1 rounded d-flex align-items-center"><span class="material-symbols-outlined fs-6">chevron_right</span></button>
+      <div class="px-8 py-5 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/30 flex flex-col sm:flex-row justify-between items-center gap-4">
+        <span class="text-[var(--sys-text-secondary)] text-[10px] font-black uppercase tracking-[0.2em] italic opacity-60">Hiển thị {{ filteredJobTitles.length }} bản ghi hệ thống</span>
+        <div class="flex items-center gap-3">
+          <button class="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] hover:border-[var(--sys-brand-solid)] transition-all shadow-sm">
+            <span class="material-symbols-outlined text-lg">chevron_left</span>
+          </button>
+          <button class="w-10 h-10 rounded-xl flex items-center justify-center bg-[var(--sys-brand-solid)] text-white text-xs font-black shadow-xl shadow-[var(--sys-brand-solid-lch-30)]">1</button>
+          <button class="w-10 h-10 rounded-xl flex items-center justify-center border border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] hover:border-[var(--sys-brand-solid)] transition-all shadow-sm">
+            <span class="material-symbols-outlined text-lg">chevron_right</span>
+          </button>
         </div>
       </div>
     </div>
@@ -118,41 +136,43 @@
         leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
       >
         <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
-          <div class="fixed inset-0 w-screen h-screen bg-slate-900/50 z-[9999] overflow-hidden backdrop-blur-sm" @click="showModal = false"></div>
-          <div class="relative z-[10000] bg-white w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
-            <div class="px-8 py-6 border-b border-slate-100 flex items-center justify-between bg-white text-left">
-              <div class="text-left">
-                <h3 class="text-xl font-black text-slate-900 text-left">{{ isEdit ? 'Cập nhật Chức danh' : 'Thêm Chức danh mới' }}</h3>
-                <p class="text-xs text-slate-500 font-bold italic mt-0.5 text-left">Hệ thống sẽ đồng bộ thông tin chức danh trên toàn hệ thống</p>
+          <div class="fixed inset-0 w-screen h-screen bg-[var(--sys-bg-canvas)]/60 z-[9999] overflow-hidden backdrop-blur-md" @click="showModal = false"></div>
+          <div class="relative z-[10000] bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col transform transition-all text-left">
+            <!-- Modal Header -->
+            <div class="px-10 py-8 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-transparent text-left">
+              <div class="text-left bg-transparent">
+                <h3 class="text-xl font-black text-[var(--sys-text-primary)] text-left italic uppercase tracking-tight">{{ isEdit ? 'Cập nhật Chức danh' : 'Thêm Chức danh mới' }}</h3>
+                <p class="text-[10px] text-[var(--sys-text-secondary)] font-black uppercase tracking-widest mt-1 opacity-60 text-left">Hệ thống sẽ đồng bộ thông tin trên toàn nền tảng</p>
               </div>
-              <button @click="showModal = false" class="w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100 transition-all text-slate-400">
+              <button @click="showModal = false" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--sys-bg-hover)] hover:text-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-secondary)] border border-[var(--sys-border-subtle)]">
                 <span class="material-symbols-outlined">close</span>
               </button>
             </div>
 
-            <div class="p-8 space-y-6">
-              <div class="grid grid-cols-12 gap-5">
-                <div class="col-span-12 md:col-span-5">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block ml-1 italic text-left">Mã chức danh *</label>
-                  <input v-model="form.code" type="text" placeholder="VD: DEV-01" class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left" :disabled="isEdit">
+            <!-- Modal Body -->
+            <div class="p-10 space-y-8 bg-transparent text-left">
+              <div class="grid grid-cols-12 gap-8 bg-transparent">
+                <div class="col-span-12 md:col-span-4 bg-transparent text-left">
+                  <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-2.5 block ml-1 italic opacity-60">Mã (VD: DEV-01)</label>
+                  <input v-model="form.code" type="text" placeholder="DEV-..." class="w-full px-5 py-4 bg-[var(--sys-bg-hover)] border border-[var(--sys-border-subtle)] rounded-2xl text-sm font-black focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)] placeholder:text-[var(--sys-text-secondary)]/30" :disabled="isEdit">
                 </div>
-                <div class="col-span-12 md:col-span-7">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block ml-1 italic text-left">Tên chức danh *</label>
-                  <input v-model="form.title" type="text" placeholder="Nhập tên..." class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm font-bold focus:outline-none focus:ring-4 focus:ring-blue-600/5 focus:border-blue-600 transition-all text-left">
+                <div class="col-span-12 md:col-span-8 bg-transparent text-left">
+                  <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-2.5 block ml-1 italic opacity-60 text-left">Tên chức danh chính thức</label>
+                  <input v-model="form.title" type="text" placeholder="Nhập tên chức danh..." class="w-full px-5 py-4 bg-[var(--sys-bg-hover)] border border-[var(--sys-border-subtle)] rounded-2xl text-sm font-black focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)]">
                 </div>
               </div>
 
-              <div class="grid grid-cols-2 gap-5 text-left">
-                <div class="text-left">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block ml-1 italic text-left">Nhóm ngành</label>
+              <div class="grid grid-cols-2 gap-8 bg-transparent text-left">
+                <div class="bg-transparent text-left">
+                  <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-2.5 block ml-1 italic opacity-60 text-left">Nhóm ngành nghề</label>
                   <Dropdown 
                     v-model="form.group"
                     :options="groupFormOptions"
                     class="w-full"
                   />
                 </div>
-                <div class="text-left">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block ml-1 italic text-left">Cấp bậc</label>
+                <div class="bg-transparent text-left">
+                  <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-2.5 block ml-1 italic opacity-60 text-left">Phân cấp bậc</label>
                   <Dropdown 
                     v-model="form.level"
                     :options="levelFormOptions"
@@ -161,29 +181,33 @@
                 </div>
               </div>
 
-              <div class="pt-2 text-left">
-                <div class="flex items-center gap-4 text-left">
-                  <label class="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1 italic text-left">Trạng thái sử dụng</label>
-                  <div class="flex items-center gap-3 text-left">
+              <div class="pt-4 bg-transparent text-left border-t border-[var(--sys-border-subtle)]">
+                <div class="flex items-center justify-between bg-transparent text-left">
+                  <div class="bg-transparent text-left">
+                    <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-1 block italic opacity-60 text-left">Trạng thái sử dụng</label>
+                    <p class="text-[11px] font-bold text-[var(--sys-text-secondary)]">Cho phép áp dụng chức danh này cho nhân sự</p>
+                  </div>
+                  <div class="flex items-center gap-4 bg-transparent text-left">
                       <button 
                           @click="form.isActiveCheckbox = !form.isActiveCheckbox"
                           type="button"
-                          class="relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 outline-none"
-                          :class="form.isActiveCheckbox ? 'bg-blue-600' : 'bg-slate-200'"
+                          class="relative inline-flex h-8 w-14 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 outline-none"
+                          :class="form.isActiveCheckbox ? 'bg-[var(--sys-brand-solid)]' : 'bg-[var(--sys-bg-hover)] border-[var(--sys-border-subtle)]'"
                       >
-                          <span class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-lg ring-0 transition duration-200"
-                                :class="form.isActiveCheckbox ? 'translate-x-5' : 'translate-x-0'"></span>
+                          <span class="pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-xl ring-0 transition duration-300"
+                                :class="form.isActiveCheckbox ? 'translate-x-6' : 'translate-x-0'"></span>
                       </button>
-                      <span class="text-xs font-black tracking-widest text-left" :class="form.isActiveCheckbox ? 'text-blue-600' : 'text-slate-400'">{{ form.isActiveCheckbox ? 'ĐANG SỬ DỤNG' : 'NGƯNG SỬ DỤNG' }}</span>
+                      <span class="text-[10px] font-black tracking-widest min-w-[100px] bg-transparent text-left" :class="form.isActiveCheckbox ? 'text-[var(--sys-success-text)]' : 'text-[var(--sys-text-secondary)]'">{{ form.isActiveCheckbox ? 'KÍCH HOẠT' : 'TẠM NGƯNG' }}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div class="px-8 py-6 border-t border-slate-100 bg-slate-50/30 flex justify-end gap-3 text-left">
-              <button @click="showModal = false" class="px-6 py-2.5 min-h-[44px] text-sm font-bold text-slate-500 hover:bg-slate-100 rounded-lg transition-all uppercase tracking-widest">Hủy</button>
-              <button @click="saveJobTitle" class="px-8 py-2.5 min-h-[44px] bg-blue-600 text-white rounded-lg text-sm font-black hover:bg-blue-700 shadow-lg shadow-blue-100 transition-all uppercase tracking-widest">
-                Lưu thông tin
+            <!-- Footer -->
+            <div class="px-10 py-8 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/20 flex justify-end gap-4 text-left">
+              <button @click="showModal = false" class="px-8 py-3.5 text-[10px] font-black text-[var(--sys-text-secondary)] hover:text-[var(--sys-text-primary)] transition-all uppercase tracking-[0.2em]">Hủy bỏ</button>
+              <button @click="saveJobTitle" class="px-10 py-3.5 bg-[var(--sys-brand-solid)] text-white rounded-2xl text-[10px] font-black hover:bg-[var(--sys-brand-hover)] shadow-2xl shadow-[var(--sys-brand-solid-lch-30)] transition-all uppercase tracking-[0.2em] active:scale-[0.98]">
+                Lưu và Cập nhật
               </button>
             </div>
           </div>
@@ -251,12 +275,25 @@ const emptyForm = {
 const form = ref({ ...emptyForm });
 
 const filteredJobTitles = computed(() => {
-  if (!searchQuery.value) return jobTitles.value;
-  const q = searchQuery.value.toLowerCase();
-  return jobTitles.value.filter(j => 
-    j.code.toLowerCase().includes(q) || 
-    j.title.toLowerCase().includes(q)
-  );
+  let result = jobTitles.value;
+  
+  if (searchQuery.value) {
+    const q = searchQuery.value.toLowerCase();
+    result = result.filter(j => 
+      j.code.toLowerCase().includes(q) || 
+      j.title.toLowerCase().includes(q)
+    );
+  }
+
+  if (filterGroup.value !== 'ALL') {
+    result = result.filter(j => j.group === filterGroup.value);
+  }
+
+  if (filterStatus.value !== 'ALL') {
+    result = result.filter(j => j.status === filterStatus.value);
+  }
+
+  return result;
 });
 
 const openModal = (type, job = null) => {
@@ -305,28 +342,6 @@ const deleteJobTitle = async (job) => {
 </script>
 
 <style scoped>
-.form-select:focus, .form-control:focus {
-  box-shadow: none;
-  background-color: #f1f5f9 !important;
-}
-.btn-link:hover {
-  background-color: #f1f5f9;
-}
-.space-y-4 > * + * { margin-top: 1rem; }
-.form-check-input:checked {
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-.cursor-pointer { cursor: pointer; }
+/* No local styles needed as we use the system-wide Tailwind and OKLCH variables */
 </style>
 
-<style scoped>
-.form-select:focus, .form-control:focus {
-  box-shadow: none;
-  background-color: #f1f5f9 !important;
-}
-.btn-link:hover {
-  background-color: #f1f5f9;
-  border-radius: 4px;
-}
-</style>

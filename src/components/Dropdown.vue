@@ -3,7 +3,7 @@
     <button 
       @click="isOpen = !isOpen"
       type="button"
-      class="flex items-center justify-between gap-2 px-4 py-2.5 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-xs font-black text-[var(--sys-text-secondary)] hover:border-[var(--sys-brand-solid)] transition-all focus:outline-none min-w-[160px] text-[var(--sys-text-primary)]"
+      class="flex items-center justify-between gap-2 px-4 h-11 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold text-[var(--sys-text-secondary)] hover:border-[var(--sys-brand-solid)] transition-all focus:outline-none min-w-[160px] text-[var(--sys-text-primary)]"
     >
       <span class="truncate">{{ selectedLabel }}</span>
       <span class="material-symbols-outlined text-[18px] transition-transform duration-200 text-[var(--sys-icon-default)]" :class="isOpen ? 'rotate-180' : ''">expand_more</span>

@@ -29,70 +29,69 @@
             </div>
           </div>
 
-          <!-- Filters -->
-          <div class="px-8 py-6 border-b border-[var(--sys-border-subtle)] bg-transparent">
-            <div class="flex flex-wrap items-end gap-6 bg-transparent">
-              <div class="flex-1 min-w-[200px] bg-transparent text-left">
-                <label class="block text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest mb-2 ml-1 italic bg-transparent text-left">Phòng ban</label>
+          <!-- Filters (Standardized h-11) -->
+          <div class="px-8 py-5 border-b border-[var(--sys-border-subtle)] bg-transparent">
+            <div class="flex flex-col md:flex-row items-center gap-3 bg-transparent">
+              <div class="flex-1 w-full relative bg-transparent group">
+                <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-[var(--sys-text-secondary)] opacity-50 group-focus-within:text-[var(--sys-brand-solid)] transition-all">search</span>
+                <input type="text" placeholder="Tìm kiếm nhanh đơn từ..." class="w-full h-11 pl-11 pr-4 bg-[var(--sys-bg-hover)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)]">
+              </div>
+
+              <div class="flex items-center gap-2 w-full md:w-auto shrink-0 bg-transparent">
                 <Dropdown 
                   v-model="filterDept"
                   :options="deptOptions"
-                  placeholder="Tất cả phòng ban"
+                  placeholder="Phòng ban"
                 />
-              </div>
-              <div class="flex-1 min-w-[200px] bg-transparent text-left">
-                <label class="block text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest mb-2 ml-1 italic bg-transparent text-left">Khoảng thời gian</label>
                 <Dropdown 
                   v-model="filterRange"
                   :options="rangeOptions"
-                  placeholder="Tháng này"
+                  placeholder="Thời gian"
                 />
-              </div>
-              <div class="bg-transparent text-left">
-                <button class="px-8 h-[48px] bg-[var(--sys-bg-hover)] hover:bg-[var(--sys-brand-soft)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] rounded-2xl text-xs font-black transition-all flex items-center justify-center gap-2 border border-[var(--sys-border-subtle)] uppercase tracking-widest">
-                  <span class="material-symbols-outlined text-[20px]">filter_alt</span> 
-                  Lọc dữ liệu
+                <button class="h-11 px-6 bg-[var(--sys-brand-solid)] text-white rounded-xl font-bold transition-all flex items-center justify-center gap-2 shadow-sm shadow-[var(--sys-brand-solid)]/20 uppercase tracking-widest text-[11px] whitespace-nowrap active:scale-95">
+                  <span class="material-symbols-outlined text-[18px]">filter_alt</span> 
+                  Lọc
                 </button>
               </div>
             </div>
           </div>
 
           <!-- Table -->
-          <div class="overflow-x-auto flex-grow bg-transparent">
-            <table class="w-full text-left border-collapse bg-transparent">
+          <div class="overflow-x-auto flex-grow bg-transparent custom-scrollbar">
+            <table class="w-full text-left border-separate border-spacing-0 bg-transparent">
               <thead>
-                <tr class="bg-[var(--sys-bg-hover)]/30 bg-transparent text-left">
-                  <th class="px-8 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Nhân viên</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Phòng ban</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Loại nghỉ</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Thời gian</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-center">Tổng ngày</th>
-                  <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)]/60 uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trạng thái</th>
+                <tr class="text-left">
+                  <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Nhân viên</th>
+                  <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Phòng ban</th>
+                  <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Loại nghỉ</th>
+                  <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Thời gian</th>
+                  <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] text-center">Tổng ngày</th>
+                  <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Trạng thái</th>
                 </tr>
               </thead>
               <tbody class="bg-transparent text-left">
                 <tr v-for="req in requests" :key="req.id" @click="activeRequestId = req.id" 
-                    class="group cursor-pointer transition-all duration-300 border-b border-[var(--sys-border-subtle)] bg-transparent text-left" 
-                    :class="activeRequestId === req.id ? 'bg-[var(--sys-brand-soft)] hover:bg-[var(--sys-brand-soft)]/80' : 'hover:bg-[var(--sys-bg-hover)]/40'">
-                  <td class="px-8 py-4 bg-transparent text-left" :class="activeRequestId === req.id ? 'border-l-4 border-[var(--sys-brand-solid)]' : 'border-l-4 border-transparent'">
-                    <div class="flex items-center gap-4 bg-transparent">
-                      <div class="w-10 h-10 rounded-full bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] flex items-center justify-center text-xs font-black text-[var(--sys-text-primary)] shadow-sm">{{ req.initial }}</div>
-                      <div class="bg-transparent text-left">
-                        <span class="block text-sm font-black text-[var(--sys-text-primary)] mb-0.5">{{ req.name }}</span>
-                        <span class="block text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-widest italic">MSNV: {{ req.msnv }}</span>
-                      </div>
+                    class="group cursor-pointer transition-all duration-300 bg-transparent text-left" 
+                    :class="activeRequestId === req.id ? 'bg-[var(--sys-brand-soft)]' : 'hover:bg-[var(--sys-bg-hover)]'">
+                  <td class="px-8 py-5 bg-transparent text-left border-b border-[var(--sys-border-subtle)]" :class="activeRequestId === req.id ? 'border-l-4 border-[var(--sys-brand-solid)]' : 'border-l-4 border-transparent'">
+                    <div class="flex flex-col bg-transparent text-left">
+                      <span class="block text-sm font-black text-[var(--sys-text-primary)] mb-0.5">{{ req.name }}</span>
+                      <span class="block text-[10px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-tight">MSNV: {{ req.msnv }}</span>
                     </div>
                   </td>
-                  <td class="px-6 py-4 text-sm font-bold text-[var(--sys-text-primary)] bg-transparent text-left">{{ req.department }}</td>
-                  <td class="px-6 py-4 bg-transparent text-left">
-                    <span class="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border shadow-sm transition-all" :class="getLeaveTypeClass(req.type)">{{ req.type }}</span>
+                  <td class="px-6 py-5 text-sm font-bold text-[var(--sys-text-primary)] bg-transparent text-left border-b border-[var(--sys-border-subtle)]">{{ req.department }}</td>
+                  <td class="px-6 py-5 bg-transparent text-left border-b border-[var(--sys-border-subtle)]">
+                    <span class="px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border transition-all" :class="getLeaveTypeClass(req.type)">{{ req.type }}</span>
                   </td>
-                  <td class="px-6 py-4 text-sm font-bold text-[var(--sys-text-secondary)] italic bg-transparent text-left">{{ req.dateRange }}</td>
-                  <td class="px-6 py-4 text-sm font-black text-[var(--sys-text-primary)] text-center bg-transparent">{{ req.days }}</td>
-                  <td class="px-6 py-4 bg-transparent text-left">
-                    <div class="flex items-center gap-2 bg-transparent text-left">
-                      <span class="w-2 h-2 rounded-full shadow-sm" :class="getStatusDotClass(req.status)"></span>
-                      <span class="text-[10px] font-black uppercase tracking-widest italic" :style="getStatusTextColor(req.status)">{{ req.statusText }}</span>
+                  <td class="px-6 py-5 text-sm font-bold text-[var(--sys-text-secondary)] italic bg-transparent text-left border-b border-[var(--sys-border-subtle)]">{{ req.dateRange }}</td>
+                  <td class="px-6 py-5 text-sm font-black text-[var(--sys-text-primary)] text-center bg-transparent border-b border-[var(--sys-border-subtle)]">{{ req.days }}</td>
+                  <td class="px-6 py-5 bg-transparent text-left border-b border-[var(--sys-border-subtle)]">
+                    <div :class="[
+                      'px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 border transition-all',
+                      getStatusBadgeClass(req.status)
+                    ]">
+                      <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotClass(req.status)"></span>
+                      {{ req.statusText }}
                     </div>
                   </td>
                 </tr>
@@ -129,27 +128,26 @@
           <div class="p-8 flex-grow flex flex-col gap-8 bg-transparent text-left">
             <!-- User info -->
             <div class="bg-[var(--sys-bg-hover)] p-6 rounded-3xl flex items-center gap-4 border border-[var(--sys-border-subtle)] shadow-sm text-left">
-              <div class="w-14 h-14 rounded-full bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center text-lg font-black bg-transparent">{{ activeRequest.initial }}</div>
-              <div class="bg-transparent text-left">
+              <div class="flex flex-col bg-transparent text-left">
                 <h6 class="text-base font-black text-[var(--sys-text-primary)] mb-1 bg-transparent">{{ activeRequest.name }}</h6>
-                <span class="text-xs font-bold text-[var(--sys-text-secondary)]/60 bg-transparent">{{ activeRequest.role }}</span>
+                <span class="text-xs font-bold text-[var(--sys-brand-solid)] uppercase tracking-tight bg-transparent">MSNV: {{ activeRequest.msnv }} — {{ activeRequest.role }}</span>
               </div>
             </div>
 
             <!-- Stats -->
             <div class="grid grid-cols-2 gap-6 px-1 bg-transparent text-left">
               <div class="bg-transparent text-left">
-                <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-2 italic bg-transparent text-left">Loại nghỉ</p>
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic bg-transparent text-left opacity-60">Loại nghỉ</p>
                 <span class="text-sm font-black text-[var(--sys-text-primary)] bg-transparent text-left">{{ activeRequest.typeDetail }}</span>
               </div>
               <div class="bg-transparent text-left">
-                <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-2 italic bg-transparent text-left">Tổng số ngày</p>
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic bg-transparent text-left opacity-60">Tổng số ngày</p>
                 <span class="text-sm font-black text-[var(--sys-text-primary)] bg-transparent text-left">{{ activeRequest.days }} ngày</span>
               </div>
             </div>
 
             <div class="px-1 bg-transparent text-left">
-              <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-2 italic bg-transparent text-left">Thời gian</p>
+              <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic bg-transparent text-left opacity-60">Thời gian</p>
               <div class="flex items-center gap-3 text-sm font-black text-[var(--sys-text-primary)] bg-transparent text-left">
                 <span class="material-symbols-outlined text-[var(--sys-brand-solid)] bg-transparent">calendar_month</span>
                 {{ activeRequest.fullDateRange }}
@@ -158,7 +156,7 @@
 
             <!-- Reason -->
             <div class="px-1 bg-transparent text-left">
-              <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-3 italic bg-transparent text-left">Lý do nghỉ</p>
+              <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-3 italic bg-transparent text-left opacity-60">Lý do nghỉ</p>
               <div class="bg-[var(--sys-bg-hover)]/50 p-5 rounded-3xl border border-[var(--sys-border-subtle)] text-sm font-bold italic text-[var(--sys-text-secondary)] bg-transparent text-left" style="line-height: 1.6;">
                 "{{ activeRequest.reason }}"
               </div>
@@ -168,19 +166,19 @@
             <div class="flex justify-between items-center p-5 rounded-3xl mt-1 mx-1 bg-[var(--sys-success-soft)] border border-[var(--sys-success-border)] text-left">
               <div class="flex items-center gap-3 text-[var(--sys-success-text)] font-black bg-transparent">
                 <span class="material-symbols-outlined text-lg bg-transparent">account_balance_wallet</span>
-                <span class="text-xs uppercase tracking-widest bg-transparent">Số dư phép năm</span>
+                <span class="text-[10px] uppercase tracking-widest bg-transparent">Số dư phép năm</span>
               </div>
-              <span class="text-xs font-black text-[var(--sys-success-text)] uppercase tracking-widest bg-transparent">Còn lại: {{ activeRequest.balance }} ngày</span>
+              <span class="text-[10px] font-black text-[var(--sys-success-text)] uppercase tracking-widest bg-transparent">Còn lại: {{ activeRequest.balance }} ngày</span>
             </div>
 
             <!-- Warnings -->
             <div v-if="activeRequest.warnings && activeRequest.warnings.length" class="p-5 rounded-3xl mt-1 mx-1 bg-[var(--sys-danger-soft)] border border-[var(--sys-danger-border)] text-left">
               <div class="flex items-center gap-3 mb-3 text-[var(--sys-danger-text)] font-black bg-transparent">
                 <span class="material-symbols-outlined text-lg bg-transparent">warning</span>
-                <span class="text-xs uppercase tracking-widest bg-transparent">Cảnh báo xung đột</span>
+                <span class="text-[10px] uppercase tracking-widest bg-transparent">Cảnh báo xung đột</span>
               </div>
               <ul class="space-y-2 bg-transparent">
-                <li v-for="(warn, idx) in activeRequest.warnings" :key="idx" class="text-xs font-bold text-[var(--sys-danger-text)]/80 italic flex items-start gap-2 bg-transparent text-left">
+                <li v-for="(warn, idx) in activeRequest.warnings" :key="idx" class="text-[11px] font-bold text-[var(--sys-danger-text)]/80 italic flex items-start gap-2 bg-transparent text-left">
                   <span class="w-1.5 h-1.5 rounded-full bg-[var(--sys-danger-text)] mt-1 shrink-0 bg-transparent"></span>
                   {{ warn }}
                 </li>
@@ -189,13 +187,13 @@
 
             <!-- Reject Reason -->
             <div v-if="activeRequest.status === 'pending'" class="mt-2 px-1 bg-transparent text-left">
-              <p class="text-[10px] font-black text-[var(--sys-text-secondary)]/40 uppercase tracking-widest mb-3 italic bg-transparent text-left">Lý do từ chối (nếu có)</p>
+              <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-3 italic bg-transparent text-left opacity-60">Lý do từ chối (nếu có)</p>
               <textarea class="w-full px-5 py-4 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl text-sm font-black text-[var(--sys-text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all resize-none placeholder:text-[var(--sys-text-secondary)]/40 bg-transparent text-left" rows="4" placeholder="Nhập lý do nếu bạn từ chối đơn này..."></textarea>
             </div>
             
              <!-- Actions form disabled if already decided -->
             <div v-else class="mt-2 p-5 bg-[var(--sys-bg-hover)]/40 rounded-3xl text-center border border-[var(--sys-border-subtle)] mx-1 bg-transparent">
-              <span class="text-[var(--sys-text-secondary)]/50 text-xs font-black uppercase tracking-widest italic bg-transparent">Đơn này đã được xử lý ({{ activeRequest.statusText }})</span>
+              <span class="text-[var(--sys-text-secondary)]/50 text-[10px] font-black uppercase tracking-widest italic bg-transparent">Đơn này đã được xử lý ({{ activeRequest.statusText }})</span>
             </div>
 
           </div>
@@ -306,41 +304,34 @@ const getLeaveTypeClass = (type) => {
   return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]'; // For Việc riêng
 };
 
+const getStatusBadgeClass = (status) => {
+  switch (status) {
+    case 'approved': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
+    case 'pending': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
+    case 'rejected': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
+    default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
+  }
+};
+
 const getStatusDotClass = (status) => {
-  if (status === 'pending') return 'bg-[var(--sys-warning-solid)]';
-  if (status === 'approved') return 'bg-[var(--sys-success-solid)]';
-  return 'bg-[var(--sys-text-secondary)]/30';
+  switch (status) {
+    case 'approved': return 'bg-[var(--sys-success-solid)]';
+    case 'pending': return 'bg-[var(--sys-warning-solid)]';
+    case 'rejected': return 'bg-[var(--sys-danger-solid)]';
+    default: return 'bg-[var(--sys-icon-default)]';
+  }
 };
-
-const getStatusTextColor = (status) => {
-  if (status === 'pending') return 'color: var(--sys-warning-text);';
-  if (status === 'approved') return 'color: var(--sys-success-text);';
-  return 'color: color-mix(in srgb, var(--sys-text-secondary) 50%, transparent);';
-};
-
 </script>
 
 <style scoped>
-/* Global active-row styles are handled safely in style.css */
-.active-row td:first-child {
-    box-shadow: none; /* Moved to Tailwind border-l-4 for better sync */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
 }
-
-.cursor-pointer {
-    cursor: pointer;
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
 }
-
-.transition-all {
-    transition: all 0.3s ease;
-}
-
-.bg-purple-100 {
-    background-color: #f3e8ff;
-}
-.text-purple {
-    color: #9333ea;
-}
-.border-purple-200 {
-    border-color: #e9d5ff !important;
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--sys-border-subtle);
+  border-radius: 10px;
 }
 </style>

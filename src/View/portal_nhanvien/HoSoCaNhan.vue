@@ -1,265 +1,271 @@
 <template>
-  <div class="profile-wrapper container-fluid py-4 min-vh-100 bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] font-sans">
-    
-    <!-- Top Header Card -->
-    <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] p-6 md:p-8 mb-6 overflow-hidden relative group">
-      <div class="absolute top-0 right-0 w-64 h-64 bg-[var(--sys-brand-solid)]/5 rounded-full -mr-32 -mt-32 transition-transform group-hover:scale-110"></div>
+  <div class="profile-wrapper min-h-screen bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] p-4 md:p-6 lg:p-10 font-sans">
+    <div class="max-w-7xl mx-auto space-y-10 bg-transparent">
       
-      <div class="d-flex flex-column flex-md-row align-items-center align-items-md-start gap-6 relative z-10">
-        <!-- Avatar Section -->
-        <div class="position-relative flex-shrink-0">
-          <div class="avatar-circle rounded-4 overflow-hidden bg-[var(--sys-bg-page)] border-2 border-[var(--sys-brand-soft)] shadow-sm d-flex align-items-center justify-content-center" style="width: 120px; height: 120px;">
-             <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar" class="w-100 h-100 object-fit-cover" />
-          </div>
-          <button class="btn bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)] text-[var(--sys-brand-solid)] btn-sm rounded-circle shadow-sm position-absolute d-flex align-items-center justify-content-center p-2 border border-[var(--sys-border-subtle)] transition-all" style="width: 36px; height: 36px; right: -6px; bottom: 6px;">
-            <span class="material-symbols-outlined fs-6" style="font-variation-settings: 'FILL' 1;">photo_camera</span>
-          </button>
-        </div>
+      <!-- Top Header Card -->
+      <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] shadow-sm border border-[var(--sys-border-subtle)] p-8 md:p-10 relative overflow-hidden group">
+        <div class="absolute top-0 right-0 w-80 h-80 bg-[var(--sys-brand-soft)] rounded-full -mr-40 -mt-40 transition-transform group-hover:scale-110 opacity-30"></div>
         
-        <!-- Info Section -->
-        <div class="flex-grow-1 text-center text-md-start w-100">
-          <div class="d-flex flex-column flex-md-row align-items-center gap-3 mb-4">
-            <h1 class="text-3xl font-black text-[var(--sys-text-primary)] tracking-tight mb-0">Nguyễn Văn An</h1>
-            <span class="status-approved badge text-[10px] font-black text-uppercase tracking-widest px-3 py-2 rounded-4">Đang làm việc</span>
-          </div>
-          
-          <div class="row g-4 pt-2">
-            <div class="col-sm-6 col-md-3 border-end-md">
-              <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Mã nhân viên</p>
-              <p class="font-black text-[var(--sys-text-primary)] mb-0">NV00123</p>
+        <div class="flex flex-col md:flex-row items-center md:items-start gap-10 relative z-10 bg-transparent">
+          <!-- Avatar Section -->
+          <div class="relative shrink-0 bg-transparent">
+            <div class="avatar-circle rounded-[2rem] overflow-hidden bg-[var(--sys-bg-page)] border-4 border-[var(--sys-brand-soft)] shadow-xl flex items-center justify-center group/avatar" style="width: 160px; height: 160px;">
+               <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar" class="w-full h-full object-cover group-hover/avatar:scale-110 transition-transform duration-500" />
             </div>
-            <div class="col-sm-6 col-md-3 border-end-md">
-              <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Phòng ban</p>
-              <a href="#" class="font-black text-[var(--sys-brand-solid)] hover:underline no-underline decoration-2">Kỹ thuật</a>
-            </div>
-            <div class="col-sm-6 col-md-3 border-end-md">
-              <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Chức vụ</p>
-              <p class="font-bold text-[var(--sys-text-primary)] mb-0 italicOpacity">Lập trình viên Senior</p>
-            </div>
-            <div class="col-sm-6 col-md-3">
-              <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Ngày vào làm</p>
-              <p class="font-bold text-[var(--sys-text-primary)] mb-0">01/01/2023</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="row g-4 d-flex align-items-stretch">
-      <!-- Left Column: Personal Info & Certificates -->
-      <div class="col-lg-8 d-flex flex-column gap-6">
-        
-        <!-- Thông tin cá nhân -->
-        <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] p-6 md:p-8">
-          <h2 class="text-base font-black text-[var(--sys-text-primary)] uppercase tracking-tight italic mb-6">Thông tin cá nhân</h2>
-          
-          <form class="row g-4">
-            <!-- Row 1 -->
-            <div class="col-md-6">
-              <label class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic d-block">Họ và tên</label>
-              <div class="input-icon-wrapper">
-                <span class="material-symbols-outlined input-icon text-[var(--sys-text-secondary)] opacity-50">person</span>
-                <input type="text" class="form-control custom-input bg-[var(--sys-bg-page)] border-[var(--sys-border-strong)] text-[var(--sys-text-primary)] font-bold rounded-xl" value="Nguyễn Văn An" readonly>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic d-block">Ngày sinh</label>
-              <div class="input-icon-wrapper">
-                <span class="material-symbols-outlined input-icon text-[var(--sys-text-secondary)] opacity-50">cake</span>
-                <input type="text" class="form-control custom-input bg-[var(--sys-bg-page)] border-[var(--sys-border-strong)] text-[var(--sys-text-primary)] font-bold rounded-xl" value="15/05/1992" readonly>
-              </div>
-            </div>
-            <!-- Row 2 -->
-            <div class="col-md-6">
-              <label class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic d-block">Giới tính</label>
-              <div class="input-icon-wrapper select-wrapper">
-                <span class="material-symbols-outlined input-icon text-[var(--sys-text-secondary)] opacity-50">wc</span>
-                <select class="form-select custom-input bg-[var(--sys-bg-page)] border-[var(--sys-border-strong)] text-[var(--sys-text-primary)] font-bold rounded-xl" disabled>
-                  <option selected>Nam</option>
-                  <option>Nữ</option>
-                </select>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <label class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic d-block">Số điện thoại</label>
-              <div class="input-icon-wrapper">
-                <span class="material-symbols-outlined input-icon text-[var(--sys-text-secondary)] opacity-50">call</span>
-                <input type="text" class="form-control custom-input bg-[var(--sys-bg-page)] border-[var(--sys-border-strong)] text-[var(--sys-text-primary)] font-bold rounded-xl" value="090 123 4567" readonly>
-              </div>
-            </div>
-            <!-- Row 3 -->
-            <div class="col-12">
-              <label class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic d-block">Email cá nhân</label>
-              <div class="input-icon-wrapper">
-                <span class="material-symbols-outlined input-icon text-[var(--sys-text-secondary)] opacity-50">mail</span>
-                <input type="email" class="form-control custom-input bg-[var(--sys-bg-page)] border-[var(--sys-border-strong)] text-[var(--sys-text-primary)] font-bold rounded-xl" value="an.nguyen92@gmail.com" readonly>
-              </div>
-            </div>
-            <!-- Row 4 -->
-            <div class="col-12">
-              <label class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic d-block">Địa chỉ thường trú</label>
-              <div class="input-icon-wrapper">
-                <span class="material-symbols-outlined input-icon text-[var(--sys-text-secondary)] opacity-50">location_on</span>
-                <input type="text" class="form-control custom-input bg-[var(--sys-bg-page)] border-[var(--sys-border-strong)] text-[var(--sys-text-primary)] font-bold rounded-xl" value="Số 123 Đường ABC, Phường 4, Quận Tân Bình, TP. Hồ Chí Minh" readonly>
-              </div>
-            </div>
-            <!-- Row 5 -->
-            <div class="col-12">
-              <label class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-2 italic d-block">Số CCCD / Hộ chiếu</label>
-              <div class="input-icon-wrapper">
-                <span class="material-symbols-outlined input-icon text-[var(--sys-text-secondary)] opacity-50">badge</span>
-                <input type="text" class="form-control custom-input bg-[var(--sys-bg-page)] border-[var(--sys-border-strong)] text-[var(--sys-text-primary)] font-bold rounded-xl" value="012345678901" readonly>
-              </div>
-            </div>
-
-            <!-- Nút Lưu thay đổi -->
-            <div class="col-12 mt-4 pt-6 border-t border-[var(--sys-border-subtle)] d-flex justify-content-end">
-              <button type="button" class="bg-[var(--sys-brand-solid)] hover:bg-[var(--sys-brand-hover)] text-white font-black px-6 py-3 rounded-xl shadow-lg shadow-[var(--sys-brand-solid-lch-30)] transition-all active:scale-95 flex items-center gap-2">
-                <span class="material-symbols-outlined text-xl">save</span>
-                Cập nhật thông tin
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- Bằng cấp & Chứng chỉ -->
-        <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] overflow-hidden">
-          <div class="px-8 py-5 border-b border-[var(--sys-border-subtle)] flex justify-between items-center bg-[var(--sys-bg-page)]/30">
-            <h2 class="text-base font-black text-[var(--sys-text-primary)] uppercase tracking-tight italic mb-0">Bằng cấp & Chứng chỉ</h2>
-            <button class="text-[var(--sys-brand-solid)] font-black text-[11px] uppercase tracking-widest hover:underline flex items-center gap-1 bg-transparent border-0">
-              <span class="material-symbols-outlined text-lg">add_circle</span>
-              Thêm mới
+            <button class="absolute -right-2 -bottom-2 w-12 h-12 bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-brand-solid)] hover:text-white text-[var(--sys-brand-solid)] rounded-2xl shadow-xl flex items-center justify-center border border-[var(--sys-border-subtle)] transition-all active:scale-90 group/cam">
+              <span class="material-symbols-outlined text-xl group-hover/cam:scale-110 transition-transform">photo_camera</span>
             </button>
           </div>
           
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="bg-[var(--sys-bg-hover)]/50">
-                  <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic border-b border-[var(--sys-border-subtle)]">Tên bằng cấp / Chứng chỉ</th>
-                  <th class="px-4 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic border-b border-[var(--sys-border-subtle)]">Nơi đào tạo</th>
-                  <th class="px-4 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic border-b border-[var(--sys-border-subtle)] text-center">Năm</th>
-                  <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic border-b border-[var(--sys-border-subtle)] text-end text-nowrap">File đính kèm</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-[var(--sys-border-subtle)] text-sm font-medium">
-                <tr class="group hover:bg-[var(--sys-bg-hover)] transition-all">
-                  <td class="px-8 py-4 font-black text-[var(--sys-text-primary)]">Kỹ sư Công nghệ thông tin</td>
-                  <td class="px-4 py-4 text-[var(--sys-text-secondary)] italic">Đại học Bách Khoa TP.HCM</td>
-                  <td class="px-4 py-4 text-center font-bold">2014</td>
-                  <td class="px-8 py-4 text-end">
-                    <a href="#" class="text-[var(--sys-brand-solid)] hover:text-[var(--sys-brand-hover)] no-underline flex items-center justify-content-end gap-1 font-black text-xs uppercase tracking-tighter">
-                      <span class="material-symbols-outlined text-base">attach_file</span>
-                      Tai_lieu.pdf
-                    </a>
-                  </td>
-                </tr>
-                <tr class="group hover:bg-[var(--sys-bg-hover)] transition-all">
-                  <td class="px-8 py-4 font-black text-[var(--sys-text-primary)]">AWS Certified Solutions Architect</td>
-                  <td class="px-4 py-4 text-[var(--sys-text-secondary)] italic">Amazon Web Services</td>
-                  <td class="px-4 py-4 text-center font-bold">2022</td>
-                  <td class="px-8 py-4 text-end">
-                    <a href="#" class="text-[var(--sys-brand-solid)] hover:text-[var(--sys-brand-hover)] no-underline flex items-center justify-content-end gap-1 font-black text-xs uppercase tracking-tighter">
-                      <span class="material-symbols-outlined text-base">attach_file</span>
-                      aws_cert.pdf
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- Info Section -->
+          <div class="grow text-center md:text-left w-full bg-transparent">
+            <div class="flex flex-col md:flex-row items-center gap-4 mb-6 bg-transparent">
+              <h1 class="text-4xl font-black text-[var(--sys-text-primary)] tracking-tight mb-0 italic">Nguyễn Văn An</h1>
+              <span class="bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] text-[10px] font-black uppercase tracking-[0.2em] px-5 py-2 rounded-full border border-[var(--sys-success-border)] shadow-sm">Đang làm việc</span>
+            </div>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 pt-4 bg-transparent">
+              <div class="md:border-r border-[var(--sys-border-subtle)] bg-transparent text-left">
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-2 italic opacity-60">Mã nhân viên</p>
+                <p class="text-lg font-black text-[var(--sys-text-primary)] tracking-tight italic">#NV-00123</p>
+              </div>
+              <div class="md:border-r border-[var(--sys-border-subtle)] bg-transparent text-left px-0 md:px-4">
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-2 italic opacity-60">Phòng ban</p>
+                <p class="text-lg font-black text-[var(--sys-brand-solid)] tracking-tight italic">Kỹ thuật & CN</p>
+              </div>
+              <div class="md:border-r border-[var(--sys-border-subtle)] bg-transparent text-left px-0 md:px-4">
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-2 italic opacity-60">Chức vụ</p>
+                <p class="text-lg font-black text-[var(--sys-text-primary)] tracking-tight opacity-80 italic">Senior Dev</p>
+              </div>
+              <div class="bg-transparent text-left px-0 md:px-4">
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-2 italic opacity-60">Ngày gia nhập</p>
+                <p class="text-lg font-black text-[var(--sys-text-primary)] tracking-tight italic">01/01/2023</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Right Column: Thông tin công việc -->
-      <div class="col-lg-4">
-        <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] p-6 md:p-8 h-full flex flex-col">
-          <h2 class="text-base font-black text-[var(--sys-text-primary)] uppercase tracking-tight italic mb-8">Thông tin công việc</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 bg-transparent">
+        <!-- Left Column: Personal Info & Certificates -->
+        <div class="lg:col-span-8 flex flex-col gap-10 bg-transparent">
           
-          <div class="flex flex-col gap-8 flex-grow">
-            <!-- Info Item -->
-            <div class="flex gap-4 items-start group">
-              <div class="w-10 h-10 rounded-xl bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center shrink-0 border border-[var(--sys-brand-subtle)] group-hover:bg-[var(--sys-brand-solid)] group-hover:text-white transition-all">
-                <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">account_tree</span>
-              </div>
-              <div>
-                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Phòng ban</p>
-                <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0">Kỹ thuật & Công nghệ</p>
-              </div>
-            </div>
-
-            <!-- Info Item -->
-            <div class="flex gap-4 items-start group">
-              <div class="w-10 h-10 rounded-xl bg-[var(--sys-info-soft)] text-[var(--sys-info-text)] flex items-center justify-center shrink-0 border border-[var(--sys-info-border)] group-hover:bg-[var(--sys-info-solid)] group-hover:text-white transition-all">
-                <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">badge</span>
-              </div>
-              <div>
-                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Chức vụ</p>
-                <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0">Lập trình viên Senior (Lv.4)</p>
-              </div>
-            </div>
-
-            <!-- Info Item -->
-            <div class="flex gap-4 items-start group">
-              <div class="w-10 h-10 rounded-xl bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] flex items-center justify-center shrink-0 border border-[var(--sys-border-subtle)] group-hover:border-[var(--sys-brand-solid)] transition-all">
-                <div class="w-7 h-7 rounded-lg overflow-hidden border border-[var(--sys-border-subtle)]">
-                   <img src="https://i.pravatar.cc/150?u=nam_le" alt="Manager" class="w-full h-full object-cover" />
+          <!-- Thông tin cá nhân -->
+          <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] shadow-sm border border-[var(--sys-border-subtle)] p-8 md:p-10">
+            <h2 class="text-sm font-black text-[var(--sys-text-primary)] uppercase tracking-tight italic mb-8 flex items-center gap-3">
+              <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-2xl">person_edit</span>
+              Hồ sơ chi tiết
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-transparent">
+              <!-- Grid Items -->
+              <div class="space-y-2.5 bg-transparent text-left">
+                <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic opacity-60 ml-2">Họ và tên</label>
+                <div class="relative group bg-transparent">
+                  <span class="absolute inset-y-0 left-5 flex items-center text-[var(--sys-text-secondary)] opacity-40 group-focus-within:text-[var(--sys-brand-solid)] group-focus-within:opacity-100 transition-all">
+                    <span class="material-symbols-outlined text-xl">person</span>
+                  </span>
+                  <input type="text" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-[var(--sys-bg-hover)]/40 border border-[var(--sys-border-subtle)] text-sm font-black text-[var(--sys-text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all italic shadow-sm" value="Nguyễn Văn An" readonly>
                 </div>
               </div>
-              <div>
-                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Quản lý trực tiếp</p>
-                <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0">Lê Hoàng Nam</p>
+
+              <div class="space-y-2.5 bg-transparent text-left">
+                <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic opacity-60 ml-2">Ngày sinh</label>
+                <div class="relative group bg-transparent">
+                  <span class="absolute inset-y-0 left-5 flex items-center text-[var(--sys-text-secondary)] opacity-40 group-focus-within:text-[var(--sys-brand-solid)] group-focus-within:opacity-100 transition-all">
+                    <span class="material-symbols-outlined text-xl">cake</span>
+                  </span>
+                  <input type="text" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-[var(--sys-bg-hover)]/40 border border-[var(--sys-border-subtle)] text-sm font-black text-[var(--sys-text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all italic shadow-sm" value="15/05/1992" readonly>
+                </div>
+              </div>
+
+              <div class="space-y-2.5 bg-transparent text-left">
+                <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic opacity-60 ml-2">Giới tính</label>
+                <div class="relative group bg-transparent">
+                  <span class="absolute inset-y-0 left-5 flex items-center text-[var(--sys-text-secondary)] opacity-40 group-focus-within:text-[var(--sys-brand-solid)] group-focus-within:opacity-100 transition-all">
+                    <span class="material-symbols-outlined text-xl">wc</span>
+                  </span>
+                  <select class="w-full pl-14 pr-6 py-4 rounded-2xl bg-[var(--sys-bg-hover)]/40 border border-[var(--sys-border-subtle)] text-sm font-black text-[var(--sys-text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all italic shadow-sm appearance-none" disabled>
+                    <option selected>Nam</option>
+                    <option>Nữ</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="space-y-2.5 bg-transparent text-left">
+                <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic opacity-60 ml-2">Số điện thoại</label>
+                <div class="relative group bg-transparent">
+                  <span class="absolute inset-y-0 left-5 flex items-center text-[var(--sys-text-secondary)] opacity-40 group-focus-within:text-[var(--sys-brand-solid)] group-focus-within:opacity-100 transition-all">
+                    <span class="material-symbols-outlined text-xl">call</span>
+                  </span>
+                  <input type="text" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-[var(--sys-bg-hover)]/40 border border-[var(--sys-border-subtle)] text-sm font-black text-[var(--sys-text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all italic shadow-sm" value="090 123 4567" readonly>
+                </div>
+              </div>
+
+              <div class="col-span-1 md:col-span-2 space-y-2.5 bg-transparent text-left">
+                <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic opacity-60 ml-2">Email chi tiết</label>
+                <div class="relative group bg-transparent">
+                  <span class="absolute inset-y-0 left-5 flex items-center text-[var(--sys-text-secondary)] opacity-40 group-focus-within:text-[var(--sys-brand-solid)] group-focus-within:opacity-100 transition-all">
+                    <span class="material-symbols-outlined text-xl">mail</span>
+                  </span>
+                  <input type="email" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-[var(--sys-bg-hover)]/40 border border-[var(--sys-border-subtle)] text-sm font-black text-[var(--sys-text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all italic shadow-sm" value="an.nguyen92@gmail.com" readonly>
+                </div>
+              </div>
+
+              <div class="col-span-1 md:col-span-2 space-y-2.5 bg-transparent text-left">
+                <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic opacity-60 ml-2">Địa chỉ thường trú</label>
+                <div class="relative group bg-transparent">
+                  <span class="absolute inset-y-0 left-5 flex items-center text-[var(--sys-text-secondary)] opacity-40 group-focus-within:text-[var(--sys-brand-solid)] group-focus-within:opacity-100 transition-all">
+                    <span class="material-symbols-outlined text-xl">location_on</span>
+                  </span>
+                  <input type="text" class="w-full pl-14 pr-6 py-4 rounded-2xl bg-[var(--sys-bg-hover)]/40 border border-[var(--sys-border-subtle)] text-sm font-black text-[var(--sys-text-primary)] focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all italic shadow-sm" value="Số 123 Đường ABC, Phường 4, Quận Tân Bình, TP. Hồ Chí Minh" readonly>
+                </div>
               </div>
             </div>
 
-            <!-- Info Item -->
-            <div class="flex gap-4 items-start group">
-              <div class="w-10 h-10 rounded-xl bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] flex items-center justify-center shrink-0 border border-[var(--sys-success-border)] group-hover:bg-[var(--sys-success-solid)] group-hover:text-white transition-all">
-                <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">description</span>
-              </div>
-              <div>
-                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Loại hợp đồng</p>
-                <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0 leading-tight">Hợp đồng vô thời hạn</p>
-              </div>
-            </div>
-
-            <!-- Info Item -->
-            <div class="flex gap-4 items-start group">
-              <div class="w-10 h-10 rounded-xl bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] flex items-center justify-center shrink-0 border border-[var(--sys-warning-border)] group-hover:bg-[var(--sys-warning-solid)] group-hover:text-white transition-all">
-                <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">event</span>
-              </div>
-              <div>
-                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Ngày bắt đầu</p>
-                <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0">01 tháng 01, 2023</p>
-              </div>
+            <!-- Footer Actions -->
+            <div class="mt-10 pt-8 border-t border-[var(--sys-border-subtle)] flex justify-end bg-transparent">
+              <button class="bg-[var(--sys-brand-solid)] hover:bg-[var(--sys-brand-hover)] text-white font-black py-4 px-10 rounded-2xl shadow-xl shadow-[var(--sys-brand-solid-lch-30)] transition-all active:scale-95 flex items-center gap-3 text-xs uppercase tracking-[0.2em] italic">
+                <span class="material-symbols-outlined text-xl">save</span>
+                Lưu chỉnh sửa
+              </button>
             </div>
           </div>
 
-          <!-- Retention Metric -->
-          <div class="mt-8 pt-6 border-t border-[var(--sys-border-subtle)]">
-            <div class="flex justify-between items-end mb-3">
-              <p class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic mb-0">Thời gian gắn bó</p>
-              <p class="text-xs font-black text-[var(--sys-brand-solid)] mb-0 uppercase tracking-tighter">1 năm 2 tháng</p>
+          <!-- Bằng cấp & Chứng chỉ -->
+          <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] shadow-sm border border-[var(--sys-border-subtle)] overflow-hidden">
+            <div class="px-10 py-6 border-b border-[var(--sys-border-subtle)] flex justify-between items-center bg-[var(--sys-bg-page)]/30">
+              <h2 class="text-sm font-black text-[var(--sys-text-primary)] uppercase tracking-tight italic m-0 flex items-center gap-3">
+                <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-2xl">school</span>
+                Học vấn & Chứng chỉ
+              </h2>
+              <button class="text-[var(--sys-brand-solid)] font-black text-[10px] uppercase tracking-[0.2em] hover:opacity-60 transition-all flex items-center gap-2 bg-transparent border-0 italic">
+                <span class="material-symbols-outlined text-lg">add_circle</span>
+                Cập nhật mới
+              </button>
             </div>
-            <div class="h-2 w-full bg-[var(--sys-bg-page)] rounded-full overflow-hidden border border-[var(--sys-border-subtle)]">
-              <div class="h-full bg-[var(--sys-brand-solid)] transition-all shadow-sm" style="width: 50%"></div>
+            
+            <div class="overflow-x-auto">
+              <table class="w-full text-left border-separate border-spacing-0 bg-transparent">
+                <thead>
+                  <tr class="bg-transparent text-left">
+                    <th class="px-10 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Tên văn bằng / Chứng chỉ</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Cơ sở đào tạo</th>
+                    <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-center">Năm học</th>
+                    <th class="px-10 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-end whitespace-nowrap">Hồ sơ đính kèm</th>
+                  </tr>
+                </thead>
+                <tbody class="bg-transparent text-left">
+                  <tr class="group hover:bg-[var(--sys-bg-hover)] transition-all border-b last:border-0 border-[var(--sys-border-subtle)]">
+                    <td class="px-10 py-6 font-black text-[var(--sys-text-primary)] text-sm bg-transparent border-b border-[var(--sys-border-subtle)]">Kỹ sư Công nghệ thông tin</td>
+                    <td class="px-8 py-6 text-[var(--sys-text-secondary)] font-bold text-xs bg-transparent border-b border-[var(--sys-border-subtle)] italic opacity-60">Đại học Bách Khoa TP.HCM</td>
+                    <td class="px-8 py-6 text-center font-black text-[var(--sys-text-primary)] text-sm bg-transparent border-b border-[var(--sys-border-subtle)]">2014</td>
+                    <td class="px-10 py-6 text-end bg-transparent border-b border-[var(--sys-border-subtle)]">
+                      <a href="#" class="text-[var(--sys-brand-solid)] hover:opacity-60 no-underline inline-flex items-center gap-2 font-black text-[10px] uppercase tracking-widest transition-all italic">
+                        <span class="material-symbols-outlined text-lg">description</span>
+                        VB_BACHKHOA.pdf
+                      </a>
+                    </td>
+                  </tr>
+                  <tr class="group hover:bg-[var(--sys-bg-hover)] transition-all border-b last:border-0 border-[var(--sys-border-subtle)]">
+                    <td class="px-10 py-6 font-black text-[var(--sys-text-primary)] text-sm bg-transparent border-b border-[var(--sys-border-subtle)]">AWS Solutions Architect</td>
+                    <td class="px-8 py-6 text-[var(--sys-text-secondary)] font-bold text-xs bg-transparent border-b border-[var(--sys-border-subtle)] italic opacity-60">AWS Training</td>
+                    <td class="px-8 py-6 text-center font-black text-[var(--sys-text-primary)] text-sm bg-transparent border-b border-[var(--sys-border-subtle)]">2022</td>
+                    <td class="px-10 py-6 text-end bg-transparent border-b border-[var(--sys-border-subtle)]">
+                      <a href="#" class="text-[var(--sys-brand-solid)] hover:opacity-60 no-underline inline-flex items-center gap-2 font-black text-[10px] uppercase tracking-widest transition-all italic">
+                        <span class="material-symbols-outlined text-lg">verified</span>
+                        AWS_CERT_01.pdf
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
-            <button class="w-full mt-6 bg-[var(--sys-bg-page)] hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] font-black text-[10px] uppercase tracking-widest py-3 rounded-xl border border-[var(--sys-border-strong)] transition-all">
-              Xem lịch sử thăng tiến
-            </button>
+          </div>
+        </div>
+
+        <!-- Right Column: Thông tin công việc -->
+        <div class="lg:col-span-4 bg-transparent text-left">
+          <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] shadow-sm border border-[var(--sys-border-subtle)] p-8 md:p-10 h-full flex flex-col items-stretch">
+            <h2 class="text-sm font-black text-[var(--sys-text-primary)] uppercase tracking-tight italic mb-10 flex items-center gap-3">
+              <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-2xl">work_history</span>
+              Công việc hiện tại
+            </h2>
+            
+            <div class="flex flex-col gap-10 flex-grow bg-transparent">
+              <!-- Info Item -->
+              <div class="flex gap-5 items-start bg-transparent group">
+                <div class="w-12 h-12 rounded-2xl bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center shrink-0 border border-[var(--sys-brand-border)] group-hover:bg-[var(--sys-brand-solid)] group-hover:text-white transition-all shadow-sm">
+                  <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">account_tree</span>
+                </div>
+                <div class="bg-transparent text-left">
+                  <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-1.5 italic opacity-60">Phòng ban</p>
+                  <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0 italic">Kỹ thuật & Công nghệ</p>
+                </div>
+              </div>
+
+              <!-- Info Item -->
+              <div class="flex gap-5 items-start bg-transparent group">
+                <div class="w-12 h-12 rounded-2xl bg-[var(--sys-info-soft)] text-[var(--sys-info-text)] flex items-center justify-center shrink-0 border border-[var(--sys-info-border)] group-hover:bg-[var(--sys-info-solid)] group-hover:text-white transition-all shadow-sm">
+                  <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">badge</span>
+                </div>
+                <div class="bg-transparent text-left">
+                  <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-1.5 italic opacity-60">Chức vụ cấp bậc</p>
+                  <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0 italic">Senior Developer (Lv.4)</p>
+                </div>
+              </div>
+
+              <!-- Info Item -->
+              <div class="flex gap-5 items-start bg-transparent group">
+                <div class="w-12 h-12 rounded-2xl bg-[var(--sys-bg-hover)] text-[var(--sys-text-primary)] flex items-center justify-center shrink-0 border border-[var(--sys-border-subtle)] group-hover:border-[var(--sys-brand-solid)] transition-all shadow-sm">
+                  <div class="w-8 h-8 rounded-xl overflow-hidden border border-[var(--sys-border-subtle)]">
+                     <img src="https://i.pravatar.cc/150?u=nam_le" alt="Manager" class="w-full h-full object-cover" />
+                  </div>
+                </div>
+                <div class="bg-transparent text-left">
+                  <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-1.5 italic opacity-60">Quản lý trực tiếp</p>
+                  <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0 italic">Lê Hoàng Nam</p>
+                </div>
+              </div>
+
+              <!-- Info Item -->
+              <div class="flex gap-5 items-start bg-transparent group">
+                <div class="w-12 h-12 rounded-2xl bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] flex items-center justify-center shrink-0 border border-[var(--sys-success-border)] group-hover:bg-[var(--sys-success-solid)] group-hover:text-white transition-all shadow-sm">
+                  <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">description</span>
+                </div>
+                <div class="bg-transparent text-left">
+                  <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] mb-1.5 italic opacity-60">Loại hợp đồng</p>
+                  <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0 italic leading-tight">Hợp đồng vô thời hạn (Lâu dài)</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Retention Metric -->
+            <div class="mt-10 pt-10 border-t border-[var(--sys-border-subtle)] bg-transparent">
+              <div class="flex justify-between items-end mb-4 bg-transparent">
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.2em] italic mb-0 opacity-60">Thời gian gắn bó</p>
+                <p class="text-xs font-black text-[var(--sys-brand-solid)] mb-0 uppercase tracking-widest italic animate-pulse">1 năm 2 tháng</p>
+              </div>
+              <div class="h-3 w-full bg-[var(--sys-bg-hover)] rounded-full overflow-hidden border border-[var(--sys-border-subtle)]/30">
+                <div class="h-full bg-[var(--sys-brand-solid)] transition-all shadow-[0_0_12px_var(--sys-brand-solid-lch-30)]" style="width: 50%"></div>
+              </div>
+              <button class="w-full mt-10 bg-[var(--sys-bg-hover)] hover:bg-[var(--sys-bg-page)] text-[var(--sys-text-secondary)] font-black text-[10px] uppercase tracking-[0.2em] py-4 rounded-2xl border border-[var(--sys-border-strong)] transition-all italic active:scale-95 shadow-sm">
+                Lịch sử thăng tiến & Quyết định
+              </button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Danger Zone Footer -->
-    <div class="mt-12 pt-6 border-t border-[var(--sys-danger-border)]/30 flex justify-end">
-      <router-link to="/don-nghi-viec" class="bg-[var(--sys-danger-soft)] hover:bg-[var(--sys-danger-solid)] text-[var(--sys-danger-text)] hover:text-white font-black px-6 py-3 rounded-xl border border-[var(--sys-danger-border)] transition-all active:scale-95 flex items-center gap-2 no-underline">
-        <span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 0;">directions_run</span>
-        <span class="text-xs uppercase tracking-widest">Nộp đơn nghỉ việc</span>
-      </router-link>
-    </div>
+      <!-- Danger Zone Footer -->
+      <div class="mt-16 pt-10 border-t border-[var(--sys-danger-border)]/20 flex justify-end bg-transparent">
+        <router-link to="/don-nghi-viec" class="bg-[var(--sys-danger-soft)]/50 hover:bg-[var(--sys-danger-solid)] text-[var(--sys-danger-text)] hover:text-white font-black px-10 py-4 rounded-2xl border border-[var(--sys-danger-border)]/50 transition-all active:scale-95 flex items-center gap-3 no-underline shadow-sm group">
+          <span class="material-symbols-outlined text-2xl group-hover:rotate-12 transition-transform" style="font-variation-settings: 'FILL' 0;">flight_takeoff</span>
+          <span class="text-[10px] uppercase tracking-[0.2em] italic">Nộp đơn nghỉ việc (Quit)</span>
+        </router-link>
+      </div>
 
+    </div>
   </div>
 </template>
 
@@ -267,52 +273,11 @@
 </script>
 
 <style scoped>
-.profile-wrapper {
-  background-color: transparent;
-}
-
 .avatar-circle {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .avatar-circle:hover {
-  transform: scale(1.05);
-}
-
-.status-approved {
-  background-color: var(--sys-success-soft) !important;
-  color: var(--sys-success-text) !important;
-  border: 1px solid var(--sys-success-border) !important;
-}
-
-.input-icon-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-.input-icon {
-  position: absolute;
-  left: 1.25rem;
-  font-size: 1.25rem;
-  z-index: 2;
-}
-.custom-input {
-  padding-left: 3rem !important;
-  padding-top: 0.875rem !important;
-  padding-bottom: 0.875rem !important;
-  font-size: 0.875rem;
-}
-.custom-input[readonly], .custom-input[disabled] {
-  opacity: 0.8 !important;
-  cursor: default;
-}
-.custom-input:focus {
-  border-color: var(--sys-brand-solid) !important;
-  box-shadow: 0 0 0 4px var(--sys-brand-subtle) !important;
-  outline: none;
-}
-
-.italicOpacity {
-  opacity: 0.9;
+  transform: scale(1.02);
 }
 
 @media (min-width: 768px) {
@@ -321,7 +286,6 @@
   }
 }
 
-/* Material Symbols settings */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }

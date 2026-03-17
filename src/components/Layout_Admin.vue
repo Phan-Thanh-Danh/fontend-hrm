@@ -165,27 +165,26 @@
               : 'text-[oklch(0.62_0.14_75)] opacity-100 scale-100'"
           >light_mode</span>
 
-          <!-- Switch track -->
           <button
             role="switch"
             :aria-checked="isDark"
             :aria-label="isDark ? 'Chuyển sang sáng' : 'Chuyển sang tối'"
             @click="isDark = !isDark"
-            class="relative w-[52px] h-8 rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)]"
+            class="relative w-[52px] h-8 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)] border border-[var(--sys-border-subtle)]"
             :class="isDark
-              ? 'bg-[var(--sys-accent)]'
-              : 'bg-[var(--sys-bg-page)] ring-2 ring-inset ring-[var(--sys-border)]'"
+              ? 'bg-[#0f172a] ring-2 ring-white/10'
+              : 'bg-[var(--sys-bg-hover)]'"
           >
             <span
-              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center shadow-[0_1px_3px_oklch(0_0_0/0.3)] transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
+              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] shadow-md"
               :class="isDark
-                ? 'left-[calc(100%-28px)] w-6 h-6 bg-[var(--sys-bg-page)]'
+                ? 'left-[calc(100%-28px)] w-6 h-6 bg-white shadow-[0_0_12px_var(--sys-accent)]'
                 : 'left-1 w-5 h-5 bg-[var(--sys-text-secondary)]'"
             >
               <span
                 class="material-symbols-rounded transition-all duration-200"
                 style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
-                :class="isDark ? 'text-[var(--sys-accent)]' : 'text-white opacity-75'"
+                :class="isDark ? 'text-[var(--sys-accent)]' : 'text-white'"
               >{{ isDark ? 'dark_mode' : 'light_mode' }}</span>
             </span>
           </button>
@@ -328,7 +327,7 @@
       >
 
         <!-- ── Dashboard (standalone) ── -->
-        <div :class="sidebarExpanded ? 'px-3' : 'px-2 flex flex-col items-center'">
+        <div :class="sidebarExpanded ? 'w-full' : 'px-2 flex flex-col items-center'">
           <SidebarItem
             :expanded="sidebarExpanded"
             :is-active="isExactActive('/admin')"
@@ -342,7 +341,7 @@
 
         <!-- ── Quản lý Nhân sự ── -->
         <NavSection label="Quản lý Nhân sự" :expanded="sidebarExpanded" :is-dark="isDark" />
-        <div :class="sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'">
+        <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/nhan-su')" icon="groups" label="Nhân viên" :is-dark="isDark" to="/admin/nhan-su" @click="handleNavClick" />
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/phong-ban')" icon="corporate_fare" label="Phòng ban" :is-dark="isDark" to="/admin/phong-ban" @click="handleNavClick" />
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/hop-dong')" icon="description" label="Hợp đồng" :is-dark="isDark" to="/admin/hop-dong" @click="handleNavClick" />
@@ -351,7 +350,7 @@
 
         <!-- ── Nghiệp vụ hằng ngày ── -->
         <NavSection label="Nghiệp vụ hằng ngày" :expanded="sidebarExpanded" :is-dark="isDark" />
-        <div :class="sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'">
+        <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/cham-cong')" icon="schedule" label="Chấm công" :is-dark="isDark" to="/admin/cham-cong" @click="handleNavClick" />
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/nghi-phep')" icon="event_busy" label="Nghỉ phép" :is-dark="isDark" to="/admin/nghi-phep" @click="handleNavClick" :badge="3" />
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/tuyen-dung')" icon="person_search" label="Tuyển dụng" :is-dark="isDark" to="/admin/tuyen-dung" @click="handleNavClick" />
@@ -361,7 +360,7 @@
 
         <!-- ── Tài chính & Tài sản ── -->
         <NavSection label="Tài chính & Tài sản" :expanded="sidebarExpanded" :is-dark="isDark" />
-        <div :class="sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'">
+        <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/bang-luong')" icon="payments" label="Bảng lương" :is-dark="isDark" to="/admin/bang-luong" @click="handleNavClick" />
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/tai-san')" icon="category" label="Quản lý Tài sản" :is-dark="isDark" to="/admin/tai-san" @click="handleNavClick" />
         </div>
@@ -372,7 +371,7 @@
       <div
         class="shrink-0 border-t border-[var(--sys-border-subtle)] py-2"
         :class="[
-          sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'
+          sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'
         ]"
       >
         <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/cai-dat')" icon="settings" label="Cài đặt" :is-dark="isDark" to="/admin/cai-dat" @click="handleNavClick" />
@@ -386,8 +385,12 @@
       class="pt-16 min-h-screen transition-[margin] duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
       :class="sidebarExpanded ? 'lg:ml-[280px]' : 'lg:ml-20'"
     >
-      <div class="p-6 lg:p-8 max-w-[1600px] mx-auto">
-        <router-view />
+      <div class="p-6 lg:p-8 max-w-[1600px] mx-auto overflow-hidden">
+        <router-view v-slot="{ Component }">
+          <transition :name="transitionName" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
       </div>
     </main>
   </div>
@@ -402,6 +405,16 @@ const { showConfirm } = useConfirm();
 
 const route = useRoute();
 const router = useRouter();
+
+// ── Transition Logic ───────────────────────────────────────────────────────
+const transitionName = ref('fade');
+watch(() => route.meta.index, (toIndex, fromIndex) => {
+  if (toIndex === undefined || fromIndex === undefined) {
+    transitionName.value = 'fade';
+    return;
+  }
+  transitionName.value = toIndex > fromIndex ? 'slide-up' : 'slide-down';
+});
 
 // ── State ──────────────────────────────────────────────────────────────────
 const sidebarExpanded = ref(true);
@@ -542,40 +555,39 @@ export const SidebarItem = defineComponent({
         return h(RouterLink, {
           to: props.to,
           class: [
-            'group relative flex items-center gap-3 w-full h-[52px] px-4 rounded-[26px]',
-            'transition-colors duration-150 outline-none text-left no-underline',
-            'focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]',
-            props.isActive ? activeBg : hoverBg,
+            'group relative flex items-center justify-between w-full h-11 px-5',
+            'transition-all duration-150 outline-none text-left no-underline border-l-4',
+            'focus-visible:bg-[var(--sys-bg-hover)]',
+            props.isActive ? 'bg-[var(--sys-brand-soft)] border-[var(--sys-brand-solid)]' : 'bg-transparent border-transparent hover:bg-[var(--sys-bg-hover)]',
           ].join(' '),
           onClick: () => emit('click'),
         }, () => [
-          // State ripple
-          h('span', { class: 'absolute inset-0 rounded-[26px] opacity-0 group-active:opacity-10 bg-[oklch(0.22_0.12_265)] dark:bg-[oklch(0.9_0.09_265)] transition-opacity pointer-events-none' }),
+          h('div', { class: 'flex items-center gap-3 bg-transparent' }, [
+            // Icon (morphing)
+            h('span', { class: 'relative shrink-0 w-6 h-6 flex items-center justify-center bg-transparent' }, [
+              // Outline icon (inactive)
+              h('span', {
+                class: [
+                  'material-symbols-rounded absolute transition-all duration-300',
+                  props.isActive ? `opacity-0 scale-50 ${activeIcon}` : `opacity-100 scale-100 ${inactiveIcon}`,
+                ].join(' '),
+                style: "font-size:22px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
+              }, props.icon),
+              // Filled icon (active)
+              h('span', {
+                class: [
+                  'material-symbols-rounded absolute transition-all duration-300',
+                  props.isActive ? `opacity-100 scale-100 ${activeIcon}` : `opacity-0 scale-150 ${inactiveIcon}`,
+                ].join(' '),
+                style: "font-size:22px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
+              }, props.icon),
+            ]),
 
-          // Icon (morphing)
-          h('span', { class: 'relative shrink-0 w-6 h-6 flex items-center justify-center' }, [
-            // Outline icon (inactive)
+            // Label
             h('span', {
-              class: [
-                'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-0 scale-50 ${activeIcon}` : `opacity-100 scale-100 ${inactiveIcon}`,
-              ].join(' '),
-              style: "font-size:22px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
-            }, props.icon),
-            // Filled icon (active)
-            h('span', {
-              class: [
-                'material-symbols-rounded absolute transition-all duration-300',
-                props.isActive ? `opacity-100 scale-100 ${activeIcon}` : `opacity-0 scale-150 ${inactiveIcon}`,
-              ].join(' '),
-              style: "font-size:22px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
-            }, props.icon),
+              class: ['text-sm whitespace-nowrap bg-transparent', props.isActive ? `${activeText} font-bold` : labelText].join(' '),
+            }, props.label),
           ]),
-
-          // Label
-          h('span', {
-            class: ['flex-1 text-sm whitespace-nowrap', props.isActive ? `${activeText} font-semibold` : labelText].join(' '),
-          }, props.label),
 
           // Badge chip
           props.badge !== undefined ? h('span', {
@@ -666,6 +678,39 @@ export const SidebarItem = defineComponent({
 .m3-dropdown-leave-to {
   opacity: 0;
   transform: translateY(8px) scale(0.96);
+}
+
+/* Page Transitions */
+.slide-up-enter-active,
+.slide-up-leave-active,
+.slide-down-enter-active,
+.slide-down-leave-active,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 /* Remove link underline */

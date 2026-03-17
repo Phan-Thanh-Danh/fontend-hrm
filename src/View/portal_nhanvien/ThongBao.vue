@@ -1,253 +1,151 @@
 <template>
-  <div class="notifications-wrapper container-fluid px-md-5 py-4 min-vh-100">
-    
-    <!-- Top Header -->
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-      <h1 class="h4 fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-        <span class="material-symbols-outlined fs-4 text-brand-blue icon-filled">notifications_active</span>
-        Trung tâm Thông báo
-      </h1>
+  <div class="notifications-page min-h-screen bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] p-4 md:p-6 lg:p-8 font-sans">
+    <div class="max-w-5xl mx-auto space-y-8 text-left">
       
-      <div class="d-flex align-items-center gap-3">
-        <div class="position-relative search-input-wrapper">
-          <span class="material-symbols-outlined position-absolute start-0 top-50 translate-middle-y ms-3 text-muted fs-5">search</span>
-          <input type="text" class="form-control custom-input search-input ps-5" placeholder="Tìm kiếm thông báo...">
+      <!-- Top Header -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-transparent text-left">
+        <div class="bg-transparent text-left">
+          <h1 class="text-3xl font-black text-[var(--sys-text-primary)] tracking-tight uppercase flex items-center gap-3 italic text-left">
+            <span class="material-symbols-outlined text-3xl text-[var(--sys-brand-solid)] font-normal" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+            Trung tâm Thông báo
+          </h1>
+          <p class="text-[10px] text-[var(--sys-text-secondary)] font-black uppercase tracking-[0.2em] italic opacity-60 mt-1 text-left">Cập nhật tin tức, phê duyệt và hoạt động hệ thống mới nhất của bạn.</p>
         </div>
-        <button class="btn btn-light bg-white border border-opacity-10 border-dark d-flex align-items-center justify-content-center p-2 rounded-3 hover-bg-light shadow-sm">
-          <span class="material-symbols-outlined text-secondary fs-5">filter_list</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Filters & Sort -->
-    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3 mb-5">
-      <div class="d-flex flex-wrap gap-2">
-        <button class="btn btn-brand-blue rounded-pill px-4 py-1 small fw-bold">Tất cả</button>
-        <button class="btn btn-white rounded-pill px-4 py-1 small fw-semibold text-secondary">Chưa đọc</button>
-        <button class="btn btn-white rounded-pill px-4 py-1 small fw-semibold text-secondary">Hành chính</button>
-        <button class="btn btn-white rounded-pill px-4 py-1 small fw-semibold text-secondary">Hệ thống</button>
-      </div>
-      
-      <div class="d-flex align-items-center gap-2">
-        <span class="x-small text-secondary fw-semibold">Sắp xếp theo:</span>
-        <button class="btn btn-link text-brand-blue fw-bold text-decoration-none p-0 d-flex align-items-center small gap-1 hover-opacity">
-          Mới nhất <span class="material-symbols-outlined fs-6">expand_more</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Group: Gần đây -->
-    <div class="mb-5">
-      <h2 class="x-small fw-bold text-secondary text-uppercase tracking-wider mb-3 ms-1">GẦN ĐÂY</h2>
-      
-      <div class="d-flex flex-column gap-3">
         
-        <!-- Unread Item 1 -->
-        <div class="card bento-card border-brand-blue border-opacity-100 shadow-sm position-relative overflow-hidden cursor-pointer hover-bg-light transition-all" style="border-width: 2px !important;">
-          <div class="position-absolute border-start border-brand-blue border-4 w-1 h-100 top-0 start-0"></div>
-          <div class="p-4 d-flex gap-3">
-            <div class="rounded-3 bg-brand-blue bg-opacity-10 text-brand-blue d-flex align-items-center justify-content-center flex-shrink-0 mt-1" style="width: 48px; height: 48px;">
-              <span class="material-symbols-outlined fs-4 icon-filled">event_available</span>
-            </div>
-            <div class="flex-grow-1">
-              <div class="d-flex justify-content-between align-items-start mb-1">
-                <h3 class="small fw-bold text-dark mb-0">Đơn nghỉ phép đã được duyệt</h3>
-                <div class="d-flex align-items-center gap-2 ms-3">
-                  <span class="x-small text-secondary">10 phút trước</span>
-                  <div class="rounded-circle bg-brand-blue" style="width: 8px; height: 8px;"></div>
-                </div>
-              </div>
-              <p class="small text-secondary mb-2 lh-base pe-md-5">
-                Đơn nghỉ phép của bạn từ ngày 20/10 đến 22/10 đã được phê duyệt bởi Trưởng phòng Hành chính Nhân sự.
-              </p>
-              <span class="badge bg-primary bg-opacity-10 text-brand-blue rounded-pill px-2 py-1 fw-bold x-small tracking-wider border border-primary border-opacity-10 text-uppercase" style="font-size: 0.65rem;">HÀNH CHÍNH</span>
-            </div>
+        <div class="flex items-center gap-3 w-full md:w-auto bg-transparent">
+          <div class="relative flex-grow md:w-64">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[var(--sys-text-secondary)]/40 text-xl font-normal">search</span>
+            <input 
+              v-model="searchQuery"
+              type="text" 
+              class="w-full pl-12 pr-4 py-3 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl text-xs font-black focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] transition-all placeholder:text-[var(--sys-text-secondary)]/30 text-[var(--sys-text-primary)]" 
+              placeholder="Tìm kiếm thông báo..."
+            >
           </div>
+          <button class="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] text-[var(--sys-text-secondary)] hover:border-[var(--sys-brand-solid)] hover:text-[var(--sys-brand-solid)] transition-all shadow-sm active:scale-95">
+            <span class="material-symbols-outlined text-xl font-normal">tune</span>
+          </button>
         </div>
-
-        <!-- Unread Item 2 -->
-        <div class="card bento-card border-brand-blue border-opacity-100 shadow-sm position-relative overflow-hidden cursor-pointer hover-bg-light transition-all" style="border-width: 2px !important;">
-          <div class="position-absolute border-start border-brand-blue border-4 w-1 h-100 top-0 start-0"></div>
-          <div class="p-4 d-flex gap-3">
-            <div class="rounded-3 bg-brand-blue bg-opacity-10 text-brand-blue d-flex align-items-center justify-content-center flex-shrink-0 mt-1" style="width: 48px; height: 48px;">
-              <span class="material-symbols-outlined fs-4 icon-filled">payments</span>
-            </div>
-            <div class="flex-grow-1">
-              <div class="d-flex justify-content-between align-items-start mb-1">
-                <h3 class="small fw-bold text-dark mb-0">Phiếu lương tháng 10 đã sẵn sàng</h3>
-                <div class="d-flex align-items-center gap-2 ms-3">
-                  <span class="x-small text-secondary">2 giờ trước</span>
-                  <div class="rounded-circle bg-brand-blue" style="width: 8px; height: 8px;"></div>
-                </div>
-              </div>
-              <p class="small text-secondary mb-2 lh-base pe-md-5">
-                Hệ thống đã cập nhật phiếu lương tháng 10 của bạn. Vui lòng kiểm tra và xác nhận nếu không có sai sót.
-              </p>
-              <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2 py-1 fw-bold x-small tracking-wider border border-success border-opacity-10 text-uppercase" style="font-size: 0.65rem;">TÀI CHÍNH</span>
-            </div>
-          </div>
-        </div>
-
       </div>
-    </div>
 
-    <!-- Group: Trước đó -->
-    <div class="mb-5">
-      <h2 class="x-small fw-bold text-secondary text-uppercase tracking-wider mb-3 ms-1">TRƯỚC ĐÓ</h2>
-      
-      <div class="d-flex flex-column gap-3">
+      <!-- Filters & Sort -->
+      <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-transparent text-left">
+        <div class="flex flex-wrap gap-2 bg-transparent text-left">
+          <button 
+            v-for="f in ['Tất cả', 'Chưa đọc', 'Hành chính', 'Hệ thống']" 
+            :key="f"
+            @click="activeFilter = f"
+            :class="[
+              'px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all italic border',
+              activeFilter === f 
+                ? 'bg-[var(--sys-brand-solid)] text-white border-[var(--sys-brand-solid)] shadow-lg shadow-[var(--sys-brand-solid-lch-30)]' 
+                : 'bg-[var(--sys-bg-surface)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)] hover:bg-[var(--sys-bg-hover)]'
+            ]"
+          >
+            {{ f }}
+          </button>
+        </div>
         
-        <!-- Read Item 1 -->
-        <div class="card bento-card border border-opacity-10 border-dark shadow-sm cursor-pointer hover-bg-light transition-all">
-          <div class="p-4 d-flex gap-3">
-            <div class="rounded-3 bg-secondary bg-opacity-10 text-secondary d-flex align-items-center justify-content-center flex-shrink-0 mt-1" style="width: 48px; height: 48px;">
-              <span class="material-symbols-outlined fs-4 icon-filled">campaign</span>
-            </div>
-            <div class="flex-grow-1">
-              <div class="d-flex justify-content-between align-items-start mb-1">
-                <h3 class="small fw-semibold text-secondary mb-0">Thông báo họp nội bộ quý 4</h3>
-                <div class="d-flex align-items-center ms-3">
-                  <span class="x-small text-muted">Hôm qua, 14:30</span>
-                </div>
-              </div>
-              <p class="small text-muted mb-2 lh-base pe-md-5">
-                Tất cả nhân viên tham gia buổi họp tổng kết quý 3 và định hướng quý 4 tại phòng họp lớn vào lúc 09:00 sáng Thứ 2 tuần sau.
-              </p>
-              <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-1 fw-bold x-small tracking-wider border border-secondary border-opacity-10 text-uppercase" style="font-size: 0.65rem;">SỰ KIỆN</span>
-            </div>
-          </div>
+        <div class="flex items-center gap-3 bg-transparent text-left">
+          <span class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic opacity-40">Sắp xếp theo:</span>
+          <button class="flex items-center gap-1 text-[10px] font-black text-[var(--sys-brand-solid)] uppercase tracking-widest hover:opacity-60 transition-all italic bg-transparent">
+            Mới nhất <span class="material-symbols-outlined text-lg font-normal">expand_more</span>
+          </button>
         </div>
-
-        <!-- Read Item 2 -->
-        <div class="card bento-card border border-opacity-10 border-dark shadow-sm cursor-pointer hover-bg-light transition-all">
-          <div class="p-4 d-flex gap-3">
-            <div class="rounded-3 bg-secondary bg-opacity-10 text-secondary d-flex align-items-center justify-content-center flex-shrink-0 mt-1" style="width: 48px; height: 48px;">
-              <span class="material-symbols-outlined fs-4 icon-filled">security</span>
-            </div>
-            <div class="flex-grow-1">
-              <div class="d-flex justify-content-between align-items-start mb-1">
-                <h3 class="small fw-semibold text-secondary mb-0">Yêu cầu thay đổi mật khẩu định kỳ</h3>
-                <div class="d-flex align-items-center ms-3">
-                  <span class="x-small text-muted">2 ngày trước</span>
-                </div>
-              </div>
-              <p class="small text-muted mb-2 lh-base pe-md-5">
-                Mật khẩu của bạn đã quá hạn 90 ngày. Vui lòng cập nhật mật khẩu mới để đảm bảo an toàn cho tài khoản Portal.
-              </p>
-              <span class="badge bg-warning bg-opacity-10 text-warning rounded-pill px-2 py-1 fw-bold x-small tracking-wider border border-warning border-opacity-10 text-uppercase" style="color: #DD7C37 !important; font-size: 0.65rem;">HỆ THỐNG</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Read Item 3 -->
-        <div class="card bento-card border border-opacity-10 border-dark shadow-sm cursor-pointer hover-bg-light transition-all">
-          <div class="p-4 d-flex gap-3">
-            <div class="rounded-3 bg-secondary bg-opacity-10 text-secondary d-flex align-items-center justify-content-center flex-shrink-0 mt-1" style="width: 48px; height: 48px;">
-              <span class="material-symbols-outlined fs-4 icon-filled">cake</span>
-            </div>
-            <div class="flex-grow-1">
-              <div class="d-flex justify-content-between align-items-start mb-1">
-                <h3 class="small fw-semibold text-secondary mb-0">Chúc mừng sinh nhật tháng 11</h3>
-                <div class="d-flex align-items-center ms-3">
-                  <span class="x-small text-muted">1 tuần trước</span>
-                </div>
-              </div>
-              <p class="small text-muted mb-2 lh-base pe-md-5">
-                Công ty thân gửi lời chúc mừng sinh nhật đến các thành viên có sinh nhật trong tháng 11. Bữa tiệc trà sẽ diễn ra vào lúc 16:00 chiều nay.
-              </p>
-              <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2 py-1 fw-bold x-small tracking-wider border border-danger border-opacity-10 text-uppercase" style="font-size: 0.65rem;">VĂN HÓA</span>
-            </div>
-          </div>
-        </div>
-
       </div>
-    </div>
 
+      <!-- Group: Gần đây -->
+      <div class="space-y-4 bg-transparent text-left">
+        <h2 class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.3em] mb-4 ml-1 opacity-40 italic text-left">Gần đây</h2>
+        
+        <div class="flex flex-col gap-4 bg-transparent">
+          <!-- Notification Card 1 -->
+          <div class="group relative bg-[var(--sys-bg-surface)] rounded-[2rem] border-2 border-[var(--sys-brand-solid)] shadow-xl shadow-[var(--sys-brand-solid-lch-30)]/5 overflow-hidden cursor-pointer hover:bg-[var(--sys-bg-hover)] transition-all transform active:scale-[0.99] text-left">
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-[var(--sys-brand-solid)]"></div>
+            <div class="p-6 md:p-8 flex gap-6 items-start bg-transparent text-left">
+              <div class="w-16 h-16 rounded-[1.25rem] bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center shrink-0 border border-[var(--sys-brand-border)] group-hover:bg-[var(--sys-brand-solid)] group-hover:text-white transition-all shadow-sm">
+                <span class="material-symbols-outlined text-3xl font-normal" style="font-variation-settings: 'FILL' 1;">event_available</span>
+              </div>
+              <div class="flex-grow bg-transparent text-left">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-2 mb-2 bg-transparent text-left">
+                  <h3 class="text-sm md:text-base font-black text-[var(--sys-text-primary)] group-hover:text-[var(--sys-brand-solid)] transition-colors uppercase tracking-tight text-left">Đơn nghỉ phép đã được duyệt</h3>
+                  <div class="flex items-center gap-3 bg-transparent self-end sm:self-auto">
+                    <span class="text-[10px] font-black text-[var(--sys-text-secondary)] opacity-40 uppercase tracking-widest italic">10 phút trước</span>
+                    <div class="w-2.5 h-2.5 rounded-full bg-[var(--sys-brand-solid)] animate-pulse shadow-lg shadow-[var(--sys-brand-solid-lch-30)]"></div>
+                  </div>
+                </div>
+                <p class="text-xs md:text-sm font-bold text-[var(--sys-text-secondary)] leading-relaxed mb-4 opacity-60 italic max-w-2xl text-left">
+                  Đơn nghỉ phép của bạn từ ngày 20/10 đến 22/10 đã được phê duyệt bởi Trưởng phòng Hành chính Nhân sự.
+                </p>
+                <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-[var(--sys-brand-soft)] text-[var(--sys-brand-soft-text)] text-[10px] font-black uppercase tracking-[0.2em] border border-[var(--sys-brand-border)] italic">Hành chính</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notification Card 2 -->
+          <div class="group relative bg-[var(--sys-bg-surface)] rounded-[2rem] border-2 border-[var(--sys-brand-solid)] shadow-xl shadow-[var(--sys-brand-solid-lch-30)]/5 overflow-hidden cursor-pointer hover:bg-[var(--sys-bg-hover)] transition-all transform active:scale-[0.99] text-left">
+            <div class="absolute top-0 left-0 w-1.5 h-full bg-[var(--sys-brand-solid)]"></div>
+            <div class="p-6 md:p-8 flex gap-6 items-start bg-transparent text-left">
+              <div class="w-16 h-16 rounded-[1.25rem] bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center shrink-0 border border-[var(--sys-brand-border)] group-hover:bg-[var(--sys-brand-solid)] group-hover:text-white transition-all shadow-sm">
+                <span class="material-symbols-outlined text-3xl font-normal" style="font-variation-settings: 'FILL' 1;">payments</span>
+              </div>
+              <div class="flex-grow bg-transparent text-left">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-2 mb-2 bg-transparent text-left">
+                  <h3 class="text-sm md:text-base font-black text-[var(--sys-text-primary)] group-hover:text-[var(--sys-brand-solid)] transition-colors uppercase tracking-tight text-left">Phiếu lương tháng 10 đã sẵn sàng</h3>
+                  <div class="flex items-center gap-3 bg-transparent self-end sm:self-auto">
+                    <span class="text-[10px] font-black text-[var(--sys-text-secondary)] opacity-40 uppercase tracking-widest italic">2 giờ trước</span>
+                    <div class="w-2.5 h-2.5 rounded-full bg-[var(--sys-brand-solid)] animate-pulse shadow-lg shadow-[var(--sys-brand-solid-lch-30)]"></div>
+                  </div>
+                </div>
+                <p class="text-xs md:text-sm font-bold text-[var(--sys-text-secondary)] leading-relaxed mb-4 opacity-60 italic max-w-2xl text-left">
+                  Hệ thống đã cập nhật phiếu lương tháng 10 của bạn. Vui lòng kiểm tra và xác nhận nếu không có sai sót.
+                </p>
+                <span class="inline-flex items-center px-4 py-1.5 rounded-full bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] text-[10px] font-black uppercase tracking-[0.2em] border border-[var(--sys-success-border)] italic">Tài chính</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Group: Trước đó -->
+      <div class="space-y-4 bg-transparent text-left">
+        <h2 class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-[0.3em] mb-4 ml-1 opacity-40 italic text-left">Trước đó</h2>
+        
+        <div class="flex flex-col gap-4 bg-transparent">
+          <div v-for="(item, idx) in [
+            { title: 'Thông báo họp nội bộ quý 4', desc: 'Tất cả nhân viên tham gia buổi họp tổng kết quý 3 và định hướng quý 4 tại phòng họp lớn vào lúc 09:00 sáng Thứ 2 tuần sau.', icon: 'campaign', time: 'Hôm qua, 14:30', tag: 'Sự kiện', color: 'brand' },
+            { title: 'Yêu cầu thay đổi mật khẩu định kỳ', desc: 'Mật khẩu của bạn đã quá hạn 90 ngày. Vui lòng cập nhật mật khẩu mới để đảm bảo an toàn cho tài khoản Portal.', icon: 'security', time: '2 ngày trước', tag: 'Hệ thống', color: 'warning' },
+            { title: 'Chúc mừng sinh nhật tháng 11', desc: 'Công ty thân gửi lời chúc mừng sinh nhật đến các thành viên có sinh nhật trong tháng 11. Bữa tiệc trà sẽ diễn ra vào lúc 16:00 chiều nay.', icon: 'cake', time: '1 tuần trước', tag: 'Văn hóa', color: 'danger' }
+          ]" :key="idx" 
+          class="group bg-[var(--sys-bg-surface)] rounded-[2rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden cursor-pointer hover:bg-[var(--sys-bg-hover)] hover:border-[var(--sys-brand-solid)] transition-all transform active:scale-[0.99] text-left">
+            <div class="p-6 md:p-8 flex gap-6 items-start bg-transparent text-left">
+              <div :class="`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border transition-all shadow-sm bg-[var(--sys-${item.color}-soft)] text-[var(--sys-${item.color}-text)] border-[var(--sys-${item.color}-border)] group-hover:bg-[var(--sys-${item.color}-solid)] group-hover:text-white`">
+                <span class="material-symbols-outlined text-2xl font-normal" style="font-variation-settings: 'FILL' 1;">{{ item.icon }}</span>
+              </div>
+              <div class="flex-grow bg-transparent text-left">
+                <div class="flex flex-col sm:flex-row justify-between items-start gap-2 mb-2 bg-transparent text-left">
+                  <h3 class="text-xs md:text-sm font-black text-[var(--sys-text-primary)] group-hover:text-[var(--sys-brand-solid)] transition-colors uppercase tracking-tight text-left">{{ item.title }}</h3>
+                  <span class="text-[10px] font-black text-[var(--sys-text-secondary)] opacity-40 uppercase tracking-widest italic self-end sm:self-auto">{{ item.time }}</span>
+                </div>
+                <p class="text-[11px] md:text-xs font-bold text-[var(--sys-text-secondary)] leading-relaxed mb-4 opacity-60 italic max-w-2xl text-left">{{ item.desc }}</p>
+                <span :class="`inline-flex items-center px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] border italic bg-[var(--sys-${item.color}-soft)] text-[var(--sys-${item.color}-text)] border-[var(--sys-${item.color}-border)]`">{{ item.tag }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
+const searchQuery = ref('');
+const activeFilter = ref('Tất cả');
 </script>
 
 <style scoped>
-.notifications-wrapper {
-  background-color: transparent;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  margin: 0 auto;
-}
-
-/* Material Symbols Override */
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-.icon-filled {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
-/* Bento Card Styling */
-.bento-card {
-  border-radius: 1rem;
-  background: #ffffff;
-}
-
-/* Brand Colors */
-.text-brand-blue { color: #3B58E9 !important; }
-.bg-brand-blue { background-color: #e9eaf3 !important; }
-
-.btn-brand-blue {
-  background-color: #3B58E9;
-  border-color: #3B58E9;
-  color: white;
-}
-.btn-brand-blue:hover {
-  background-color: #2b45cf;
-  border-color: #2b45cf;
-  color: white;
-}
-
-.btn-white {
-  background-color: var(--sys-bg-surface, #ffffff);
-  border: 1px solid var(--sys-border, #E2E8F0);
-}
-.btn-white:hover {
-  background-color: var(--sys-bg-page, #F1F5F9);
-}
-
-/* Base custom input */
-.custom-input {
-  border-radius: 0.75rem;
-  border: 1px solid transparent;
-  background-color: var(--sys-bg-page, #F1F4F9);
-  font-size: 0.875rem;
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
-  color: var(--sys-text-primary, #1E293B);
-  transition: all 0.2s ease;
-}
-.custom-input:focus {
-  border-color: rgba(59, 88, 233, 0.4);
-  background-color: var(--sys-bg-surface, #ffffff);
-  box-shadow: 0 0 0 0.25rem rgba(59, 88, 233, 0.1);
-  outline: none;
-}
-
-.search-input-wrapper {
-  width: 280px;
-}
-
-/* Utilities */
-.tracking-wider { letter-spacing: 0.05em; }
-.x-small { font-size: 0.75rem; }
-.cursor-pointer { cursor: pointer; }
-
-.hover-bg-light:hover {
-  background-color: var(--sys-bg-page, #FAFCFF) !important;
-}
-.hover-opacity:hover {
-  opacity: 0.8;
-}
-
-.transition-all {
-  transition: all 0.2s ease-in-out;
-}
+/* Individual styles managed by Tailwind and OKLCH design system */
 </style>

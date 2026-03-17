@@ -72,6 +72,7 @@
 
   /* Warning (Yellow/Orange) */
   --sys-warning-solid: oklch(0.7 0.18 70);
+  --sys-warning-hover: oklch(0.62 0.18 65);
   --sys-warning-soft: oklch(0.98 0.05 75);
   --sys-warning-text: oklch(0.45 0.15 65);
   --sys-warning-border: oklch(0.9 0.1 75);
@@ -333,6 +334,7 @@ html.dark {
 
   /* Warning */
   --sys-warning-solid: oklch(0.75 0.15 70);
+  --sys-warning-hover: oklch(0.82 0.18 75);
   --sys-warning-soft: oklch(0.3 0.06 70);
   --sys-warning-text: oklch(0.9 0.1 70);
   --sys-warning-border: oklch(0.4 0.08 70);

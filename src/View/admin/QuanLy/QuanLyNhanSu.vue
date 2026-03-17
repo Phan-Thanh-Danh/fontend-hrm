@@ -6,108 +6,120 @@
         <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight">Quản lý Nhân sự</h1>
         <p class="text-[var(--sys-text-secondary)] text-sm font-medium italic">Quản lý hồ sơ, hợp đồng và lộ trình công tác của nhân viên.</p>
       </div>
-      <div class="flex flex-wrap items-center lg:justify-end gap-3 flex-1">
-        <div class="relative group hidden xl:block">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--sys-icon-default)]">search</span>
+      <div class="flex flex-col md:flex-row items-center gap-3 flex-1 w-full">
+        <!-- Search Bar (flex-1 - Co giãn tối đa) -->
+        <div class="relative flex-1 w-full group">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-[var(--sys-text-secondary)] opacity-50 group-focus-within:text-[var(--sys-brand-solid)] group-focus-within:opacity-100 transition-all">search</span>
           <input 
             v-model="searchQuery"
             type="text" 
             placeholder="Tìm mã NV, tên..." 
-            class="pl-10 pr-4 py-2.5 w-52 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all font-bold text-[var(--sys-text-primary)]"
+            class="w-full h-11 pl-11 pr-4 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:border-[var(--sys-brand-solid)] focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 transition-all text-[var(--sys-text-primary)]"
           >
         </div>
         
-        <div class="flex items-center gap-2">
+        <!-- Action Group (Cụm Dropdown & Button) -->
+        <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
           <Dropdown 
             v-model="filterDepartment"
             :options="departmentOptions"
-            placeholder="Tất cả phòng ban"
+            placeholder="Phòng ban"
           />
 
           <Dropdown 
             v-model="filterStatus"
             :options="statusOptions"
-            placeholder="Tất cả trạng thái"
+            placeholder="Trạng thái"
           />
-        </div>
 
-        <button 
-          @click="openAddModal"
-          class="px-5 py-2.5 bg-[var(--sys-brand-solid)] rounded-xl font-black text-white hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid)]/10 transition-all flex items-center gap-2 whitespace-nowrap ml-auto md:ml-0"
-        >
-          <span class="material-symbols-outlined text-[20px]">person_add</span>
-          Thêm nhân sự
-        </button>
+          <button 
+            @click="openAddModal"
+            class="h-11 px-6 bg-[var(--sys-brand-solid)] rounded-xl font-bold text-white hover:brightness-110 shadow-sm shadow-[var(--sys-brand-solid)]/20 active:scale-95 transition-all flex items-center gap-2 uppercase tracking-widest text-[11px] whitespace-nowrap"
+          >
+            <span class="material-symbols-outlined text-[18px]">person_add</span>
+            Thêm nhân sự
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div v-for="stat in stats" :key="stat.label" class="bg-[var(--sys-bg-surface)] p-5 rounded-3xl border border-[var(--sys-border-subtle)] shadow-sm">
-        <div class="flex items-center gap-4">
-          <div :class="`w-12 h-12 rounded-2xl flex items-center justify-center`" :style="`background-color: var(--sys-${stat.semantic}-soft); color: var(--sys-${stat.semantic}-solid);` ">
-            <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">{{ stat.icon }}</span>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div v-for="stat in stats" :key="stat.label" class="bg-[var(--sys-bg-surface)] p-6 rounded-[2rem] border border-[var(--sys-border-subtle)] shadow-sm hover:shadow-xl transition-all duration-300">
+        <div class="flex items-center gap-5">
+          <div :class="`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner`" :style="`background-color: var(--sys-${stat.semantic}-soft); color: var(--sys-${stat.semantic}-solid);` ">
+            <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">{{ stat.icon }}</span>
           </div>
           <div>
-            <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">{{ stat.label }}</p>
-            <p class="text-xl font-black text-[var(--sys-text-primary)] leading-none">{{ stat.value }}</p>
+            <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic opacity-70">{{ stat.label }}</p>
+            <p class="text-2xl font-black text-[var(--sys-text-primary)] leading-none tracking-tight">{{ stat.value }}</p>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Table -->
-    <div class="bg-[var(--sys-bg-surface)] rounded-3xl border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden text-sm">
-      <table class="w-full text-left border-collapse">
-        <thead>
-          <tr class="bg-[var(--sys-bg-hover)]">
-            <th class="px-6 py-4 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Nhân viên</th>
-            <th class="px-6 py-4 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Phòng ban / Chức vụ</th>
-            <th class="px-6 py-4 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-center">Ngày vào làm</th>
-            <th class="px-6 py-4 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trạng thái</th>
-            <th class="px-6 py-4 text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-right">Thao tác</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="emp in filteredEmployees" :key="emp.id" 
-              class="group transition-all duration-200 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]">
-            <td class="px-6 py-4 bg-transparent">
-              <div class="flex items-center gap-3 bg-transparent">
-                <div class="w-10 h-10 rounded-xl bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] font-black flex items-center justify-center text-sm border border-[var(--sys-border-subtle)] group-hover:border-[var(--sys-brand-solid)] transition-colors">
-                  {{ emp.full_name.charAt(0) }}
+    <div class="bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden">
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-separate border-spacing-0">
+          <thead>
+            <tr>
+              <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Nhân viên</th>
+              <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Phòng ban / Chức vụ</th>
+              <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-center">Ngày vào làm</th>
+              <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Trạng thái</th>
+              <th class="px-8 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-right">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="emp in filteredEmployees" :key="emp.id" 
+                class="group transition-all duration-200 bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]">
+              <td class="px-8 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div class="flex flex-col bg-transparent">
+                  <span class="text-sm font-black text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ emp.full_name }}</span>
+                  <span class="text-[10px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-tight bg-transparent">{{ emp.employee_code }}</span>
                 </div>
-                <div class="bg-transparent">
-                  <p class="text-sm font-black text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ emp.full_name }}</p>
-                  <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-tighter bg-transparent">{{ emp.employee_code }}</p>
+              </td>
+              <td class="px-6 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div class="flex flex-col bg-transparent text-left">
+                  <span class="text-sm font-bold text-[var(--sys-text-primary)] mb-0.5 bg-transparent text-left">{{ emp.department }}</span>
+                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-tight opacity-60 italic bg-transparent text-left">{{ emp.position }}</span>
                 </div>
-              </div>
-            </td>
-            <td class="px-6 py-4 bg-transparent">
-              <p class="text-xs font-bold text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ emp.department }}</p>
-              <p class="text-[10px] font-medium text-[var(--sys-text-secondary)] bg-transparent">{{ emp.position }}</p>
-            </td>
-            <td class="px-6 py-4 text-center bg-transparent">
-              <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] bg-transparent">{{ emp.hire_date }}</p>
-            </td>
-            <td class="px-6 py-4 bg-transparent">
-              <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusColor(emp.status)} border d-inline-flex align-items-center gap-2 shadow-sm transition-all`" style="background-color: transparent !important;">
-                <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotColor(emp.status)"></span>
-                {{ emp.status.replace('_', ' ') }}
-              </div>
-            </td>
-            <td class="px-6 py-4 text-right bg-transparent">
-              <div class="flex items-center justify-end gap-1 transition-opacity bg-transparent">
-                <button @click="editEmployee(emp)" class="btn-action-icon text-[var(--sys-icon-default)] hover:text-[var(--sys-brand-solid)]">
-                  <span class="material-symbols-outlined">edit</span>
-                </button>
-                <button @click="confirmResign(emp)" class="btn-action-icon text-[var(--sys-icon-default)] hover:text-[var(--sys-danger-solid)]" title="Chuyển trạng thái nghỉ việc">
-                  <span class="material-symbols-outlined">person_off</span>
-                </button>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+              </td>
+              <td class="px-6 py-5 text-center bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-tight opacity-60 italic bg-transparent">{{ emp.hire_date }}</span>
+              </td>
+              <td class="px-6 py-5 bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div :class="[
+                  'px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest inline-flex items-center gap-1.5 border transition-all shadow-sm',
+                  getStatusBadgeClass(emp.status)
+                ]">
+                  <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotClass(emp.status)"></span>
+                  {{ emp.status.split('_').join(' ') }}
+                </div>
+              </td>
+              <td class="px-8 py-5 text-right bg-transparent border-b border-[var(--sys-border-subtle)]">
+                <div class="flex items-center justify-end gap-3 bg-transparent">
+                  <button 
+                    @click="editEmployee(emp)" 
+                    class="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--sys-bg-page)]/50 border border-[var(--sys-border-subtle)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] hover:border-[var(--sys-brand-solid)] shadow-sm active:scale-95"
+                    title="Chỉnh sửa hồ sơ"
+                  >
+                    <span class="material-symbols-outlined text-lg">edit_note</span>
+                  </button>
+                  <button 
+                    @click="confirmResign(emp)" 
+                    class="w-10 h-10 rounded-xl flex items-center justify-center transition-all bg-[var(--sys-bg-page)]/50 border border-[var(--sys-border-subtle)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-danger-solid)] hover:border-[var(--sys-danger-border)] shadow-sm active:scale-95" 
+                    title="Chuyển trạng thái nghỉ việc"
+                  >
+                    <span class="material-symbols-outlined text-lg">person_off</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- Add/Edit Modal -->
@@ -385,7 +397,7 @@ const filteredEmployees = computed(() => {
   return list;
 });
 
-const getStatusColor = (status) => {
+const getStatusBadgeClass = (status) => {
   switch (status) {
     case 'ĐANG_LÀM_VIỆC': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
     case 'THỬ_VIỆC': return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-soft-text)] border-[var(--sys-brand-border)]';
@@ -394,7 +406,7 @@ const getStatusColor = (status) => {
   }
 };
 
-const getStatusDotColor = (status) => {
+const getStatusDotClass = (status) => {
   switch (status) {
     case 'ĐANG_LÀM_VIỆC': return 'bg-[var(--sys-success-solid)]';
     case 'THỬ_VIỆC': return 'bg-[var(--sys-brand-solid)]';

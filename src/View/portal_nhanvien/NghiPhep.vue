@@ -63,22 +63,30 @@
           </div>
           
           <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0 bg-transparent">
-              <thead class="bg-[var(--sys-bg-page)] border-bottom">
-                <tr class="x-small text-[var(--sys-text-secondary)] text-uppercase fw-bold">
-                  <th class="py-3 px-4 border-0">LOẠI PHÉP</th>
-                  <th class="py-3 px-2 border-0">THỜI GIAN NGHỈ</th>
-                  <th class="py-3 px-2 border-0 text-center">TỔNG NGÀY</th>
-                  <th class="py-3 px-4 border-0 text-end">TRẠNG THÁI</th>
+            <table class="w-full text-left border-separate border-spacing-0">
+              <thead>
+                <tr>
+                  <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Loại phép</th>
+                  <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]">Thời gian nghỉ</th>
+                  <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] text-center">Tổng ngày</th>
+                  <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] text-end">Trạng thái</th>
                 </tr>
               </thead>
-              <tbody class="small text-[var(--sys-text-primary)]">
-                <tr v-for="(item, index) in leaveHistory" :key="index" class="border-bottom border-[var(--sys-border-subtle)]">
-                  <td class="py-4 px-4 fw-bold">{{ item.type }}</td>
-                  <td class="py-4 px-2 text-[var(--sys-text-secondary)]">{{ item.duration }}</td>
-                  <td class="py-4 px-2 text-center fw-medium">{{ item.total }}</td>
-                  <td class="py-4 px-4 text-end">
-                    <span :class="getStatusClass(item.status)" class="badge x-small fw-bold text-uppercase px-2.5 py-1.5 rounded-4">
+              <tbody class="text-sm">
+                <tr v-for="(item, index) in leaveHistory" :key="index" 
+                    class="group transition-colors duration-200 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] hover:bg-[var(--sys-bg-hover)]">
+                  <td class="px-6 py-5 font-bold text-[var(--sys-text-primary)] bg-transparent">
+                    {{ item.type }}
+                  </td>
+                  <td class="px-6 py-5 text-[var(--sys-text-secondary)] bg-transparent">
+                    {{ item.duration }}
+                  </td>
+                  <td class="px-6 py-5 text-center font-bold text-[var(--sys-text-primary)] bg-transparent">
+                    {{ item.total }}
+                  </td>
+                  <td class="px-6 py-5 text-end bg-transparent">
+                    <span :class="getStatusBadgeClass(item.status)" class="px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 border transition-all">
+                      <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotClass(item.status)"></span>
                       {{ item.status }}
                     </span>
                   </td>
@@ -190,16 +198,25 @@ const leaveHistory = ref([
   { type: 'Nghỉ phép năm', duration: '20/11/2023 - 21/11/2023', total: '2 ngày', status: 'Chờ duyệt' }
 ]);
 
-const getStatusClass = (status) => {
+const getStatusBadgeClass = (status) => {
   switch (status) {
     case 'Đã duyệt':
-      return 'status-approved';
+      return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
     case 'Chờ duyệt':
-      return 'status-pending';
+      return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-soft-text)] border-[var(--sys-brand-border)]';
     case 'Từ chối':
-      return 'status-rejected';
+      return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
     default:
-      return 'status-default';
+      return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
+  }
+};
+
+const getStatusDotClass = (status) => {
+  switch (status) {
+    case 'Đã duyệt': return 'bg-[var(--sys-success-solid)]';
+    case 'Chờ duyệt': return 'bg-[var(--sys-brand-solid)]';
+    case 'Từ chối': return 'bg-[var(--sys-danger-solid)]';
+    default: return 'bg-[var(--sys-icon-default)]';
   }
 };
 </script>

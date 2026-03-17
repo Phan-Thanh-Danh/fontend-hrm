@@ -6,30 +6,34 @@
         <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight">Quản lý Hợp đồng</h1>
         <p class="text-[var(--sys-text-secondary)] text-sm font-medium italic">Quản lý thời hạn, điều khoản và phụ lục hợp đồng lao động.</p>
       </div>
-      <div class="flex flex-wrap items-center gap-3">
-        <div class="relative group hidden sm:block">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--sys-text-secondary)]">search</span>
+      <div class="flex flex-col md:flex-row items-center gap-3 flex-1 w-full mt-4 md:mt-0">
+        <!-- Search Bar (flex-1 - Co giãn tối đa) -->
+        <div class="relative flex-1 w-full group">
+          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-[18px] text-[var(--sys-text-secondary)] opacity-50 group-focus-within:text-[var(--sys-brand-solid)] transition-all">search</span>
           <input 
             v-model="searchQuery"
             type="text" 
-            placeholder="Tìm số HĐ, tên NV..." 
-            class="pl-10 pr-4 py-2.5 w-64 bg-[var(--sys-bg-surface)] border border-[var(--sys-border)] rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[var(--sys-brand-solid)]/20 focus:border-[var(--sys-brand-solid)] transition-all font-bold text-[var(--sys-text-primary)]"
+            placeholder="Tìm số hợp đồng, tên nhân sự..." 
+            class="w-full h-11 pl-11 pr-4 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold focus:outline-none focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)]"
           >
         </div>
 
-        <Dropdown 
-          v-model="filterStatus"
-          :options="statusOptions"
-          placeholder="Tất cả trạng thái"
-        />
+        <!-- Action Group (Cụm Dropdown & Button) -->
+        <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
+          <Dropdown 
+            v-model="filterStatus"
+            :options="statusOptions"
+            placeholder="Trạng thái"
+          />
 
-        <button 
-          @click="openAddModal"
-          class="px-5 py-2.5 bg-[var(--sys-brand-solid)] rounded-xl font-black text-white hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid)]/10 transition-all flex items-center gap-2"
-        >
-          <span class="material-symbols-outlined text-[20px]">add</span>
-          Ký hợp đồng mới
-        </button>
+          <button 
+            @click="openAddModal"
+            class="h-11 px-6 bg-[var(--sys-brand-solid)] rounded-xl font-bold text-white hover:brightness-110 active:scale-95 shadow-sm shadow-[var(--sys-brand-solid)]/20 transition-all flex items-center gap-2 uppercase tracking-widest text-[11px] whitespace-nowrap"
+          >
+            <span class="material-symbols-outlined text-[18px]">add</span>
+            Ký hợp đồng
+          </button>
+        </div>
       </div>
     </div>
 
@@ -82,43 +86,55 @@
       </div>
 
       <!-- Right: Main Table -->
-      <div class="xl:col-span-2 bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden text-sm flex flex-col h-full">
-        <div class="overflow-x-auto flex-1">
-          <table class="w-full text-left border-collapse">
+      <div class="xl:col-span-2 bg-[var(--sys-bg-surface)] rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col h-full uppercase tracking-tight font-bold">
+        <div class="overflow-x-auto flex-1 h-full custom-scrollbar">
+          <table class="w-full text-left border-separate border-spacing-0 h-full">
             <thead>
-              <tr class="bg-[var(--sys-bg-surface-elevated)]/50">
-                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Số HĐ</th>
-                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Nhân viên</th>
-                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Thời hạn</th>
-                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic">Trạng thái</th>
-                <th class="px-6 py-4 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] italic text-right">Thao tác</th>
+              <tr>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Số HĐ</th>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Nhân viên</th>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Thời hạn</th>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Trạng thái</th>
+                <th class="px-6 py-4 text-xs font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-right">Thao tác</th>
               </tr>
             </thead>
-            <tbody>
-              <tr v-for="item in filteredContracts" :key="item.id" class="hover:bg-[var(--sys-bg-hover)] transition-all group">
-                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)] font-black text-[var(--sys-text-primary)]">{{ item.contract_no }}</td>
-                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)]">
-                   <p class="font-bold text-[var(--sys-text-primary)] mb-0.5">{{ item.employee_name }}</p>
-                   <p class="text-[10px] text-[var(--sys-text-secondary)] uppercase font-black">{{ item.contract_type }}</p>
+            <tbody class="bg-transparent">
+              <tr v-for="item in filteredContracts" :key="item.id" 
+                  class="group transition-all duration-200 bg-transparent hover:bg-[var(--sys-bg-hover)]">
+                <td class="px-6 py-5 border-b border-[var(--sys-border-subtle)] font-black text-[var(--sys-brand-solid)] bg-transparent">{{ item.contract_no }}</td>
+                <td class="px-6 py-5 border-b border-[var(--sys-border-subtle)] bg-transparent">
+                   <p class="font-black text-[var(--sys-text-primary)] mb-0.5 bg-transparent">{{ item.employee_name }}</p>
+                   <p class="text-[10px] text-[var(--sys-text-secondary)] uppercase font-black tracking-widest bg-transparent">{{ item.contract_type }}</p>
                 </td>
-                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)]">
-                    <div class="flex flex-col gap-0.5">
-                        <span class="text-[10px] text-[var(--sys-text-secondary)] font-bold italic">{{ item.start_date }} → {{ item.end_date || 'N/A' }}</span>
+                <td class="px-6 py-5 border-b border-[var(--sys-border-subtle)] bg-transparent">
+                    <div class="flex flex-col gap-0.5 bg-transparent">
+                        <span class="text-xs text-[var(--sys-text-secondary)] font-bold italic bg-transparent">{{ item.start_date }} → {{ item.end_date || 'N/A' }}</span>
                     </div>
                 </td>
-                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)]">
-                  <div :class="`px-3 py-1.5 rounded-full text-[10px] font-black uppercase tracking-wider whitespace-nowrap border d-inline-flex align-items-center gap-2 ${getStatusColor(item.status)}`">
+                <td class="px-6 py-5 border-b border-[var(--sys-border-subtle)] bg-transparent">
+                  <div :class="[
+                    'px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-1.5 border transition-all whitespace-nowrap',
+                    getStatusColor(item.status)
+                  ]">
                     <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotColor(item.status)"></span>
                     {{ item.status.replaceAll('_', ' ') }}
                   </div>
                 </td>
-                <td class="px-6 py-4 border-b border-[var(--sys-border-subtle)] text-right">
-                  <div class="flex items-center justify-end gap-1 opacity-100 md:opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
-                    <button @click="editContract(item)" class="btn-action-icon">
-                      <span class="material-symbols-outlined">edit</span>
+                <td class="px-6 py-5 border-b border-[var(--sys-border-subtle)] text-right bg-transparent">
+                  <div class="flex items-center justify-end gap-2 bg-transparent">
+                    <button 
+                      @click="editContract(item)" 
+                      class="w-8 h-8 rounded-lg flex items-center justify-center transition-all bg-transparent text-[var(--sys-icon-default)] hover:text-[var(--sys-brand-solid)] hover:bg-[var(--sys-brand-solid)]/10 active:scale-95"
+                      title="Chỉnh sửa"
+                    >
+                      <span class="material-symbols-outlined text-lg">edit</span>
                     </button>
-                    <button @click="extendContract(item)" class="btn-action-icon btn-success-action" title="Gia hạn HĐ">
-                      <span class="material-symbols-outlined">restore</span>
+                    <button 
+                      @click="extendContract(item)" 
+                      class="w-8 h-8 rounded-lg flex items-center justify-center transition-all bg-transparent text-[var(--sys-icon-default)] hover:text-[var(--sys-success-text)] hover:bg-[var(--sys-success-soft)] active:scale-95" 
+                      title="Gia hạn HĐ"
+                    >
+                      <span class="material-symbols-outlined text-lg">restore</span>
                     </button>
                   </div>
                 </td>

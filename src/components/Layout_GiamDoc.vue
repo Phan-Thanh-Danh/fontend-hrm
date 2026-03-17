@@ -43,18 +43,19 @@
             role="switch"
             :aria-checked="isDark"
             @click="isDark = !isDark"
-            class="relative w-[48px] h-7 rounded-full transition-colors duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-[#1e2536] border border-white/10 shadow-inner"
+            class="relative w-[48px] h-7 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-[#1e2536] border border-white/20 shadow-inner"
+            :class="isDark ? 'bg-[#0f172a] ring-2 ring-white/10' : ''"
           >
             <span
-              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center shadow-sm transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
+              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
               :class="isDark
-                ? 'left-[calc(100%-24px)] w-5 h-5 bg-blue-500'
+                ? 'left-[calc(100%-24px)] w-5 h-5 bg-white border border-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]'
                 : 'left-1 w-4 h-4 bg-white/70'"
             >
               <span
                 class="material-symbols-rounded transition-all duration-200"
                 style="font-size:11px;font-variation-settings:'FILL' 1"
-                :class="isDark ? 'text-white' : 'text-[#1e2536] opacity-75'"
+                :class="isDark ? 'text-blue-500' : 'text-[#1e2536]'"
               >{{ isDark ? 'dark_mode' : 'light_mode' }}</span>
             </span>
           </button>
@@ -95,8 +96,12 @@
     </header>
 
     <!-- Main Content -->
-    <main class="pt-16 min-h-screen">
-      <router-view />
+    <main class="pt-16 min-h-screen overflow-hidden px-6 lg:px-8">
+      <router-view v-slot="{ Component }">
+        <transition :name="transitionName" mode="out-in">
+          <component :is="Component" />
+        </transition>
+      </router-view>
     </main>
 
   </div>
@@ -104,8 +109,20 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 
+const route = useRoute();
 const isDark = ref(false);
+
+// ── Transition Logic ───────────────────────────────────────────────────────
+const transitionName = ref('fade');
+watch(() => route.meta.index, (toIndex, fromIndex) => {
+  if (toIndex === undefined || fromIndex === undefined) {
+    transitionName.value = 'fade';
+    return;
+  }
+  transitionName.value = toIndex > fromIndex ? 'slide-up' : 'slide-down';
+});
 
 watch(isDark, (val) => {
   document.documentElement.classList.toggle('dark', val);
@@ -113,5 +130,36 @@ watch(isDark, (val) => {
 </script>
 
 <style scoped>
-/* Scoped styles if needed */
+/* Page Transitions */
+.slide-up-enter-active,
+.slide-up-leave-active,
+.slide-down-enter-active,
+.slide-down-leave-active,
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
 </style>
