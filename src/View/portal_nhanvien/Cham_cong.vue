@@ -89,35 +89,29 @@
     </div>
 
     <!-- History Table Section -->
-    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
-      <div class="card-header bg-white border-bottom p-4 d-flex flex-wrap gap-3 align-items-center justify-content-between">
-        <h3 class="h6 mb-0 fw-bold text-uppercase tracking-tight">Lịch sử cá nhân</h3>
-        <div class="d-flex gap-2">
-          <button class="btn btn-primary btn-sm rounded-3 px-3 py-2 d-flex align-items-center gap-2">
-            <span class="material-symbols-outlined fs-5">add_circle</span>
+    <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] overflow-hidden">
+      <div class="px-6 py-5 border-b border-[var(--sys-border-subtle)] flex flex-wrap gap-4 align-items-center justify-between bg-[var(--sys-bg-page)]/30 text-left">
+        <h3 class="text-base font-black text-[var(--sys-text-primary)] mb-0 uppercase tracking-tight italic">Lịch sử cá nhân</h3>
+        <div class="flex flex-wrap gap-3 items-center">
+          <button class="bg-[var(--sys-brand-solid)] hover:bg-[var(--sys-brand-hover)] text-white font-bold text-xs px-4 py-2.5 rounded-xl flex items-center gap-2 shadow-sm transition-all active:scale-95">
+            <span class="material-symbols-outlined text-[18px]">add_circle</span>
             Xin bổ sung công
           </button>
-          <div class="dropdown">
-            <button class="btn btn-light btn-sm border px-3 py-2 rounded-3 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-              Tháng 10
-            </button>
-            <ul class="dropdown-menu shadow-sm border-0 rounded-3">
-              <li><a class="dropdown-item active" href="#">Tháng 10</a></li>
-              <li><a class="dropdown-item" href="#">Tháng 09</a></li>
-              <li><a class="dropdown-item" href="#">Tháng 08</a></li>
-            </ul>
-          </div>
-          <div class="dropdown">
-            <button class="btn btn-light btn-sm border px-3 py-2 rounded-3 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
-              2023
-            </button>
-            <ul class="dropdown-menu shadow-sm border-0 rounded-3">
-              <li><a class="dropdown-item active" href="#">2023</a></li>
-              <li><a class="dropdown-item" href="#">2022</a></li>
-            </ul>
-          </div>
-          <button class="btn btn-light btn-sm border p-2 rounded-3">
-            <span class="material-symbols-outlined fs-5 align-middle">filter_list</span>
+          
+          <Dropdown 
+            v-model="selectedMonth"
+            :options="monthOptions"
+            placeholder="Chọn tháng"
+          />
+          
+          <Dropdown 
+            v-model="selectedYear"
+            :options="yearOptions"
+            placeholder="Chọn năm"
+          />
+
+          <button class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] text-[var(--sys-text-secondary)] hover:border-[var(--sys-brand-solid)] hover:text-[var(--sys-brand-solid)] transition-all" title="Bộ lọc nâng cao">
+            <span class="material-symbols-outlined text-[20px]">filter_list</span>
           </button>
         </div>
       </div>
@@ -147,16 +141,14 @@
           </tbody>
         </table>
       </div>
-      <div class="card-footer bg-light border-top p-4 d-flex justify-content-between align-items-center">
-        <p class="x-small text-muted mb-0">Hiển thị 5 trên tổng số 22 ngày công</p>
-        <nav>
-          <ul class="pagination pagination-sm mb-0 gap-1">
-            <li class="page-item"><a class="page-link border-0 rounded-2 px-3 bg-transparent text-dark fw-bold" href="#">Trước</a></li>
-            <li class="page-item active"><a class="page-link border-0 rounded-2 px-3 fw-bold shadow-primary" href="#">1</a></li>
-            <li class="page-item"><a class="page-link border-0 rounded-2 px-3 bg-transparent text-dark" href="#">2</a></li>
-            <li class="page-item"><a class="page-link border-0 rounded-2 px-3 bg-transparent text-dark fw-bold" href="#">Tiếp</a></li>
-          </ul>
-        </nav>
+      <div class="px-6 py-4 border-top border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/20 flex justify-between items-center">
+        <p class="text-xs font-medium text-[var(--sys-text-secondary)] mb-0">Hiển thị 5 trên tổng số 22 ngày công</p>
+        <div class="flex items-center gap-1">
+          <button class="px-3 py-1.5 rounded-lg text-xs font-black text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)] transition-colors">Trước</button>
+          <button class="w-8 h-8 rounded-lg text-xs font-black bg-[var(--sys-brand-solid)] text-white shadow-sm shadow-[var(--sys-brand-solid-lch-30)]">1</button>
+          <button class="w-8 h-8 rounded-lg text-xs font-black text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)] transition-colors">2</button>
+          <button class="px-3 py-1.5 rounded-lg text-xs font-black text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)] transition-colors">Tiếp</button>
+        </div>
       </div>
     </div>
 
@@ -173,12 +165,31 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import Dropdown from '@/components/Dropdown.vue';
 
 const currentHours = ref('00');
 const currentMinutes = ref('00');
 const currentSeconds = ref('00');
 const currentDateStr = ref('');
 let timerInterval = null;
+
+// Filter States
+const selectedMonth = ref(10);
+const selectedYear = ref(2023);
+
+const monthOptions = [
+  { label: 'Tháng 10', value: 10 },
+  { label: 'Tháng 09', value: 9 },
+  { label: 'Tháng 08', value: 8 },
+  { label: 'Tháng 07', value: 7 },
+  { label: 'Tháng 06', value: 6 },
+];
+
+const yearOptions = [
+  { label: 'Năm 2023', value: 2023 },
+  { label: 'Năm 2022', value: 2022 },
+  { label: 'Năm 2021', value: 2021 },
+];
 
 const updateTime = () => {
   const now = new Date();
@@ -210,13 +221,13 @@ const historyItems = ref([
 const getStatusClass = (status) => {
   switch (status) {
     case 'Hợp lệ':
-      return 'bg-success-light text-success';
+      return 'status-approved';
     case 'Đi muộn':
-      return 'bg-warning-light text-warning';
+      return 'status-late';
     case 'Về sớm':
-      return 'bg-danger-light text-danger';
+      return 'status-early';
     default:
-      return 'bg-light text-muted';
+      return 'status-default';
   }
 };
 </script>
@@ -232,33 +243,28 @@ const getStatusClass = (status) => {
   box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 }
 
-.bg-success-light {
-  background-color: #E6F4EA !important;
-}
-.text-success {
-  color: #137333 !important;
+.status-approved {
+  background-color: var(--sys-success-soft) !important;
+  color: var(--sys-success-text) !important;
 }
 
-.bg-warning-light {
-  background-color: #FEF3C7 !important;
-}
-.text-warning {
-  color: #B45309 !important;
+.status-late {
+  background-color: var(--sys-warning-soft) !important;
+  color: var(--sys-warning-text) !important;
 }
 
-.bg-danger-light {
-  background-color: #FEE2E2 !important;
-}
-.text-danger {
-  color: #B91C1C !important;
+.status-early {
+  background-color: var(--sys-danger-soft) !important;
+  color: var(--sys-danger-text) !important;
 }
 
-.bg-primary-light {
-  background-color: rgba(59, 130, 246, 0.1) !important;
+.status-default {
+  background-color: var(--sys-bg-page) !important;
+  color: var(--sys-text-secondary) !important;
 }
 
 .custom-rounded-badge {
-  border-radius: 4px !important;
+  border-radius: 6px !important;
 }
 
 .page-link.active {

@@ -1,231 +1,260 @@
 <template>
-  <div class="dashboard-wrapper container-fluid py-4 min-vh-100">
-    <!-- Header -->
-    <div class="mb-4">
-      <h1 class="h2 fw-black text-dark mb-1">Chào buổi sáng, A!</h1>
-      <p class="text-secondary fw-medium">{{ currentDateStr }} Chúc bạn một ngày làm việc hiệu quả.</p>
-    </div>
+  <div class="dashboard-wrapper min-h-screen bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] p-4 md:p-6 lg:p-8 font-sans">
+    <div class="max-w-7xl mx-auto space-y-8">
+      
+      <!-- Header Area -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-2">
+        <div>
+          <h1 class="text-2xl font-black text-[var(--sys-text-primary)] tracking-tight uppercase mb-1">Chào buổi sáng, A!</h1>
+          <p class="text-sm text-[var(--sys-text-secondary)] font-medium italic">{{ currentDateStr }} Chúc bạn một ngày làm việc hiệu quả.</p>
+        </div>
+        <div class="hidden md:block">
+          <span class="bg-[var(--sys-brand-soft)] text-[var(--sys-brand-soft-text)] px-4 py-1.5 rounded-xl font-black text-[10px] uppercase tracking-widest border border-[var(--sys-brand-subtle)] shadow-sm">Portal Nhân Viên</span>
+        </div>
+      </div>
 
-    <!-- Main Content Grid -->
-    <div class="row g-4 mb-4">
-      <!-- Left Column (Layout for Check-in, Leave, Summary) -->
-      <div class="col-lg-8 d-flex flex-column gap-4">
+      <!-- Hero Section Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
-        <!-- Top Row: Time & Check-in/out -->
-        <div class="card bento-card p-4">
-          <div class="row align-items-center g-4">
-            <!-- Time Section -->
-            <div class="col-md-6 border-end-md">
-              <p class="text-uppercase small fw-bold text-secondary tracking-wider mb-2">GIỜ HIỆN TẠI</p>
-              <div class="d-flex align-items-baseline gap-1 mb-2">
-                <span class="display-3 fw-bold text-brand-blue lh-1">{{ currentHours }}:{{ currentMinutes }}</span>
-                <span class="h4 fw-bold text-secondary ms-1 mb-0">{{ currentSeconds }}s</span>
+        <!-- Left Column: Clock & Summary -->
+        <div class="lg:col-span-8 flex flex-col gap-6">
+          
+          <!-- Check-in Hero Card -->
+          <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] p-6 md:p-8 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-[var(--sys-brand-solid)]/5 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center relative z-10">
+              <!-- Digital Clock Display -->
+              <div class="flex flex-col items-center md:items-start text-center md:text-left border-b md:border-b-0 md:border-r border-[var(--sys-border-subtle)] pb-6 md:pb-0 md:pr-8">
+                <p class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-3 italic">Thời gian hiện tại</p>
+                <div class="flex items-baseline gap-2">
+                  <span class="text-6xl font-black text-[var(--sys-brand-solid)] tracking-tighter">{{ currentHours }}:{{ currentMinutes }}</span>
+                  <span class="text-xl font-bold text-[var(--sys-text-secondary)]">{{ currentSeconds }}s</span>
+                </div>
+                <div class="mt-4 flex flex-col gap-2">
+                  <div class="flex items-center gap-2 text-xs font-bold text-[var(--sys-text-secondary)]">
+                    <span class="material-symbols-outlined text-base text-[var(--sys-brand-solid)]">location_on</span>
+                    Văn phòng TP. Hồ Chí Minh
+                  </div>
+                  <div class="flex items-center gap-2 text-[10px] font-black text-[var(--sys-success-text)] uppercase tracking-widest">
+                    <span class="w-2 h-2 rounded-full bg-[var(--sys-success-solid)] animate-pulse"></span>
+                    GPS/IP: Hợp lệ
+                  </div>
+                </div>
               </div>
-              <p class="text-muted small d-flex align-items-center gap-1 mb-1">
-                <span class="material-symbols-outlined fs-6">location_on</span>
-                Văn phòng TP. Hồ Chí Minh
-              </p>
-              <p class="text-success small fw-semibold d-flex align-items-center gap-1 mb-0">
-                <span class="rounded-circle bg-success d-inline-block" style="width: 6px; height: 6px;"></span>
-                GPS/IP: HỢP LỆ
-              </p>
+
+              <!-- Action Area -->
+              <div class="flex flex-col gap-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <button class="bg-[var(--sys-brand-solid)] hover:bg-[var(--sys-brand-hover)] text-white font-black py-4 px-4 rounded-xl flex flex-col items-center justify-center gap-2 shadow-lg shadow-[var(--sys-brand-solid-lch-30)] transition-all active:scale-95 group/btn">
+                    <span class="material-symbols-outlined text-3xl group-hover/btn:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;">login</span>
+                    <span class="text-xs uppercase tracking-widest">Vào ca</span>
+                  </button>
+                  <button class="bg-[var(--sys-bg-page)] hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-primary)] border border-[var(--sys-border-strong)] font-black py-4 px-4 rounded-xl flex flex-col items-center justify-center gap-2 transition-all active:scale-95 group/btn">
+                    <span class="material-symbols-outlined text-3xl text-[var(--sys-text-secondary)] group-hover/btn:scale-110 transition-transform" style="font-variation-settings: 'FILL' 0;">logout</span>
+                    <span class="text-xs uppercase tracking-widest opacity-80">Kết thúc</span>
+                  </button>
+                </div>
+                <div class="p-3 bg-[var(--sys-bg-page)]/50 rounded-xl border border-[var(--sys-border-subtle)] text-center">
+                  <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] mb-0 italic">Lần chấm công gần nhất: <span class="text-[var(--sys-text-primary)]">08:25:12</span> (Vào ca)</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Secondary Metric Cards Row -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Leave Remaining -->
+            <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] p-6 flex flex-col justify-between group hover:border-[var(--sys-brand-solid)] transition-all">
+              <div class="flex justify-between items-start mb-6">
+                <div class="w-12 h-12 rounded-2xl bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-subtle)] group-hover:bg-[var(--sys-brand-solid)] group-hover:text-white transition-all">
+                  <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+                </div>
+                <span class="text-[10px] font-black text-[var(--sys-text-secondary)] bg-[var(--sys-bg-page)] px-3 py-1 rounded-full border border-[var(--sys-border-subtle)] uppercase">Tháng 10/2023</span>
+              </div>
+              <div>
+                <p class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 italic">Quỹ phép năm còn lại</p>
+                <div class="flex items-baseline gap-2">
+                  <h3 class="text-5xl font-black text-[var(--sys-text-primary)] tracking-tighter">12</h3>
+                  <span class="text-sm font-bold text-[var(--sys-text-secondary)] italic">ngày</span>
+                </div>
+              </div>
+              <div class="mt-6 pt-4 border-t border-[var(--sys-border-subtle)]">
+                <div class="flex justify-between items-center text-[10px] font-bold text-[var(--sys-text-secondary)] mb-2 uppercase tracking-tighter">
+                  <span>Đã dùng: 6</span>
+                  <span>Tổng quỹ: 18</span>
+                </div>
+                <div class="h-2 w-full bg-[var(--sys-bg-page)] rounded-full overflow-hidden">
+                  <div class="h-full bg-[var(--sys-brand-solid)] transition-all" style="width: 33%"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stats Summary -->
+            <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] p-6 flex flex-col">
+              <h3 class="text-[11px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest mb-6 italic">Tóm tắt chuyên cần tháng</h3>
+              <div class="grid grid-cols-3 gap-2 flex-grow">
+                <div class="flex flex-col items-center justify-center p-3 rounded-2xl bg-[var(--sys-success-soft)]/40 border border-[var(--sys-success-border)]/30 group hover:bg-[var(--sys-success-soft)] transition-all">
+                  <span class="material-symbols-outlined text-[var(--sys-success-text)] mb-2" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                  <span class="text-[9px] font-black text-[var(--sys-success-text)] uppercase tracking-tight mb-1">Công</span>
+                  <span class="text-xl font-black text-[var(--sys-text-primary)]">18.5</span>
+                </div>
+                <div class="flex flex-col items-center justify-center p-3 rounded-2xl bg-[var(--sys-danger-soft)]/40 border border-[var(--sys-danger-border)]/30 group hover:bg-[var(--sys-danger-soft)] transition-all">
+                  <span class="material-symbols-outlined text-[var(--sys-danger-text)] mb-2" style="font-variation-settings: 'FILL' 1;">event_busy</span>
+                  <span class="text-[9px] font-black text-[var(--sys-danger-text)] uppercase tracking-tight mb-1">Vắng</span>
+                  <span class="text-xl font-black text-[var(--sys-text-primary)]">0</span>
+                </div>
+                <div class="flex flex-col items-center justify-center p-3 rounded-2xl bg-[var(--sys-warning-soft)]/40 border border-[var(--sys-warning-border)]/30 group hover:bg-[var(--sys-warning-soft)] transition-all">
+                  <span class="material-symbols-outlined text-[var(--sys-warning-text)] mb-2" style="font-variation-settings: 'FILL' 1;">timer</span>
+                  <span class="text-[9px] font-black text-[var(--sys-warning-text)] uppercase tracking-tight mb-1">Muộn</span>
+                  <span class="text-xl font-black text-[var(--sys-text-primary)]">15</span>
+                </div>
+              </div>
+              <div class="mt-4 pt-3 flex justify-center italic">
+                <a href="#" class="text-[var(--sys-brand-solid)] text-[10px] font-black uppercase tracking-widest hover:underline d-flex items-center gap-1">
+                  Xem chi tiết bảng công <span class="material-symbols-outlined text-xs">arrow_forward</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Notifications -->
+        <div class="lg:col-span-4 flex flex-col">
+          <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] h-full flex flex-col overflow-hidden">
+            <div class="px-6 py-5 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/30 flex justify-between items-center">
+              <h3 class="text-sm font-black text-[var(--sys-text-primary)] uppercase tracking-tight flex items-center gap-2 m-0 italic">
+                <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-xl" style="font-variation-settings: 'FILL' 1;">notifications_active</span>
+                Thông báo mới
+              </h3>
+              <span class="bg-[var(--sys-danger-solid)] text-white text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">3</span>
             </div>
             
-            <!-- Check-in/out Buttons -->
-            <div class="col-md-6">
-              <div class="d-flex gap-3 justify-content-md-end">
-                <button class="btn btn-checkin text-white fw-bold d-flex align-items-center justify-content-center gap-2 px-4 shadow-sm">
-                  <span class="material-symbols-outlined fs-5">login</span>
-                  <span class="fs-5 text-nowrap">Check-in</span>
-                </button>
-                <button class="btn btn-checkout text-white fw-bold d-flex align-items-center justify-content-center gap-2 px-4 shadow-sm">
-                  <span class="material-symbols-outlined fs-5">logout</span>
-                  <span class="fs-5 text-nowrap">Check-out</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Bottom Row: Leave & Summary -->
-        <div class="row g-4">
-          <!-- Leave Balance Card -->
-          <div class="col-sm-6">
-            <div class="card bento-card bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] shadow-sm rounded-xl p-4 h-100 position-relative overflow-hidden">
-              <div class="d-flex justify-content-between align-items-start mb-4">
-                <div class="icon-box-white rounded-3 d-flex align-items-center justify-content-center bg-[var(--sys-brand-soft)]">
-                  <span class="material-symbols-outlined text-[var(--sys-brand-solid)]">calendar_month</span>
-                </div>
-                <span class="badge bg-[var(--sys-brand-soft)] py-2 px-3 rounded-2 fw-black italic" style="color: var(--sys-brand-solid) !important;">Năm 2023</span>
-              </div>
-              
-              <p class="small fw-semibold text-[var(--sys-text-secondary)] mb-1 text-uppercase">QUỸ PHÉP NĂM CÒN LẠI</p>
-              <div class="d-flex align-items-baseline gap-2 mb-4">
-                <span class="display-3 font-bold text-[var(--sys-text-primary)] lh-1">12</span>
-                <span class="h5 fw-medium text-[var(--sys-text-secondary)]">ngày</span>
-              </div>
-              
-              <div class="mt-auto">
-                <div class="d-flex justify-content-between x-small text-[var(--sys-text-secondary)] fw-medium mb-2 text-uppercase">
-                  <span>ĐÃ DÙNG: 6</span>
-                  <span>TỔNG: 18</span>
-                </div>
-                <div class="progress rounded-pill bg-[var(--sys-bg-hover)]" style="height: 12px;">
-                  <div class="progress-bar bg-[var(--sys-brand-solid)] rounded-pill" role="progressbar" style="width: 33%;"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Monthly Attendance Summary -->
-          <div class="col-sm-6">
-            <div class="card bento-card p-4 h-100">
-              <h3 class="h6 fw-bold mb-4 text-uppercase">TÓM TẮT CHẤM CÔNG THÁNG</h3>
-              <div class="row text-center g-3 mt-2">
-                <!-- Actual -->
-                <div class="col-4 px-1">
-                  <div class="text-success mb-2 d-flex justify-content-center">
-                    <span class="material-symbols-outlined">event_available</span>
+            <div class="flex-grow overflow-y-auto">
+              <!-- Notif 1 -->
+              <router-link :to="{ name: 'thong-bao' }" class="block px-6 py-4 hover:bg-[var(--sys-bg-hover)] transition-colors cursor-pointer border-b border-[var(--sys-border-subtle)] group no-underline">
+                <div class="flex gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] flex items-center justify-center shrink-0 shadow-sm border border-[var(--sys-success-border)]">
+                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">verified</span>
                   </div>
-                  <div class="x-small text-muted fw-bold mb-2 text-nowrap">CÔNG THỰC TẾ</div>
-                  <div class="h3 fw-bold text-dark mb-0">18.5</div>
-                </div>
-                <!-- Absent -->
-                <div class="col-4 px-1 border-start border-end">
-                  <div class="text-danger mb-2 d-flex justify-content-center">
-                    <span class="material-symbols-outlined">event_busy</span>
+                  <div>
+                    <h4 class="text-xs font-black text-[var(--sys-text-primary)] mb-1 group-hover:text-[var(--sys-brand-solid)] transition-colors">Đơn nghỉ phép đã duyệt</h4>
+                    <p class="text-[11px] text-[var(--sys-text-secondary)] leading-relaxed mb-1.5 font-medium">Đơn nghỉ phép ngày 28/10 của bạn đã được quản lý phê duyệt thành công.</p>
+                    <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] opacity-60">10 phút trước</span>
                   </div>
-                  <div class="x-small text-muted fw-bold mb-2 text-nowrap">VẮNG</div>
-                  <div class="h3 fw-bold text-dark mb-0">0</div>
                 </div>
-                <!-- Late -->
-                <div class="col-4 px-1">
-                  <div class="text-warning mb-2 d-flex justify-content-center">
-                    <span class="material-symbols-outlined">schedule</span>
+              </router-link>
+              <!-- Notif 2 -->
+              <router-link :to="{ name: 'thong-bao' }" class="block px-6 py-4 hover:bg-[var(--sys-bg-hover)] transition-colors cursor-pointer border-b border-[var(--sys-border-subtle)] group no-underline">
+                <div class="flex gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-[var(--sys-info-soft)] text-[var(--sys-info-text)] flex items-center justify-center shrink-0 shadow-sm border border-[var(--sys-info-border)]">
+                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">payments</span>
                   </div>
-                  <div class="x-small text-muted fw-bold mb-2 text-nowrap">PHÚT ĐI MUỘN</div>
-                  <div class="h3 fw-bold text-dark mb-0">15</div>
+                  <div>
+                    <h4 class="text-xs font-black text-[var(--sys-text-primary)] mb-1 group-hover:text-[var(--sys-brand-solid)] transition-colors">Đã có phiếu lương</h4>
+                    <p class="text-[11px] text-[var(--sys-text-secondary)] leading-relaxed mb-1.5 font-medium">Phiếu lương tháng 09/2023 đã sẵn sàng. Bạn có thể xem ngay bây giờ.</p>
+                    <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] opacity-60">2 giờ trước</span>
+                  </div>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Right Column: Notifications -->
-      <div class="col-lg-4">
-        <div class="card bento-card h-100 d-flex flex-column">
-          <div class="p-4 d-flex justify-content-between align-items-center">
-            <h3 class="h6 mb-0 fw-bold d-flex align-items-center gap-2">
-              <span class="material-symbols-outlined text-brand-blue fs-5">notifications</span>
-              Thông báo mới
-            </h3>
-            <a href="#" class="text-brand-blue text-decoration-none fw-semibold small">Xem tất cả</a>
-          </div>
-          
-          <div class="flex-grow-1 px-4">
-            <!-- Interleaved notification items -->
-            <div class="notification-item py-3 border-top">
-              <div class="d-flex gap-3 align-items-start">
-                <div class="notif-icon-circle bg-success bg-opacity-10 text-success rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
-                  <span class="material-symbols-outlined fs-5">check_circle</span>
+              </router-link>
+              <!-- Notif 3 -->
+              <router-link :to="{ name: 'thong-bao' }" class="block px-6 py-4 hover:bg-[var(--sys-bg-hover)] transition-colors cursor-pointer group no-underline">
+                <div class="flex gap-4">
+                  <div class="w-10 h-10 rounded-xl bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] flex items-center justify-center shrink-0 shadow-sm border border-[var(--sys-warning-border)]">
+                    <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">campaign</span>
+                  </div>
+                  <div>
+                    <h4 class="text-xs font-black text-[var(--sys-text-primary)] mb-1 group-hover:text-[var(--sys-brand-solid)] transition-colors">Thông báo Công ty</h4>
+                    <p class="text-[11px] text-[var(--sys-text-secondary)] leading-relaxed mb-1.5 font-medium">Thông báo về lịch nghỉ lễ Quốc khánh và các quy định trực Tết Dương lịch...</p>
+                    <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] opacity-60">Hôm qua</span>
+                  </div>
                 </div>
-                <div>
-                  <h4 class="small fw-bold text-dark mb-1">Đơn nghỉ phép đã duyệt</h4>
-                  <p class="x-small text-secondary mb-2 lh-base">Đơn nghỉ phép ngày 28/10 của bạn đã được quản lý phê duyệt.</p>
-                  <span class="text-muted" style="font-size: 0.7rem;">10 phút trước</span>
-                </div>
-              </div>
+              </router-link>
             </div>
 
-            <div class="notification-item py-3 border-top">
-              <div class="d-flex gap-3 align-items-start">
-                <div class="notif-icon-circle bg-primary bg-opacity-10 text-primary rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
-                  <span class="material-symbols-outlined fs-5">payments</span>
-                </div>
-                <div>
-                  <h4 class="small fw-bold text-dark mb-1">Đã có phiếu lương</h4>
-                  <p class="x-small text-secondary mb-2 lh-base">Phiếu lương tháng 09/2023 đã sẵn sàng để xem.</p>
-                  <span class="text-muted" style="font-size: 0.7rem;">2 giờ trước</span>
-                </div>
-              </div>
+            <div class="px-6 py-4 bg-[var(--sys-bg-page)]/50 border-t border-[var(--sys-border-subtle)] text-center">
+              <router-link :to="{ name: 'thong-bao' }" class="text-[var(--sys-text-secondary)] text-[11px] font-black uppercase tracking-widest hover:text-[var(--sys-brand-solid)] transition-colors inline-flex items-center gap-2 no-underline">
+                Xem tất cả thông báo
+                <span class="material-symbols-outlined text-sm">chevron_right</span>
+              </router-link>
             </div>
-
-            <div class="notification-item py-3 border-top">
-              <div class="d-flex gap-3 align-items-start">
-                <div class="notif-icon-circle bg-warning bg-opacity-10 text-warning rounded-circle d-flex align-items-center justify-content-center flex-shrink-0" style="width: 40px; height: 40px;">
-                  <span class="material-symbols-outlined fs-5">campaign</span>
-                </div>
-                <div>
-                  <h4 class="small fw-bold text-dark mb-1">Thông báo Công ty</h4>
-                  <p class="x-small text-secondary mb-2 lh-base">V/v Nghỉ lễ Quốc khánh sắp tới và lịch trực...</p>
-                  <span class="text-muted" style="font-size: 0.7rem;">Hôm qua</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="p-3 bg-light rounded-bottom-4 position-relative border-top text-center">
-            <p class="x-small text-muted fw-medium fst-italic mb-0 d-flex align-items-center justify-content-center gap-2">
-              <span class="rounded-circle bg-brand-blue d-inline-block" style="width: 6px; height: 6px;"></span>
-              Bạn có 3 thông báo chưa đọc
-            </p>
           </div>
         </div>
       </div>
+
+      <!-- Recent Activity Table Section -->
+      <div class="bg-[var(--sys-bg-surface)] rounded-4 shadow-sm border border-[var(--sys-border-subtle)] overflow-hidden">
+        <div class="px-8 py-5 border-b border-[var(--sys-border-subtle)] flex justify-between items-center bg-[var(--sys-bg-page)]/30">
+          <h3 class="text-base font-black text-[var(--sys-text-primary)] uppercase tracking-tight italic flex items-center gap-2 m-0">
+            <span class="material-symbols-outlined text-[var(--sys-brand-solid)]" style="font-variation-settings: 'FILL' 1;">history</span>
+            Hoạt động gần đây
+          </h3>
+          <button class="w-10 h-10 flex items-center justify-center rounded-xl bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] text-[var(--sys-text-secondary)] hover:border-[var(--sys-brand-solid)] hover:text-[var(--sys-brand-solid)] transition-all">
+            <span class="material-symbols-outlined text-[20px]">tune</span>
+          </button>
+        </div>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[var(--sys-bg-hover)]/50">
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic border-b border-[var(--sys-border-subtle)]">Ngày thực hiện</th>
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic border-b border-[var(--sys-border-subtle)]">Loại hoạt động</th>
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic border-b border-[var(--sys-border-subtle)]">Thời gian chi tiết</th>
+                <th class="px-8 py-5 text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest italic border-b border-[var(--sys-border-subtle)] text-end text-nowrap">Trạng thái</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--sys-border-subtle)] text-sm font-medium">
+              <tr class="group hover:bg-[var(--sys-bg-hover)] transition-all">
+                <td class="px-8 py-4 text-[var(--sys-text-primary)] font-bold">Thứ Tư, 25/10/2023</td>
+                <td class="px-8 py-4">
+                  <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-[var(--sys-success-solid)] shadow-sm"></span>
+                    <span class="text-[var(--sys-text-primary)]">Chấm công vào ca (Check-in)</span>
+                  </div>
+                </td>
+                <td class="px-8 py-4 text-[var(--sys-text-secondary)] italic">08:02:45 AM</td>
+                <td class="px-8 py-4 text-end">
+                  <span class="bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] text-[10px] font-black px-3 py-1.5 rounded-lg border border-[var(--sys-success-border)] uppercase tracking-widest">Thành công</span>
+                </td>
+              </tr>
+              <tr class="group hover:bg-[var(--sys-bg-hover)] transition-all">
+                <td class="px-8 py-4 text-[var(--sys-text-primary)] font-bold">Thứ Ba, 24/10/2023</td>
+                <td class="px-8 py-4">
+                  <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-[var(--sys-brand-solid)] shadow-sm"></span>
+                    <span class="text-[var(--sys-text-primary)]">Chấm công ra về (Check-out)</span>
+                  </div>
+                </td>
+                <td class="px-8 py-4 text-[var(--sys-text-secondary)] italic">17:35:10 PM</td>
+                <td class="px-8 py-4 text-end">
+                  <span class="bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] text-[10px] font-black px-3 py-1.5 rounded-lg border border-[var(--sys-success-border)] uppercase tracking-widest">Thành công</span>
+                </td>
+              </tr>
+              <tr class="group hover:bg-[var(--sys-bg-hover)] transition-all">
+                <td class="px-8 py-4 text-[var(--sys-text-primary)] font-bold">Thứ Ba, 24/10/2023</td>
+                <td class="px-8 py-4">
+                  <div class="flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-[var(--sys-warning-solid)] shadow-sm"></span>
+                    <span class="text-[var(--sys-text-primary)]">Gửi đơn xin nghỉ phép</span>
+                  </div>
+                </td>
+                <td class="px-8 py-4 text-[var(--sys-text-secondary)] italic">14:20:05 PM</td>
+                <td class="px-8 py-4 text-end">
+                  <span class="bg-[var(--sys-brand-soft)] text-[var(--sys-brand-soft-text)] text-[10px] font-black px-3 py-1.5 rounded-lg border border-[var(--sys-brand-subtle)] uppercase tracking-widest">Đã duyệt</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="px-8 py-4 bg-[var(--sys-bg-page)]/20 border-t border-[var(--sys-border-subtle)] flex justify-end">
+          <a href="#" class="text-[var(--sys-brand-solid)] text-[10px] font-black uppercase tracking-widest hover:underline d-flex items-center gap-1 leading-none">
+            Xem toàn bộ hoạt động <span class="material-symbols-outlined text-sm">arrow_right_alt</span>
+          </a>
+        </div>
+      </div>
+
     </div>
-
-    <!-- Recent Activities Table -->
-    <div class="card bento-card p-4">
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <h3 class="h6 mb-0 fw-bold">Hoạt động gần đây</h3>
-        <button class="btn btn-sm text-secondary px-0 d-flex align-items-center gap-1 bg-transparent border-0 hover-opacity">
-          Filter
-          <span class="material-symbols-outlined fs-6">filter_list</span>
-        </button>
-      </div>
-      
-      <div class="table-responsive">
-        <table class="table table-borderless align-middle mb-0 activity-table">
-          <thead class="text-muted text-uppercase small border-bottom">
-            <tr>
-              <th class="py-3 ps-0 fw-bold w-25">NGÀY</th>
-              <th class="py-3 px-2 fw-bold w-40">HOẠT ĐỘNG</th>
-              <th class="py-3 px-2 fw-bold w-20">THỜI GIAN</th>
-              <th class="py-3 pe-0 fw-bold w-15 text-end">TRẠNG THÁI</th>
-            </tr>
-          </thead>
-          <tbody class="small text-dark fw-medium">
-            <tr class="border-bottom-custom">
-              <td class="py-3 ps-0">25/10/2023</td>
-              <td class="py-3 px-2 text-secondary">Chấm công vào (Check-in)</td>
-              <td class="py-3 px-2 text-secondary">08:02 AM</td>
-              <td class="py-3 pe-0 text-end">
-                <span class="badge status-success text-uppercase px-2 py-1 user-select-none">THÀNH CÔNG</span>
-              </td>
-            </tr>
-            <tr class="border-bottom-custom">
-              <td class="py-3 ps-0">24/10/2023</td>
-              <td class="py-3 px-2 text-secondary">Chấm công ra (Check-out)</td>
-              <td class="py-3 px-2 text-secondary">17:35 PM</td>
-              <td class="py-3 pe-0 text-end">
-                <span class="badge status-success text-uppercase px-2 py-1 user-select-none">THÀNH CÔNG</span>
-              </td>
-            </tr>
-            <tr>
-              <td class="py-3 ps-0">24/10/2023</td>
-              <td class="py-3 px-2 text-secondary">Gửi đơn nghỉ phép</td>
-              <td class="py-3 px-2 text-secondary">14:20 PM</td>
-              <td class="py-3 pe-0 text-end">
-                <span class="badge status-primary text-uppercase px-2 py-1 user-select-none">ĐÃ DUYỆT</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
   </div>
 </template>
 
@@ -259,122 +288,35 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Google Font inter-like, adjust as necessary */
-.dashboard-wrapper {
-  background-color: var(--sys-bg-page);
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+.fw-black {
+  font-weight: 900;
 }
 
-/* Material Symbols Override if needed */
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+.tracking-tighter {
+  letter-spacing: -0.05em;
 }
 
-/* Base Card Styling - Soft UI/Bento Grid feel */
-.bento-card {
-  border: none;
-  border-radius: 1.25rem; /* ~20px */
-  background-color: var(--sys-bg-surface);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.02);
-  transition: box-shadow 0.2s ease;
-  color: var(--sys-text-primary);
+.tracking-tight {
+  letter-spacing: -0.025em;
 }
 
-/* Brand Colors */
-.text-brand-blue {
-  color: var(--sys-accent) !important;
-}
-.bg-brand-blue {
-  background-color: var(--sys-accent) !important;
-}
-.text-white-75 {
-  color: rgba(255, 255, 255, 0.75) !important;
+.tracking-widest {
+  letter-spacing: 0.1em;
 }
 
-/* Big Buttons */
-.btn-checkin {
-  background-color: oklch(0.62 0.17 155);
-  border-color: oklch(0.62 0.17 155);
-  border-radius: 0.75rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  min-width: 140px;
-}
-.btn-checkin:hover {
-  background-color: oklch(0.55 0.17 155);
+.rounded-4 {
+  border-radius: 1.25rem !important;
 }
 
-.btn-checkout {
-  background-color: oklch(0.75 0.15 75);
-  border-color: oklch(0.75 0.15 75);
-  border-radius: 0.75rem;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-  min-width: 140px;
+/* Custom Scrollbar for Notifications */
+::-webkit-scrollbar {
+  width: 5px;
 }
-.btn-checkout:hover {
-  background-color: oklch(0.68 0.15 75);
+::-webkit-scrollbar-track {
+  background: transparent;
 }
-
-.icon-box-white {
-  width: 40px;
-  height: 40px;
-}
-
-/* Borders and lines */
-@media (min-width: 768px) {
-  .border-end-md {
-    border-right: 1px solid var(--sys-border) !important;
-  }
-}
-
-.border-bottom-custom {
-  border-bottom: 1px solid var(--sys-border) !important;
-}
-
-/* Badge specific colors reproducing figma design closely */
-.status-success {
-  background-color: #E6F4EA !important; /* Green light */
-  color: #137333 !important; /* Green dark */
-  border-radius: 4px;
-}
-
-.status-primary {
-  background-color: #111827 !important; /* Dark navy */
-  color: #3B82F6 !important; /* Bright blue */
-  border-radius: 4px;
-}
-
-.hover-opacity:hover {
-  opacity: 0.8;
-}
-
-/* Table styling fixes */
-th {
-  font-weight: 700 !important;
-  color: var(--sys-text-secondary) !important;
-}
-
-/* Text clamp for notifications if they get long */
-.text-line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;  
-  overflow: hidden;
-}
-
-/* Dark mode overrides for specific helper classes */
-:global(html.dark) .text-dark {
-  color: var(--sys-text-primary) !important;
-}
-:global(html.dark) .text-secondary {
-  color: var(--sys-text-secondary) !important;
-}
-:global(html.dark) .bg-light {
-  background-color: var(--sys-bg-page) !important;
-}
-:global(html.dark) .border-top {
-  border-color: var(--sys-border) !important;
+::-webkit-scrollbar-thumb {
+  background: var(--sys-border-subtle);
+  border-radius: 10px;
 }
 </style>
