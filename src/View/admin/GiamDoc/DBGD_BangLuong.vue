@@ -1,259 +1,223 @@
 <template>
-  <div class="p-6 md:p-8 space-y-6">
-    <!-- Header -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-      <div>
-        <h1 class="text-[24px] font-[800] text-[var(--sys-text-primary)] tracking-tight">Tổng Quan Quỹ Lương</h1>
-        <p class="text-sm text-[var(--sys-text-secondary)] mt-1 font-medium">Báo cáo chi tiết chi phí nhân sự tháng hiện tại dành cho Ban Giám Đốc</p>
-      </div>
-      <div class="flex items-center gap-3">
-        <button class="flex items-center gap-2 px-4 py-2.5 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-sm font-bold text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)] transition-colors shadow-sm">
-          <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-          Tháng 10, 2023
-        </button>
-        <button class="flex items-center gap-2 px-5 py-2.5 bg-[var(--sys-brand-solid)] border border-transparent rounded-xl text-sm font-bold text-white hover:bg-[var(--sys-brand-hover)] transition-colors shadow-lg shadow-[var(--sys-brand-solid-lch-30)]">
-          <span class="material-symbols-outlined text-[18px]">download</span>
-          Xuất báo cáo
-        </button>
-      </div>
-    </div>
+ <div class="space-y-10 pb-10">
+ <!-- Header -->
+ <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-transparent text-left">
+ <div class="bg-transparent text-left">
+ <h1 class="text-3xl font-semibold text-[var(--sys-text-primary)] mb-1">Kiểm soát Quỹ lương</h1>
+ <p class="text-[10px] text-[var(--sys-text-secondary)] font-semibold opacity-60">Báo cáo hợp nhất chi phí nhân sự, trợ cấp và khấu trừ ngân sách toàn tập đoàn.</p>
+ </div>
+ <div class="flex items-center gap-4 bg-transparent">
+ <button class="h-12 px-6 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl flex items-center gap-3 text-[10px] font-semibold text-[var(--sys-text-primary)] hover:border-[var(--sys-brand-solid)] transition-all shadow-sm">
+ <span class="material-symbols-outlined text-xl">calendar_month</span>
+ Tháng 10, 2023
+ </button>
+ <button class="h-12 px-8 bg-[var(--sys-brand-solid)] text-white rounded-2xl flex items-center gap-3 text-[10px] font-semibold hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid)]/20 transition-all active:scale-95">
+ <span class="material-symbols-outlined text-xl">ios_share</span>
+ Xuất báo cáo tài chính
+ </button>
+ </div>
+ </div>
 
-    <!-- 4 KPI Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-      <!-- Card 1 -->
-      <div class="bg-[var(--sys-bg-surface)] rounded-2xl p-6 border border-[var(--sys-border-subtle)] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all">
-        <div class="flex justify-between items-start">
-          <h3 class="text-[12px] font-bold text-[var(--sys-text-secondary)]">Tổng quỹ lương</h3>
-          <div class="w-10 h-10 rounded-xl bg-[var(--sys-brand-soft)] flex items-center justify-center">
-            <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[20px]">payments</span>
-          </div>
-        </div>
-        <div class="mt-2">
-          <p class="text-[24px] font-[900] text-[var(--sys-text-primary)] leading-tight">5.280.000.000đ</p>
-          <div class="flex items-center gap-1.5 mt-3">
-            <span class="flex items-center text-[11px] font-bold text-[var(--sys-success-text)]">
-              <span class="material-symbols-outlined text-[14px]">trending_up</span>
-              +2.5%
-            </span>
-            <span class="text-[11px] font-semibold text-[var(--sys-text-secondary)]/50">vs tháng trước</span>
-          </div>
-        </div>
-      </div>
+ <!-- 4 KPI Cards -->
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+ <div v-for="(stat, idx) in [
+ { label: 'Tổng quỹ chi phí', value: '5.280B', sub: 'vs tháng trước', change: '+2.5%', icon: 'payments', color: 'brand' },
+ { label: 'Quỹ lương cơ bản', value: '4.150B', sub: 'vs tháng trước', change: '-1.2%', icon: 'account_balance_wallet', color: 'info' },
+ { label: 'Thưởng & Phụ cấp', value: '850M', sub: 'vs tháng trước', change: '+5.8%', icon: 'redeem', color: 'success' },
+ { label: 'Khấu trừ thuế/BH', value: '280M', sub: 'vs tháng trước', change: '+0.5%', icon: 'receipt_long', color: 'warning' }
+ ]" :key="idx" 
+ class="bg-[var(--sys-bg-surface)] p-8 rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm hover:shadow-2xl hover:translate-y-[-4px] transition-all duration-500 group relative overflow-hidden">
+ <div class="absolute top-0 right-0 w-32 h-32 bg-[var(--sys-brand-soft)] rounded-full -mr-16 -mt-16 opacity-0 group-hover:opacity-40 transition-all duration-700 blur-2xl"></div>
+ <div class="flex justify-between items-start mb-10 relative z-10 bg-transparent">
+ <div :class="`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all shadow-lg ${
+ stat.color === 'brand' ? 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]' :
+ stat.color === 'success' ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' :
+ stat.color === 'warning' ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]' :
+ 'bg-[var(--sys-info-soft)] text-[var(--sys-info-text)] border-[var(--sys-info-border)]'
+ }`">
+ <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' 1;">{{ stat.icon }}</span>
+ </div>
+ <span :class="`px-3 py-1.5 rounded-xl text-[9px] font-semibold border ${
+ stat.change.startsWith('+') ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]'
+ }`">{{ stat.change }}</span>
+ </div>
+ <div class="relative z-10 bg-transparent text-left">
+ <p class="text-[10px] font-semibold text-[var(--sys-text-secondary)] mb-2 opacity-40">{{ stat.label }}</p>
+ <h2 class="text-3xl font-semibold text-[var(--sys-text-primary)] mb-2">{{ stat.value }}</h2>
+ <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] opacity-30 ">{{ stat.sub }}</p>
+ </div>
+ </div>
+ </div>
 
-      <!-- Card 2 -->
-      <div class="bg-[var(--sys-bg-surface)] rounded-2xl p-6 border border-[var(--sys-border-subtle)] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all">
-        <div class="flex justify-between items-start">
-          <h3 class="text-[12px] font-bold text-[var(--sys-text-secondary)]">Lương cơ bản</h3>
-          <div class="w-10 h-10 rounded-xl bg-[var(--sys-brand-soft)]/50 flex items-center justify-center">
-            <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[20px]">account_balance_wallet</span>
-          </div>
-        </div>
-        <div class="mt-2">
-          <p class="text-[24px] font-[900] text-[var(--sys-text-primary)] leading-tight">4.150.000.000đ</p>
-          <div class="flex items-center gap-1.5 mt-3">
-             <span class="flex items-center text-[11px] font-bold text-[var(--sys-danger-text)]">
-              <span class="material-symbols-outlined text-[14px]">trending_down</span>
-              -1.2%
-            </span>
-            <span class="text-[11px] font-semibold text-[var(--sys-text-secondary)]/50">vs tháng trước</span>
-          </div>
-        </div>
-      </div>
+ <!-- Charts Row -->
+ <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+ <div class="bg-[var(--sys-bg-surface)] p-10 rounded-[3rem] border border-[var(--sys-border-subtle)] shadow-sm flex flex-col hover:border-[var(--sys-brand-solid)] transition-all duration-500 relative group/chart1">
+ <div class="absolute inset-0 bg-gradient-to-br from-[var(--sys-brand-soft)]/20 to-transparent opacity-0 group-hover/chart1:opacity-100 transition-opacity rounded-[3rem]"></div>
+ <div class="flex justify-between items-center mb-12 relative z-10">
+ <h5 class="text-base font-semibold text-[var(--sys-text-primary)] flex items-center gap-4 m-0">
+ <div class="w-10 h-10 rounded-xl bg-[var(--sys-brand-soft)] flex items-center justify-center">
+ <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-2xl font-normal">hub</span>
+ </div>
+ Quỹ lương theo Khối vận hành
+ </h5>
+ <span class="text-[10px] font-semibold text-[var(--sys-text-secondary)] bg-[var(--sys-bg-hover)] px-4 py-2 rounded-xl opacity-60">Đơn vị: Tỷ VNĐ</span>
+ </div>
+ 
+ <div class="flex items-end justify-between flex-1 border-b border-[var(--sys-border-subtle)] pb-6 relative min-h-[280px] z-10 px-4">
+ <div class="relative group/bar" v-for="(val, idx) in [180, 140, 90, 60, 40]" :key="idx">
+ <div class="w-12 bg-gradient-to-t from-[var(--sys-brand-solid)] to-[var(--sys-brand-hover)] rounded-t-2xl transition-all group-hover/bar:scale-x-110 shadow-xl shadow-[var(--sys-brand-solid)]/10" :style="{ height: val + 'px' }"></div>
+ </div>
+ </div>
 
-      <!-- Card 3 -->
-      <div class="bg-[var(--sys-bg-surface)] rounded-2xl p-6 border border-[var(--sys-border-subtle)] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all">
-        <div class="flex justify-between items-start">
-          <h3 class="text-[12px] font-bold text-[var(--sys-text-secondary)]">Thưởng & Phụ cấp</h3>
-          <div class="w-10 h-10 rounded-xl bg-[var(--sys-brand-soft)] flex items-center justify-center">
-            <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[20px]">redeem</span>
-          </div>
-        </div>
-        <div class="mt-2">
-          <p class="text-[24px] font-[900] text-[var(--sys-text-primary)] leading-tight">850.000.000đ</p>
-           <div class="flex items-center gap-1.5 mt-3">
-            <span class="flex items-center text-[11px] font-bold text-[var(--sys-success-text)]">
-              <span class="material-symbols-outlined text-[14px]">trending_up</span>
-              +5.8%
-            </span>
-            <span class="text-[11px] font-semibold text-[var(--sys-text-secondary)]/50">vs tháng trước</span>
-          </div>
-        </div>
-      </div>
+ <div class="flex justify-between pt-8 text-[9px] font-semibold text-[var(--sys-text-secondary)] opacity-40 z-10 px-2">
+ <span class="w-12 text-center">Kỹ thuật</span>
+ <span class="w-12 text-center">Kinh doanh</span>
+ <span class="w-12 text-center">Marketing</span>
+ <span class="w-12 text-center">Vận hành</span>
+ <span class="w-12 text-center">Nhân sự</span>
+ </div>
+ </div>
 
-      <!-- Card 4 -->
-      <div class="bg-[var(--sys-bg-surface)] rounded-2xl p-6 border border-[var(--sys-border-subtle)] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all">
-        <div class="flex justify-between items-start">
-          <h3 class="text-[12px] font-bold text-[var(--sys-text-secondary)]">Khấu trừ (Thuế/BH)</h3>
-          <div class="w-10 h-10 rounded-xl bg-[var(--sys-brand-soft)]/50 flex items-center justify-center">
-            <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[20px]">receipt_long</span>
-          </div>
-        </div>
-        <div class="mt-2">
-          <p class="text-[24px] font-[900] text-[var(--sys-text-primary)] leading-tight">280.000.000đ</p>
-           <div class="flex items-center gap-1.5 mt-3">
-            <span class="flex items-center text-[11px] font-bold text-[var(--sys-success-text)]">
-              <span class="material-symbols-outlined text-[14px]">trending_up</span>
-              +0.5%
-            </span>
-            <span class="text-[11px] font-semibold text-[var(--sys-text-secondary)]/50">vs tháng trước</span>
-          </div>
-        </div>
-      </div>
-    </div>
+ <div class="bg-[var(--sys-bg-surface)] p-10 rounded-[3rem] border border-[var(--sys-border-subtle)] shadow-sm flex flex-col hover:border-[var(--sys-brand-solid)] transition-all duration-500 relative group/chart2">
+ <div class="absolute inset-0 bg-gradient-to-tr from-[var(--sys-info-soft)]/10 to-transparent opacity-0 group-hover/chart2:opacity-100 transition-opacity rounded-[3rem]"></div>
+ <div class="flex justify-between items-center mb-12 relative z-10 bg-transparent text-left">
+ <div class="bg-transparent text-left">
+ <h5 class="text-base font-semibold text-[var(--sys-text-primary)] flex items-center gap-4 m-0">
+ <div class="w-10 h-10 rounded-xl bg-[var(--sys-info-soft)] flex items-center justify-center">
+ <span class="material-symbols-outlined text-[var(--sys-info-text)] text-2xl font-normal">timeline</span>
+ </div>
+ Xu hướng tăng trưởng 06 tháng
+ </h5>
+ <p class="text-[10px] font-semibold text-[var(--sys-text-secondary)] mt-2 ml-14 opacity-40">Trung bình đạt mức tăng 3.2% / kỳ</p>
+ </div>
+ <div class="flex items-center gap-4 text-[9px] font-semibold text-[var(--sys-text-secondary)] opacity-60">
+ <span class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-[var(--sys-brand-solid)]"></div> Quỹ lương</span>
+ </div>
+ </div>
+ 
+ <div class="flex-1 w-full relative mt-4 z-10 px-4">
+ <svg class="w-full h-[180px]" viewBox="0 0 500 160" preserveAspectRatio="none">
+ <defs>
+ <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
+ <stop offset="0%" stop-color="var(--sys-brand-solid)" stop-opacity="0.2" />
+ <stop offset="100%" stop-color="var(--sys-brand-solid)" stop-opacity="0" />
+ </linearGradient>
+ </defs>
+ <path class="transition-all duration-1000 ease-in-out" d="M 0 130 C 50 100 100 100 150 120 C 200 140 220 120 270 90 C 320 60 350 20 400 40 C 450 60 480 140 500 100 L 500 160 L 0 160 Z" fill="url(#curveGradient)" />
+ <path class="transition-all duration-1000 ease-in-out" d="M 0 130 C 50 100 100 100 150 120 C 200 140 220 120 270 90 C 320 60 350 20 400 40 C 450 60 480 140 500 100" fill="none" stroke="var(--sys-brand-solid)" stroke-width="4" stroke-linecap="round" />
+ </svg>
+ </div>
 
-    <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5">
-      
-      <!-- Left Chart Placeholder -->
-      <div class="bg-[var(--sys-bg-surface)] rounded-2xl border border-[var(--sys-border-subtle)] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] flex flex-col pt-7 pb-5 px-7 relative h-[320px]">
-        <div class="flex justify-between items-start mb-auto relative z-10">
-          <h2 class="text-[16px] font-[800] text-[var(--sys-text-primary)]">Quỹ lương theo Phòng ban</h2>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/60 bg-[var(--sys-bg-hover)] px-3 py-1 rounded-md">Đơn vị: Tỷ VNĐ</span>
-        </div>
-        
-        <!-- Mock bars -->
-        <div class="absolute inset-x-7 bottom-[60px] top-[70px] flex items-end justify-around pb-0 opacity-[0.05]">
-           <div class="w-12 bg-[var(--sys-brand-solid)] rounded-t-lg h-[80%]"></div>
-           <div class="w-12 bg-[var(--sys-brand-solid)] rounded-t-lg h-[50%]"></div>
-           <div class="w-12 bg-[var(--sys-brand-solid)] rounded-t-lg h-[30%]"></div>
-           <div class="w-12 bg-[var(--sys-brand-solid)] rounded-t-lg h-[20%]"></div>
-           <div class="w-12 bg-[var(--sys-brand-solid)] rounded-t-lg h-[10%]"></div>
-        </div>
+ <div class="flex justify-between pt-6 text-[9px] font-semibold text-[var(--sys-text-secondary)] opacity-30 z-10 px-4">
+ <span>Tháng 5</span>
+ <span>Tháng 6</span>
+ <span>Tháng 7</span>
+ <span>Tháng 8</span>
+ <span>Tháng 9</span>
+ <span>Tháng 10</span>
+ </div>
+ </div>
+ </div>
 
-        <div class="flex justify-around items-end pt-5 mt-auto relative z-10">
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/50 w-16 text-center italic">Kỹ thuật</span>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/50 w-16 text-center italic">Kinh doanh</span>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/50 w-16 text-center italic">Marketing</span>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/50 w-16 text-center italic">Vận hành</span>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/50 w-16 text-center italic">Nhân sự</span>
-        </div>
-      </div>
+ <!-- Bottom Table -->
+ <div class="bg-[var(--sys-bg-surface)] rounded-[3rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col hover:shadow-2xl transition-shadow duration-500">
+ <div class="px-10 py-10 border-b border-[var(--sys-border-subtle)] flex flex-col sm:flex-row justify-between items-center gap-6 bg-[var(--sys-bg-page)]/30">
+ <h2 class="text-base font-semibold text-[var(--sys-text-primary)] flex items-center gap-4 m-0">
+ <div class="w-12 h-12 rounded-[1.2rem] bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)]">
+ <span class="material-symbols-outlined text-2xl">table_rows</span>
+ </div>
+ Cơ cấu chi phí định tính theo bộ phận
+ </h2>
+ 
+ <div class="relative w-full max-w-sm group">
+ <span class="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-[var(--sys-text-secondary)] opacity-40 group-focus-within:text-[var(--sys-brand-solid)] transition-all">search</span>
+ <input type="text" placeholder="Truy xuất dữ liệu bộ phận..." class="w-full h-12 pl-14 pr-6 py-4 rounded-2xl bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] text-[10px] font-semibold text-[var(--sys-text-primary)] focus:outline-none focus:border-[var(--sys-brand-solid)] transition-all ">
+ </div>
+ </div>
 
-      <!-- Right Chart SVG -->
-      <!-- Right Chart SVG -->
-      <div class="bg-[var(--sys-bg-surface)] rounded-2xl border border-[var(--sys-border-subtle)] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] flex flex-col pt-7 pb-5 px-7 relative h-[320px]">
-        <div class="flex justify-between items-start z-10 relative">
-          <div>
-            <h2 class="text-[16px] font-[800] text-[var(--sys-text-primary)]">Xu hướng 6 tháng</h2>
-            <p class="text-[11px] font-semibold text-[var(--sys-text-secondary)]/50 mt-1 italic">Tăng trưởng trung bình 3.2%</p>
-          </div>
-          <div class="flex items-center gap-4 text-[11px] font-bold text-[var(--sys-text-secondary)]/60">
-            <div class="flex items-center gap-1.5 uppercase tracking-widest"><span class="w-2 h-2 rounded-full bg-[var(--sys-brand-solid)] shadow-sm"></span>Quỹ lương</div>
-          </div>
-        </div>
-        
-        <!-- Pure SVG approximation of the smooth curve in the image -->
-        <div class="flex-1 w-full relative mt-6">
-           <!-- The Area Chart -->
-           <svg class="w-full h-[160px]" viewBox="0 0 500 160" preserveAspectRatio="none">
-              <defs>
-                 <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="var(--sys-brand-solid-lch-30)" stop-opacity="0.15" />
-                    <stop offset="100%" stop-color="var(--sys-brand-solid-lch-30)" stop-opacity="0" />
-                 </linearGradient>
-              </defs>
-              
-              <!-- Filled Area -->
-              <path class="transition-all duration-1000 ease-in-out" d="M 0 130 C 50 100 100 100 150 120 C 200 140 220 120 270 90 C 320 60 350 20 400 40 C 450 60 480 140 500 100 L 500 160 L 0 160 Z" fill="url(#curveGradient)" />
-              
-              <!-- Smooth Line -->
-              <path class="transition-all duration-1000 ease-in-out" d="M 0 130 C 50 100 100 100 150 120 C 200 140 220 120 270 90 C 320 60 350 20 400 40 C 450 60 480 140 500 100" fill="none" stroke="var(--sys-brand-solid)" stroke-width="3.5" stroke-linecap="round" />
-           </svg>
-        </div>
-
-        <div class="flex justify-between items-end mt-2 pt-2 relative z-10 w-full px-2">
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/30 italic">Th5</span>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/30 italic">Th6</span>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/30 italic">Th7</span>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/30 italic">Th8</span>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/30 italic">Th9</span>
-          <span class="text-[11px] font-bold text-[var(--sys-text-secondary)]/30 italic">Th10</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom Lists Row -->
-    <div class="bg-[var(--sys-bg-surface)] rounded-2xl border border-[var(--sys-border-subtle)] shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] p-7 flex flex-col">
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-[16px] font-[800] text-[var(--sys-text-primary)]">Chi tiết chi phí theo bộ phận</h2>
-        
-        <div class="relative w-64 hidden sm:block">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[var(--sys-text-secondary)]/40 text-[18px]">search</span>
-          <input type="text" placeholder="Tìm bộ phận..." class="w-full pl-9 pr-4 py-2 bg-[var(--sys-bg-hover)]/30 border border-[var(--sys-border-subtle)] rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-[var(--sys-brand-solid)]/20 focus:border-[var(--sys-brand-solid)] transition-all font-medium text-[var(--sys-text-primary)]">
-        </div>
-      </div>
-
-      <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
-          <thead>
-            <tr class="border-b border-[var(--sys-border-subtle)]">
-              <th class="py-4 px-2 text-[12px] font-[800] text-[var(--sys-text-secondary)] whitespace-nowrap uppercase tracking-widest italic">Phòng ban</th>
-              <th class="py-4 px-2 text-[12px] font-[800] text-[var(--sys-text-secondary)] whitespace-nowrap text-center uppercase tracking-widest italic">Số nhân viên</th>
-              <th class="py-4 px-2 text-[12px] font-[800] text-[var(--sys-text-secondary)] whitespace-nowrap text-right uppercase tracking-widest italic">Tổng lương cơ bản</th>
-              <th class="py-4 px-2 text-[12px] font-[800] text-[var(--sys-text-secondary)] whitespace-nowrap text-right uppercase tracking-widest italic">Thưởng & Phụ cấp</th>
-              <th class="py-4 px-2 text-[12px] font-[800] text-[var(--sys-text-secondary)] whitespace-nowrap text-right uppercase tracking-widest italic">Tổng chi phí</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-[var(--sys-border-subtle)]/30">
-            <tr class="hover:bg-[var(--sys-bg-hover)] transition-colors group">
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-text-primary)]">Phòng Kỹ thuật</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-center uppercase tracking-tighter">120</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">2.100.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">450.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-brand-solid)] text-right uppercase tracking-tighter">2.550.000.000đ</td>
-            </tr>
-            <tr class="hover:bg-[var(--sys-bg-hover)] transition-colors group">
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-text-primary)]">Phòng Kinh doanh</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-center uppercase tracking-tighter">85</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">1.200.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">300.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-brand-solid)] text-right uppercase tracking-tighter">1.500.000.000đ</td>
-            </tr>
-            <tr class="hover:bg-[var(--sys-bg-hover)] transition-colors group">
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-text-primary)]">Phòng Marketing</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-center uppercase tracking-tighter">45</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">650.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">60.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-brand-solid)] text-right uppercase tracking-tighter">710.000.000đ</td>
-            </tr>
-             <tr class="hover:bg-[var(--sys-bg-hover)] transition-colors group">
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-text-primary)]">Phòng Vận hành</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-center uppercase tracking-tighter">30</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">350.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">25.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-brand-solid)] text-right uppercase tracking-tighter">375.000.000đ</td>
-            </tr>
-             <tr class="hover:bg-[var(--sys-bg-hover)] transition-colors group border-b-2 border-[var(--sys-border-subtle)]">
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-text-primary)]">Phòng Nhân sự</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-center uppercase tracking-tighter">12</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">150.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-medium text-[var(--sys-text-secondary)]/80 text-right uppercase tracking-tighter">15.000.000đ</td>
-              <td class="py-4 px-2 text-[13px] font-[800] text-[var(--sys-brand-solid)] text-right uppercase tracking-tighter">165.000.000đ</td>
-            </tr>
-             <tr class="bg-[var(--sys-bg-hover)]/30">
-              <td class="py-5 px-2 text-[14px] font-[900] text-[var(--sys-text-primary)] uppercase italic">Tổng cộng</td>
-              <td class="py-5 px-2 text-[14px] font-[900] text-[var(--sys-text-primary)] text-center uppercase tracking-tighter">292</td>
-              <td class="py-5 px-2 text-[14px] font-[900] text-[var(--sys-text-primary)] text-right uppercase tracking-tighter">4.450.000.000đ</td>
-              <td class="py-5 px-2 text-[14px] font-[900] text-[var(--sys-text-primary)] text-right uppercase tracking-tighter">850.000.000đ</td>
-              <td class="py-5 px-2 text-[14px] font-[900] text-[var(--sys-brand-solid)] text-right uppercase tracking-tighter">5.300.000.000đ</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      
-      <div class="mt-4 flex items-center justify-between text-[12px] text-[var(--sys-text-secondary)]/40 italic font-bold">
-        <span>Hiển thị 5 trên 5 bộ phận</span>
-        <button class="w-8 h-8 rounded border border-[var(--sys-border-subtle)] flex items-center justify-center hover:bg-[var(--sys-bg-hover)] transition-colors font-black">1</button>
-      </div>
-    </div>
-  </div>
+ <div class="overflow-x-auto custom-scrollbar">
+ <table class="min-w-max w-full text-left border-separate border-spacing-0">
+ <thead>
+ <tr>
+ <th class="whitespace-nowrap px-12 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50">Phòng ban quản trị</th>
+ <th class="whitespace-nowrap px-8 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-center">Định biên</th>
+ <th class="whitespace-nowrap px-8 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-right">Lương căn bản</th>
+ <th class="whitespace-nowrap px-8 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-right">Phụ cấp (+)</th>
+ <th class="whitespace-nowrap px-12 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 text-right">Hợp nhất chi phí</th>
+ </tr>
+ </thead>
+ <tbody class="divide-y divide-[var(--sys-border-subtle)]/30">
+ <tr v-for="(item, idx) in [
+ { name: 'Khối Kỹ thuật Cloud', count: 120, base: '2.100B', bonus: '450M', total: '2.550B' },
+ { name: 'Phát triển Kinh doanh', count: 85, base: '1.200B', bonus: '300M', total: '1.500B' },
+ { name: 'Marketing & Sáng tạo', count: 45, base: '650M', bonus: '60M', total: '710M' },
+ { name: 'Quản trị Vận hành', count: 30, base: '350M', bonus: '25M', total: '375M' },
+ { name: 'Nguồn nhân lực (HR)', count: 12, base: '150M', bonus: '15M', total: '165M' }
+ ]" :key="idx" class="group transition-all duration-300 bg-transparent hover:bg-[var(--sys-bg-hover)]">
+ <td class="whitespace-nowrap px-12 py-6 bg-transparent border-b border-[var(--sys-border-subtle)]">
+ <span class="text-sm font-semibold text-[var(--sys-text-primary)] ">{{ item.name }}</span>
+ </td>
+ <td class="whitespace-nowrap px-8 py-6 text-center bg-transparent border-b border-[var(--sys-border-subtle)]">
+ <span class="px-4 py-1.5 bg-[var(--sys-bg-hover)] border border-[var(--sys-border-subtle)] rounded-xl text-[10px] font-semibold group-hover:border-[var(--sys-brand-solid)] transition-all ">{{ item.count }} NV</span>
+ </td>
+ <td class="whitespace-nowrap px-8 py-6 text-right bg-transparent border-b border-[var(--sys-border-subtle)]">
+ <span class="text-sm font-semibold text-[var(--sys-text-secondary)] opacity-60">{{ item.base }}</span>
+ </td>
+ <td class="whitespace-nowrap px-8 py-6 text-right bg-transparent border-b border-[var(--sys-border-subtle)]">
+ <span class="text-sm font-semibold text-[var(--sys-success-text)] ">+{{ item.bonus }}</span>
+ </td>
+ <td class="whitespace-nowrap px-12 py-6 text-right bg-transparent border-b border-[var(--sys-border-subtle)]">
+ <span class="text-lg font-semibold text-[var(--sys-brand-solid)] ">{{ item.total }}</span>
+ </td>
+ </tr>
+ <tr class="bg-[var(--sys-bg-page)]/50">
+ <td class="whitespace-nowrap px-12 py-8 text-base font-semibold text-[var(--sys-text-primary)] ">Hợp nhất toàn đoàn</td>
+ <td class="whitespace-nowrap px-8 py-8 text-center text-base font-semibold text-[var(--sys-text-primary)] ">292 NV</td>
+ <td class="whitespace-nowrap px-8 py-8 text-right text-base font-semibold text-[var(--sys-text-secondary)] opacity-40">4.450B</td>
+ <td class="whitespace-nowrap px-8 py-8 text-right text-base font-semibold text-[var(--sys-text-secondary)] opacity-40">850M</td>
+ <td class="whitespace-nowrap px-12 py-8 text-right text-2xl font-semibold text-[var(--sys-brand-solid)] shadow-inner">5.300B VNĐ</td>
+ </tr>
+ </tbody>
+ </table>
+ </div>
+ </div>
+ </div>
 </template>
 
 <script setup>
 </script>
 
 <style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+ width: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+ background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+ background: var(--sys-border-subtle);
+ border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+ background: var(--sys-brand-solid);
+}
+
+.space-y-10 {
+ animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeIn {
+ from { opacity: 0; transform: translateY(20px); }
+ to { opacity: 1; transform: translateY(0); }
+}
+</style>
+
+
+<script setup>
+</script>
+
+<style scoped>
 .material-symbols-outlined {
-  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+ font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
 }
 </style>
