@@ -176,6 +176,18 @@ const routes = [
                         name: 'giam-doc-bang-luong',
                         component: () => import('../View/admin/GiamDoc/DBGD_BangLuong.vue'),
                         meta: { index: 3 }
+                  },
+                  {
+                        path: 'chuyen-can',
+                        name: 'giam-doc-chuyen-can',
+                        component: () => import('../View/admin/GiamDoc/DBGD_ChuyenCan.vue'),
+                        meta: { index: 4 }
+                  },
+                  {
+                        path: 'bien-dong',
+                        name: 'giam-doc-bien-dong',
+                        component: () => import('../View/admin/GiamDoc/DBGD_BienDong.vue'),
+                        meta: { index: 5 }
                   }
             ]
       }
