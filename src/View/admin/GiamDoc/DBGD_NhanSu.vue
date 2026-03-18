@@ -1,248 +1,309 @@
 <template>
- <div class="space-y-10 pb-10">
- <!-- Header Area -->
- <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-transparent text-left">
- <div class="bg-transparent text-left">
- <h1 class="text-3xl font-semibold text-[var(--sys-text-primary)] mb-1">Kiến trúc Quản trị</h1>
- <p class="text-[10px] text-[var(--sys-text-secondary)] font-semibold opacity-60">Dữ liệu chiến lược cập nhật theo thời gian thực: Thứ Hai, 24 Tháng 5, 2024</p>
- </div>
- <div class="flex items-center gap-4 bg-transparent">
- <button class="h-12 px-6 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl flex items-center gap-3 text-[10px] font-semibold text-[var(--sys-text-primary)] hover:border-[var(--sys-brand-solid)] transition-all shadow-sm">
- <span class="material-symbols-outlined text-xl">calendar_month</span>
- 30 Ngày Quy Mô
- </button>
- <button class="h-12 px-8 bg-[var(--sys-brand-solid)] text-white rounded-2xl flex items-center gap-3 text-[10px] font-semibold hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid)]/20 transition-all active:scale-95">
- <span class="material-symbols-outlined text-xl">file_download</span>
- Xuất Báo Cáo CEO
- </button>
- </div>
- </div>
+  <div class="p-6 md:p-8 space-y-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <h1 class="text-[24px] font-[800] text-slate-800 tracking-tight">Bảng Điều Khiển Quản Trị</h1>
+        <p class="text-sm text-slate-500 mt-1 font-medium">Dữ liệu chiến lược cập nhật theo thời gian thực: Thứ Hai, 24 Tháng 5, 2024</p>
+      </div>
+      <div class="flex items-center gap-3">
+        <button class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
+          <span class="material-symbols-outlined text-[18px]">calendar_today</span>
+          30 ngày qua
+        </button>
+        <button class="flex items-center gap-2 px-5 py-2.5 bg-[#3B5BDB] border border-transparent rounded-xl text-sm font-bold text-white hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20">
+          <span class="material-symbols-outlined text-[18px]">download</span>
+          Xuất báo cáo CEO
+        </button>
+      </div>
+    </div>
 
- <!-- 4 KPI Cards -->
- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
- <div v-for="(stat, idx) in [
- { label: 'Tổng lực lượng', value: '1,250', sub: 'Mục tiêu quý: 1,300', change: '+12%', icon: 'groups', color: 'brand' },
- { label: 'Tỷ lệ biến động', value: '2.4%', sub: 'Dưới ngưỡng trung bình', change: '-0.5%', icon: 'person_remove', color: 'warning' },
- { label: 'Chỉ số hài lòng', value: '88%', sub: 'Tăng mức gắn kết', change: '-2%', icon: 'sentiment_satisfied', color: 'danger' },
- { label: 'Hiệu suất chung', value: '92.5%', sub: 'Theo định chuẩn KPI', change: '+5%', icon: 'bolt', color: 'success' }
- ]" :key="idx" 
- class="bg-[var(--sys-bg-surface)] p-8 rounded-[2.5rem] border border-[var(--sys-border-subtle)] shadow-sm hover:shadow-2xl hover:translate-y-[-4px] transition-all duration-500 group relative overflow-hidden">
- <div class="absolute top-0 right-0 w-40 h-40 bg-[var(--sys-brand-soft)] rounded-full -mr-20 -mt-20 opacity-0 group-hover:opacity-40 transition-all duration-700 blur-3xl"></div>
- <div class="flex justify-between items-start mb-10 relative z-10 bg-transparent">
- <div :class="`w-16 h-16 rounded-[1.5rem] flex items-center justify-center border transition-all shadow-lg ${
- stat.color === 'brand' ? 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]' :
- stat.color === 'success' ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' :
- stat.color === 'danger' ? 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]' :
- 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]'
- }`">
- <span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">{{ stat.icon }}</span>
- </div>
- <span :class="`px-4 py-2 rounded-xl text-[9px] font-semibold border shadow-sm transition-all group-hover:scale-110 ${
- stat.change.startsWith('+') ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]'
- }`">{{ stat.change }}</span>
- </div>
- <div class="relative z-10 bg-transparent text-left">
- <p class="text-[10px] font-semibold text-[var(--sys-text-secondary)] mb-2.5 opacity-40">{{ stat.label }}</p>
- <h2 class="text-4xl font-semibold text-[var(--sys-text-primary)] mb-2">{{ stat.value }}</h2>
- <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] opacity-30 ">{{ stat.sub }}</p>
- </div>
- </div>
- </div>
+    <!-- ✅ 4 KPI Cards – từ nhanSuKpiCards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
+      <div
+        v-for="(card, i) in nhanSuKpiCards" :key="card.id"
+        class="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all animate-chart"
+        :style="{ animationDelay: (i * 100) + 'ms' }"
+      >
+        <div class="flex justify-between items-start">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" :class="card.iconBg">
+            <span class="material-symbols-outlined text-[24px]" :class="card.iconColor">{{ card.icon }}</span>
+          </div>
+          <span class="text-[11px] font-bold px-2.5 py-1 rounded-full" :class="card.badgeClass">{{ card.badge }}</span>
+        </div>
+        <div class="mt-5">
+          <h3 class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">{{ card.label }}</h3>
+          <p class="text-[32px] font-[900] text-slate-800 leading-tight mt-1">{{ card.value }}</p>
+          <p class="text-[11px] font-semibold text-slate-400 mt-2">{{ card.note }}</p>
+        </div>
+      </div>
+    </div>
 
- <!-- Charts Section -->
- <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
- <div class="bg-[var(--sys-bg-surface)] p-10 rounded-[3rem] border border-[var(--sys-border-subtle)] shadow-sm flex flex-col hover:border-[var(--sys-brand-solid)] transition-all duration-500 relative group/chart-bg">
- <div class="absolute inset-0 bg-gradient-to-br from-[var(--sys-brand-soft)]/20 to-transparent opacity-0 group-hover/chart-bg:opacity-100 transition-opacity rounded-[3rem]"></div>
- <div class="flex justify-between items-center mb-12 relative z-10">
- <h5 class="text-base font-semibold text-[var(--sys-text-primary)] flex items-center gap-4 m-0">
- <div class="w-10 h-10 rounded-xl bg-[var(--sys-brand-soft)] flex items-center justify-center">
- <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-2xl font-normal">leaderboard</span>
- </div>
- Cơ cấu nhân sự theo cấp bậc
- </h5>
- <button class="w-10 h-10 rounded-xl bg-[var(--sys-bg-hover)] flex items-center justify-center text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] transition-all border border-[var(--sys-border-subtle)]">
- <span class="material-symbols-outlined text-xl">more_horiz</span>
- </button>
- </div>
- 
- <div class="flex items-end justify-between flex-1 border-b border-[var(--sys-border-subtle)] pb-6 relative min-h-[300px] z-10 px-4">
- <div class="relative group/bar" v-for="(val, idx) in [60, 120, 180, 240, 90]" :key="idx">
- <div class="w-12 bg-gradient-to-t from-[var(--sys-brand-solid)] to-[var(--sys-brand-hover)] rounded-t-2xl transition-all group-hover/bar:scale-x-110 shadow-xl shadow-[var(--sys-brand-solid)]/10" :style="{ height: val + 'px' }"></div>
- </div>
- </div>
+    <!-- Charts Row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
+      
+      <!-- Chart: Cơ cấu nhân sự theo cấp bậc -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] flex flex-col pt-6 pb-5 px-6 relative h-[360px] animate-chart" style="animation-delay: 200ms">
+        <div class="flex justify-between items-start mb-auto relative z-10">
+          <div>
+            <h2 class="text-[16px] font-[800] text-slate-800">Cơ cấu nhân sự theo cấp bậc</h2>
+            <p class="text-[12px] font-semibold text-slate-400 mt-1">Phân bổ 1,250 nhân sự toàn công ty</p>
+          </div>
+          <span class="text-[11px] font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg border border-blue-100 hidden sm:block">Đơn vị: Người</span>
+        </div>
+        
+        <div class="flex-1 relative w-full mt-10 mb-2 z-10">
+          <!-- Background Grid Lines -->
+          <div class="absolute inset-x-0 bottom-0 top-0 flex flex-col justify-between">
+            <div class="border-t border-slate-100 border-dashed w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2 text-[10px] font-bold text-slate-400">500</span></div>
+            <div class="border-t border-slate-100 border-dashed w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2 text-[10px] font-bold text-slate-400">250</span></div>
+            <div class="border-t border-slate-200 w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2 text-[10px] font-bold text-slate-400">0</span></div>
+          </div>
+          
+          <!-- Column Bars -->
+          <div class="absolute inset-0 ml-8 flex items-end justify-around pb-[1px]" style="height: 100%;">
+             <!-- Intern -->
+             <div class="w-10 md:w-14 bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-[0_-4px_16px_rgba(59,130,246,0.3)] hover:-translate-y-1 cursor-pointer" style="height: 25%">
+                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">10% Tổng số</div>
+                <span class="absolute -top-5 text-[12px] font-[900] text-slate-700">125</span>
+             </div>
+             <!-- Junior -->
+             <div class="w-10 md:w-14 bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-[0_-4px_16px_rgba(99,102,241,0.3)] hover:-translate-y-1 cursor-pointer" style="height: 90%">
+                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">36% Tổng số</div>
+                <span class="absolute -top-5 text-[12px] font-[900] text-slate-700">450</span>
+             </div>
+             <!-- Senior -->
+             <div class="w-10 md:w-14 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-[0_-4px_16px_rgba(59,130,246,0.3)] hover:-translate-y-1 cursor-pointer" style="height: 76%">
+                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">30% Tổng số</div>
+                <span class="absolute -top-5 text-[12px] font-[900] text-slate-700">380</span>
+             </div>
+             <!-- Manager -->
+             <div class="w-10 md:w-14 bg-gradient-to-t from-cyan-500 to-cyan-400 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-[0_-4px_16px_rgba(6,182,212,0.3)] hover:-translate-y-1 cursor-pointer" style="height: 44%">
+                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">18% Tổng số</div>
+                <span class="absolute -top-5 text-[12px] font-[900] text-slate-700">220</span>
+             </div>
+             <!-- Director -->
+             <div class="w-10 md:w-14 bg-gradient-to-t from-slate-400 to-slate-300 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-sm hover:-translate-y-1 cursor-pointer" style="height: 15%">
+                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">6% Ban giám đốc</div>
+                <span class="absolute -top-5 text-[12px] font-[900] text-slate-600">75</span>
+             </div>
+          </div>
+        </div>
 
- <div class="flex justify-between pt-8 text-[9px] font-semibold text-[var(--sys-text-secondary)] opacity-40 z-10 px-2">
- <span class="w-12 text-center">Intern</span>
- <span class="w-12 text-center">Junior</span>
- <span class="w-12 text-center">Senior</span>
- <span class="w-12 text-center">Manager</span>
- <span class="w-12 text-center">Director</span>
- </div>
- </div>
+        <div class="flex justify-around items-end pt-5 ml-8 relative z-10 border-t border-slate-100 mt-2">
+          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Intern</span>
+          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Junior</span>
+          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Senior</span>
+          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Manager</span>
+          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Director</span>
+        </div>
+      </div>
 
- <div class="bg-[var(--sys-bg-surface)] p-10 rounded-[3rem] border border-[var(--sys-border-subtle)] shadow-sm flex flex-col hover:border-[var(--sys-brand-solid)] transition-all duration-500 relative group/donut">
- <div class="absolute inset-0 bg-gradient-to-tr from-[var(--sys-success-soft)]/10 to-transparent opacity-0 group-hover/donut:opacity-100 transition-opacity rounded-[3rem]"></div>
- <div class="flex justify-between items-center mb-12 relative z-10">
- <h5 class="text-base font-semibold text-[var(--sys-text-primary)] flex items-center gap-4 m-0">
- <div class="w-10 h-10 rounded-xl bg-[var(--sys-success-soft)] flex items-center justify-center">
- <span class="material-symbols-outlined text-[var(--sys-success-text)] text-2xl font-normal">query_stats</span>
- </div>
- Biến động nguồn lực (06 tháng)
- </h5>
- <div class="flex items-center gap-6 text-[9px] font-semibold text-[var(--sys-text-secondary)] opacity-60">
- <span class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-[var(--sys-brand-solid)] shadow-lg shadow-[var(--sys-brand-solid)]/20"></div> Tuyển mới</span>
- <span class="flex items-center gap-2"><div class="w-2.5 h-2.5 rounded-full bg-[var(--sys-bg-hover)] border border-[var(--sys-border-subtle)]"></div> Nghỉ việc</span>
- </div>
- </div>
- 
- <div class="flex-1 w-full relative mt-4 z-10 px-4">
- <svg class="w-full h-[200px]" viewBox="0 0 500 180" preserveAspectRatio="none">
- <defs>
- <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
- <stop offset="0%" stop-color="var(--sys-brand-solid)" stop-opacity="0.2" />
- <stop offset="100%" stop-color="var(--sys-brand-solid)" stop-opacity="0" />
- </linearGradient>
- </defs>
- <path class="transition-all duration-1000 ease-in-out" d="M 0 150 C 60 140 90 100 140 90 C 190 80 220 70 270 75 C 320 80 360 50 400 30 C 440 10 470 30 500 45 L 500 180 L 0 180 Z" fill="url(#curveGradient)" />
- <path class="transition-all duration-1000 ease-in-out" d="M 0 150 C 60 140 90 100 140 90 C 190 80 220 70 270 75 C 320 80 360 50 400 30 C 440 10 470 30 500 45" fill="none" stroke="var(--sys-brand-solid)" stroke-width="4" stroke-linecap="round" />
- <circle cx="140" cy="90" r="7" fill="white" stroke="var(--sys-brand-solid)" stroke-width="3" />
- <circle cx="270" cy="75" r="7" fill="white" stroke="var(--sys-brand-solid)" stroke-width="3" />
- <circle cx="400" cy="30" r="7" fill="white" stroke="var(--sys-brand-solid)" stroke-width="3" />
- </svg>
- </div>
+      <!-- Chart: Biến động nhân sự SVG (Premium SaaS Design) -->
+      <div class="bg-gradient-to-br from-white to-slate-50/50 rounded-2xl border border-slate-100 shadow-[0_4px_24px_-4px_rgba(0,0,0,0.03)] flex flex-col pt-6 pb-6 px-7 relative h-[360px] overflow-hidden group/premium">
+        <!-- Subtle decorative corners -->
+        <div class="absolute -top-32 -right-32 w-64 h-64 bg-blue-400/5 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-rose-400/5 rounded-full blur-3xl pointer-events-none"></div>
 
- <div class="flex justify-between pt-6 text-[9px] font-semibold text-[var(--sys-text-secondary)] opacity-30 z-10 px-4">
- <span>Tháng 1</span>
- <span>Tháng 2</span>
- <span>Tháng 3</span>
- <span>Tháng 4</span>
- <span>Tháng 5</span>
- <span>Tháng 6</span>
- </div>
- </div>
- </div>
+        <div class="flex justify-between items-start z-10 relative mb-4">
+          <div>
+            <h2 class="text-[18px] font-[800] text-slate-800 tracking-tight font-sans">Biến động nhân lực</h2>
+            <p class="text-[12px] font-medium text-slate-400 mt-1">So sánh giữa tuyển vào và nghỉ việc (6 tháng)</p>
+          </div>
+          <!-- Pill-style Modern Toggles -->
+          <div class="flex items-center gap-2 p-1 bg-slate-50 rounded-full border border-slate-100 shadow-inner">
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white shadow-sm text-[11px] font-[800] text-slate-700 transition-all hover:text-blue-600 border border-slate-100/50">
+              <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-blue-500 to-indigo-500 shadow-sm shadow-blue-500/30"></span>
+              Tuyển vào
+            </button>
+            <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold text-slate-500 transition-all hover:bg-white hover:text-rose-500 hover:shadow-sm border border-transparent">
+              <span class="w-2.5 h-2.5 rounded-full bg-gradient-to-tr from-rose-400 to-rose-300 opacity-80"></span>
+              Nghỉ việc
+            </button>
+          </div>
+        </div>
+        
+        <!-- Y-Axis Lines Backdrop (HTML for sharp text rendering) -->
+        <div class="absolute inset-x-7 top-[91px] bottom-[50px] flex flex-col justify-between pointer-events-none z-0">
+          <div class="border-t border-slate-100/60 w-full h-0 relative"><span class="absolute -top-[9px] bg-transparent pr-2 text-[10px] font-bold text-slate-300/80">120</span></div>
+          <div class="border-t border-slate-100/60 w-full h-0 relative"><span class="absolute -top-[9px] bg-transparent pr-2 text-[10px] font-bold text-slate-300/80">60</span></div>
+          <div class="border-t border-slate-200/80 w-full h-0 relative"><span class="absolute -top-[9px] bg-transparent pr-2 text-[10px] font-bold text-slate-300/80">0</span></div>
+        </div>
 
- <!-- Bottom Lists Row -->
- <div class="flex flex-col lg:flex-row gap-8">
- <!-- Top Performers -->
- <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] shadow-sm lg:w-3/5 rounded-[3rem] overflow-hidden flex flex-col hover:shadow-2xl transition-all duration-500">
- <div class="px-10 py-10 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-page)]/30">
- <h2 class="text-base font-semibold text-[var(--sys-text-primary)] flex items-center gap-4 m-0">
- <div class="w-12 h-12 rounded-[1.2rem] bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)]">
- <span class="material-symbols-outlined text-2xl">workspace_premium</span>
- </div>
- Nhân sự ưu tú & Hiệu suất cao
- </h2>
- <button class="text-[10px] font-semibold text-[var(--sys-brand-solid)] hover:opacity-60 transition-all active:scale-95">Xem toàn bộ danh mục</button>
- </div>
+        <!-- SVG Line Chart Area -->
+        <div class="flex-1 w-full relative -ml-1 mt-6 overflow-visible min-h-0 pl-10 z-10">
+           <svg class="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 500 180" preserveAspectRatio="none">
 
- <div class="overflow-x-auto custom-scrollbar">
- <table class="min-w-max w-full text-left border-separate border-spacing-0">
- <thead>
- <tr class="bg-[var(--sys-bg-page)]/50">
- <th class="whitespace-nowrap px-10 py-5 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)]">Định danh nhân sự</th>
- <th class="whitespace-nowrap px-8 py-5 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)]">Chức danh chiến lược</th>
- <th class="whitespace-nowrap px-8 py-5 text-[10px] font-semibold text-[var(--sys-text-secondary)] text-center border-b border-[var(--sys-border-subtle)]">Hiệu suất</th>
- <th class="whitespace-nowrap px-10 py-5 text-[10px] font-semibold text-[var(--sys-text-secondary)] text-center border-b border-[var(--sys-border-subtle)]">Đánh giá định tính</th>
- </tr>
- </thead>
- <tbody class="divide-y divide-[var(--sys-border-subtle)]/10">
- <tr v-for="(emp, idx) in [
- { name: 'Lê Minh Anh', mail: 'minhanh.le@company.com', role: 'Head of Marketing', perf: 98, status: 'Excellent', color: 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)]', img: '5' },
- { name: 'Nguyễn Hoàng Nam', mail: 'nam.nguyen@company.com', role: 'CTO Cloud Service', perf: 95, status: 'High Potential', color: 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)]', img: '11' },
- { name: 'Trần Thu Hà', mail: 'ha.tran@company.com', role: 'HR Manager Lead', perf: 92, status: 'Top Talent', color: 'bg-[var(--sys-info-soft)] text-[var(--sys-info-text)]', img: '35' }
- ]" :key="idx" class="group hover:bg-[var(--sys-bg-hover)] transition-all">
- <td class="whitespace-nowrap px-10 py-6 border-b border-[var(--sys-border-subtle)]">
- <div class="flex items-center gap-4">
- <img :src="`https://i.pravatar.cc/150?img=${emp.img}`" class="w-12 h-12 rounded-2xl object-cover border-2 border-[var(--sys-border-subtle)] shadow-sm group-hover:scale-110 transition-transform" />
- <div>
- <p class="text-sm font-semibold text-[var(--sys-text-primary)] leading-tight ">{{ emp.name }}</p>
- <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] mt-1 opacity-40">{{ emp.mail }}</p>
- </div>
- </div>
- </td>
- <td class="whitespace-nowrap px-8 py-6 text-xs font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] opacity-60 ">{{ emp.role }}</td>
- <td class="whitespace-nowrap px-8 py-6 text-center border-b border-[var(--sys-border-subtle)] w-48">
- <span class="text-[11px] font-semibold text-[var(--sys-brand-solid)] mb-2 inline-block ">{{ emp.perf }}%</span>
- <div class="w-full h-1.5 bg-[var(--sys-bg-hover)] rounded-full overflow-hidden border border-[var(--sys-border-subtle)]">
- <div class="h-full bg-[var(--sys-brand-solid)] rounded-full shadow-[0_0_10px_var(--sys-brand-solid)]" :style="{ width: emp.perf + '%' }"></div>
- </div>
- </td>
- <td class="whitespace-nowrap px-10 py-6 text-center border-b border-[var(--sys-border-subtle)]">
- <span :class="`inline-flex items-center px-4 py-1.5 rounded-xl text-[9px] font-semibold shadow-sm border border-transparent group-hover:border-current transition-all ${emp.color}`">
- {{ emp.status }}
- </span>
- </td>
- </tr>
- </tbody>
- </table>
- </div>
- </div>
 
- <!-- Department Rankings -->
- <div class="bg-[var(--sys-bg-surface)] rounded-[3rem] border border-[var(--sys-border-subtle)] shadow-sm lg:w-2/5 p-10 flex flex-col hover:shadow-2xl transition-all duration-500">
- <h2 class="text-base font-semibold text-[var(--sys-text-primary)] flex items-center gap-4 m-0 mb-10">
- <div class="w-10 h-10 rounded-xl bg-[var(--sys-info-soft)] text-[var(--sys-info-text)] flex items-center justify-center">
- <span class="material-symbols-outlined text-2xl">analytics</span>
- </div>
- Xếp hạng năng lực tổ chức
- </h2>
- 
- <div class="flex flex-col flex-1 justify-between gap-10">
- <div v-for="(dept, idx) in [
- { name: 'Công nghệ (IT & Cloud)', val: 96.8, note: 'Dẫn đầu hiệu suất KPI', trend: 'up' },
- { name: 'Phát triển Kinh doanh', val: 94.2, note: 'Vượt chỉ tiêu doanh thu 15%', trend: 'up' },
- { name: 'Quản trị Nhân sự (HR)', val: 89.5, note: 'Số hóa quy trình vận hành', trend: 'neutral' },
- { name: 'Tài chính - Kế toán', val: 82.0, note: 'Tối ưu hóa dòng tiền', trend: 'down' }
- ]" :key="idx" class="group/rank">
- <div class="flex justify-between items-end mb-3">
- <span class="text-xs font-semibold text-[var(--sys-text-primary)] group-hover/rank:text-[var(--sys-brand-solid)] transition-all">{{ dept.name }}</span>
- <span class="text-base font-semibold text-[var(--sys-brand-solid)] ">{{ dept.val }}%</span>
- </div>
- <div class="w-full h-2 bg-[var(--sys-bg-hover)] rounded-full overflow-hidden mb-3 border border-[var(--sys-border-subtle)] group-hover/rank:scale-y-125 transition-all">
- <div class="h-full bg-[var(--sys-brand-solid)] rounded-full transition-all duration-1000 shadow-lg" :style="{ width: dept.val + '%' }"></div>
- </div>
- <div class="flex justify-between items-center text-[10px] font-semibold text-[var(--sys-text-secondary)] opacity-40">
- <span>{{ dept.note }}</span>
- <span class="material-symbols-outlined text-base" :class="dept.trend === 'up' ? 'text-[var(--sys-success-text)]' : dept.trend === 'down' ? 'text-[var(--sys-danger-text)]' : 'opacity-0'">
- {{ dept.trend === 'up' ? 'trending_up' : 'trending_down' }}
- </span>
- </div>
- </div>
- </div>
- </div>
- </div>
- </div>
+              <defs>
+                 <linearGradient id="premiumBlue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.25" />
+                    <stop offset="100%" stop-color="#6366F1" stop-opacity="0.0" />
+                 </linearGradient>
+                 <linearGradient id="premiumRed" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#FB7185" stop-opacity="0.15" />
+                    <stop offset="100%" stop-color="#FB7185" stop-opacity="0.0" />
+                 </linearGradient>
+                 <linearGradient id="lineBlue" x1="0" y1="0" x2="1" y2="0">
+                    <stop offset="0%" stop-color="#3B82F6" />
+                    <stop offset="100%" stop-color="#6366F1" />
+                 </linearGradient>
+                 <filter id="glowBlue" x="-20%" y="-20%" width="140%" height="140%">
+                   <feGaussianBlur stdDeviation="3" result="blur" />
+                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                 </filter>
+                 <filter id="glowRed" x="-20%" y="-20%" width="140%" height="140%">
+                   <feGaussianBlur stdDeviation="2.5" result="blur" />
+                   <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                 </filter>
+              </defs>
+
+              <!-- Filled Area (Nghỉ việc) -->
+              <path class="fade-area" d="M 0 160 C 60 140 90 150 140 130 C 190 110 220 120 270 120 C 320 120 360 80 400 90 C 440 100 470 110 500 120 L 500 180 L 0 180 Z" fill="url(#premiumRed)" />
+              <!-- Smooth Line (Nghỉ việc) - Dashed -->
+              <path class="draw-red" d="M 0 160 C 60 140 90 150 140 130 C 190 110 220 120 270 120 C 320 120 360 80 400 90 C 440 100 470 110 500 120" fill="none" stroke="#FB7185" stroke-width="2.5" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+
+              <!-- Data Points (Nghỉ việc) -->
+              <g class="fade-dots">
+                <circle cx="140" cy="130" r="4" fill="#fff" stroke="#FB7185" stroke-width="2.5" vector-effect="non-scaling-stroke" />
+                <circle cx="270" cy="120" r="4" fill="#fff" stroke="#FB7185" stroke-width="2.5" vector-effect="non-scaling-stroke" />
+                <circle cx="400" cy="90" r="4" fill="#fff" stroke="#FB7185" stroke-width="3" filter="url(#glowRed)" vector-effect="non-scaling-stroke" />
+              </g>
+              
+              <!-- Filled Area (Tuyển vào) -->
+              <path class="fade-area" d="M 0 140 C 60 110 90 60 140 70 C 190 80 220 40 270 50 C 320 60 360 20 400 40 C 440 60 470 30 500 45 L 500 180 L 0 180 Z" fill="url(#premiumBlue)" />
+              <!-- Smooth Line (Tuyển vào) -->
+              <path class="draw-blue" d="M 0 140 C 60 110 90 60 140 70 C 190 80 220 40 270 50 C 320 60 360 20 400 40 C 440 60 470 30 500 45" fill="none" stroke="url(#lineBlue)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+              
+              <!-- Data Points (Tuyển vào) -->
+              <g class="fade-dots">
+                <circle cx="140" cy="70" r="4" fill="#fff" stroke="#2563EB" stroke-width="2.5" vector-effect="non-scaling-stroke" />
+                <circle cx="270" cy="50" r="5" fill="#fff" stroke="#4F46E5" stroke-width="3.5" filter="url(#glowBlue)" vector-effect="non-scaling-stroke" />
+                <circle cx="400" cy="40" r="4" fill="#fff" stroke="#6366F1" stroke-width="2.5" vector-effect="non-scaling-stroke" />
+                <circle cx="498" cy="45" r="4" fill="#fff" stroke="#6366F1" stroke-width="2.5" vector-effect="non-scaling-stroke" />
+              </g>
+           </svg>
+
+           <!-- Premium Hover Tooltips -->
+           <!-- Tooltip 1 (Peak Tuyển Vào) -->
+           <div class="absolute left-[54%] top-8 -translate-x-1/2 -translate-y-[120%] opacity-0 group-hover/premium:opacity-100 transition-all duration-500 delay-100 pointer-events-none z-50">
+             <div class="bg-slate-900/95 backdrop-blur-md rounded-xl p-3 shadow-2xl shadow-blue-900/20 border border-slate-700/50 min-w-[130px] relative">
+               <span class="text-[10px] font-[800] text-slate-400 uppercase tracking-widest block mb-1.5">Tháng 3</span>
+               <div class="flex items-center justify-between gap-4 mb-0.5">
+                  <span class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-200"><span class="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_4px_#60A5FA]"></span> Tuyển vào</span>
+                  <span class="text-[12px] font-[900] text-white">102</span>
+               </div>
+               <div class="flex items-center justify-between gap-4">
+                  <span class="flex items-center gap-1.5 text-[11px] font-semibold text-slate-200"><span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span> Nghỉ việc</span>
+                  <span class="text-[12px] font-[900] text-white">45</span>
+               </div>
+               <!-- Dropdown Arrow -->
+               <div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-900/95 border-b border-r border-slate-700/50 rotate-45"></div>
+             </div>
+           </div>
+        </div>
+
+        <!-- X-Axis text -->
+        <div class="flex justify-between items-end mt-0 pt-2 relative z-10 w-full pl-10 pr-2 pointer-events-none">
+          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.1</span>
+          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.2</span>
+          <span class="text-[10px] font-[800] text-blue-500 hover:text-blue-600 transition-colors uppercase tracking-widest drop-shadow-sm">Th.3</span>
+          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.4</span>
+          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.5</span>
+          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.6</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Lists Row -->
+    <div class="flex flex-col lg:flex-row gap-4 md:gap-5">
+      
+      <!-- Top Performers (Table) -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] lg:w-3/5 p-7 overflow-hidden animate-chart" style="animation-delay: 400ms">
+        <div class="flex items-center justify-between xl:mb-4 mb-6">
+          <h2 class="text-[16px] font-[800] text-slate-800">Nhân sự chủ chốt & Hiệu suất cao</h2>
+          <button class="text-[12px] font-[800] text-[#3B5BDB] hover:text-blue-800 transition-colors">Xem tất cả</button>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="border-b border-slate-100">
+                <th class="py-3 px-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] whitespace-nowrap">Họ & Tên</th>
+                <th class="py-3 px-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] whitespace-nowrap">Chức vụ</th>
+                <th class="py-3 px-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] text-center whitespace-nowrap">Hiệu suất</th>
+                <th class="py-3 px-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] text-center whitespace-nowrap">Trạng thái</th>
+              </tr>
+            </thead>
+            <!-- ✅ Top performers – từ topPerformers -->
+            <tbody class="divide-y divide-slate-50">
+              <tr v-for="emp in topPerformers" :key="emp.id" class="hover:bg-slate-50/50 transition-colors group">
+                <td class="py-5 px-2">
+                  <div class="flex items-center gap-3">
+                    <img :src="emp.avatar" class="w-10 h-10 rounded-full object-cover border-2 border-slate-100" alt=""/>
+                    <div>
+                      <p class="text-[13px] font-[800] text-slate-800 group-hover:text-[#3B5BDB] cursor-pointer transition-colors leading-tight">{{ emp.name }}</p>
+                      <p class="text-[11px] font-semibold text-slate-400 mt-0.5">{{ emp.email }}</p>
+                    </div>
+                  </div>
+                </td>
+                <td class="py-5 px-2 text-[13px] font-bold text-slate-600">{{ emp.chucVu }}</td>
+                <td class="py-5 px-2 text-center w-36">
+                  <span class="text-[12px] font-[800] text-[#3B5BDB] mb-1.5 inline-block">{{ emp.hieuSuat }}%</span>
+                  <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mx-auto">
+                    <div class="h-full bg-[#3B5BDB] rounded-full" :style="`width:${emp.hieuSuat}%`"></div>
+                  </div>
+                </td>
+                <td class="py-5 px-2 text-center">
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" :class="emp.trangThaiClass">{{ emp.trangThai }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Department Rankings -->
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] lg:w-2/5 p-7 flex flex-col">
+        <h2 class="text-[16px] font-[800] text-slate-800 mb-6">Xếp hạng phòng ban</h2>
+        
+        <!-- ✅ Dept rankings – từ deptRankings -->
+        <div class="flex flex-col flex-1 justify-between gap-6">
+          <div v-for="dept in deptRankings" :key="dept.name">
+            <div class="flex justify-between items-end mb-1.5">
+              <span class="text-[13px] font-[800] text-slate-800">{{ dept.name }}</span>
+              <span class="text-[14px] font-[900] text-[#3B5BDB]">{{ dept.score }}%</span>
+            </div>
+            <div class="w-full h-[6px] bg-slate-100 rounded-full overflow-hidden mb-1.5">
+              <div class="h-full bg-[#3B5BDB] rounded-full transition-all duration-1000" :style="`width:${dept.score}%`"></div>
+            </div>
+            <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400">
+              <span class="italic">{{ dept.note }}</span>
+              <span v-if="dept.trend==='up'"   class="material-symbols-outlined text-green-500 text-[16px]">trending_up</span>
+              <span v-else-if="dept.trend==='down'" class="material-symbols-outlined text-red-400 text-[16px]">trending_down</span>
+              <span v-else class="material-symbols-outlined text-transparent text-[16px] select-none">remove</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup>
+import { nhanSuKpiCards, topPerformers, deptRankings } from '@/data/sampleData_GiamDoc.js';
 </script>
 
 <style scoped>
-.custom-scrollbar::-webkit-scrollbar {
- width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
- background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
- background: var(--sys-border-subtle);
- border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
- background: var(--sys-brand-solid);
-}
-
-.space-y-10 {
- animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-@keyframes fadeIn {
- from { opacity: 0; transform: translateY(20px); }
- to { opacity: 1; transform: translateY(0); }
-}
-
 .material-symbols-outlined {
- font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
 }
+
+/* Animations for SVG Charts */
+@keyframes dashDraw { to { stroke-dashoffset: 0; } }
+@keyframes fadeIn { to { opacity: 1; } }
+.draw-blue { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: dashDraw 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards; }
+.draw-red { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: dashDraw 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.2s; }
+.fade-area { opacity: 0; animation: fadeIn 1s ease-in forwards 0.6s; }
+.fade-dots { opacity: 0; animation: fadeIn 0.5s ease forwards 1.2s; }
 </style>
