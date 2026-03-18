@@ -1316,3 +1316,31 @@ html.dark .btn-action-icon.btn-danger-action:hover {
 html.dark .btn-action-icon.btn-success-action:hover {
   color: oklch(0.8 0.15 145) !important;
 }
+
+/* ─────────────────────────────────────────────────────────
+   CHART & KPI DASHBOARD LOADING ANIMATIONS
+   ───────────────────────────────────────────────────────── */
+@keyframes fadeSlideUpDashboard {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-chart {
+  opacity: 0;
+  animation: fadeSlideUpDashboard 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.delay-75 { animation-delay: 75ms; }
+.delay-150 { animation-delay: 150ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+.delay-700 { animation-delay: 700ms; }

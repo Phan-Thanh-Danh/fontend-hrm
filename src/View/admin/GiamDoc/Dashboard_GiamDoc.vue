@@ -29,93 +29,54 @@
          KPI CARDS
     ══════════════════════════════════════════════ -->
     <div class="kpi-grid">
-      <!-- Card: Tổng nhân sự -->
-      <div class="kpi-card" @click="$router.push('/giam-doc/nhan-su')">
+      <!-- ✅ KPI Cards -->
+      <div
+        v-for="(card, index) in kpiCards"
+        :key="card.id"
+        class="kpi-card animate-chart"
+        :style="{ animationDelay: (index * 100) + 'ms' }"
+        @click="$router.push(card.route)"
+      >
         <div class="kpi-card-header">
-          <div class="kpi-icon kpi-icon--blue">
-            <span class="material-symbols-rounded">group</span>
+          <div class="kpi-icon" :class="card.iconClass">
+            <span class="material-symbols-rounded">{{ card.icon }}</span>
           </div>
-          <span class="kpi-badge kpi-badge--up">
-            <span class="material-symbols-rounded" style="font-size:11px">trending_up</span>+5.2%
+          <span class="kpi-badge" :class="card.badgeClass">
+            <span class="material-symbols-rounded" style="font-size:11px">{{ card.badgeIcon }}</span>
+            {{ card.badge }}
           </span>
         </div>
-        <p class="kpi-label">Tổng nhân sự</p>
-        <h3 class="kpi-value">1,250</h3>
+        <p class="kpi-label">{{ card.label }}</p>
+        <h3 class="kpi-value">{{ card.value }}</h3>
         <div class="kpi-footer">
-          <div class="kpi-sparkline">
-            <div class="bar" style="height:40%"></div>
-            <div class="bar" style="height:55%"></div>
-            <div class="bar" style="height:70%"></div>
-            <div class="bar" style="height:65%"></div>
-            <div class="bar" style="height:85%"></div>
-            <div class="bar bar--active" style="height:100%"></div>
-          </div>
-          <span class="kpi-meta">so với tháng trước</span>
-        </div>
-      </div>
-
-      <!-- Card: Tỷ lệ biến động -->
-      <div class="kpi-card" @click="$router.push('/giam-doc/bien-dong')">
-        <div class="kpi-card-header">
-          <div class="kpi-icon kpi-icon--rose">
-            <span class="material-symbols-rounded">sync</span>
-          </div>
-          <span class="kpi-badge kpi-badge--down">
-            <span class="material-symbols-rounded" style="font-size:11px">trending_down</span>-0.5%
-          </span>
-        </div>
-        <p class="kpi-label">Tỷ lệ biến động</p>
-        <h3 class="kpi-value">2.4%</h3>
-        <div class="kpi-footer">
-          <div class="kpi-sparkline">
-            <div class="bar bar--danger" style="height:70%"></div>
-            <div class="bar bar--danger" style="height:60%"></div>
-            <div class="bar bar--danger" style="height:50%"></div>
-            <div class="bar bar--danger" style="height:45%"></div>
-            <div class="bar bar--danger" style="height:40%"></div>
-            <div class="bar bar--danger bar--active-danger" style="height:30%"></div>
-          </div>
-          <span class="kpi-meta">cải thiện 0.5%</span>
-        </div>
-      </div>
-
-      <!-- Card: Quỹ lương -->
-      <div class="kpi-card" @click="$router.push('/giam-doc/bang-luong')">
-        <div class="kpi-card-header">
-          <div class="kpi-icon kpi-icon--green">
-            <span class="material-symbols-rounded">payments</span>
-          </div>
-          <span class="kpi-badge kpi-badge--up">
-            <span class="material-symbols-rounded" style="font-size:11px">trending_up</span>+1.2%
-          </span>
-        </div>
-        <p class="kpi-label">Tổng quỹ lương tháng</p>
-        <h3 class="kpi-value">8.5 tỷ</h3>
-        <div class="kpi-footer">
-          <div class="kpi-progress-bar">
-            <div class="kpi-progress-fill" style="width:85%"></div>
-          </div>
-          <span class="kpi-meta">85% ngân sách</span>
-        </div>
-      </div>
-
-      <!-- Card: Chuyên cần -->
-      <div class="kpi-card" @click="$router.push('/giam-doc/chuyen-can')">
-        <div class="kpi-card-header">
-          <div class="kpi-icon kpi-icon--amber">
-            <span class="material-symbols-rounded">verified</span>
-          </div>
-          <span class="kpi-badge kpi-badge--up">
-            <span class="material-symbols-rounded" style="font-size:11px">trending_up</span>+0.8%
-          </span>
-        </div>
-        <p class="kpi-label">Chỉ số chuyên cần</p>
-        <h3 class="kpi-value">98.2%</h3>
-        <div class="kpi-footer">
-          <div class="kpi-progress-bar">
-            <div class="kpi-progress-fill kpi-progress-fill--amber" style="width:98%"></div>
-          </div>
-          <span class="kpi-meta">Xuất sắc</span>
+          <!-- Loại sparkline (bar mini) -->
+          <template v-if="card.footerType === 'sparkline'">
+            <div class="kpi-sparkline">
+              <div
+                v-for="(h, i) in card.sparkline"
+                :key="i"
+                class="bar"
+                :class="[
+                  card.sparklineDanger ? 'bar--danger' : '',
+                  i === card.sparkline.length - 1
+                    ? (card.sparklineDanger ? 'bar--active-danger' : 'bar--active')
+                    : ''
+                ]"
+                :style="`height:${h}%`"
+              ></div>
+            </div>
+          </template>
+          <!-- Loại progress bar -->
+          <template v-else-if="card.footerType === 'progress'">
+            <div class="kpi-progress-bar">
+              <div
+                class="kpi-progress-fill"
+                :class="card.progressClass"
+                :style="`width:${card.progress}%`"
+              ></div>
+            </div>
+          </template>
+          <span class="kpi-meta">{{ card.meta }}</span>
         </div>
       </div>
     </div>
@@ -126,7 +87,7 @@
     <div class="charts-grid">
 
       <!-- Bar Chart -->
-      <div class="chart-card chart-card--wide">
+      <div class="chart-card chart-card--wide animate-chart" style="animation-delay: 200ms;">
         <div class="chart-card-header">
           <div>
             <h4 class="chart-title">Xu hướng tăng trưởng nhân sự</h4>
@@ -144,10 +105,10 @@
 
         <div class="bar-chart">
           <div class="bar-chart-cols">
-            <div class="bar-col" v-for="(col, i) in barChartData" :key="i">
+            <div class="bar-col" v-for="(col, i) in dynamicBarChart" :key="i">
               <div class="bar-col-inner">
-                <div class="bar-target" :style="`height:${col.target}%`"></div>
-                <div class="bar-current" :class="col.active ? 'bar-current--active' : ''" :style="`height:${col.current}%`">
+                <div class="bar-target" :style="`height:${col.targetH}%`"></div>
+                <div class="bar-current" :class="col.active ? 'bar-current--active' : ''" :style="`height:${col.currentH}%`">
                   <div class="bar-tooltip">{{ col.value }}</div>
                 </div>
               </div>
@@ -156,24 +117,21 @@
           </div>
           <!-- Y-axis lines -->
           <div class="y-axis-lines">
-            <span class="y-label">1,300</span>
-            <span class="y-label">1,200</span>
-            <span class="y-label">1,100</span>
-            <span class="y-label">1,000</span>
+            <span class="y-label" v-for="(lab, i) in barChartYLabels" :key="i">{{ lab }}</span>
           </div>
         </div>
       </div>
 
       <!-- Donut Chart -->
-      <div class="chart-card chart-card--narrow">
+      <div class="chart-card chart-card--narrow animate-chart" style="animation-delay: 300ms;">
         <div class="chart-card-header">
           <h4 class="chart-title">Cơ cấu phòng ban</h4>
         </div>
 
         <div class="donut-wrapper">
-          <div class="donut-chart-ring">
+          <div class="donut-chart-ring" :style="donutStyle">
             <div class="donut-center">
-              <span class="donut-number">1,250</span>
+              <span class="donut-number">{{ donutTotal }}</span>
               <span class="donut-unit">Nhân sự</span>
             </div>
           </div>
@@ -201,65 +159,42 @@
     ══════════════════════════════════════════════ -->
     <div class="bottom-grid">
 
-      <!-- Approval List -->
-      <div class="list-card list-card--wide">
+      <!-- Approval List – dữ liệu từ pendingApprovals -->
+      <div class="list-card list-card--wide animate-chart" style="animation-delay: 400ms;">
         <div class="list-card-header">
           <h4 class="chart-title">Yêu cầu chờ phê duyệt</h4>
           <span class="badge-urgent">
             <span class="material-symbols-rounded" style="font-size:12px">warning</span>
-            03 khẩn cấp
+            {{ urgentCount < 10 ? '0' + urgentCount : urgentCount }} khẩn cấp
           </span>
         </div>
 
         <div class="approval-list">
-          <!-- Item 1 -->
-          <div class="approval-item">
-            <div class="approval-icon approval-icon--amber">
-              <span class="material-symbols-rounded">person_add</span>
+          <div
+            v-for="item in pendingApprovals"
+            :key="item.id"
+            class="approval-item"
+          >
+            <div class="approval-icon" :class="item.iconClass">
+              <span class="material-symbols-rounded">{{ item.icon }}</span>
             </div>
             <div class="approval-content">
-              <h5 class="approval-title">Tuyển dụng: Trưởng phòng Marketing</h5>
-              <p class="approval-meta">Phòng Nhân sự &bull; Gửi 2 giờ trước</p>
+              <h5 class="approval-title">{{ item.title }}</h5>
+              <p class="approval-meta" :class="item.urgent ? 'urgent-meta' : ''">{{ item.meta }}</p>
             </div>
             <div class="approval-actions">
-              <button class="btn-reject">Từ chối</button>
-              <button class="btn-approve">Duyệt ngay</button>
-            </div>
-          </div>
-
-          <!-- Item 2 -->
-          <div class="approval-item">
-            <div class="approval-icon approval-icon--blue">
-              <span class="material-symbols-rounded">trending_up</span>
-            </div>
-            <div class="approval-content">
-              <h5 class="approval-title">Đề xuất tăng lương (Bùi Anh Tuấn)</h5>
-              <p class="approval-meta">Khối Công nghệ &bull; Gửi 5 giờ trước</p>
-            </div>
-            <div class="approval-actions">
-              <button class="btn-reject">Chi tiết</button>
-              <button class="btn-approve">Duyệt ngay</button>
-            </div>
-          </div>
-
-          <!-- Item 3 -->
-          <div class="approval-item">
-            <div class="approval-icon approval-icon--red">
-              <span class="material-symbols-rounded">warning</span>
-            </div>
-            <div class="approval-content">
-              <h5 class="approval-title">Đơn thôi việc: Giám đốc sáng tạo</h5>
-              <p class="approval-meta urgent-meta">Nhân sự chủ chốt &bull; Cần làm việc trực tiếp</p>
-            </div>
-            <div class="approval-actions">
-              <button class="btn-approve btn-schedule">Đặt lịch hẹn</button>
+              <button
+                v-for="(action, ai) in item.actions"
+                :key="ai"
+                :class="ai === item.actions.length - 1 ? 'btn-approve' : 'btn-reject'"
+              >{{ action }}</button>
             </div>
           </div>
         </div>
 
         <button class="list-card-footer">
           <span class="material-symbols-rounded" style="font-size:15px">expand_more</span>
-          Xem toàn bộ 12 yêu cầu
+          Xem toàn bộ {{ pendingApprovals.length }} yêu cầu
         </button>
       </div>
 
@@ -271,44 +206,22 @@
           <h4 class="events-title">Sự kiện quan trọng</h4>
         </div>
 
+        <!-- Timeline events – dữ liệu từ timelineEvents -->
         <div class="timeline">
           <div class="timeline-line"></div>
-
-          <!-- Event 1 -->
-          <div class="timeline-item timeline-item--active">
-            <div class="timeline-dot timeline-dot--active"></div>
+          <div
+            v-for="ev in timelineEvents"
+            :key="ev.id"
+            class="timeline-item"
+            :class="ev.active ? 'timeline-item--active' : ''"
+          >
+            <div class="timeline-dot" :class="ev.active ? 'timeline-dot--active' : ''"></div>
             <div class="timeline-content">
-              <p class="timeline-time active-time">09:00 — Hôm nay</p>
-              <h5 class="timeline-title">Họp Ban Giám đốc quý I</h5>
+              <p class="timeline-time" :class="ev.active ? 'active-time' : ''">{{ ev.time }}</p>
+              <h5 class="timeline-title">{{ ev.title }}</h5>
               <p class="timeline-place">
-                <span class="material-symbols-rounded" style="font-size:13px">location_on</span>
-                Phòng họp Star VIP
-              </p>
-            </div>
-          </div>
-
-          <!-- Event 2 -->
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-              <p class="timeline-time">25/01/2024</p>
-              <h5 class="timeline-title">Kỷ niệm 10 năm thành lập</h5>
-              <p class="timeline-place">
-                <span class="material-symbols-rounded" style="font-size:13px">location_on</span>
-                Trung tâm Hội nghị Quốc gia
-              </p>
-            </div>
-          </div>
-
-          <!-- Event 3 -->
-          <div class="timeline-item">
-            <div class="timeline-dot"></div>
-            <div class="timeline-content">
-              <p class="timeline-time">30/01/2024</p>
-              <h5 class="timeline-title">Hạn cuối đánh giá OKR năm</h5>
-              <p class="timeline-place">
-                <span class="material-symbols-rounded" style="font-size:13px">groups</span>
-                Toàn bộ các khối phòng ban
+                <span class="material-symbols-rounded" style="font-size:13px">{{ ev.placeIcon }}</span>
+                {{ ev.place }}
               </p>
             </div>
           </div>
@@ -320,7 +233,7 @@
             <span class="material-symbols-rounded" style="font-size:14px;font-variation-settings:'FILL' 1">sticky_note_2</span>
             Lời nhắc của bạn
           </p>
-          <p class="reminder-text">"Tổ chức buổi tiệc tri ân nhân viên xuất sắc vào thứ Sáu này."</p>
+          <p class="reminder-text">{{ reminderText }}</p>
           <button class="reminder-edit">
             <span class="material-symbols-rounded" style="font-size:14px">edit</span>
             Chỉnh sửa
@@ -333,20 +246,56 @@
 </template>
 
 <script setup>
-const barChartData = [
-  { label: 'Tháng 8',  current: 44, target: 50,  value: '1,080' },
-  { label: 'Tháng 9',  current: 55, target: 62,  value: '1,120' },
-  { label: 'Tháng 10', current: 67, target: 74,  value: '1,165' },
-  { label: 'Tháng 11', current: 78, target: 80,  value: '1,190' },
-  { label: 'Tháng 12', current: 88, target: 90,  value: '1,220' },
-  { label: 'Tháng 1',  current: 95, target: 96,  value: '1,250', active: true },
-];
+import { computed } from 'vue';
+import {
+  kpiCards,
+  barChartData,
+  barChartYLabels,
+  donutData,
+  donutTotal,
+  pendingApprovals,
+  urgentCount,
+  timelineEvents,
+  reminderText,
+} from '@/data/sampleData_GiamDoc.js';
 
-const donutData = [
-  { label: 'Khối Sản xuất',  pct: 65, color: '#3B82F6' },
-  { label: 'Khối Kinh doanh', pct: 20, color: '#F59E0B' },
-  { label: 'Khối Văn phòng', pct: 15, color: '#94A3B8' },
-];
+// Tính toán conic-gradient động cho Donut Chart
+const donutStyle = computed(() => {
+  let gradientStr = [];
+  let currentPct = 0;
+  donutData.forEach(item => {
+    let nextPct = currentPct + item.pct;
+    gradientStr.push(`${item.color} ${currentPct}% ${nextPct}%`);
+    currentPct = nextPct;
+  });
+  return {
+    background: `conic-gradient(${gradientStr.join(', ')})`
+  };
+});
+
+// Tính toán Scale động cho Bar Chart từ Data
+const dynamicBarChart = computed(() => {
+  // Lấy giá trị nhỏ nhất và lớn nhất trực tiếp từ mảng nhãn trục Y
+  const maxLabel = parseFloat(barChartYLabels[0].replace(/,/g, ''));
+  const minLabel = parseFloat(barChartYLabels[barChartYLabels.length - 1].replace(/,/g, ''));
+  const range = maxLabel - minLabel;
+
+  return barChartData.map(col => {
+    // Trực tiếp dùng dữ liệu dạng raw integer mới từ sampleData_GiamDoc
+    const valCurrentNum = col.current || 0;
+    const targetNum = col.target || 0;
+
+    let currentH = range > 0 ? ((valCurrentNum - minLabel) / range) * 100 : (valCurrentNum > 100 ? 100 : valCurrentNum);
+    let targetH = range > 0 ? ((targetNum - minLabel) / range) * 100 : (targetNum > 100 ? 100 : targetNum);
+
+    // Kẹp trong khoảng 0 - 100% để giao diện không bể khi vượt chuẩn
+    return {
+      ...col,
+      currentH: Math.max(0, Math.min(currentH, 100)),
+      targetH: Math.max(0, Math.min(targetH, 100))
+    };
+  });
+});
 </script>
 
 <style scoped>
@@ -767,11 +716,6 @@ const donutData = [
   width: 160px;
   height: 160px;
   border-radius: 50%;
-  background: conic-gradient(
-    var(--brand, #3B82F6) 0% 65%,
-    var(--warning, #F59E0B) 65% 85%,
-    var(--text-muted, #94A3B8) 85% 100%
-  );
   display: flex;
   align-items: center;
   justify-content: center;

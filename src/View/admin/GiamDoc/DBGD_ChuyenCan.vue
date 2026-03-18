@@ -27,60 +27,62 @@
         </div>
     </div>
 
-    <!-- 3 Target Cards -->
+    <!-- ✅ 3 KPI Cards – dữ liệu từ chuyenCanCards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <!-- Card 1 -->
-        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-[2rem] p-6 shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all cursor-pointer group text-left">
+        <div
+          v-for="(card, i) in chuyenCanCards"
+          :key="card.id"
+          class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-[2rem] p-6 shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all cursor-pointer group text-left animate-chart"
+          :style="{ animationDelay: (i * 100) + 'ms' }"
+        >
             <div class="flex justify-between items-center mb-6">
-                <p class="text-[13px] font-semibold text-[var(--sys-text-secondary)]">Tỷ lệ chuyên cần trung bình</p>
-                <div class="w-10 h-10 rounded-2xl bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center shadow-inner">
-                    <span class="material-symbols-rounded text-xl">event_available</span>
+                <p class="text-[13px] font-semibold text-[var(--sys-text-secondary)]">{{ card.label }}</p>
+                <div
+                  class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-inner"
+                  :style="`background:${card.iconBg}; color:${card.iconColor}`"
+                >
+                    <span class="material-symbols-rounded text-xl">{{ card.icon }}</span>
                 </div>
             </div>
-            <div class="flex items-baseline gap-3 mb-6">
-                <h3 class="text-[40px] font-bold text-[var(--sys-text-primary)] leading-none">98.5%</h3>
-                <span class="flex items-center text-sm font-semibold text-[var(--sys-success-text)] gap-1">
-                    <span class="material-symbols-rounded text-[18px]">trending_up</span>1.2%
-                </span>
-            </div>
-            <!-- Progress Line -->
-            <div class="h-1.5 w-full bg-[var(--sys-bg-hover)] rounded-full overflow-hidden">
-                <div class="h-full bg-[var(--sys-brand-solid)] rounded-full shadow-lg" style="width: 98.5%"></div>
-            </div>
-        </div>
 
-        <!-- Card 2 -->
-        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-[2rem] p-6 shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all cursor-pointer group text-left">
-            <div class="flex justify-between items-center mb-6">
-                <p class="text-[13px] font-semibold text-[var(--sys-text-secondary)]">Công thực tế / Dự kiến</p>
-                <div class="w-10 h-10 rounded-2xl bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] flex items-center justify-center shadow-inner">
-                    <span class="material-symbols-rounded text-xl">work</span>
+            <!-- Card 1: chỉ hiện giá trị đơn + progress bar -->
+            <template v-if="card.id === 'ty-le'">
+                <div class="flex items-baseline gap-3 mb-6">
+                    <h3 class="text-[40px] font-bold text-[var(--sys-text-primary)] leading-none">{{ card.value }}</h3>
+                    <span
+                      class="flex items-center text-sm font-semibold gap-1"
+                      :class="card.badgeGood ? 'text-[var(--sys-success-text)]' : 'text-[var(--sys-danger-text)]'"
+                    >
+                        <span class="material-symbols-rounded text-[18px]">
+                            {{ card.badgeTrend === 'up' ? 'trending_up' : 'trending_down' }}
+                        </span>
+                        {{ card.badge }}
+                    </span>
                 </div>
-            </div>
-            <div class="flex items-baseline gap-3 mb-3">
-                <h3 class="text-[32px] font-bold text-[var(--sys-text-primary)] leading-none">4,250 <span class="text-[24px] text-[var(--sys-text-secondary)]/50 font-semibold">/ 4,300</span></h3>
-                <span class="flex items-center text-sm font-semibold text-[var(--sys-danger-text)] gap-1">
-                    <span class="material-symbols-rounded text-[18px]">trending_down</span>0.5%
-                </span>
-            </div>
-            <p class="text-[12px] font-semibold text-[var(--sys-text-secondary)]/60">Thiếu 50 ngày công so với kế hoạch</p>
-        </div>
+                <div class="h-1.5 w-full bg-[var(--sys-bg-hover)] rounded-full overflow-hidden">
+                    <div class="h-full bg-[var(--sys-brand-solid)] rounded-full shadow-lg" :style="`width:${card.progress}%`"></div>
+                </div>
+            </template>
 
-        <!-- Card 3 -->
-        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-[2rem] p-6 shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all cursor-pointer group text-left">
-            <div class="flex justify-between items-center mb-6">
-                <p class="text-[13px] font-semibold text-[var(--sys-text-secondary)]">Đi muộn / Về sớm</p>
-                <div class="w-10 h-10 rounded-2xl bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] flex items-center justify-center shadow-inner">
-                    <span class="material-symbols-rounded text-xl">schedule</span>
+            <!-- Card 2 & 3: giá trị kèm đơn vị + ghi chú -->
+            <template v-else>
+                <div class="flex items-baseline gap-3 mb-3">
+                    <h3 class="text-[32px] font-bold text-[var(--sys-text-primary)] leading-none">
+                        {{ card.value }}
+                        <span v-if="card.valueSub" class="text-[24px] text-[var(--sys-text-secondary)]/50 font-semibold"> {{ card.valueSub }}</span>
+                    </h3>
+                    <span
+                      class="flex items-center text-sm font-semibold gap-1"
+                      :class="card.badgeGood ? 'text-[var(--sys-success-text)]' : 'text-[var(--sys-danger-text)]'"
+                    >
+                        <span class="material-symbols-rounded text-[18px]">
+                            {{ card.badgeTrend === 'up' ? 'trending_up' : 'trending_down' }}
+                        </span>
+                        {{ card.badge }}
+                    </span>
                 </div>
-            </div>
-            <div class="flex items-baseline gap-3 mb-3">
-                <h3 class="text-[32px] font-bold text-[var(--sys-text-primary)] leading-none">12 <span class="text-[24px] text-[var(--sys-text-secondary)]/50 font-semibold">lượt</span></h3>
-                <span class="flex items-center text-sm font-semibold text-[var(--sys-success-text)] gap-1">
-                    <span class="material-symbols-rounded text-[18px]">trending_down</span>4%
-                </span>
-            </div>
-            <p class="text-[12px] font-semibold text-[var(--sys-text-secondary)]/60">Giảm 2 lượt so với tháng trước</p>
+                <p class="text-[12px] font-semibold text-[var(--sys-text-secondary)]/60">{{ card.note }}</p>
+            </template>
         </div>
     </div>
 
@@ -203,25 +205,12 @@
 </template>
 
 <script setup>
-const depts = [
-    { name: 'Kỹ thuật (Engineering)', val: 99.2 },
-    { name: 'Kinh doanh (Sales)', val: 97.5 },
-    { name: 'Nhân sự (HR)', val: 98.8 },
-    { name: 'Marketing', val: 96.4 },
-    { name: 'Vận hành (Operations)', val: 98.1 }
-];
-
-const topUsers = [
-    { name: 'Nguyễn Thu Hà', dept: 'Phòng Nhân sự', val: '100%', subval: '22/22 NGÀY CÔNG', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d' },
-    { name: 'Trần Văn Nam', dept: 'Phòng Kỹ thuật', val: '100%', subval: '22/22 NGÀY CÔNG', avatar: 'https://i.pravatar.cc/150?u=a04258114e29026702d' },
-    { name: 'Lê Minh Anh', dept: 'Phòng Marketing', val: '99.5%', subval: '21.5/22 NGÀY CÔNG', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026024d' }
-];
-
-const badUsers = [
-    { name: 'Phạm Thành Long', dept: 'Phòng Kinh doanh', val: '5 lượt', subval: 'ĐI MUỘN THÁNG NÀY', avatar: 'https://i.pravatar.cc/150?u=a048581f4e29026701d' },
-    { name: 'Đặng Hoàng Yến', dept: 'Phòng Kỹ thuật', val: '3 lượt', subval: 'ĐI MUỘN THÁNG NÀY', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026705d' },
-    { name: 'Vũ Minh Đức', dept: 'Phòng Vận hành', val: '2 lượt', subval: 'VỀ SỚM THÁNG NÀY', avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026712d' }
-];
+import {
+  chuyenCanCards,
+  depts,
+  topUsers,
+  badUsers,
+} from '@/data/sampleData_GiamDoc.js';
 </script>
 
 <style scoped>

@@ -18,65 +18,23 @@
       </div>
     </div>
 
-    <!-- 4 KPI Cards -->
+    <!-- ✅ 4 KPI Cards – từ nhanSuKpiCards -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5">
-      <!-- Card 1 -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all">
+      <div
+        v-for="(card, i) in nhanSuKpiCards" :key="card.id"
+        class="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all animate-chart"
+        :style="{ animationDelay: (i * 100) + 'ms' }"
+      >
         <div class="flex justify-between items-start">
-          <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
-            <span class="material-symbols-outlined text-blue-600 text-[24px]">group</span>
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center" :class="card.iconBg">
+            <span class="material-symbols-outlined text-[24px]" :class="card.iconColor">{{ card.icon }}</span>
           </div>
-          <span class="bg-emerald-50 text-emerald-600 text-[11px] font-bold px-2.5 py-1 rounded-full">+12%</span>
+          <span class="text-[11px] font-bold px-2.5 py-1 rounded-full" :class="card.badgeClass">{{ card.badge }}</span>
         </div>
         <div class="mt-5">
-          <h3 class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">Tổng nhân viên</h3>
-          <p class="text-[32px] font-[900] text-slate-800 leading-tight mt-1">1,250</p>
-          <p class="text-[11px] font-semibold text-slate-400 mt-2">Dự kiến đạt 1,300 vào cuối quý</p>
-        </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all">
-        <div class="flex justify-between items-start">
-          <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
-            <span class="material-symbols-outlined text-orange-600 text-[24px]">person_remove</span>
-          </div>
-          <span class="bg-emerald-50 text-emerald-600 text-[11px] font-bold px-2.5 py-1 rounded-full">-0.5%</span>
-        </div>
-        <div class="mt-5">
-          <h3 class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">Tỷ lệ nghỉ việc</h3>
-          <p class="text-[32px] font-[900] text-slate-800 leading-tight mt-1">2.4%</p>
-          <p class="text-[11px] font-semibold text-slate-400 mt-2">Dưới ngưỡng trung bình ngành (4%)</p>
-        </div>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all">
-        <div class="flex justify-between items-start">
-          <div class="w-12 h-12 rounded-xl bg-pink-50 flex items-center justify-center">
-            <span class="material-symbols-outlined text-pink-600 text-[24px]">sentiment_satisfied</span>
-          </div>
-          <span class="bg-rose-50 text-rose-600 text-[11px] font-bold px-2.5 py-1 rounded-full">-2%</span>
-        </div>
-        <div class="mt-5">
-          <h3 class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">Chỉ số hài lòng (eNPS)</h3>
-          <p class="text-[32px] font-[900] text-slate-800 leading-tight mt-1">88%</p>
-          <p class="text-[11px] font-semibold text-slate-400 mt-2">Mục tiêu quý tới: 92%</p>
-        </div>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_24px_-4px_rgba(0,0,0,0.08)] transition-all">
-        <div class="flex justify-between items-start">
-          <div class="w-12 h-12 rounded-xl bg-violet-50 flex items-center justify-center">
-            <span class="material-symbols-outlined text-violet-600 text-[24px]">bolt</span>
-          </div>
-          <span class="bg-emerald-50 text-emerald-600 text-[11px] font-bold px-2.5 py-1 rounded-full">+5%</span>
-        </div>
-        <div class="mt-5">
-          <h3 class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">Hiệu suất trung bình</h3>
-          <p class="text-[32px] font-[900] text-slate-800 leading-tight mt-1">92.5%</p>
-          <p class="text-[11px] font-semibold text-slate-400 mt-2">Dựa trên KPI hoàn thành</p>
+          <h3 class="text-[12px] font-bold text-slate-500 uppercase tracking-widest">{{ card.label }}</h3>
+          <p class="text-[32px] font-[900] text-slate-800 leading-tight mt-1">{{ card.value }}</p>
+          <p class="text-[11px] font-semibold text-slate-400 mt-2">{{ card.note }}</p>
         </div>
       </div>
     </div>
@@ -85,7 +43,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5">
       
       <!-- Chart: Cơ cấu nhân sự theo cấp bậc -->
-      <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] flex flex-col pt-6 pb-5 px-6 relative h-[360px]">
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] flex flex-col pt-6 pb-5 px-6 relative h-[360px] animate-chart" style="animation-delay: 200ms">
         <div class="flex justify-between items-start mb-auto relative z-10">
           <div>
             <h2 class="text-[16px] font-[800] text-slate-800">Cơ cấu nhân sự theo cấp bậc</h2>
@@ -261,7 +219,7 @@
     <div class="flex flex-col lg:flex-row gap-4 md:gap-5">
       
       <!-- Top Performers (Table) -->
-      <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] lg:w-3/5 p-7 overflow-hidden">
+      <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] lg:w-3/5 p-7 overflow-hidden animate-chart" style="animation-delay: 400ms">
         <div class="flex items-center justify-between xl:mb-4 mb-6">
           <h2 class="text-[16px] font-[800] text-slate-800">Nhân sự chủ chốt & Hiệu suất cao</h2>
           <button class="text-[12px] font-[800] text-[#3B5BDB] hover:text-blue-800 transition-colors">Xem tất cả</button>
@@ -277,77 +235,27 @@
                 <th class="py-3 px-2 text-[10px] font-bold text-slate-400 uppercase tracking-[0.15em] text-center whitespace-nowrap">Trạng thái</th>
               </tr>
             </thead>
+            <!-- ✅ Top performers – từ topPerformers -->
             <tbody class="divide-y divide-slate-50">
-              <!-- Row 1 -->
-              <tr class="hover:bg-slate-50/50 transition-colors group">
+              <tr v-for="emp in topPerformers" :key="emp.id" class="hover:bg-slate-50/50 transition-colors group">
                 <td class="py-5 px-2">
                   <div class="flex items-center gap-3">
-                    <img src="https://i.pravatar.cc/150?img=5" class="w-10 h-10 rounded-full object-cover border-2 border-slate-100" alt="Avatar"/>
+                    <img :src="emp.avatar" class="w-10 h-10 rounded-full object-cover border-2 border-slate-100" alt=""/>
                     <div>
-                      <p class="text-[13px] font-[800] text-slate-800 group-hover:text-[#3B5BDB] cursor-pointer transition-colors leading-tight">Lê Minh Anh</p>
-                      <p class="text-[11px] font-semibold text-slate-400 mt-0.5">minhanh.le@company.com</p>
+                      <p class="text-[13px] font-[800] text-slate-800 group-hover:text-[#3B5BDB] cursor-pointer transition-colors leading-tight">{{ emp.name }}</p>
+                      <p class="text-[11px] font-semibold text-slate-400 mt-0.5">{{ emp.email }}</p>
                     </div>
                   </div>
                 </td>
-                <td class="py-5 px-2 text-[13px] font-bold text-slate-600">Head of Marketing</td>
+                <td class="py-5 px-2 text-[13px] font-bold text-slate-600">{{ emp.chucVu }}</td>
                 <td class="py-5 px-2 text-center w-36">
-                  <span class="text-[12px] font-[800] text-[#3B5BDB] mb-1.5 inline-block">98%</span>
+                  <span class="text-[12px] font-[800] text-[#3B5BDB] mb-1.5 inline-block">{{ emp.hieuSuat }}%</span>
                   <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mx-auto">
-                    <div class="h-full bg-[#3B5BDB] rounded-full" style="width: 98%"></div>
+                    <div class="h-full bg-[#3B5BDB] rounded-full" :style="`width:${emp.hieuSuat}%`"></div>
                   </div>
                 </td>
                 <td class="py-5 px-2 text-center">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-600 uppercase tracking-wider">
-                    Excellent
-                  </span>
-                </td>
-              </tr>
-              <!-- Row 2 -->
-              <tr class="hover:bg-slate-50/50 transition-colors group">
-                <td class="py-5 px-2">
-                  <div class="flex items-center gap-3">
-                    <img src="https://i.pravatar.cc/150?img=11" class="w-10 h-10 rounded-full object-cover border-2 border-slate-100" alt="Avatar"/>
-                    <div>
-                      <p class="text-[13px] font-[800] text-slate-800 group-hover:text-[#3B5BDB] cursor-pointer transition-colors leading-tight">Nguyễn Hoàng Nam</p>
-                      <p class="text-[11px] font-semibold text-slate-400 mt-0.5">nam.nguyen@company.com</p>
-                    </div>
-                  </div>
-                </td>
-                <td class="py-5 px-2 text-[13px] font-bold text-slate-600">CTO</td>
-                <td class="py-5 px-2 text-center w-36">
-                  <span class="text-[12px] font-[800] text-[#3B5BDB] mb-1.5 inline-block">95%</span>
-                  <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mx-auto">
-                    <div class="h-full bg-[#3B5BDB] rounded-full" style="width: 95%"></div>
-                  </div>
-                </td>
-                <td class="py-5 px-2 text-center">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-green-50 text-green-600 uppercase tracking-wider">
-                    High Potential
-                  </span>
-                </td>
-              </tr>
-              <!-- Row 3 -->
-              <tr class="hover:bg-slate-50/50 transition-colors group">
-                <td class="py-5 px-2">
-                  <div class="flex items-center gap-3">
-                    <img src="https://i.pravatar.cc/150?img=35" class="w-10 h-10 rounded-full object-cover border-2 border-slate-100" alt="Avatar"/>
-                    <div>
-                      <p class="text-[13px] font-[800] text-slate-800 group-hover:text-[#3B5BDB] cursor-pointer transition-colors leading-tight">Trần Thu Hà</p>
-                      <p class="text-[11px] font-semibold text-slate-400 mt-0.5">ha.tran@company.com</p>
-                    </div>
-                  </div>
-                </td>
-                <td class="py-5 px-2 text-[13px] font-bold text-slate-600">HR Manager</td>
-                <td class="py-5 px-2 text-center w-36">
-                  <span class="text-[12px] font-[800] text-[#3B5BDB] mb-1.5 inline-block">92%</span>
-                  <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mx-auto">
-                    <div class="h-full bg-[#3B5BDB] rounded-full" style="width: 92%"></div>
-                  </div>
-                </td>
-                <td class="py-5 px-2 text-center">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-500 uppercase tracking-wider">
-                    Stable
-                  </span>
+                  <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider" :class="emp.trangThaiClass">{{ emp.trangThai }}</span>
                 </td>
               </tr>
             </tbody>
@@ -359,64 +267,21 @@
       <div class="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] lg:w-2/5 p-7 flex flex-col">
         <h2 class="text-[16px] font-[800] text-slate-800 mb-6">Xếp hạng phòng ban</h2>
         
+        <!-- ✅ Dept rankings – từ deptRankings -->
         <div class="flex flex-col flex-1 justify-between gap-6">
-          <!-- Item 1 -->
-          <div>
+          <div v-for="dept in deptRankings" :key="dept.name">
             <div class="flex justify-between items-end mb-1.5">
-              <span class="text-[13px] font-[800] text-slate-800">Công nghệ (IT)</span>
-              <span class="text-[14px] font-[900] text-[#3B5BDB]">96.8%</span>
+              <span class="text-[13px] font-[800] text-slate-800">{{ dept.name }}</span>
+              <span class="text-[14px] font-[900] text-[#3B5BDB]">{{ dept.score }}%</span>
             </div>
             <div class="w-full h-[6px] bg-slate-100 rounded-full overflow-hidden mb-1.5">
-              <div class="h-full bg-[#3B5BDB] rounded-full transition-all duration-1000" style="width: 96.8%"></div>
+              <div class="h-full bg-[#3B5BDB] rounded-full transition-all duration-1000" :style="`width:${dept.score}%`"></div>
             </div>
             <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400">
-              <span class="italic">Dẫn đầu về hiệu suất KPI</span>
-              <span class="material-symbols-outlined text-green-500 text-[16px]">trending_up</span>
-            </div>
-          </div>
-
-          <!-- Item 2 -->
-          <div>
-            <div class="flex justify-between items-end mb-1.5">
-              <span class="text-[13px] font-[800] text-slate-800">Kinh doanh (Sales)</span>
-              <span class="text-[14px] font-[900] text-[#3B5BDB]">94.2%</span>
-            </div>
-            <div class="w-full h-[6px] bg-slate-100 rounded-full overflow-hidden mb-1.5">
-              <div class="h-full bg-[#3B5BDB] rounded-full transition-all duration-1000" style="width: 94.2%"></div>
-            </div>
-            <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400">
-              <span class="italic">Vượt chỉ tiêu doanh thu 15%</span>
-              <span class="material-symbols-outlined text-green-500 text-[16px]">trending_up</span>
-            </div>
-          </div>
-
-          <!-- Item 3 -->
-          <div>
-            <div class="flex justify-between items-end mb-1.5">
-              <span class="text-[13px] font-[800] text-slate-800">Nhân sự (HR)</span>
-              <span class="text-[14px] font-[900] text-[#3B5BDB]">89.5%</span>
-            </div>
-            <div class="w-full h-[6px] bg-slate-100 rounded-full overflow-hidden mb-1.5">
-              <div class="h-full bg-[#3B5BDB] rounded-full transition-all duration-1000" style="width: 89.5%"></div>
-            </div>
-            <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400">
-              <span class="italic">Tăng chỉ số gắn kết</span>
-              <span class="material-symbols-outlined text-transparent text-[16px] select-none">remove</span>
-            </div>
-          </div>
-
-          <!-- Item 4 -->
-          <div>
-            <div class="flex justify-between items-end mb-1.5">
-              <span class="text-[13px] font-[800] text-slate-800">Tài chính (Finance)</span>
-              <span class="text-[14px] font-[900] text-[#3B5BDB]">87.0%</span>
-            </div>
-            <div class="w-full h-[6px] bg-slate-100 rounded-full overflow-hidden mb-1.5">
-              <div class="h-full bg-[#3B5BDB] rounded-full transition-all duration-1000" style="width: 87.0%"></div>
-            </div>
-            <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400">
-              <span class="italic">Tối ưu hóa quy trình thanh toán</span>
-              <span class="material-symbols-outlined text-red-400 text-[16px]">trending_down</span>
+              <span class="italic">{{ dept.note }}</span>
+              <span v-if="dept.trend==='up'"   class="material-symbols-outlined text-green-500 text-[16px]">trending_up</span>
+              <span v-else-if="dept.trend==='down'" class="material-symbols-outlined text-red-400 text-[16px]">trending_down</span>
+              <span v-else class="material-symbols-outlined text-transparent text-[16px] select-none">remove</span>
             </div>
           </div>
         </div>
@@ -426,6 +291,7 @@
 </template>
 
 <script setup>
+import { nhanSuKpiCards, topPerformers, deptRankings } from '@/data/sampleData_GiamDoc.js';
 </script>
 
 <style scoped>
