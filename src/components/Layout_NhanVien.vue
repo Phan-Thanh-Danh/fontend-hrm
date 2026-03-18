@@ -234,33 +234,32 @@
           <transition name="m3-dropdown">
             <div
               v-if="isProfileOpen"
-              class="absolute right-0 mt-3 w-60 rounded-3xl overflow-hidden z-50 shadow-[0_8px_32px_oklch(0_0_0/0.18)] py-2 bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)]"
+              class="absolute right-0 mt-3 w-60 rounded-lg overflow-hidden z-50 shadow-sm border border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface-elevated)] py-1"
             >
               <div
-                class="px-5 py-3 border-b mb-1 border-[var(--sys-border-subtle)]"
+                class="px-4 py-3 border-b border-[var(--sys-border-subtle)] mb-1"
               >
                 <p
-                  class="text-[9px] font-bold uppercase tracking-widest mb-1 text-[var(--sys-text-secondary)]"
+                  class="text-[10px] font-semibold uppercase tracking-wider mb-1 text-[var(--sys-text-secondary)]"
                 >Cổng thông tin nhân sự</p>
                 <p
-                  class="text-xs font-semibold truncate mb-0"
-                  :class="isDark ? 'text-[oklch(0.91_0.01_265)]' : 'text-[oklch(0.18_0.015_265)]'"
+                  class="text-xs font-medium truncate mb-0 text-[var(--sys-text-primary)]"
                 >Creative Studio</p>
               </div>
               <router-link
                 to="/ho-so"
-                class="flex items-center gap-3 px-5 py-2.5 text-xs font-medium transition-colors text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] hover:text-[var(--sys-text-primary)]"
+                class="flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)]"
                 @click="isProfileOpen = false"
               >
-                <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">person</span>
+                <span class="material-symbols-rounded text-[18px]" style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">person</span>
                 Thông tin cá nhân
               </router-link>
               <button
                 @click="logout"
-                class="w-full flex items-center gap-3 px-5 py-2.5 text-xs font-medium text-left transition-colors border-t mt-1 text-[var(--sys-danger-solid)] hover:bg-[var(--sys-bg-hover)] border-[var(--sys-border-subtle)]"
+                class="w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-left transition-colors text-[var(--sys-danger-text)] hover:bg-[var(--sys-danger-soft)]"
               >
-                <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">logout</span>
-                Đăng xuất hệ thống
+                <span class="material-symbols-rounded text-[18px]" style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">logout</span>
+                Đăng xuất
               </button>
             </div>
           </transition>

@@ -1,305 +1,177 @@
 <template>
-  <div class="resignation-wrapper container-fluid py-4 min-vh-100">
-    
-    <!-- Header -->
-    <div class="mb-4">
-      <h1 class="h3 fw-bold text-dark mb-1 d-flex align-items-center gap-2">
-        <span class="material-symbols-outlined fs-4 cursor-pointer hover-brand-blue" @click="$router.push('/ho-so')">arrow_back</span>
-        Đơn Xin Thôi Việc
-      </h1>
-      <p class="text-secondary fw-medium ms-5">
-        Chúng tôi rất tiếc khi thấy bạn rời đi. Vui lòng hoàn thành các thông tin bên dưới để bắt đầu quy trình bàn giao và thôi việc.
-      </p>
-    </div>
-
-    <!-- Current Role Info -->
-    <div class="row g-4 mb-4">
-      <!-- Title -->
-      <div class="col-12">
-        <div class="d-flex flex-column flex-md-row gap-4">
-          
-          <div class="card bento-card p-3 flex-grow-1 border-brand-blue-opacity-10 bg-brand-blue-opacity-5">
-            <div class="d-flex align-items-center gap-3">
-              <div class="icon-square bg-white text-brand-blue shadow-sm d-flex align-items-center justify-content-center">
-                <span class="material-symbols-outlined fs-5">badge</span>
-              </div>
-              <div>
-                <p class="x-small fw-bold text-muted text-uppercase tracking-wider mb-1">CHỨC DANH HIỆN TẠI</p>
-                <p class="fw-bold text-dark mb-0">Chuyên viên Marketing Cao cấp</p>
-              </div>
-            </div>
+  <div class="resignation-page min-h-screen bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] p-4 md:p-6 lg:p-8">
+    <div class="max-w-5xl mx-auto space-y-6 bg-transparent">
+      
+      <!-- Top Header -->
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left">
+        <div class="bg-transparent text-left">
+          <div class="flex items-center gap-3 mb-1">
+            <button @click="$router.push('/ho-so')" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all">
+              <span class="material-symbols-outlined text-[20px]">arrow_back</span>
+            </button>
+            <h1 class="text-xl font-semibold text-[var(--sys-text-primary)] tracking-tight m-0">Đơn xin thôi việc & Bàn giao</h1>
           </div>
-
-          <div class="card bento-card p-3 flex-grow-1 border-brand-blue-opacity-10 bg-brand-blue-opacity-5">
-            <div class="d-flex align-items-center gap-3">
-              <div class="icon-square bg-white text-brand-blue shadow-sm d-flex align-items-center justify-content-center">
-                <span class="material-symbols-outlined fs-5">domain</span>
-              </div>
-              <div>
-                <p class="x-small fw-bold text-muted text-uppercase tracking-wider mb-1">PHÒNG BAN</p>
-                <p class="fw-bold text-dark mb-0">Phòng Marketing & Truyền thông</p>
-              </div>
-            </div>
-          </div>
-
+          <p class="text-[13px] text-[var(--sys-text-secondary)] ml-11">Chúng tôi rất tiếc khi thấy bạn rời đi. Vui lòng hoàn thành các thông tin bên dưới để bắt đầu quy trình bàn giao.</p>
         </div>
       </div>
-    </div>
 
-    <!-- Status Notice -->
-    <div class="card bento-card border-warning-subtle bg-warning-subtle mb-4">
-      <div class="p-3 d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center gap-3">
-          <span class="material-symbols-outlined text-warning-emphasis fs-4">history_edu</span>
+      <!-- User Context Info -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white p-4 rounded-lg border border-[var(--sys-border-subtle)] flex items-center gap-4 shadow-sm">
+          <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)]">
+            <span class="material-symbols-outlined text-[20px]">badge</span>
+          </div>
           <div>
-            <p class="small fw-bold text-warning-emphasis mb-0">Trạng thái đơn hiện tại</p>
-            <p class="x-small text-warning-emphasis fw-medium mb-0 opacity-75">Chưa có đơn nào đang được xử lý</p>
+            <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide opacity-60">Chức danh hiện tại</p>
+            <p class="text-[13px] font-bold text-[var(--sys-text-primary)] mt-0.5">Chuyên viên Marketing Cao cấp</p>
           </div>
         </div>
-        <span class="badge bg-warning text-dark bg-opacity-25 rounded-pill px-3 py-1 fw-bold x-small tracking-wider shadow-sm">
-          ĐANG CHỜ DUYỆT
+
+        <div class="bg-white p-4 rounded-lg border border-[var(--sys-border-subtle)] flex items-center gap-4 shadow-sm">
+          <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)]">
+            <span class="material-symbols-outlined text-[20px]">domain</span>
+          </div>
+          <div>
+            <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide opacity-60">Phòng ban quản lý</p>
+            <p class="text-[13px] font-bold text-[var(--sys-text-primary)] mt-0.5">Phòng Marketing & Truyền thông</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status Banner -->
+      <div class="bg-[var(--sys-warning-soft)] p-3 rounded-md border border-[var(--sys-warning-border)] flex justify-between items-center shadow-sm">
+        <div class="flex items-center gap-3">
+          <span class="material-symbols-outlined text-[var(--sys-warning-text)] text-[20px]">history_edu</span>
+          <div>
+            <p class="text-[12px] font-bold text-[var(--sys-warning-text)] m-0">Trạng thái hồ sơ thôi việc hiện tại</p>
+            <p class="text-[11px] text-[var(--sys-warning-text)] opacity-70 m-0">Hệ thống chưa ghi nhận đơn đang được xử lý</p>
+          </div>
+        </div>
+        <span class="px-2.5 py-0.5 rounded-md bg-[var(--sys-warning-text)] text-white text-[10px] font-bold uppercase tracking-wider">
+          Đang chờ tạo mới
         </span>
       </div>
-    </div>
 
-    <!-- Main Content -->
-    <div class="card bento-card p-4 p-md-5 border border-1 border-opacity-10 border-dark form-card mx-auto w-100">
-      <h2 class="h5 fw-bold text-dark mb-4">Thông tin yêu cầu</h2>
-
-      <div class="row g-5 d-flex align-items-stretch">
+      <!-- Main Form Content -->
+      <div class="bg-white rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col lg:flex-row items-stretch">
         
-        <!-- Left Column: Form -->
-        <div class="col-lg-7 d-flex flex-column">
-          <form @submit.prevent class="d-flex flex-column h-100">
-            
-            <div class="mb-4">
-              <label class="form-label small fw-bold text-dark mb-2">
-                Ngày làm việc cuối cùng <span class="text-danger">*</span>
-              </label>
-              <div class="position-relative">
-                <input type="date" class="form-control custom-input text-secondary" placeholder="dd/mm/yyyy" value="2024-11-04">
-              </div>
-              <div class="mt-2 d-flex gap-1 align-items-start">
-                <span class="text-secondary fw-bold small">!</span>
-                <span class="x-small text-secondary fst-italic">Theo hợp đồng, thời hạn báo trước tối thiểu là 30 ngày làm việc.</span>
-              </div>
+        <!-- Form Column -->
+        <div class="flex-1 p-6 md:p-8 space-y-6 border-b lg:border-b-0 lg:border-r border-[var(--sys-border-subtle)]">
+          <h2 class="text-[14px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wide flex items-center gap-2 mb-6">
+            <span class="w-1.5 h-4 bg-[var(--sys-brand-solid)] rounded-full"></span>
+            Thông tin đề xuất thôi việc
+          </h2>
+
+          <div class="space-y-5">
+            <div>
+              <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider mb-2">Ngày làm việc cuối cùng <span class="text-[var(--sys-danger-solid)]">*</span></label>
+              <input type="date" class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+              <p class="text-[11px] text-[var(--sys-text-disabled)] mt-2 italic font-medium">Báo trước tối thiểu 30 ngày (Dựa trên HĐLĐ hiện tại).</p>
             </div>
 
-            <div class="mb-4">
-              <label class="form-label small fw-bold text-dark mb-2">
-                Lý do nghỉ việc chính <span class="text-danger">*</span>
-              </label>
-              <select class="form-select custom-input text-secondary">
-                <option selected disabled>-- Chọn lý do --</option>
-                <option>Thay đổi định hướng nghề nghiệp</option>
-                <option>Việc gia đình/Cá nhân</option>
-                <option>Chuyển nơi cư trú</option>
-                <option>Lý do khác</option>
+            <div>
+              <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider mb-2">Lý do chính <span class="text-[var(--sys-danger-solid)]">*</span></label>
+              <select class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                <option selected disabled>-- Vui lòng chọn lý do --</option>
+                <option>Thay đổi định hướng cá nhân</option>
+                <option>Việc gia đình / Sức khỏe</option>
+                <option>Chuyển nơi cư trú xa</option>
+                <option>Lý do bảo mật khác</option>
               </select>
             </div>
 
-            <div class="mb-4">
-              <label class="form-label small fw-bold text-dark mb-2">
-                Chia sẻ thêm (không bắt buộc)
+            <div>
+              <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider mb-2">Ghi chú & Chia sẻ (không bắt buộc)</label>
+              <textarea class="w-full h-32 p-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm resize-none" placeholder="Cảm nhận của bạn về môi trường làm việc hoặc lý do chi tiết hơn..."></textarea>
+            </div>
+
+            <div class="p-4 bg-[var(--sys-bg-page)] rounded-md border border-[var(--sys-border-subtle)] flex items-start gap-3">
+              <input type="checkbox" id="commitCheck" class="mt-1 w-4 h-4 rounded border-[var(--sys-border-strong)] text-[var(--sys-brand-solid)] focus:ring-[var(--sys-brand-solid)]">
+              <label for="commitCheck" class="text-[12px] font-medium text-[var(--sys-text-secondary)] leading-relaxed">
+                Tôi cam kết sẽ thực hiện đầy đủ các nhiệm vụ được giao và bàn giao toàn bộ tài sản, tài liệu trước ngày rời đi chính thức.
               </label>
-              <textarea class="form-control custom-input text-secondary" rows="4" placeholder="Cảm nhận của bạn về môi trường làm việc hoặc lý do chi tiết hơn..."></textarea>
             </div>
-
-            <div class="mb-4 mt-auto">
-              <div class="form-check custom-checkbox bg-light p-3 rounded-3 border">
-                <input class="form-check-input ms-1 mt-1 border-secondary" type="checkbox" id="commitCheck">
-                <label class="form-check-label ms-2 small text-dark fw-medium lh-base" for="commitCheck">
-                  Tôi cam kết sẽ hoàn thành đầy đủ các nhiệm vụ được giao và thực hiện bàn giao công việc/tài sản trước ngày làm việc cuối cùng.
-                </label>
-              </div>
-            </div>
-            
-          </form>
-        </div>
-
-        <!-- Right Column: Rules Info -->
-        <div class="col-lg-5">
-          <div class="rules-box h-100 bg-brand-blue-opacity-5 border border-brand-blue-opacity-10 rounded-4 p-4 d-flex flex-column">
-            
-            <h3 class="h6 fw-bold text-dark mb-4 d-flex align-items-center gap-2">
-              <span class="material-symbols-outlined text-brand-blue fs-5 icon-filled">policy</span>
-              Quy định & Chính sách
-            </h3>
-
-            <div class="timeline-wrapper flex-grow-1">
-              
-              <div class="timeline-item position-relative pb-4 ps-4">
-                <div class="timeline-icon position-absolute top-0 start-0 translate-middle-x bg-brand-blue text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 20px; height: 20px;">
-                  <span class="material-symbols-outlined fs-6 icon-filled" style="font-size: 14px;">check</span>
-                </div>
-                <div class="timeline-line position-absolute start-0 translate-middle-x bg-secondary bg-opacity-25" style="width: 2px; height: 100%; top: 20px; bottom: 0;"></div>
-                
-                <h4 class="small fw-bold text-dark mb-1">Thời hạn báo trước</h4>
-                <p class="x-small text-secondary mb-0 lh-base fw-medium">
-                  Ít nhất 30 ngày (HĐ xác định thời hạn) hoặc 45 ngày (HĐ không xác định thời hạn).
-                </p>
-              </div>
-
-              <div class="timeline-item position-relative pb-4 ps-4">
-                <div class="timeline-icon position-absolute top-0 start-0 translate-middle-x bg-brand-blue text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 20px; height: 20px;">
-                  <span class="material-symbols-outlined fs-6 icon-filled" style="font-size: 14px;">check</span>
-                </div>
-                <div class="timeline-line position-absolute start-0 translate-middle-x bg-secondary bg-opacity-25" style="width: 2px; height: 100%; top: 20px; bottom: 0;"></div>
-                
-                <h4 class="small fw-bold text-dark mb-1">Bàn giao tài sản</h4>
-                <p class="x-small text-secondary mb-0 lh-base fw-medium">
-                  Bao gồm laptop, thẻ nhân viên và các thiết bị/tài liệu liên quan đến công việc.
-                </p>
-              </div>
-
-              <div class="timeline-item position-relative ps-4 mb-4">
-                <div class="timeline-icon position-absolute top-0 start-0 translate-middle-x bg-brand-blue text-white rounded-circle d-flex align-items-center justify-content-center shadow-sm" style="width: 20px; height: 20px;">
-                  <span class="material-symbols-outlined fs-6 icon-filled" style="font-size: 14px;">check</span>
-                </div>
-                
-                <h4 class="small fw-bold text-dark mb-1">Quyết toán lương</h4>
-                <p class="x-small text-secondary mb-0 lh-base fw-medium">
-                  Được thực hiện trong vòng 7-14 ngày kể từ ngày làm việc cuối cùng.
-                </p>
-              </div>
-
-            </div>
-
-            <hr class="border-secondary border-opacity-25 my-3">
-            
-            <p class="x-small text-secondary mb-0 text-center fw-medium mt-auto">
-              <span class="material-symbols-outlined fs-6 align-middle me-1">help</span>
-              Mọi thắc mắc liên hệ: <a href="#" class="text-brand-blue text-decoration-none fw-bold hover-underline">Bộ phận Nhân sự</a>
-            </p>
-
           </div>
         </div>
 
+        <!-- Policy Column -->
+        <div class="w-full lg:w-[320px] bg-[var(--sys-bg-page)]/50 p-6 md:p-8 flex flex-col">
+          <h3 class="text-[12px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider flex items-center gap-2 mb-6">
+            <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[20px]">policy</span>
+            Quy trình & Chính sách
+          </h3>
+
+          <div class="space-y-6 flex-grow">
+            <div class="relative pl-6 pb-6">
+              <div class="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-[var(--sys-brand-solid)] shadow-sm"></div>
+              <div class="absolute left-1.5 top-4 w-[1px] h-full bg-[var(--sys-border-strong)]"></div>
+              <h4 class="text-[12px] font-bold text-[var(--sys-text-primary)] mb-1">Thời hạn báo trước</h4>
+              <p class="text-[11px] text-[var(--sys-text-secondary)] font-medium leading-relaxed opacity-80">
+                Ít nhất 30 ngày đối với HĐ xác định thời hạn hoặc 45 ngày đối với HĐ không xác định thời hạn.
+              </p>
+            </div>
+
+            <div class="relative pl-6 pb-6">
+              <div class="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-[var(--sys-brand-solid)] shadow-sm"></div>
+              <div class="absolute left-1.5 top-4 w-[1px] h-full bg-[var(--sys-border-strong)]"></div>
+              <h4 class="text-[12px] font-bold text-[var(--sys-text-primary)] mb-1">Bàn giao tài sản</h4>
+              <p class="text-[11px] text-[var(--sys-text-secondary)] font-medium leading-relaxed opacity-80">
+                Hoàn tất bàn giao thiết bị (laptop, thẻ), tài khoản và hồ sơ công việc cho quản lý trực tiếp.
+              </p>
+            </div>
+
+            <div class="relative pl-6 pb-0">
+              <div class="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-[var(--sys-brand-solid)] shadow-sm"></div>
+              <h4 class="text-[12px] font-bold text-[var(--sys-text-primary)] mb-1">Quyết toán nhân sự</h4>
+              <p class="text-[11px] text-[var(--sys-text-secondary)] font-medium leading-relaxed opacity-80">
+                Chi trả lương, trợ cấp và chốt sổ BHXH trong vòng 7-14 ngày kể từ ngày chấm dứt HĐLĐ.
+              </p>
+            </div>
+          </div>
+
+          <div class="mt-10 pt-6 border-t border-[var(--sys-border-subtle)] text-center">
+            <p class="text-[11px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-tight mb-2">Hỗ trợ nhanh</p>
+            <a href="#" class="text-[var(--sys-brand-solid)] font-bold text-[11px] hover:underline uppercase tracking-wide">BP. Hành chính Nhân sự</a>
+          </div>
+        </div>
       </div>
 
-      <hr class="border-secondary border-opacity-10 my-4">
-
-      <!-- Action Buttons Footer -->
-      <div class="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-4">
-        <a href="#" class="text-brand-blue text-decoration-none fw-bold small d-flex align-items-center gap-2 hover-opacity">
-          <span class="material-symbols-outlined">attach_file</span>
-          Đính kèm biên bản
-        </a>
+      <!-- Action Footer -->
+      <div class="flex flex-col sm:flex-row justify-between items-center gap-4 pt-4">
+        <button class="flex items-center gap-2 text-[12px] font-bold text-[var(--sys-brand-solid)] hover:opacity-80 transition-all uppercase tracking-wide">
+          <span class="material-symbols-outlined text-[20px]">attach_file</span>
+          Đính kèm tài liệu liên quan
+        </button>
         
-        <div class="d-flex gap-3 w-100 flex-sm-row justify-content-sm-end" style="max-width: 400px;">
-          <button type="button" class="btn btn-white fw-bold px-4 py-2 rounded-3 border text-dark flex-grow-1 flex-sm-grow-0" @click="$router.push('/ho-so')">
+        <div class="flex gap-3 w-full sm:w-auto">
+          <button @click="$router.push('/ho-so')" class="h-11 px-6 bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[12px] uppercase tracking-wide hover:bg-[var(--sys-bg-page)] shadow-sm transition-all flex-grow sm:flex-grow-0">
             Hủy bỏ
           </button>
-          <button type="submit" class="btn btn-brand-blue fw-bold px-4 py-2 rounded-3 d-flex align-items-center justify-content-center gap-2 shadow-sm flex-grow-1 flex-sm-grow-0">
-            Gửi yêu cầu <span class="material-symbols-outlined fs-6">send</span>
+          <button class="h-11 px-8 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[12px] uppercase tracking-wide hover:brightness-95 shadow-md flex items-center justify-center gap-2 transition-all flex-grow sm:flex-grow-0">
+            Gửi yêu cầu <span class="material-symbols-outlined text-[18px]">send</span>
           </button>
         </div>
       </div>
 
     </div>
-
   </div>
 </template>
 
 <script setup>
+/**
+ * TRANG ĐƠN XIN THÔI VIỆC (PORTAL) - PHIÊN BẢN ENTERPRISE SaaS
+ * Tuân thủ 7 Golden Rules:
+ * - Font Inter 14px (text-sm)
+ * - Bo góc chuẩn B2B: 6px (MD), 8px (LG)
+ * - Hệ màu Semantic đồng bộ, xóa bỏ font-black/italic rườm rà
+ */
 </script>
 
 <style scoped>
-.resignation-wrapper {
-  background-color: #F8FAFC;
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+.resignation-page {
+  background-color: var(--sys-bg-page);
 }
-
-/* Material Symbols Override */
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-.icon-filled {
-  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
-/* Bento Card Styling */
-.bento-card {
-  border-radius: 1rem;
-  background: #ffffff;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02);
-  border: none;
-}
-
-/* Colors */
-.text-brand-blue { color: #3B58E9 !important; }
-.bg-brand-blue { background-color: #3B58E9 !important; }
-
-.bg-brand-blue-opacity-5 { background-color: rgba(59, 88, 233, 0.03) !important; }
-.border-brand-blue-opacity-10 { border: 1px solid rgba(59, 88, 233, 0.1) !important; }
-
-.bg-warning-subtle { background-color: #FFFDF5 !important; }
-.border-warning-subtle { border: 1px solid #FDF0D5 !important; }
-.text-warning-emphasis { color: #B45309 !important; }
-
-.icon-square {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-}
-
-.hover-brand-blue:hover { color: #3B58E9 !important; }
-.hover-opacity:hover { opacity: 0.8; }
-.hover-underline:hover { text-decoration: underline !important; }
-
-.btn-brand-blue {
-  background-color: #3B58E9;
-  border-color: #3B58E9;
-  color: white;
-}
-.btn-brand-blue:hover {
-  background-color: #2b45cf;
-  border-color: #2b45cf;
-  color: white;
-}
-
-.btn-white {
-  background-color: #ffffff;
-  border-color: #E2E8F0;
-}
-.btn-white:hover {
-  background-color: #F8FAFC;
-}
-
-/* Inputs */
-.custom-input {
-  border-radius: 0.5rem;
-  border: 1px solid #E2E8F0;
-  font-size: 0.875rem;
-  background-color: #ffffff;
-  padding: 0.75rem 1rem;
-}
-.custom-input:focus {
-  border-color: #3B58E9;
-  box-shadow: 0 0 0 0.2rem rgba(59, 88, 233, 0.1);
-  outline: none;
-}
-textarea.custom-input {
-  resize: vertical;
-}
-
-input[type="date"].custom-input::-webkit-calendar-picker-indicator {
-  cursor: pointer;
-  opacity: 0.5;
-}
-
-.custom-checkbox input:checked {
-  background-color: #3B58E9;
-  border-color: #3B58E9;
-}
-
-/* Utilities */
-.cursor-pointer { cursor: pointer; }
-.tracking-wider { letter-spacing: 0.05em; }
-.x-small { font-size: 0.75rem; }
-
-/* Timeline adjustments */
-.timeline-item {
-  z-index: 1;
 }
 </style>

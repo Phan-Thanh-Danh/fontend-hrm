@@ -24,12 +24,12 @@
       <!-- Brand -->
       <div class="flex items-center gap-2.5 ml-1">
         <div
-          class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md bg-gradient-to-br from-[oklch(0.55_0.18_255)] to-[oklch(0.45_0.15_285)]"
+          class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 border border-[var(--sys-border-subtle)] bg-[var(--sys-brand-solid)] shadow-sm"
         >
           <span class="material-symbols-rounded text-white" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 20">corporate_fare</span>
         </div>
         <span
-          class="hidden sm:block whitespace-nowrap font-medium text-[1.08rem] transition-colors duration-300 text-[var(--sys-text-primary)]"
+          class="hidden sm:block whitespace-nowrap font-semibold text-base transition-colors duration-300 text-[var(--sys-text-primary)]"
         >HRM Portal</span>
       </div>
 
@@ -55,13 +55,13 @@
         <!-- Search -->
         <div class="relative group hidden sm:flex items-center mr-1">
           <span
-            class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] transition-colors text-[var(--sys-text-secondary)]"
+            class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] transition-colors text-[var(--sys-text-secondary)] opacity-50"
             style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20"
           >search</span>
           <input
             type="text"
             placeholder="Tìm kiếm..."
-            class="pl-9 pr-4 py-1.5 w-48 rounded-full text-sm transition-all duration-200 focus:outline-none focus:w-64 bg-[var(--sys-bg-page)] border border-[var(--sys-border)] text-[var(--sys-text-primary)] focus:border-[var(--sys-accent)] focus:ring-2 focus:ring-[var(--sys-accent)]/20"
+            class="pl-9 pr-4 h-9 w-48 rounded-md text-sm transition-all duration-200 focus:outline-none focus:w-64 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] text-[var(--sys-text-primary)] focus:border-[var(--sys-brand-solid)] shadow-sm"
           />
         </div>
 
@@ -87,60 +87,55 @@
           <transition name="m3-dropdown">
             <div
               v-if="isNotificationOpen"
-              class="absolute right-0 mt-3 w-80 rounded-xl overflow-hidden z-50 shadow-lg"
-              :class="isDark
-                ? 'bg-[oklch(0.2_0.018_265)] border border-[oklch(0.3_0.025_265)]'
-                : 'bg-white border border-slate-200'"
+              class="absolute right-0 mt-3 w-80 rounded-lg overflow-hidden z-50 shadow-sm border border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface-elevated)]"
             >
               <div
-                class="flex justify-between items-center px-5 py-4 border-b"
-                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[oklch(0.92_0.008_265)]'"
+                class="flex justify-between items-center px-4 py-3 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]"
               >
                 <h6
-                  class="text-sm font-bold mb-0 text-[var(--sys-text-primary)]"
+                  class="text-sm font-semibold mb-0 text-[var(--sys-text-primary)]"
                 >Thông báo</h6>
-                <span class="text-[10px] font-bold text-[var(--sys-accent)] uppercase tracking-widest">2 Mới</span>
+                <span class="text-[10px] font-semibold text-[var(--sys-brand-solid)] uppercase tracking-wider">2 Mới</span>
               </div>
               <div class="max-h-[300px] overflow-y-auto">
                 <div
-                  class="p-4 flex gap-3 transition-colors cursor-default border-b border-slate-100 hover:bg-slate-50"
+                  class="p-3 flex gap-3 transition-colors cursor-default border-b border-[var(--sys-border-subtle)] hover:bg-[var(--sys-bg-hover)]"
                 >
                   <div
-                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-blue-50 text-blue-600"
+                    class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)]"
                   >
                     <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">person_add</span>
                   </div>
                   <div>
                     <p
-                      class="text-xs font-semibold mb-0.5 text-slate-900"
+                      class="text-xs font-medium mb-0.5 text-[var(--sys-text-primary)]"
                     >3 Ứng viên mới nộp CV</p>
                     <p
-                      class="text-[10px] text-slate-400 font-bold"
+                      class="text-[10px] text-[var(--sys-text-secondary)] font-medium"
                     >Frontend Developer · 15 phút trước</p>
                   </div>
                 </div>
                 <div
-                  class="p-4 flex gap-3 transition-colors cursor-default hover:bg-slate-50"
+                  class="p-3 flex gap-3 transition-colors cursor-default hover:bg-[var(--sys-bg-hover)]"
                 >
                   <div
-                    class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 bg-green-50 text-green-600"
+                    class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-[var(--sys-success-soft)] text-[var(--sys-success-text)]"
                   >
                     <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">task_alt</span>
                   </div>
                   <div>
                     <p
-                      class="text-xs font-semibold mb-0.5 text-slate-900"
+                      class="text-xs font-medium mb-0.5 text-[var(--sys-text-primary)]"
                     >Đơn xin nghỉ phép đã được duyệt</p>
                     <p
-                      class="text-[10px] text-slate-400 font-bold"
+                      class="text-[10px] text-[var(--sys-text-secondary)] font-medium"
                     >Phê duyệt · 1 giờ trước</p>
                   </div>
                 </div>
               </div>
               <!-- Custom Xem Tất Cả Thông Báo Link -->
               <div
-                class="border-t p-2 text-center"
-                :class="isDark ? 'border-[oklch(0.3_0.025_265)]' : 'border-[var(--sys-border)]'"
+                class="border-t p-2 text-center border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]"
               >
                 <router-link
                   to="/thong-bao"
@@ -234,32 +229,32 @@
           <transition name="m3-dropdown">
             <div
               v-if="isProfileOpen"
-              class="absolute right-0 mt-3 w-60 rounded-xl overflow-hidden z-50 shadow-lg py-2 bg-white border border-slate-100"
+              class="absolute right-0 mt-3 w-60 rounded-lg overflow-hidden z-50 shadow-sm border border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface-elevated)] py-1"
             >
               <div
-                class="px-5 py-3 border-b border-[var(--sys-border)] mb-1"
+                class="px-4 py-3 border-b border-[var(--sys-border-subtle)] mb-1"
               >
                 <p
-                  class="text-[9px] font-bold uppercase tracking-widest mb-1 text-[var(--sys-text-secondary)]"
+                  class="text-[10px] font-semibold uppercase tracking-wider mb-1 text-[var(--sys-text-secondary)]"
                 >Tài khoản quản trị</p>
                 <p
-                  class="text-xs font-semibold truncate mb-0 text-[var(--sys-text-primary)]"
+                  class="text-xs font-medium truncate mb-0 text-[var(--sys-text-primary)]"
                 >admin@hrm.com</p>
               </div>
               <router-link
                 to="/admin/ho-so"
-                class="flex items-center gap-3 px-5 py-2.5 text-[13px] font-bold transition-colors text-slate-600 hover:bg-slate-50 hover:text-indigo-700"
+                class="flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)]"
                 @click="isProfileOpen = false"
               >
-                <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">person</span>
+                <span class="material-symbols-rounded text-[18px]" style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">person</span>
                 Thông tin cá nhân
               </router-link>
               <button
                 @click="logout"
-                class="w-full flex items-center gap-3 px-5 py-2.5 text-[13px] font-bold text-left transition-colors border-t border-slate-50 text-red-500 hover:bg-slate-50"
+                class="w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-left transition-colors text-[var(--sys-danger-text)] hover:bg-[var(--sys-danger-soft)]"
               >
-                <span class="material-symbols-rounded" style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">logout</span>
-                Đăng xuất hệ thống
+                <span class="material-symbols-rounded text-[18px]" style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20">logout</span>
+                Đăng xuất
               </button>
             </div>
           </transition>
@@ -555,8 +550,8 @@ export const SidebarItem = defineComponent({
         return h(RouterLink, {
           to: props.to,
           class: [
-            'group relative flex items-center justify-between w-full h-11 px-5',
-            'transition-all duration-150 outline-none text-left no-underline border-l-4',
+            'group relative flex items-center justify-between w-full h-10 px-4',
+            'transition-all duration-150 outline-none text-left no-underline border-l-2',
             'focus-visible:bg-[var(--sys-bg-hover)]',
             props.isActive ? 'bg-[var(--sys-brand-soft)] border-[var(--sys-brand-solid)]' : 'bg-transparent border-transparent hover:bg-[var(--sys-bg-hover)]',
           ].join(' '),
@@ -564,14 +559,14 @@ export const SidebarItem = defineComponent({
         }, () => [
           h('div', { class: 'flex items-center gap-3 bg-transparent' }, [
             // Icon (morphing)
-            h('span', { class: 'relative shrink-0 w-6 h-6 flex items-center justify-center bg-transparent' }, [
+            h('span', { class: 'relative shrink-0 w-5 h-5 flex items-center justify-center bg-transparent' }, [
               // Outline icon (inactive)
               h('span', {
                 class: [
                   'material-symbols-rounded absolute transition-all duration-300',
                   props.isActive ? `opacity-0 scale-50 ${activeIcon}` : `opacity-100 scale-100 ${inactiveIcon}`,
                 ].join(' '),
-                style: "font-size:22px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
+                style: "font-size:20px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
               }, props.icon),
               // Filled icon (active)
               h('span', {

@@ -4,37 +4,37 @@
       @click="isOpen = !isOpen"
       type="button"
       :class="[
-        'w-full flex items-center justify-between gap-4 px-6 h-12 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl text-sm font-semibold text-[var(--sys-text-primary)] hover:border-[var(--sys-brand-solid)] hover:shadow-lg hover:shadow-[var(--sys-brand-solid)]/5 transition-all focus:outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 active:scale-[0.98]',
+        'w-full flex items-center justify-between gap-2 px-3 h-full bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] hover:border-[var(--sys-brand-solid)] hover:shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--sys-brand-solid)]/10 active:scale-[0.98]',
         buttonClass
       ]"
     >
-      <div class="flex items-center gap-3 whitespace-nowrap bg-transparent">
-        <span v-if="selectedIcon" class="material-symbols-outlined text-xl text-[var(--sys-brand-solid)] shrink-0">{{ selectedIcon }}</span>
-        <span class="whitespace-nowrap">{{ selectedLabel }}</span>
+      <div class="flex items-center gap-2 whitespace-nowrap bg-transparent overflow-hidden">
+        <span v-if="selectedIcon" class="material-symbols-outlined text-[18px] text-[var(--sys-brand-solid)] shrink-0">{{ selectedIcon }}</span>
+        <span class="whitespace-nowrap truncate">{{ selectedLabel }}</span>
       </div>
-      <span class="material-symbols-outlined text-xl transition-transform duration-500 text-[var(--sys-icon-default)] shrink-0 opacity-40 ml-2" :class="isOpen ? 'rotate-180 opacity-100' : ''">expand_more</span>
+      <span class="material-symbols-outlined text-[18px] transition-transform duration-500 text-[var(--sys-icon-default)] shrink-0 opacity-40" :class="isOpen ? 'rotate-180 opacity-100' : ''">expand_more</span>
     </button>
 
     <transition name="dropdown">
       <div 
         v-if="isOpen"
-        class="absolute z-[1001] mt-3 min-w-full bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)] rounded-[1.5rem] shadow-2xl shadow-black/10 overflow-hidden backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-300"
+        class="absolute z-[1001] mt-2 min-w-full bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)] rounded-md shadow-2xl overflow-hidden backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-300"
       >
-        <div class="p-2 max-h-[300px] overflow-y-auto custom-scrollbar">
+        <div class="p-1.5 max-h-[300px] overflow-y-auto custom-scrollbar">
           <div 
             v-for="option in options" 
             :key="option.value"
             @click="selectOption(option)"
-            class="px-4 py-3 text-sm transition-all cursor-pointer rounded-xl mb-1 last:mb-0 flex items-center justify-between group/opt whitespace-nowrap min-w-max"
+            class="px-3 py-2 text-[13px] transition-all cursor-pointer rounded-md mb-0.5 last:mb-0 flex items-center justify-between group/opt whitespace-nowrap min-w-max"
             :class="modelValue === option.value 
               ? 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] font-semibold' 
               : 'text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)]'"
           >
             <div class="flex items-center gap-3 bg-transparent pr-4">
-               <span v-if="option.icon" class="material-symbols-outlined text-lg opacity-40 group-hover/opt:opacity-100 transition-opacity">{{ option.icon }}</span>
+               <span v-if="option.icon" class="material-symbols-outlined text-[18px] opacity-40 group-hover/opt:opacity-100 transition-opacity">{{ option.icon }}</span>
                <span class="font-medium">{{ option.label }}</span>
             </div>
-            <span v-if="modelValue === option.value" class="material-symbols-outlined text-lg">check_circle</span>
+            <span v-if="modelValue === option.value" class="material-symbols-outlined text-[18px]">check_circle</span>
           </div>
         </div>
       </div>

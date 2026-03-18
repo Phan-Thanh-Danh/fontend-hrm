@@ -3,114 +3,77 @@
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
 
 :root {
-  --primary-color: #1E40AF;
-  --secondary-color: #64748B;
-  --background-light: #F8FAFC;
-  --background-dark: #111621;
-  --accent-color: #3B82F6;
-  --success-color: #117c39;
-  --warning-color: #dd8e09;
-  --danger-color: #d42f2f;
   --sidebar-width: 280px;
 
-  /* Bootstrap Variable Overrides for Opacity Support */
-  --bs-primary: #1E40AF;
-  --bs-primary-rgb: 30, 64, 175;
-  --bs-secondary: #64748B;
-  --bs-secondary-rgb: 100, 116, 139;
-  --bs-success: #117c39;
-  --bs-success-rgb: 17, 124, 57;
-  --bs-warning: #dd8e09;
-  --bs-warning-rgb: 221, 142, 9;
-  --bs-danger: #d42f2f;
-  --bs-danger-rgb: 212, 47, 47;
-
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
-
-  /* ── SEMANTIC DESIGN TOKENS (LIGHT MODE) ── */
   /* 1. Canvas & Surfaces (Backgrounds) */
-  --sys-bg-page: oklch(0.98 0.01 260);          /* Background tuyệt đối dưới cùng */
-  --sys-bg-surface: oklch(1 0 0);               /* Nền thẻ (Card), khung form cơ bản */
-  --sys-bg-surface-elevated: oklch(1 0 0);      /* Background modal, menu dropdown (có thêm shadow) */
-  --sys-bg-hover: oklch(0.96 0.01 260);         /* Nền khi hover (table row, menu item) */
-  --sys-bg-active: oklch(0.94 0.03 260);        /* Nền khi đang chọn (active sidebar, selected row) */
+  --sys-bg-page: #F8FAFC;         /* Nền tổng thể: Xám cực nhạt (Slate 50) */
+  --sys-bg-surface: #FFFFFF;      /* Nền Thẻ/Card: Trắng tinh */
+  --sys-bg-surface-elevated: #FFFFFF;
+  --sys-bg-hover: #F1F5F9;        /* Nền hover: Xám nhạt (Slate 100) */
+  --sys-bg-active: #E2E8F0;       /* Nền active: Xám rõ (Slate 200) */
 
   /* 2. Typography (Text & Icons) */
-  --sys-text-primary: oklch(0.2 0.02 260);      /* Chữ chính: Tiêu đề, nội dung body */
-  --sys-text-secondary: oklch(0.45 0.02 260);   /* Chữ phụ: Captions, breadcrumbs, thead */
-  --sys-text-disabled: oklch(0.7 0.01 260);     /* Chữ trạng thái vô hiệu hóa */
-  --sys-text-inverse: oklch(1 0 0);             /* Chữ trắng (đặt trên nút bấm primary) */
-  --sys-text-accent: oklch(0.45 0.18 260);      /* Link, text nổi bật dùng màu brand */
-  --sys-icon-default: oklch(0.45 0.02 260);     /* Icon mặc định */
-  --sys-icon-hover: oklch(0.2 0.02 260);        /* Icon khi hover/active */
+  --sys-text-primary: #0F172A;    /* Chữ chính: Đen cực nét (Slate 900) */
+  --sys-text-secondary: #475569;  /* Chữ phụ/Tiêu đề cột: Xám đậm rõ ràng (Slate 600) */
+  --sys-text-disabled: #94A3B8;   /* Chữ vô hiệu: Xám vừa (Slate 400) */
+  --sys-text-inverse: #FFFFFF;    /* Chữ trắng trên nền đậm */
+  --sys-text-accent: #2563EB;     /* Chữ nhấn mạnh: Xanh dương (Blue 600) */
+
+  --sys-icon-default: #64748B;    /* Icon mặc định: Xám (Slate 500) */
+  --sys-icon-hover: #0F172A;      /* Icon khi hover: Đen nét (Slate 900) */
 
   /* 3. Borders & Dividers */
-  --sys-border-subtle: oklch(0.92 0.01 260);    /* Viền mờ: Divider ngăn cách, table border */
-  --sys-border-strong: oklch(0.75 0.02 260);    /* Viền đậm: Input field cơ bản */
-  --sys-ring-focus: oklch(0.55 0.18 260 / 0.3); /* Vòng lặp viền khi Focus (Accessibility) */
+  --sys-border-subtle: #E2E8F0;   /* Viền mỏng phân cách (Slate 200) -> Khắc phục lỗi mất viền */
+  --sys-border-strong: #CBD5E1;   /* Viền input/form (Slate 300) */
+  --sys-ring-focus: rgba(37, 99, 235, 0.2); 
 
-  /* 4. Primary Brand/Action (Indigo/Blue) */
-  --sys-brand-solid: oklch(0.55 0.18 260);      /* Nút Primary cơ bản */
-  --sys-brand-hover: oklch(0.48 0.18 260);      /* Hover nút Primary (tối hơn xíu) */
-  --sys-brand-soft: oklch(0.95 0.05 260);       /* Nền mềm: Sidebar active item */
-  --sys-brand-soft-text: oklch(0.4 0.15 260);   /* Chữ nằm trên nền mềm */
+  /* 4. Primary Brand/Action (Blue 600) */
+  --sys-brand-solid: #2563EB;      /* Nút Primary cơ bản */
+  --sys-brand-hover: #1D4ED8;      /* Hover nút Primary (Blue 700) */
+  --sys-brand-soft: #EFF6FF;       /* Nền mềm: Sidebar active item (Blue 50) */
+  --sys-brand-soft-text: #1E40AF;  /* Chữ nằm trên nền mềm (Blue 800) */
 
-  /* 5. Semantic Feedback (Tối ưu tỷ lệ tương phản) */
-  /* Success (Green) */
-  --sys-success-solid: oklch(0.55 0.15 150);
-  --sys-success-soft: oklch(0.96 0.05 150);
-  --sys-success-text: oklch(0.35 0.12 150);
-  --sys-success-border: oklch(0.85 0.1 150);
+  /* 5. Semantic Feedback (High Contrast) */
+  --sys-success-solid: #16A34A;
+  --sys-success-soft: #F0FDF4;
+  --sys-success-text: #166534;
+  --sys-success-border: #BBF7D0;
 
-  /* Danger (Red) */
-  --sys-danger-solid: oklch(0.55 0.2 25);
-  --sys-danger-soft: oklch(0.96 0.05 25);
-  --sys-danger-text: oklch(0.4 0.18 25);
-  --sys-danger-border: oklch(0.85 0.1 25);
+  --sys-danger-solid: #DC2626;
+  --sys-danger-soft: #FEF2F2;
+  --sys-danger-text: #991B1B;
+  --sys-danger-border: #FECACA;
 
-  /* Warning (Yellow/Orange) */
-  --sys-warning-solid: oklch(0.7 0.18 70);
-  --sys-warning-hover: oklch(0.62 0.18 65);
-  --sys-warning-soft: oklch(0.98 0.05 75);
-  --sys-warning-text: oklch(0.45 0.15 65);
-  --sys-warning-border: oklch(0.9 0.1 75);
+  --sys-warning-solid: #EA580C;
+  --sys-warning-soft: #FFF7ED;
+  --sys-warning-text: #9A3412;
+  --sys-warning-border: #FED7AA;
 
-  /* Info (Cyan/Blue) */
-  --sys-info-solid: oklch(0.6 0.15 230);
-  --sys-info-soft: oklch(0.96 0.05 230);
-  --sys-info-text: oklch(0.4 0.15 230);
-  --sys-info-border: oklch(0.85 0.1 230);
+  /* Radius System (Strict B2B) */
+  --radius-sm: 4px;
+  --radius-md: 6px;  /* Inputs, Buttons, Dropdowns */
+  --radius-lg: 8px;  /* Main Cards, Modals, Tables */
 }
+
 
 body {
   margin: 0;
-  background-color: var(--background-light);
-  color: #1e293b;
+  background-color: var(--sys-bg-page);
+  color: var(--sys-text-primary);
   min-height: 100vh;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 14px;
 }
 
 /* Optimized transition for smooth dark/light mode toggle without layout lag */
-body, .card, .bento-card, .list-group-item, .modal-content, input, select, textarea, .form-control, .form-select, table, th, td, tr {
-  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+body, .card, .modal-content, input, select, textarea, .form-control, .form-select, table, th, td, tr {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .material-symbols-outlined, 
-.material-symbols-rounded,
-.btn-link,
-.nav-icon {
-  text-decoration: none !important;
-}
-
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
 .material-symbols-rounded {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-  font-family: 'Material Symbols Rounded', sans-serif;
+  font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 20;
+  text-decoration: none !important;
 }
 
 /* Sidebar Styles */
@@ -123,51 +86,30 @@ body, .card, .bento-card, .list-group-item, .modal-content, input, select, texta
   background: #111621;
   border-right: 1px solid #1e293b;
   z-index: 1000;
-  transition: transform 0.3s ease;
 }
 
 .sidebar .nav-link {
   color: #94a3b8;
-  padding: 0.75rem 1rem;
-  border-radius: 0.75rem;
-  margin: 0.25rem 1rem;
+  padding: 0.625rem 1rem;
+  border-radius: var(--radius-md);
+  margin: 0.25rem 0.75rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  font-size: 13.5px;
   font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-origin: left center;
-}
-
-.sidebar .nav-link .material-symbols-outlined {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s ease;
 }
 
 .sidebar .nav-link:hover {
   background-color: rgba(255, 255, 255, 0.05);
   color: #f8fafc;
-  transform: scale(1.04);
-}
-
-.sidebar .nav-link:hover .material-symbols-outlined {
-  color: var(--accent-color);
-  transform: scale(1.2);
-}
-
-.sidebar .nav-link:active {
-  transform: scale(0.97);
 }
 
 .sidebar .nav-link.active {
-  background-color: rgba(59, 130, 246, 0.15);
-  color: var(--accent-color);
+  background-color: var(--sys-brand-solid);
+  color: white;
   font-weight: 600;
-  transform: scale(1.04);
-}
-
-.sidebar .nav-link.active .material-symbols-outlined {
-  color: var(--accent-color);
-  transform: scale(1.2);
 }
 
 .main-wrapper {
@@ -1200,69 +1142,7 @@ html.dark .material-symbols-outlined.text-slate-400 {
    Light mode tokens at :root, Dark mode tokens at html.dark
    These power Layout_GiamDoc & Dashboard_GiamDoc via var()
 ═══════════════════════════════════════════════════════════════════ */
-:root {
-  --bg-page:        #F8FAFC;
-  --bg-card:        #FFFFFF;
-  --bg-sidebar:     #FFFFFF;
-  --bg-topbar:      #FFFFFF;
-  --bg-hover:       #F1F5F9;
-  --bg-active:      #EFF6FF;
-  --border:         #E5E7EB;
-  --border-light:   #F3F4F6;
-  --text-title:     #111827;
-  --text-body:      #374151;
-  --text-muted:     #6B7280;
-  --icon-default:   #4B5563;
-  --icon-active:    #3B82F6;
-  --brand:          #3B82F6;
-  --brand-hover:    #2563EB;
-  --brand-light:    #DBEAFE;
-  --brand-text:     #1D4ED8;
-  --success:        #22C55E;
-  --success-light:  #DCFCE7;
-  --success-text:   #15803D;
-  --warning:        #F59E0B;
-  --warning-light:  #FEF3C7;
-  --warning-text:   #B45309;
-  --danger:         #EF4444;
-  --danger-light:   #FEE2E2;
-  --danger-text:    #B91C1C;
-  --shadow-sm:      0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-card:    0 2px 8px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
-  --shadow-hover:   0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
-}
 
-html.dark {
-  --bg-page:        #0F172A;
-  --bg-card:        #1E293B;
-  --bg-sidebar:     #020617;
-  --bg-topbar:      #0F172A;
-  --bg-hover:       #1E293B;
-  --bg-active:      #1E3A5F;
-  --border:         #334155;
-  --border-light:   #1E293B;
-  --text-title:     #F1F5F9;
-  --text-body:      #CBD5F5;
-  --text-muted:     #94A3B8;
-  --icon-default:   #CBD5F5;
-  --icon-active:    #60A5FA;
-  --brand:          #60A5FA;
-  --brand-hover:    #3B82F6;
-  --brand-light:    #1E3A5F;
-  --brand-text:     #93C5FD;
-  --success:        #4ADE80;
-  --success-light:  #052e16;
-  --success-text:   #4ADE80;
-  --warning:        #FBBF24;
-  --warning-light:  #1c1300;
-  --warning-text:   #FBBF24;
-  --danger:         #F87171;
-  --danger-light:   #1a0505;
-  --danger-text:    #F87171;
-  --shadow-sm:      0 1px 3px rgba(0,0,0,0.3), 0 1px 2px rgba(0,0,0,0.2);
-  --shadow-card:    0 4px 16px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.3);
-  --shadow-hover:   0 12px 32px rgba(0,0,0,0.5), 0 4px 10px rgba(0,0,0,0.35);
-}
 
 /* ── Unified Action Buttons for Tables ── */
 .btn-action-icon {

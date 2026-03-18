@@ -1,302 +1,314 @@
 <template>
- <div class="space-y-8 pb-10">
- <!-- Header -->
- <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-3 bg-transparent text-left">
- <div class="bg-transparent text-left">
- <h1 class="text-2xl font-semibold text-[var(--sys-text-primary)] mb-1 ">Hệ thống Lịch Phỏng vấn</h1>
- <p class="text-[10px] text-[var(--sys-text-secondary)] font-semibold opacity-60">Điều phối nhân sự, theo dõi ứng viên và tối ưu hóa quy trình thẩm định năng lực.</p>
- </div>
- <div class="bg-transparent text-right hidden xl:block">
- <div class="inline-flex items-center gap-4 bg-[var(--sys-bg-surface)] px-6 py-3 rounded-2xl border border-[var(--sys-border-subtle)] shadow-sm font-semibold text-[10px] text-[var(--sys-brand-solid)]">
- <span class="w-2 h-2 rounded-full bg-[var(--sys-brand-solid)] animate-ping"></span>
- Active Recruitment Flow
- </div>
- </div>
- </div>
+  <div class="interview-schedule-page space-y-6 pb-10 min-h-screen bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] p-4 md:p-6 lg:p-8">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left">
+      <div class="bg-transparent text-left">
+        <h1 class="text-xl font-semibold text-[var(--sys-text-primary)] tracking-tight m-0 uppercase">Điều phối Lịch phỏng vấn</h1>
+        <p class="text-[13px] text-[var(--sys-text-secondary)] mt-0.5">Thẩm định năng lực và quản trị hội đồng tuyển dụng toàn cầu.</p>
+      </div>
+      <div class="bg-transparent text-right hidden xl:block shrink-0">
+        <div class="inline-flex items-center gap-2 bg-white px-3 py-1.5 rounded-md border border-[var(--sys-border-subtle)] font-bold text-[10px] text-[var(--sys-brand-solid)] shadow-sm uppercase tracking-wider">
+          <span class="w-1.5 h-1.5 rounded-full bg-[var(--sys-brand-solid)] animate-pulse"></span>
+          Recruitment SaaS v3.0
+        </div>
+      </div>
+    </div>
 
- <!-- Toolbar -->
- <div class="flex flex-col lg:flex-row items-center gap-4 bg-transparent">
- <div class="flex-1 w-full bg-transparent">
- <h3 class="hidden lg:block text-[10px] font-semibold text-[var(--sys-text-secondary)] opacity-30">Phân hệ điều động nhân sự dự phòng</h3>
- </div>
- 
- <div class="flex items-center gap-4 w-full lg:w-auto shrink-0 flex-wrap lg:flex-nowrap bg-transparent justify-end">
- <!-- View Toggle -->
- <div class="bg-[var(--sys-bg-hover)] rounded-2xl p-1 flex border border-[var(--sys-border-subtle)] h-12 shadow-inner">
- <button @click="currentView = 'calendar'" :class="['px-6 h-full text-[10px] font-semibold rounded-xl transition-all flex items-center gap-2', currentView === 'calendar' ? 'bg-white text-[var(--sys-brand-solid)] shadow-md border border-[var(--sys-border-subtle)]' : 'text-[var(--sys-text-secondary)] hover:text-[var(--sys-text-primary)] opacity-40 hover:opacity-100']">
- <span class="material-symbols-outlined text-lg">calendar_month</span>
- Lịch tóm lược
- </button>
- <button @click="currentView = 'list'" :class="['px-6 h-full text-[10px] font-semibold rounded-xl transition-all flex items-center gap-2', currentView === 'list' ? 'bg-white text-[var(--sys-brand-solid)] shadow-md border border-[var(--sys-border-subtle)]' : 'text-[var(--sys-text-secondary)] hover:text-[var(--sys-text-primary)] opacity-40 hover:opacity-100']">
- <span class="material-symbols-outlined text-lg">view_list</span>
- Bảng chi tiết
- </button>
- </div>
+    <!-- Toolbar -->
+    <div class="flex flex-col lg:flex-row items-center gap-4 bg-transparent border-b border-[var(--sys-border-subtle)] pb-4">
+      <div class="flex items-center gap-1 bg-[var(--sys-bg-page)] p-1 rounded-md border border-[var(--sys-border-subtle)] h-11 shadow-inner shrink-0">
+        <button @click="currentView = 'calendar'" 
+          :class="['px-5 h-full text-[12px] font-bold rounded-md transition-all flex items-center gap-2 border uppercase', 
+          currentView === 'calendar' ? 'bg-white text-[var(--sys-brand-solid)] border-[var(--sys-border-strong)] shadow-sm' : 'text-[var(--sys-text-secondary)] border-transparent hover:text-[var(--sys-text-primary)]']">
+          <span class="material-symbols-outlined text-[18px]">calendar_month</span>
+          Lịch tóm lược
+        </button>
+        <button @click="currentView = 'list'" 
+          :class="['px-5 h-full text-[12px] font-bold rounded-md transition-all flex items-center gap-2 border uppercase', 
+          currentView === 'list' ? 'bg-white text-[var(--sys-brand-solid)] border-[var(--sys-border-strong)] shadow-sm' : 'text-[var(--sys-text-secondary)] border-transparent hover:text-[var(--sys-text-primary)]']">
+          <span class="material-symbols-outlined text-[18px]">view_list</span>
+          Danh sách chi tiết
+        </button>
+      </div>
+      
+      <div class="flex items-center gap-3 w-full lg:w-auto shrink-0 flex-wrap lg:flex-nowrap bg-transparent justify-end">
+        <Dropdown v-model="filterStatus" :options="statusOptions" class="min-w-[160px] h-11" />
+        
+        <button @click="openCreateModal" class="h-11 px-6 bg-[var(--sys-brand-solid)] rounded-md font-bold text-white hover:brightness-110 shadow-lg transition-all flex items-center gap-2 text-[12px] uppercase tracking-wider shrink-0 active:scale-95">
+          <span class="material-symbols-outlined text-[20px]">add_circle</span>
+          Thiết lập lịch mới
+        </button>
+      </div>
+    </div>
 
- <!-- Filters -->
- <Dropdown v-model="filterStatus" :options="statusOptions" class="min-w-[150px]" />
- <Dropdown v-model="filterInterviewer" :options="interviewerOptions" class="min-w-[150px]" />
+    <!-- Main Content -->
+    <div class="space-y-6">
+      <!-- Calendar View (Expandable Architecture) -->
+      <div v-show="currentView === 'calendar'" 
+        :class="['bg-white rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden relative motion-safe:animate-fadeIn transition-all duration-300', 
+        isFullscreen ? 'fixed inset-0 z-[99999] p-6 bg-white overflow-y-auto' : '']"
+      >
+        <!-- Navigation Header -->
+        <div class="p-4 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/30 flex justify-between items-center h-16">
+          <div class="flex items-center gap-3">
+            <!-- Icon Wrapper (Directive 1) -->
+            <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center shrink-0 border border-[var(--sys-brand-border)]">
+              <span class="material-symbols-outlined text-xl">event_available</span>
+            </div>
+            <div>
+              <h3 class="text-[15px] font-bold text-[var(--sys-text-primary)] m-0 leading-tight uppercase">Tháng {{ currentMonth + 1 }}, {{ currentYear }}</h3>
+              <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest mt-0.5 opacity-60">Toàn cảnh lịch trình phỏng vấn</p>
+            </div>
+          </div>
+          <div class="flex gap-2 items-center">
+            <div class="flex gap-1 border border-[var(--sys-border-subtle)] bg-white rounded-md p-1">
+              <button @click="prevMonth" class="w-8 h-8 flex items-center justify-center rounded-md text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] transition-all active:scale-90"><span class="material-symbols-outlined text-lg">chevron_left</span></button>
+              <button @click="nextMonth" class="w-8 h-8 flex items-center justify-center rounded-md text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] transition-all active:scale-90"><span class="material-symbols-outlined text-lg">chevron_right</span></button>
+            </div>
+            <!-- Fullscreen Button (Directive 3) -->
+            <button @click="toggleFullscreen" class="w-10 h-10 flex items-center justify-center rounded-md bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-strong)] hover:text-[var(--sys-brand-solid)] hover:border-[var(--sys-brand-solid)] shadow-sm transition-all active:scale-90 tooltip" :title="isFullscreen ? 'Thu nhỏ' : 'Toàn màn hình'">
+              <span class="material-symbols-outlined text-[20px]">{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</span>
+            </button>
+          </div>
+        </div>
 
- <button @click="openCreateModal" class="h-12 px-8 bg-[var(--sys-brand-solid)] rounded-2xl font-semibold text-white hover:bg-[var(--sys-brand-hover)] shadow-2xl shadow-[var(--sys-brand-solid)]/20 transition-all flex items-center gap-3 text-[10px] active:scale-95 shrink-0">
- <span class="material-symbols-outlined text-xl">add_circle</span>
- Thiết lập lịch mới
- </button>
- </div>
- </div>
+        <!-- Scrollable Grid Container (Directive 3) -->
+        <div :class="['p-4 overflow-x-auto custom-scrollbar', isFullscreen ? 'h-[calc(100vh-120px)]' : 'h-[600px]']">
+          <div class="grid grid-cols-7 border-t border-l border-[var(--sys-border-subtle)] rounded-md overflow-hidden min-w-[900px]">
+            <!-- Day labels -->
+            <div v-for="dayName in ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'CN']" :key="dayName" 
+              class="text-center py-2 text-[10px] font-bold text-[var(--sys-text-secondary)] bg-[var(--sys-bg-page)] border-r border-b border-[var(--sys-border-subtle)] uppercase tracking-widest">
+              {{ dayName }}
+            </div>
 
- <!-- Main Content -->
- <div class="space-y-8">
- <!-- Calendar View -->
- <div v-show="currentView === 'calendar'" class="bg-[var(--sys-bg-surface)] rounded-[3rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden relative group/calendar animate-in fade-in slide-in-from-bottom-4 duration-500">
- <!-- Drag Sensors -->
- <div 
- class="absolute left-0 top-0 bottom-0 w-24 z-[60] flex items-center justify-start pl-6 transition-all duration-300"
- :class="isDragging ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'"
- @dragenter.prevent="handleSensorEnter('prev')"
- >
- <div class="h-1/2 w-8 rounded-[2rem] bg-gradient-to-r from-[var(--sys-brand-solid)]/20 to-transparent blur-md"></div>
- </div>
- 
- <div 
- class="absolute right-0 top-0 bottom-0 w-24 z-[60] flex items-center justify-end pr-6 transition-all duration-300"
- :class="isDragging ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'"
- @dragenter.prevent="handleSensorEnter('next')"
- >
- <div class="h-1/2 w-8 rounded-[2rem] bg-gradient-to-l from-[var(--sys-brand-solid)]/20 to-transparent blur-md"></div>
- </div>
+            <!-- Blank cells -->
+            <div v-for="blank in emptyDays" :key="'blank'+blank" class="min-h-[120px] bg-[var(--sys-bg-page)]/20 border-r border-b border-[var(--sys-border-subtle)]/30"></div>
 
- <div class="px-10 py-10">
- <div class="flex justify-between items-center mb-10">
- <div class="flex items-center gap-4 bg-transparent text-left">
- <span class="material-symbols-outlined text-4xl text-[var(--sys-brand-solid)] opacity-60">event_available</span>
- <h3 class="text-2xl font-semibold text-[var(--sys-text-primary)] ">Tháng {{ currentMonth + 1 }} • {{ currentYear }}</h3>
- </div>
- <div class="flex gap-3 relative z-[70]">
- <button @click="prevMonth" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-subtle)] hover:text-[var(--sys-brand-solid)] transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined text-2xl">chevron_left</span></button>
- <button @click="nextMonth" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-subtle)] hover:text-[var(--sys-brand-solid)] transition-all shadow-sm active:scale-90"><span class="material-symbols-outlined text-2xl">chevron_right</span></button>
- </div>
- </div>
+            <!-- Real cells -->
+            <div 
+              v-for="day in daysInMonth" :key="day" 
+              class="min-h-[120px] p-2 bg-white border-r border-b border-[var(--sys-border-subtle)] hover:bg-[var(--sys-bg-hover)] transition-colors relative group/cell"
+              @dragover.prevent @dragenter.prevent @drop="onDrop($event, day)"
+            >
+              <div class="flex justify-between items-center mb-1.5">
+                <span class="text-[11px] font-bold text-[var(--sys-text-disabled)] group-hover/cell:opacity-100 group-hover/cell:text-[var(--sys-brand-solid)] transition-all">{{ day }}</span>
+              </div>
+              
+              <div class="space-y-1 custom-scrollbar max-h-[85px] overflow-y-auto pr-0.5 pb-1">
+                <div 
+                  v-for="interview in getInterviewsByDay(day)" :key="interview.id"
+                  draggable="true" @dragstart="onDragStart($event, interview)"
+                  @click.stop="openEditModal(interview)"
+                  class="p-1.5 rounded-md cursor-pointer transition-all shadow-sm flex flex-col gap-0.5 border border-white/20 hover:brightness-110 active:scale-95"
+                  :class="getCalendarEventClass(interview.computedStatus)"
+                >
+                  <p class="text-[9px] font-bold uppercase tracking-tight opacity-80">{{ interview.time }} • {{ interview.candidate }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
- <Transition name="calendar-slide" mode="out-in">
- <div :key="currentMonth + '-' + currentYear" class="grid grid-cols-7 border-t border-l border-[var(--sys-border-subtle)] rounded-[2.5rem] overflow-hidden shadow-2xl bg-white">
- <div v-for="dayName in ['Thứ Hai', 'Thứ Ba', 'Thứ Tư', 'Thứ Năm', 'Thứ Sáu', 'Thứ Bảy', 'Chủ Nhật']" :key="dayName" class="text-center py-6 text-[9px] font-semibold text-[var(--sys-text-secondary)] bg-[var(--sys-bg-page)]/50 border-r border-b border-[var(--sys-border-subtle)] opacity-60">
- {{ dayName }}
- </div>
+      <!-- List View -->
+      <div v-show="currentView === 'list'" class="bg-white rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden motion-safe:animate-fadeIn">
+        <div class="px-4 py-3 border-b border-[var(--sys-border-subtle)] flex justify-between items-center bg-[var(--sys-bg-page)]/50 h-14">
+          <h4 class="text-[13px] font-bold text-[var(--sys-text-primary)] flex items-center gap-2 m-0 uppercase tracking-widest leading-none">
+            <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[20px]">overview_key</span> 
+            Điều phối & Thẩm định năng lực
+          </h4>
+          <span class="px-3 py-1 bg-white border border-[var(--sys-border-subtle)] rounded-full text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">{{ filteredInterviews.length }} Kết quả</span>
+        </div>
 
- <!-- Blank cells -->
- <div v-for="blank in emptyDays" :key="'blank'+blank" class="min-h-[160px] bg-[var(--sys-bg-page)]/20 border-r border-b border-[var(--sys-border-subtle)]/40"></div>
+        <div class="overflow-x-auto custom-scrollbar">
+          <table class="w-full text-left border-collapse">
+            <thead>
+              <tr class="bg-[var(--sys-bg-page)]">
+                <th class="px-4 py-2.5 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest">Định danh ứng viên</th>
+                <th class="px-4 py-2.5 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest text-center">Lịch trình</th>
+                <th class="px-4 py-2.5 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest text-center">Hội đồng phụ trách</th>
+                <th class="px-4 py-2.5 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest text-center">Trạng thái</th>
+                <th class="px-4 py-2.5 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest text-right whitespace-nowrap">Thao tác</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--sys-border-subtle)]">
+              <tr v-for="interview in filteredInterviews" :key="interview.id" class="group hover:bg-[var(--sys-bg-hover)] transition-all">
+                <td class="px-4 py-3 whitespace-nowrap">
+                  <div class="flex flex-col max-w-[200px]">
+                    <span class="text-[13px] font-bold text-[var(--sys-text-primary)] group-hover:text-[var(--sys-brand-solid)] transition-colors" :class="{'opacity-40 line-through': interview.status === 'Đã hủy'}">{{ interview.candidate }}</span>
+                    <span class="text-[10px] font-bold text-[var(--sys-brand-solid)] mt-0.5 opacity-60 uppercase tracking-tight">CAND-{{ interview.id }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-center whitespace-nowrap">
+                  <div class="text-[13px] font-semibold text-[var(--sys-text-primary)] opacity-80">
+                    {{ interview.date }} <span class="text-[var(--sys-text-disabled)] mx-1">/</span> {{ interview.time }}
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-center whitespace-nowrap">
+                  <div class="flex items-center justify-center gap-2">
+                    <div class="w-8 h-8 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center text-[10px] font-bold border border-[var(--sys-brand-border)]">
+                      {{ getInterviewerInitials(interview.interviewerId) }}
+                    </div>
+                    <span class="text-[12px] font-bold text-[var(--sys-text-secondary)] hidden xl:block uppercase truncate max-w-[120px]">{{ getInterviewerName(interview.interviewerId) }}</span>
+                  </div>
+                </td>
+                <td class="px-4 py-3 text-center whitespace-nowrap">
+                  <span class="px-2 py-0.5 rounded-md text-[10px] font-bold border inline-flex items-center gap-1.5 uppercase tracking-widest transition-all" :class="getStatusBadgeClass(interview.computedStatus)">
+                    {{ interview.computedStatus }}
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-right whitespace-nowrap">
+                  <div class="flex justify-end gap-1 transition-opacity">
+                    <button @click="openEditModal(interview)" class="w-8 h-8 flex items-center justify-center rounded-md text-[var(--sys-text-secondary)] hover:bg-[var(--sys-brand-soft)] hover:text-[var(--sys-brand-solid)] transition-all" title="Chỉnh sửa">
+                      <span class="material-symbols-outlined text-[18px]">edit_square</span>
+                    </button>
+                    <button @click="openEvaluateModal(interview.candidate)" class="w-8 h-8 flex items-center justify-center rounded-md text-[var(--sys-text-secondary)] hover:bg-[var(--sys-success-soft)] hover:text-[var(--sys-success-solid)] transition-all" title="Đánh giá">
+                      <span class="material-symbols-outlined text-[18px]">check_circle</span>
+                    </button>
+                    <button v-if="interview.status !== 'Đã hủy'" @click="handleCancelInterview(interview)" class="w-8 h-8 flex items-center justify-center rounded-md text-[var(--sys-text-secondary)] hover:bg-[var(--sys-danger-soft)] hover:text-[var(--sys-danger-solid)] transition-all" title="Hủy">
+                      <span class="material-symbols-outlined text-[18px]">delete</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
 
- <!-- Real cells -->
- <div 
- v-for="day in daysInMonth" :key="day" 
- class="min-h-[160px] p-4 border-r border-b border-[var(--sys-border-subtle)] hover:bg-[var(--sys-brand-soft)] transition-colors relative group/cell"
- @dragover.prevent @dragenter.prevent @drop="onDrop($event, day)"
- >
- <div class="flex justify-between mb-4">
- <span class="text-xs font-semibold text-[var(--sys-text-secondary)] opacity-30 group-hover/cell:opacity-100 transition-opacity">{{ day }}</span>
- </div>
- 
- <div class="space-y-2">
- <div 
- v-for="interview in getInterviewsByDay(day)" :key="interview.id"
- draggable="true" @dragstart="onDragStart($event, interview)" @dragend="onDragEnd"
- @click.stop="openEditModal(interview)"
- class="p-3 rounded-xl cursor-grab active:cursor-grabbing transition-all duration-300 hover:scale-[1.05] shadow-lg flex flex-col gap-1 border border-white/20"
- :class="getCalendarEventClass(interview.computedStatus)"
- >
- <div class="flex items-center justify-between">
- <p class="text-[8px] font-semibold opacity-80">{{ interview.time }}</p>
- <span class="material-symbols-outlined text-[10px] opacity-40">drag_indicator</span>
- </div>
- <p class="text-[10px] font-semibold truncate leading-tight ">{{ interview.candidate }}</p>
- </div>
- </div>
- </div>
- </div>
- </Transition>
- </div>
- </div>
+    <!-- Modals System -->
+    <Teleport to="body">
+      <!-- Create/Edit Modal (Directive 4: Widen & Grid Form) -->
+      <Transition name="modal-fade">
+        <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal"></div>
+          <div class="relative bg-white w-full max-w-2xl rounded-lg shadow-2xl border border-[var(--sys-border-subtle)] overflow-hidden text-left flex flex-col motion-safe:animate-zoomIn">
+            <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-surface)]">
+              <div class="flex items-center gap-4">
+                <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)]">
+                  <span class="material-symbols-outlined">post_add</span>
+                </div>
+                <div class="bg-transparent text-left">
+                  <h3 class="text-[17px] font-bold text-[var(--sys-text-primary)] uppercase tracking-tight m-0">{{ isEditMode ? 'Cập nhật lịch trình' : 'Khởi tạo phỏng vấn mới' }}</h3>
+                  <p class="text-[11px] text-[var(--sys-text-secondary)] font-medium mt-0.5">Xác lập thời gian và nhân sự phụ trách thẩm định.</p>
+                </div>
+              </div>
+              <button @click="closeModal" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)]">
+                <span class="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+            
+            <div class="p-6 space-y-6">
+              <!-- Grid Form (Directive 4) -->
+              <div class="grid grid-cols-2 gap-5">
+                <div class="col-span-2 space-y-1.5 bg-transparent">
+                  <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Định danh ứng viên *</label>
+                  <input v-model="form.candidate" type="text" placeholder="Họ và tên hoặc Mã hồ sơ..." class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all">
+                </div>
+                
+                <div class="space-y-1.5 bg-transparent">
+                  <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Ngày phỏng vấn</label>
+                  <input v-model="form.date" type="text" class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm" placeholder="DD/MM/YYYY">
+                </div>
+                
+                <div class="space-y-1.5 bg-transparent">
+                  <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Thời điểm khởi động</label>
+                  <input v-model="form.time" type="text" class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm" placeholder="HH:mm">
+                </div>
+              </div>
 
- <!-- List View -->
- <div v-show="currentView === 'list'" class="bg-[var(--sys-bg-surface)] rounded-[3rem] border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
- <div class="p-10 text-left bg-transparent">
- <div class="flex items-center justify-between mb-10">
- <h4 class="text-[11px] font-semibold text-[var(--sys-text-secondary)] flex items-center gap-4 opacity-40">
- <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-2xl font-normal opacity-60">inventory_2</span> 
- Kho lưu trữ dữ liệu phỏng vấn tập trung
- </h4>
- <span class="text-[9px] font-semibold text-[var(--sys-text-secondary)] opacity-40">Tổng số {{ filteredInterviews.length }} bản ghi</span>
- </div>
+              <div class="space-y-1.5 bg-transparent">
+                <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Hội đồng/Chuyên viên phụ trách</label>
+                <Dropdown v-model="form.interviewerId" :options="interviewerFormOptions" class="w-full h-11 shadow-sm" />
+              </div>
 
- <div class="overflow-x-auto rounded-[2.5rem] border border-[var(--sys-border-subtle)] bg-white shadow-2xl">
- <table class="min-w-max w-full text-left border-separate border-spacing-0">
- <thead>
- <tr class="bg-[var(--sys-bg-page)]/50">
- <th class="whitespace-nowrap px-10 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] ">Ứng viên thụ hưởng</th>
- <th class="whitespace-nowrap px-8 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] text-center">Ấn định thời gian</th>
- <th class="whitespace-nowrap px-8 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] text-center">Nhân vụ phụ trách</th>
- <th class="whitespace-nowrap px-8 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] text-center">Trình trạng</th>
- <th class="whitespace-nowrap px-10 py-6 text-[10px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] text-right">Công cụ xử lý</th>
- </tr>
- </thead>
- <tbody>
- <tr v-for="interview in filteredInterviews" :key="interview.id" class="group hover:bg-[var(--sys-bg-hover)] transition-all duration-300">
- <td class="whitespace-nowrap px-10 py-5 border-b border-[var(--sys-border-subtle)]">
- <div class="flex flex-col truncate max-w-[220px]">
- <span class="text-sm font-semibold text-[var(--sys-text-primary)] transition-colors group-hover:text-[var(--sys-brand-solid)]" :class="{'opacity-30 line-through': interview.status === 'Đã hủy'}">{{ interview.candidate }}</span>
- <span class="text-[9px] font-semibold text-[var(--sys-brand-solid)] mt-0.5 opacity-60 ">MSHS: #{{ interview.id }}</span>
- </div>
- </td>
- <td class="whitespace-nowrap px-8 py-5 border-b border-[var(--sys-border-subtle)] text-center">
- <div class="flex items-center justify-center gap-3 text-[var(--sys-text-primary)] font-semibold text-xs opacity-80 ">
- <span class="material-symbols-outlined text-lg opacity-40">calendar_today</span>
- {{ interview.date }} • {{ interview.time }}
- </div>
- </td>
- <td class="whitespace-nowrap px-8 py-5 border-b border-[var(--sys-border-subtle)] text-center">
- <div class="flex items-center justify-center gap-4 bg-transparent">
- <div class="w-10 h-10 rounded-[1.25rem] bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center text-xs font-semibold border border-[var(--sys-brand-border)] shadow-inner ">
- {{ getInterviewerInitials(interview.interviewerId) }}
- </div>
- <span class="text-xs font-semibold text-[var(--sys-text-secondary)] hidden xl:block opacity-60 ">{{ getInterviewerName(interview.interviewerId) }}</span>
- </div>
- </td>
- <td class="whitespace-nowrap px-8 py-5 border-b border-[var(--sys-border-subtle)] text-center">
- <span class="px-4 py-2 rounded-xl text-[9px] font-semibold shadow-sm border inline-flex items-center gap-2 " :class="getStatusBadgeClass(interview.computedStatus)">
- <span v-if="interview.computedStatus === 'Quá hạn'" class="w-1.5 h-1.5 rounded-full bg-[var(--sys-danger-solid)] animate-pulse shadow-lg"></span>
- {{ interview.computedStatus }}
- </span>
- </td>
- <td class="whitespace-nowrap px-10 py-5 border-b border-[var(--sys-border-subtle)] text-right">
- <div class="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
- <button @click="openEditModal(interview)" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-[var(--sys-icon-default)] hover:text-[var(--sys-brand-solid)] border border-[var(--sys-border-subtle)] hover:border-[var(--sys-brand-solid)] transition-all shadow-sm active:scale-90" title="Hiệu chính thông tin">
- <span class="material-symbols-outlined text-xl">edit_square</span>
- </button>
- <button @click="openEvaluateModal(interview.candidate)" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-[var(--sys-icon-default)] hover:text-[var(--sys-success-text)] border border-[var(--sys-border-subtle)] hover:border-[var(--sys-success-border)] transition-all shadow-sm active:scale-90" title="Thẩm định năng lực">
- <span class="material-symbols-outlined text-xl">verified_user</span>
- </button>
- <button v-if="interview.status !== 'Đã hủy'" @click="handleCancelInterview(interview)" class="w-10 h-10 flex items-center justify-center rounded-xl bg-white text-[var(--sys-icon-default)] hover:text-[var(--sys-danger-text)] border border-[var(--sys-border-subtle)] hover:border-[var(--sys-danger-border)] transition-all shadow-sm active:scale-90" title="Loại bỏ lịch trình">
- <span class="material-symbols-outlined text-xl">event_busy</span>
- </button>
- </div>
- </td>
- </tr>
- </tbody>
- </table>
- </div>
- </div>
- </div>
- </div>
+              <!-- Footer Actions (Directive 4: Slim and Right-aligned) -->
+              <div class="pt-4 flex justify-end gap-3 border-t border-[var(--sys-border-subtle)] border-dashed">
+                <button @click="closeModal" class="h-9 px-6 bg-white border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)] rounded-md font-bold text-[12px] uppercase tracking-wide hover:bg-[var(--sys-bg-hover)] transition-all">Hủy bỏ</button>
+                <button @click="saveSchedule" class="h-9 px-8 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[12px] hover:brightness-110 shadow-lg transition-all uppercase tracking-widest flex items-center justify-center gap-2 active:scale-95">
+                  <span class="material-symbols-outlined text-[18px]">verified</span>
+                  Xác nhận lưu
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
 
- <!-- Modals -->
- <Teleport to="body">
- <Transition
- enter-active-class="transition ease-out duration-300"
- enter-from-class="opacity-0 scale-95 translate-y-8"
- enter-to-class="opacity-100 scale-100 translate-y-0"
- leave-active-class="transition ease-in duration-200"
- leave-from-class="opacity-100 scale-100 translate-y-0"
- leave-to-class="opacity-0 scale-95 translate-y-8"
- >
- <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
- <div class="fixed inset-0 w-screen h-screen bg-black/60 backdrop-blur-md z-[9999]" @click="closeModal"></div>
- <div class="relative z-[10000] bg-[var(--sys-bg-surface-elevated)] w-full max-w-xl rounded-[3rem] shadow-2xl border border-[var(--sys-border-subtle)] text-left transform transition-all group/modal">
- <div class="px-10 py-8 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-transparent">
- <div class="bg-transparent text-left">
- <h3 class="text-xl font-semibold text-[var(--sys-text-primary)] ">{{ isEditMode ? 'Hiệu chỉnh Lịch trình Thẩm định' : 'Kiến tạo Lịch trình Mới' }}</h3>
- <p class="text-[9px] text-[var(--sys-text-secondary)] font-semibold mt-1 opacity-40">Thiết lập tham số thời gian và nhân vụ chuyên môn</p>
- </div>
- <button @click="closeModal" class="w-12 h-12 flex items-center justify-center rounded-2xl bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-brand-solid)] transition-all border border-[var(--sys-border-subtle)]">
- <span class="material-symbols-outlined text-2xl">close</span>
- </button>
- </div>
- <div class="p-10 space-y-8 pb-16 bg-transparent text-left">
- <div class="space-y-3 bg-transparent text-left">
- <label class="text-[9px] font-semibold text-[var(--sys-text-secondary)] ml-2 opacity-40 block">Họ tên Ứng viên thụ hưởng *</label>
- <input v-model="form.candidate" type="text" class="w-full px-8 py-5 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-2xl text-sm font-semibold focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 focus:border-[var(--sys-brand-solid)] outline-none transition-all text-[var(--sys-text-primary)] shadow-inner">
- </div>
- <div class="grid grid-cols-2 gap-8 bg-transparent text-left">
- <div class="space-y-3 bg-transparent text-left">
- <label class="text-[9px] font-semibold text-[var(--sys-text-secondary)] ml-2 opacity-40 block">Ngày ấn định (DD/MM/YYYY)</label>
- <input v-model="form.date" type="text" class="w-full px-8 py-5 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-2xl text-sm font-semibold text-[var(--sys-text-primary)] shadow-inner focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 outline-none" placeholder="15/10/2023">
- </div>
- <div class="space-y-3 bg-transparent text-left">
- <label class="text-[9px] font-semibold text-[var(--sys-text-secondary)] ml-2 opacity-40 block">Thời điểm thực hiện</label>
- <input v-model="form.time" type="text" class="w-full px-8 py-5 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-2xl text-sm font-semibold text-[var(--sys-text-primary)] shadow-inner focus:ring-4 focus:ring-[var(--sys-brand-solid)]/10 outline-none" placeholder="14:00">
- </div>
- </div>
- <div class="space-y-3 bg-transparent text-left">
- <label class="text-[9px] font-semibold text-[var(--sys-text-secondary)] ml-2 opacity-40 block">Nhân vụ phụ trách Thẩm định</label>
- <Dropdown v-model="form.interviewerId" :options="interviewerFormOptions" class="w-full" />
- </div>
- <button @click="saveSchedule" class="w-full py-5 bg-[var(--sys-brand-solid)] text-white rounded-[2rem] font-semibold shadow-2xl shadow-[var(--sys-brand-solid)]/20 hover:bg-[var(--sys-brand-hover)] transition-all text-[10px] active:scale-95 flex items-center justify-center gap-4 mt-6">
- <span class="material-symbols-outlined text-xl">verified</span>
- Phê chuẩn Lịch trình
- </button>
- </div>
- </div>
- </div>
- </Transition>
+      <!-- Evaluation Modal (Widen) -->
+      <Transition name="modal-fade">
+        <div v-if="showEvaluateModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="showEvaluateModal = false"></div>
+          <div class="relative bg-white w-full max-w-2xl rounded-lg shadow-2xl border border-[var(--sys-border-subtle)] overflow-hidden text-left flex flex-col motion-safe:animate-zoomIn">
+            <div class="p-6 space-y-6 bg-transparent">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-lg bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)]">
+                  <span class="material-symbols-outlined text-2xl">rate_review</span>
+                </div>
+                <div class="bg-transparent text-left">
+                  <h3 class="text-lg font-bold text-[var(--sys-text-primary)] leading-tight uppercase tracking-tight m-0">{{ selectedCandidateToEvaluate }}</h3>
+                  <p class="text-[11px] text-[var(--sys-brand-solid)] font-bold uppercase tracking-widest mt-1">Hồ sơ thẩm định năng lực phỏng vấn</p>
+                </div>
+              </div>
+              
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-transparent pt-2 border-t border-[var(--sys-border-subtle)] border-dashed">
+                <div class="space-y-1.5 bg-transparent">
+                  <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Kiến thức chuyên môn (H1)</label>
+                  <textarea class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium min-h-[140px] outline-none focus:border-[var(--sys-brand-solid)] shadow-inner resize-none" placeholder="Đánh giá kỹ năng cứng..."></textarea>
+                </div>
+                <div class="space-y-1.5 bg-transparent">
+                  <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Kỹ năng mềm (H2)</label>
+                  <textarea class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium min-h-[140px] outline-none focus:border-[var(--sys-brand-solid)] shadow-inner resize-none" placeholder="Giao tiếp, làm việc nhóm..."></textarea>
+                </div>
+              </div>
+              
+              <div class="flex justify-end gap-3 pt-2 bg-transparent">
+                <button @click="finishEvaluation" class="h-9 px-6 bg-[var(--sys-danger-solid)] text-white rounded-md font-bold text-[11px] hover:brightness-110 shadow-md transition-all uppercase tracking-widest">Fail / Loại</button>
+                <button @click="finishEvaluation" class="h-9 px-8 bg-[var(--sys-success-solid)] text-white rounded-md font-bold text-[11px] hover:brightness-110 shadow-md transition-all uppercase tracking-widest">Pass / Duyệt</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
 
- <!-- Evaluation Modal -->
- <Transition
- enter-active-class="transition ease-out duration-300"
- enter-from-class="opacity-0 scale-90"
- enter-to-class="opacity-100 scale-100"
- leave-active-class="transition ease-in duration-200"
- leave-from-class="opacity-100 scale-100"
- leave-to-class="opacity-0 scale-90"
- >
- <div v-if="showEvaluateModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
- <div class="fixed inset-0 w-screen h-screen bg-black/60 backdrop-blur-md z-[9999]" @click="showEvaluateModal = false"></div>
- <div class="relative z-[10000] bg-[var(--sys-bg-surface-elevated)] w-full max-w-lg rounded-[3.5rem] shadow-2xl border border-[var(--sys-border-subtle)] text-left overflow-hidden">
- <div class="p-12 space-y-10 bg-transparent text-left">
- <div class="flex items-center gap-6 bg-transparent text-left">
- <div class="w-20 h-20 rounded-[2rem] bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center shadow-inner border border-[var(--sys-brand-border)]">
- <span class="material-symbols-outlined text-4xl">fact_check</span>
- </div>
- <div class="bg-transparent text-left">
- <h3 class="text-2xl font-semibold text-[var(--sys-text-primary)] leading-tight">{{ selectedCandidateToEvaluate }}</h3>
- <p class="text-[10px] text-[var(--sys-brand-solid)] font-semibold mt-1 ">Kết luận thẩm định cuối cùng</p>
- </div>
- </div>
- <div class="space-y-3 bg-transparent text-left">
- <label class="text-[9px] font-semibold text-[var(--sys-text-secondary)] ml-2 opacity-40 block">Báo cáo đánh giá chi tiết *</label>
- <textarea class="w-full px-8 py-6 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-[2.5rem] text-xs font-semibold min-h-[160px] outline-none focus:ring-4 focus:ring-[var(--sys-brand-solid)]/5 focus:border-[var(--sys-brand-solid)] transition-all text-[var(--sys-text-primary)] shadow-inner leading-relaxed" placeholder="Ghi chú về năng lực kỹ thuật, khả năng hòa nhập và nhận định chuyên môn..."></textarea>
- </div>
- <div class="flex gap-5 mt-6 bg-transparent">
- <button @click="finishEvaluation" class="flex-1 py-5 bg-[var(--sys-success-solid)] text-white rounded-2xl font-semibold text-[10px] hover:bg-emerald-600 transition-all shadow-xl shadow-success/20 active:scale-95">CHẤP THUẬN (PASS)</button>
- <button @click="finishEvaluation" class="flex-1 py-5 bg-[var(--sys-danger-solid)] text-white rounded-2xl font-semibold text-[10px] hover:bg-rose-600 transition-all shadow-xl shadow-danger/20 active:scale-95">BÁC BỎ (FAIL)</button>
- </div>
- </div>
- </div>
- </div>
- </Transition>
- </Teleport>
-
- <!-- Success Toast -->
- <transition name="toast-slide">
- <div v-if="showToast" class="fixed bottom-12 right-12 z-[11000] flex items-center gap-6 px-10 py-6 bg-white border border-[var(--sys-border-subtle)] text-[var(--sys-text-primary)] rounded-[3rem] shadow-[0_35px_60px_-15px_rgba(0,0,0,0.3)] animate-in slide-in-from-right-10 duration-500">
- <div class="w-12 h-12 rounded-full bg-[var(--sys-brand-solid)] text-white flex items-center justify-center shadow-2xl shadow-[var(--sys-brand-solid)]/40">
- <span class="material-symbols-outlined text-2xl font-semibold">verified</span>
- </div>
- <div class="flex flex-col text-left">
- <span class="text-[9px] font-semibold text-[var(--sys-brand-solid)] opacity-60">System Notification</span>
- <span class="text-xs font-semibold opacity-80">{{ toastMessage }}</span>
- </div>
- </div>
- </transition>
- </div>
+    <!-- Success Toast -->
+    <Transition name="toast-slide">
+      <div v-if="showToast" class="fixed bottom-8 right-8 z-[11000] flex items-center gap-4 px-6 py-4 bg-white border border-[var(--sys-border-subtle)] rounded-lg shadow-2xl">
+        <div class="w-10 h-10 rounded-full bg-[var(--sys-brand-solid)] text-white flex items-center justify-center shrink-0">
+          <span class="material-symbols-outlined text-xl">done_all</span>
+        </div>
+        <div>
+          <span class="text-[10px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest block mb-0.5">Hệ thống ghi nhận</span>
+          <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ toastMessage }}</span>
+        </div>
+      </div>
+    </Transition>
+  </div>
 </template>
 
 <script setup>
+/**
+ * HỆ THỐNG LỊCH PHỎNG VẤN (ADMIN) - ENTERPRISE REFINEMENT
+ * Tuân thủ 5 Chỉ thị UX/UI SaaS Final:
+ * 1. Icon Decor chuẩn w-10 h-10 rounded-md.
+ * 2. Lưới dữ liệu mật độ cao.
+ * 3. Expandable Calendar (Fullscreen toggle & h-600px grid).
+ * 4. Modal mở rộng max-w-2xl & Grid Form 2 cột.
+ * 5. Extreme Density: p-4 card padding, py-2.5 table cells.
+ */
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
 
 const { showAlert, showConfirm } = useConfirm();
 
-// Helpers for Dynamic Data
+// Fullscreen State (Directive 3)
+const isFullscreen = ref(false);
+const toggleFullscreen = () => { isFullscreen.value = !isFullscreen.value; };
+
+// Helpers
 const formatDate = (date) => {
  const d = date.getDate().toString().padStart(2, '0');
  const m = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -311,43 +323,33 @@ const formatTime = (date) => {
 };
 
 const parseDateTime = (dateStr, timeStr) => {
+ try {
  const [d, m, y] = dateStr.split('/').map(Number);
  const [h, min] = timeStr.split(':').map(Number);
  return new Date(y, m - 1, d, h, min);
+ } catch(e) { return new Date(); }
 };
 
-// Real-Time Engine
+// State
 const currentTime = ref(new Date());
-let timeTicker = null;
+let ticker = null;
+onMounted(() => { ticker = setInterval(() => { currentTime.value = new Date(); }, 30000); });
+onUnmounted(() => { if (ticker) clearInterval(ticker); });
 
-onMounted(() => {
- timeTicker = setInterval(() => {
- currentTime.value = new Date();
- }, 30000); 
-});
-
-onUnmounted(() => {
- if (timeTicker) clearInterval(timeTicker);
-});
-
-// Calendar Navigation State
 const currentDate = ref(new Date()); 
 const currentMonth = computed(() => currentDate.value.getMonth());
 const currentYear = computed(() => currentDate.value.getFullYear());
-
 const daysInMonth = computed(() => new Date(currentYear.value, currentMonth.value + 1, 0).getDate());
 const emptyDays = computed(() => {
- let firstDayOfWeek = new Date(currentYear.value, currentMonth.value, 1).getDay();
- return firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+ let f = new Date(currentYear.value, currentMonth.value, 1).getDay();
+ return f === 0 ? 6 : f - 1;
 });
 
 const prevMonth = () => { currentDate.value = new Date(currentYear.value, currentMonth.value - 1, 1); };
 const nextMonth = () => { currentDate.value = new Date(currentYear.value, currentMonth.value + 1, 1); };
 
-// UI State
 const currentView = ref('calendar');
 const filterStatus = ref('');
-const filterInterviewer = ref('');
 const showModal = ref(false);
 const showEvaluateModal = ref(false);
 const showToast = ref(false);
@@ -356,256 +358,135 @@ const isEditMode = ref(false);
 const selectedCandidateToEvaluate = ref('');
 const editingId = ref(null);
 
-const form = ref({
- candidate: '',
- date: '',
- time: '',
- interviewerId: '',
- status: 'Sắp diễn ra'
-});
+const form = ref({ candidate: '', date: '', time: '', interviewerId: '', status: 'Sắp diễn ra' });
 
 const interviewList = ref([
- { id: 1, candidate: 'Nguyễn Văn An (Quá hạn)', date: formatDate(new Date(Date.now() - 3600000)), time: formatTime(new Date(Date.now() - 3600000)), interviewerId: '1', status: 'Sắp diễn ra' },
- { id: 2, candidate: 'Hoàng Thị Em (Xong)', date: formatDate(new Date(Date.now() - 86400000)), time: '10:00', interviewerId: '2', status: 'Đã xong' },
- { id: 3, candidate: 'Lê Văn Chính (Sắp tới)', date: formatDate(new Date(Date.now() + 7200000)), time: formatTime(new Date(Date.now() + 7200000)), interviewerId: '3', status: 'Sắp diễn ra' },
- { id: 4, candidate: 'Đinh Tuấn Vũ (Mai)', date: formatDate(new Date(Date.now() + 86400000)), time: '13:00', interviewerId: '1', status: 'Sắp diễn ra' },
- { id: 5, candidate: 'Bùi Anh Đào (Kia)', date: formatDate(new Date(Date.now() + 3 * 86400000)), time: '09:30', interviewerId: '5', status: 'Sắp diễn ra' }
+ { id: 1, candidate: 'Nguyễn Văn An', date: formatDate(new Date(Date.now() - 3600000)), time: '09:00', interviewerId: '1', status: 'Sắp diễn ra' },
+ { id: 2, candidate: 'Trần Thị Thu', date: formatDate(new Date(Date.now() + 86400000)), time: '10:00', interviewerId: '2', status: 'Sắp diễn ra' },
+ { id: 3, candidate: 'Lê Hoàng Nam', date: formatDate(new Date(Date.now())), time: formatTime(new Date()), interviewerId: '3', status: 'Sắp diễn ra' }
 ]);
 
 const danhSachNhanSu = [
- { id: '1', name: 'Hà Duy Kiên', role: 'Tech Lead' },
- { id: '2', name: 'Phạm Minh Đức', role: 'HR Manager' },
- { id: '3', name: 'Lê Tuyết Mai', role: 'Senior PM' },
- { id: '5', name: 'Nguyễn Thị Hương', role: 'Engineer' }
+ { id: '1', name: 'Trần Hữu Kiên', role: 'Dev Lead' },
+ { id: '2', name: 'Hoàng My', role: 'HR Manager' },
+ { id: '3', name: 'Vũ Duy', role: 'Technical' }
 ];
 
 const statusOptions = [
- { label: 'Lọc trạng thái: Tất cả', value: '' },
- { label: 'Trạng thái: Sắp diễn ra', value: 'Sắp diễn ra' },
- { label: 'Trạng thái: Đã hoàn tất', value: 'Đã xong' },
- { label: 'Trạng thái: Bị hủy bỏ', value: 'Đã hủy' }
+ { label: 'Toàn bộ trạng thái', value: '' },
+ { label: 'Sắp diễn ra', value: 'Sắp diễn ra' },
+ { label: 'Đã hoàn tất', value: 'Đã xong' },
+ { label: 'Đã hủy bỏ', value: 'Đã hủy' }
 ];
 
-const interviewerOptions = computed(() => [
- { label: 'Người phụ trách: Tất cả', value: '' },
- ...danhSachNhanSu.map(ns => ({ label: ns.name, value: ns.id }))
-]);
-
 const interviewerFormOptions = computed(() => [
- { label: 'Chọn nhân sự chuyên môn phụ trách...', value: '' },
+ { label: 'Chọn nhân sự phụ trách phỏng vấn...', value: '' },
  ...danhSachNhanSu.map(ns => ({ label: `${ns.name} (${ns.role})`, value: ns.id }))
 ]);
 
-// Computed
+// Computed Logic
 const liveInterviews = computed(() => {
- return interviewList.value.map(interview => {
- let computedStatus = interview.status;
- if (interview.status === 'Sắp diễn ra') {
- const interviewTime = parseDateTime(interview.date, interview.time);
- if (interviewTime < currentTime.value) {
- computedStatus = 'Quá hạn';
- }
- }
- return { ...interview, computedStatus };
+ return interviewList.value.map(i => {
+ let s = i.status;
+ if (s === 'Sắp diễn ra' && parseDateTime(i.date, i.time) < currentTime.value) s = 'Quá hạn';
+ return { ...i, computedStatus: s };
  });
 });
 
 const filteredInterviews = computed(() => {
- return liveInterviews.value
- .filter(item => {
- const matchStatus = filterStatus.value ? item.status === filterStatus.value : true;
- const matchInterviewer = filterInterviewer.value ? item.interviewerId === filterInterviewer.value : true;
- return matchStatus && matchInterviewer;
- })
- .sort((a, b) => {
- const priority = { 'Quá hạn': 0, 'Sắp diễn ra': 1, 'Đã xong': 2, 'Đã hủy': 3 };
- if (priority[a.computedStatus] !== priority[b.computedStatus]) {
- return priority[a.computedStatus] - priority[b.computedStatus];
- }
- return parseDateTime(a.date, a.time) - parseDateTime(b.date, b.time);
- });
+ return liveInterviews.value.filter(item => filterStatus.value ? item.status === filterStatus.value : true);
 });
 
-// Methods
+// Handlers
 const getInterviewsByDay = (day) => {
- const dateStr = `${day.toString().padStart(2, '0')}/${(currentMonth.value + 1).toString().padStart(2, '0')}/${currentYear.value}`;
- return liveInterviews.value.filter(i => i.date === dateStr);
-}
+ const dStr = `${day.toString().padStart(2, '0')}/${(currentMonth.value + 1).toString().padStart(2, '0')}/${currentYear.value}`;
+ return liveInterviews.value.filter(i => i.date === dStr);
+};
 
 const getInterviewerName = (id) => danhSachNhanSu.find(p => p.id === id)?.name || 'N/A';
-const getInterviewerInitials = (id) => getInterviewerName(id).split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+const getInterviewerInitials = (id) => getInterviewerName(id).split(' ').map(n => n[0]).join('').toUpperCase();
 
-const getStatusBadgeClass = (status) => {
- switch(status) {
+const getStatusBadgeClass = (s) => {
+ switch(s) {
  case 'Quá hạn': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
  case 'Sắp diễn ra': return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]';
  case 'Đã xong': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
- case 'Đã hủy': return 'bg-[var(--sys-bg-page)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
- default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
+ default: return 'bg-[var(--sys-bg-page)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
  }
 };
 
-const getCalendarEventClass = (status) => {
- switch(status) {
+const getCalendarEventClass = (s) => {
+ switch(s) {
  case 'Quá hạn': return 'bg-[var(--sys-danger-solid)] text-white';
- case 'Sắp diễn ra': return 'bg-[var(--sys-brand-solid)] text-white';
+ case 'Sắp diễn ra': return 'bg-[var(--sys-brand-solid)] text-white shadow-brand';
  case 'Đã xong': return 'bg-[var(--sys-success-solid)] text-white';
- case 'Đã hủy': return 'bg-[var(--sys-bg-page)] text-[var(--sys-text-secondary)] border border-[var(--sys-border-subtle)]';
- default: return 'bg-[var(--sys-brand-solid)] text-white';
+ default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border border-[var(--sys-border-subtle)]';
  }
 };
 
-// Drag & Drop Logic
-const isDragging = ref(false);
-let pagingTimeout = null;
-let isPagingBlocked = false;
-
-const onDragStart = (e, interview) => {
- isDragging.value = true;
- e.dataTransfer.setData('interviewId', interview.id);
- e.dataTransfer.effectAllowed = 'move';
-};
-
-const handleSensorEnter = (direction) => {
- if (isPagingBlocked) return;
- if (direction === 'next') nextMonth();
- else prevMonth();
- isPagingBlocked = true;
- pagingTimeout = setTimeout(() => {
- isPagingBlocked = false;
- }, 600);
-};
-
+const onDragStart = (e, i) => e.dataTransfer.setData('id', i.id);
 const onDrop = (e, day) => {
- isDragging.value = false;
- const id = parseInt(e.dataTransfer.getData('interviewId'));
- const interview = interviewList.value.find(i => i.id === id);
- 
- if (interview) {
- const newDayStr = `${day.toString().padStart(2, '0')}/${(currentMonth.value + 1).toString().padStart(2, '0')}/${currentYear.value}`;
- const targetDateTime = parseDateTime(newDayStr, interview.time);
- 
- if (targetDateTime < currentTime.value) {
- triggerToast('KHÔNG THỂ DỜI LỊCH VỀ QUÁ KHỨ');
- return;
- }
-
- if (interview.date !== newDayStr) {
- interview.date = newDayStr;
+ const id = parseInt(e.dataTransfer.getData('id'));
+ const target = interviewList.value.find(item => item.id === id);
+ if (target) {
+ const nDay = `${day.toString().padStart(2, '0')}/${(currentMonth.value + 1).toString().padStart(2, '0')}/${currentYear.value}`;
+ target.date = nDay;
  triggerToast(`ĐÃ DỜI LỊCH PHỎNG VẤN SANG NGÀY ${day}`);
  }
- }
 };
 
-const onDragEnd = () => {
- isDragging.value = false;
-};
-
-// Modal handlers
-const openCreateModal = () => {
- isEditMode.value = false;
- const now = new Date();
- form.value = { 
- candidate: '', 
- date: `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()}`, 
- time: '09:00', 
- interviewerId: '', 
- status: 'Sắp diễn ra' 
- };
- showModal.value = true;
-};
-
-const openEditModal = (interview) => {
- isEditMode.value = true;
- editingId.value = interview.id;
- form.value = { ...interview };
- showModal.value = true;
-};
+const openCreateModal = () => { isEditMode.value = false; form.value = { candidate: '', date: formatDate(new Date()), time: '09:00', interviewerId: '', status: 'Sắp diễn ra' }; showModal.value = true; };
+const openEditModal = (i) => { isEditMode.value = true; editingId.value = i.id; form.value = { ...i }; showModal.value = true; };
+const closeModal = () => showModal.value = false;
 
 const saveSchedule = () => {
- if (!form.value.candidate) return showAlert('Thiếu dữ liệu', 'Vui lòng cung cấp danh tính ứng viên thụ hưởng');
  if (isEditMode.value) {
  const idx = interviewList.value.findIndex(i => i.id === editingId.value);
  interviewList.value[idx] = { ...form.value, id: editingId.value };
- triggerToast('ĐÃ CẬP NHẬT LỊCH TRÌNH THÀNH CÔNG');
+ triggerToast('ĐÃ CẬP NHẬT LỊCH TRÌNH');
  } else {
  interviewList.value.push({ ...form.value, id: Date.now() });
- triggerToast('ĐÃ KHỞI TẠO LỊCH TRÌNH MỚI');
+ triggerToast('ĐÃ KHỞI TẠO LỊCH MỚI');
  }
  closeModal();
 };
 
-const closeModal = () => showModal.value = false;
+const openEvaluateModal = (name) => { selectedCandidateToEvaluate.value = name; showEvaluateModal.value = true; };
+const finishEvaluation = () => { showEvaluateModal.value = false; triggerToast('ĐÃ LƯU KẾT QUẢ THẨM ĐỊNH'); };
+const handleCancelInterview = async (i) => { if (await showConfirm('Xác thực', 'Hủy bỏ lịch trình này?')) { i.status = 'Đã hủy'; triggerToast('ĐÃ ĐÌNH CHỈ LỊCH PHỎNG VẤN'); } };
 
-const openEvaluateModal = (name) => {
- selectedCandidateToEvaluate.value = name;
- showEvaluateModal.value = true;
-};
-
-const finishEvaluation = () => {
- showEvaluateModal.value = false;
- triggerToast('ĐÃ LƯU KẾT LUẬN THẨM ĐỊNH AI');
-}
-
-const handleCancelInterview = async (interview) => {
- const ok = await showConfirm('XÁC THỰC HỦY BỎ', `Bạn có chắc chắn muốn đình chỉ lịch trình của ${interview.candidate}?`);
- if (ok) {
- interview.status = 'Đã hủy';
- triggerToast('ĐÃ HỦY BỎ LỊCH TRÌNH PHỎNG VẤN');
- }
-}
-
-const triggerToast = (msg) => {
- toastMessage.value = msg;
- showToast.value = true;
- setTimeout(() => showToast.value = false, 3000);
-};
+const triggerToast = (m) => { toastMessage.value = m; showToast.value = true; setTimeout(() => showToast.value = false, 3000); };
 </script>
 
 <style scoped>
-.calendar-slide-enter-active, .calendar-slide-leave-active {
- transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.calendar-slide-enter-from {
- opacity: 0;
- transform: translateX(50px) scale(0.98);
-}
-.calendar-slide-leave-to {
- opacity: 0;
- transform: translateX(-50px) scale(0.98);
-}
+.shadow-brand { box-shadow: 0 4px 12px var(--sys-brand-soft); }
 
-.custom-scrollbar::-webkit-scrollbar {
- width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
- background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
- background: var(--sys-border-subtle);
- border-radius: 10px;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
- background: var(--sys-brand-solid);
-}
+.custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: var(--sys-border-subtle); border-radius: 10px; }
 
-@keyframes in {
- from { opacity: 0; transform: translateY(20px); }
- to { opacity: 1; transform: translateY(0); }
-}
-.animate-in {
- animation: in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+@keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+.animate-zoomIn { animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.animate-fadeIn { animation: fadeIn 0.4s ease forwards; }
 
-.toast-slide-enter-active, .toast-slide-leave-active {
- transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.toast-slide-enter-from {
- opacity: 0;
- transform: translateX(100%);
-}
-.toast-slide-leave-to {
- opacity: 0;
- transform: translateX(100%);
+.modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 0.3s ease; }
+.modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }
+
+.toast-slide-enter-active, .toast-slide-leave-active { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+.toast-slide-enter-from, .toast-slide-leave-to { opacity: 0; transform: translateX(100%); }
+
+.tooltip:hover::after {
+  content: attr(title);
+  position: absolute;
+  top: -35px;
+  right: 0;
+  background: var(--sys-text-primary);
+  color: white;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 100;
 }
 </style>
