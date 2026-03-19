@@ -16,7 +16,7 @@
       <button
         @click="handleMenuToggle"
         aria-label="Toggle sidebar"
-        class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
+        class="flex items-center justify-center w-10 h-10 rounded-md transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
       >
         <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">menu</span>
       </button>
@@ -70,7 +70,7 @@
           <button
             @click="isNotificationOpen = !isNotificationOpen"
             aria-label="Notifications"
-            class="relative flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150"
+            class="relative flex items-center justify-center w-10 h-10 rounded-md transition-colors duration-150"
             :class="isDark
               ? 'text-[oklch(0.75_0.03_265)] hover:bg-[oklch(0.28_0.025_265)]'
               : 'text-[oklch(0.46_0.03_265)] hover:bg-[oklch(0.93_0.012_265)]'"
@@ -140,7 +140,7 @@
                 <router-link
                   to="/thong-bao"
                   @click="isNotificationOpen = false"
-                  class="text-xs font-semibold transition-colors duration-200 text-[var(--sys-accent)] hover:text-[oklch(0.4_0.15_265)] inline-block py-1 px-4 rounded-full hover:bg-[var(--sys-accent)]/10"
+                  class="text-xs font-semibold transition-colors duration-200 text-[var(--sys-accent)] hover:text-[oklch(0.4_0.15_265)] inline-block py-1 px-4 rounded-md hover:bg-[var(--sys-accent)]/10"
                 >
                   Xem tất cả thông báo
                 </router-link>
@@ -165,13 +165,13 @@
             :aria-checked="isDark"
             :aria-label="isDark ? 'Chuyển sang sáng' : 'Chuyển sang tối'"
             @click="isDark = !isDark"
-            class="relative w-[52px] h-8 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)] border border-[var(--sys-border-subtle)]"
+            class="relative w-[52px] h-8 rounded-md transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)] border border-[var(--sys-border-subtle)]"
             :class="isDark
               ? 'bg-[#0f172a] ring-2 ring-white/10'
               : 'bg-[var(--sys-bg-hover)]'"
           >
             <span
-              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] shadow-md"
+              class="absolute top-1/2 -translate-y-1/2 rounded-md flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] shadow-md"
               :class="isDark
                 ? 'left-[calc(100%-28px)] w-6 h-6 bg-white shadow-[0_0_12px_var(--sys-accent)]'
                 : 'left-1 w-5 h-5 bg-[var(--sys-text-secondary)]'"
@@ -202,7 +202,7 @@
         <div class="relative" ref="profileDropdownRef">
           <button
             @click="isProfileOpen = !isProfileOpen"
-            class="flex items-center gap-2.5 p-1 pr-3 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]"
+            class="flex items-center gap-2.5 p-1 pr-3 rounded-md transition-all duration-200 select-none hover:bg-[var(--sys-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]"
           >
             <div
               class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
@@ -304,7 +304,7 @@
         <!-- Chevron collapse toggle -->
         <button
           @click="sidebarExpanded = !sidebarExpanded"
-          class="hidden lg:flex ml-auto w-8 h-8 rounded-full items-center justify-center transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] hover:text-[var(--sys-text-primary)]"
+          class="hidden lg:flex ml-auto w-8 h-8 rounded-md items-center justify-center transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] hover:text-[var(--sys-text-primary)]"
           :aria-label="sidebarExpanded ? 'Thu gọn sidebar' : 'Mở rộng sidebar'"
         >
           <span
@@ -610,7 +610,7 @@ export const SidebarItem = defineComponent({
         // Pill
         h('div', {
           class: [
-            'relative flex items-center justify-center w-16 h-8 rounded-full transition-colors duration-150',
+            'relative flex items-center justify-center w-16 h-8 rounded-lg transition-colors duration-150',
             props.isActive ? activeBg : hoverBg,
           ].join(' '),
         }, [

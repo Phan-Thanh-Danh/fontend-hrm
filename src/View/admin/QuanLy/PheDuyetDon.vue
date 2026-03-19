@@ -58,7 +58,8 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 px-1 bg-transparent">
       <transition-group name="grid-anim">
         <div v-for="request in filteredRequests" :key="request.id" 
-          class="bg-white p-4 rounded-lg border border-[var(--sys-border-subtle)] shadow-sm hover:border-[var(--sys-brand-solid)] hover:shadow-lg transition-all flex flex-col group relative overflow-hidden group/card hover:-translate-y-1">
+          @click="openDetailModal(request)"
+          class="bg-white p-4 rounded-lg border border-[var(--sys-border-subtle)] shadow-sm hover:border-[var(--sys-brand-solid)] hover:shadow-md transition-all flex flex-col group relative overflow-hidden cursor-pointer group/card hover:-translate-y-1">
           
           <!-- Top Row: Icon/Avatar + Basic Info -->
           <div class="flex items-start gap-4 mb-4">
@@ -100,11 +101,11 @@
           <div class="pt-4 border-t border-[var(--sys-border-subtle)] border-dashed mt-auto">
             <template v-if="request.status === 'pending'">
               <div class="flex gap-1 w-full bg-transparent">
-                <button @click="handleReject(request)" class="flex-1 h-9 px-1 text-[10px] font-bold text-[var(--sys-text-secondary)] hover:text-[var(--sys-danger-text)] hover:bg-[var(--sys-danger-soft)] rounded-md border border-[var(--sys-border-subtle)] bg-white uppercase transition-all whitespace-nowrap active:scale-95 flex items-center justify-center gap-1">
+                <button @click.stop="handleReject(request)" class="flex-1 h-9 px-1 text-[10px] font-bold text-[var(--sys-text-secondary)] hover:text-[var(--sys-danger-text)] hover:bg-[var(--sys-danger-soft)] rounded-md border border-[var(--sys-border-subtle)] bg-white uppercase transition-all whitespace-nowrap active:scale-95 flex items-center justify-center gap-1">
                    <span class="material-symbols-outlined text-[16px]">do_not_disturb_on</span>
                    TỪ CHỐI
                 </button>
-                <button @click="handleApprove(request)" class="flex-[1.6] h-9 px-1 bg-[var(--sys-brand-solid)] text-white rounded-md text-[10px] font-bold hover:brightness-110 shadow-lg flex items-center justify-center gap-1 uppercase transition-all whitespace-nowrap">
+                <button @click.stop="handleApprove(request)" class="flex-[1.6] h-9 px-1 bg-[var(--sys-brand-solid)] text-white rounded-md text-[10px] font-bold hover:brightness-110 shadow-lg flex items-center justify-center gap-1 uppercase transition-all whitespace-nowrap">
                    <span class="material-symbols-outlined text-[16px] font-bold text-white">task_alt</span>
                    PHÊ DUYỆT
                 </button>
@@ -121,6 +122,72 @@
         </div>
       </transition-group>
     </div>
+
+    <!-- Detail Modal (Progressive Disclosure) -->
+    <Teleport to="body">
+      <Transition name="slide-up">
+        <div v-if="showDetailModal" class="fixed inset-0 z-[10001] flex items-center justify-center p-4">
+          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeDetailModal"></div>
+          <div class="relative max-w-2xl w-full bg-[var(--sys-bg-surface)] rounded-xl shadow-2xl p-6 overflow-hidden flex flex-col text-left">
+            <!-- Modal Header -->
+            <div class="flex items-center gap-4 mb-6">
+              <div :class="[
+                'w-14 h-14 rounded-lg flex items-center justify-center shadow-sm border border-[var(--sys-border-subtle)]',
+                getIconWrapperClass(selectedRequest)
+              ]">
+                <span class="material-symbols-outlined text-2xl font-bold">{{ selectedRequest?.icon }}</span>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-[var(--sys-text-primary)] leading-tight mb-0.5">{{ selectedRequest?.employeeName }}</h3>
+                <p class="text-xs font-bold text-[var(--sys-brand-solid)] uppercase tracking-tight opacity-70">{{ selectedRequest?.employeeId }} • {{ selectedRequest?.title }}</p>
+              </div>
+              <button @click="closeDetailModal" class="w-10 h-10 rounded-full hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] flex items-center justify-center transition-all">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <!-- Modal Body (Grid) -->
+            <div class="grid grid-cols-2 gap-6 mb-6">
+              <div class="space-y-1">
+                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Loại đề xuất</span>
+                <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ selectedRequest?.title }}</p>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Mã nhân sự</span>
+                <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ selectedRequest?.employeeId }}</p>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Khoảng thời gian</span>
+                <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ selectedRequest?.dateRange }}</p>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Tổng thời lượng</span>
+                <p class="text-sm font-black text-[var(--sys-brand-solid)]">{{ selectedRequest?.duration }}</p>
+              </div>
+            </div>
+
+            <!-- Detailed Reason -->
+            <div class="space-y-2 mb-6">
+              <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest">Nội dung giải trình</span>
+              <div class="bg-[var(--sys-bg-hover)] p-4 rounded-lg border border-[var(--sys-border-subtle)]">
+                <p class="text-sm text-[var(--sys-text-secondary)] leading-relaxed font-medium italic">
+                  "{{ selectedRequest?.reason }}"
+                </p>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div v-if="selectedRequest?.status === 'pending'" class="flex justify-end gap-3 mt-auto pt-6 border-t border-[var(--sys-border-subtle)] border-dashed">
+              <button @click="handleRejectFromDetail" class="h-10 px-5 text-[11px] font-bold text-[var(--sys-danger-text)] hover:bg-[var(--sys-danger-soft)] rounded-md transition-all uppercase tracking-widest border border-[var(--sys-danger-border)]">Từ chối</button>
+              <button @click="handleApproveFromDetail" class="h-10 px-6 bg-[var(--sys-brand-solid)] text-white rounded-md font-extrabold text-[11px] hover:brightness-110 shadow-lg transition-all uppercase tracking-widest flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">task_alt</span>
+                Chấp thuận ngay
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
 
     <!-- Empty State -->
     <div v-if="filteredRequests.length === 0" class="flex flex-col items-center justify-center py-24 bg-[var(--sys-bg-page)]/20 rounded-lg border-2 border-[var(--sys-border-subtle)] border-dashed">
@@ -209,8 +276,33 @@ const activeTab = ref('pending');
 const searchQuery = ref('');
 const filterType = ref('ALL');
 const showRejectModal = ref(false);
+const showDetailModal = ref(false);
 const rejectReason = ref('');
 const selectedRequest = ref(null);
+
+const openDetailModal = (r) => {
+  selectedRequest.value = r;
+  showDetailModal.value = true;
+};
+
+const closeDetailModal = () => {
+  showDetailModal.value = false;
+};
+
+const handleApproveFromDetail = () => {
+  if (selectedRequest.value) {
+    handleApprove(selectedRequest.value);
+    closeDetailModal();
+  }
+};
+
+const handleRejectFromDetail = () => {
+  if (selectedRequest.value) {
+    const r = selectedRequest.value;
+    closeDetailModal();
+    handleReject(r);
+  }
+};
 
 const typeOptions = [
   { label: 'TẤT CẢ LOẠI HÌNH', value: 'ALL' },
@@ -266,4 +358,13 @@ const closeRejectModal = () => { showRejectModal.value = false; rejectReason.val
 .animate-zoomIn { animation: zoomIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 .modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 0.2s ease; }
 .modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }
+
+/* Slide-up Transition for Detail Modal */
+.slide-up-enter-active, .slide-up-leave-active {
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.slide-up-enter-from, .slide-up-leave-to {
+  opacity: 0;
+  transform: translateY(40px);
+}
 </style>

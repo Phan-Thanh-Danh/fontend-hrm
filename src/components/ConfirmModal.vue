@@ -1,48 +1,53 @@
 <template>
   <Teleport to="body">
     <Transition
-      enter-active-class="transition ease-out duration-300"
-      enter-from-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
-      enter-to-class="opacity-100 scale-100 translate-y-0"
-      leave-active-class="transition ease-in duration-200"
-      leave-from-class="opacity-100 scale-100 translate-y-0"
-      leave-to-class="opacity-0 scale-95 translate-y-4 sm:translate-y-0"
+      enter-active-class="transition ease-out duration-200"
+      enter-from-class="opacity-0 scale-95"
+      enter-to-class="opacity-100 scale-100"
+      leave-active-class="transition ease-in duration-150"
+      leave-from-class="opacity-100 scale-100"
+      leave-to-class="opacity-0 scale-95"
     >
       <div v-if="state.show" class="fixed inset-0 z-[100000] flex items-center justify-center p-4">
-        <!-- Backdrop: Lighter in light mode, deeper in dark mode -->
+        <!-- Backdrop -->
         <div 
-          class="fixed inset-0 transition-colors duration-300 bg-black/20 dark:bg-black/60 backdrop-blur-[2px]" 
+          class="fixed inset-0 bg-black/40 backdrop-blur-[1px]" 
           @click="confirmAction(false)"
         ></div>
         
-        <!-- Modal Content: Using semantic tokens from style.css -->
-        <div class="relative w-full max-w-sm rounded-[2.5rem] shadow-[0_20px_50px_oklch(0_0_0/0.1)] dark:shadow-[0_20px_50px_oklch(0_0_0/0.4)] overflow-hidden border p-8 text-center flex flex-col items-center bg-[var(--sys-bg-surface)] border-[var(--sys-border)] transition-colors duration-300">
+        <!-- Modal Content: Enterprise B2B Refined -->
+        <div class="relative w-full max-w-sm rounded-xl shadow-2xl overflow-hidden border bg-[var(--sys-bg-surface-elevated)] border-[var(--sys-border-subtle)] transition-all duration-300 flex flex-col p-6 text-left">
           
-          <!-- Icon based on type -->
-          <div :class="[
-            'w-20 h-20 rounded-full flex items-center justify-center mb-6 shadow-sm transition-all duration-300',
-            state.type === 'confirm' 
-              ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)]' 
-              : 'bg-[var(--sys-info-soft)] text-[var(--sys-info-text)]'
-          ]">
-            <span class="material-symbols-rounded text-[40px] transition-all" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 48">
-              {{ state.type === 'confirm' ? 'help' : 'info' }}
-            </span>
+          <div class="flex items-start gap-4 mb-6">
+            <!-- Icon Area -->
+            <div :class="[
+              'w-12 h-12 rounded-lg flex items-center justify-center shrink-0 shadow-sm border',
+              state.type === 'confirm' 
+                ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]' 
+                : 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]'
+            ]">
+              <span class="material-symbols-outlined text-[28px] font-bold">
+                {{ state.type === 'confirm' ? 'priority_high' : 'info' }}
+              </span>
+            </div>
+
+            <!-- Text Area -->
+            <div class="flex-1 flex flex-col pt-0.5">
+              <h3 class="text-base font-extrabold text-[var(--sys-text-primary)] uppercase tracking-tight mb-1">
+                {{ state.title }}
+              </h3>
+              <p class="text-[13px] font-medium leading-relaxed text-[var(--sys-text-secondary)] opacity-80">
+                {{ state.message }}
+              </p>
+            </div>
           </div>
 
-          <h3 class="text-xl font-black mb-2 tracking-tight text-[var(--sys-text-primary)] transition-colors duration-300">
-            {{ state.title }}
-          </h3>
-          <p class="text-sm font-medium leading-relaxed mb-8 text-[var(--sys-text-secondary)] transition-colors duration-300">
-            {{ state.message }}
-          </p>
-
-          <div class="flex gap-3 w-full mt-auto">
+          <div class="flex gap-2 justify-end w-full">
             <!-- Secondary Button (Cancel) -->
             <button 
               v-if="state.type === 'confirm'"
               @click="confirmAction(false)" 
-              class="flex-1 py-3.5 rounded-2xl text-xs font-bold transition-all uppercase tracking-widest border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] active:scale-95"
+              class="h-10 px-6 rounded-md text-[11px] font-bold transition-all uppercase tracking-widest border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] active:scale-95"
             >
               Hủy bỏ
             </button>
@@ -50,11 +55,11 @@
             <!-- Primary Button (Confirm/OK) -->
             <button 
               @click="confirmAction(true)" 
-              class="flex-1 py-3.5 rounded-2xl text-xs font-bold transition-all focus:outline-none uppercase tracking-widest active:scale-95"
+              class="h-10 px-8 rounded-md text-[11px] font-bold transition-all focus:outline-none uppercase tracking-widest active:scale-95 shadow-lg flex items-center justify-center"
               :class="[
                 state.type === 'confirm' 
-                  ? 'bg-[var(--sys-warning-solid)] text-white hover:bg-[var(--sys-warning-solid)]/90 shadow-lg shadow-[var(--sys-warning-solid)]/20' 
-                  : 'bg-[var(--sys-brand-solid)] text-white hover:bg-[var(--sys-brand-hover)] shadow-lg shadow-[var(--sys-brand-solid)]/20'
+                  ? 'bg-[var(--sys-warning-solid)] text-white hover:brightness-110' 
+                  : 'bg-[var(--sys-brand-solid)] text-white hover:brightness-110'
               ]"
             >
               {{ state.type === 'confirm' ? 'Xác nhận' : 'Đóng' }}
@@ -73,5 +78,5 @@ const { state, confirmAction } = useConfirm();
 </script>
 
 <style scoped>
-/* Modal animations are handled by Vue Transition and Tailwind classes */
+/* Modal transition refined for SaaS feel */
 </style>
