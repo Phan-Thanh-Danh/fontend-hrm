@@ -351,6 +351,7 @@
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/tuyen-dung')" icon="person_search" label="Tuyển dụng" :is-dark="isDark" to="/admin/tuyen-dung" @click="handleNavClick" />
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/lich-phong-van')" icon="calendar_today" label="Lịch phỏng vấn" :is-dark="isDark" to="/admin/lich-phong-van" @click="handleNavClick" />
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/phe-duyet')" icon="task_alt" label="Phê duyệt đơn" :is-dark="isDark" to="/admin/phe-duyet" @click="handleNavClick" :badge="7" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/ho-tro')" icon="support_agent" label="Hỗ trợ nội bộ" :is-dark="isDark" to="/admin/ho-tro" @click="handleNavClick" :badge="2" />
         </div>
 
         <!-- ── Tài chính & Tài sản ── -->
@@ -446,6 +447,7 @@ const currentPageLabel = computed(() => {
   if (path.startsWith('/admin/tai-san')) return 'Quản lý Tài sản';
   if (path.startsWith('/admin/phe-duyet')) return 'Phê duyệt đơn';
   if (path.startsWith('/admin/lich-phong-van')) return 'Lịch phỏng vấn';
+  if (path.startsWith('/admin/ho-tro')) return 'Hỗ trợ nội bộ';
   return 'Dashboard';
 });
 
