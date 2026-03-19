@@ -62,40 +62,15 @@
           
           <!-- Column Bars -->
           <div class="absolute inset-0 ml-8 flex items-end justify-around pb-[1px]" style="height: 100%;">
-             <!-- Intern -->
-             <div class="w-10 md:w-14 bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-[0_-4px_16px_rgba(59,130,246,0.3)] hover:-translate-y-1 cursor-pointer" style="height: 25%">
-                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">10% Tổng số</div>
-                <span class="absolute -top-5 text-[12px] font-[900] text-slate-700">125</span>
-             </div>
-             <!-- Junior -->
-             <div class="w-10 md:w-14 bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-[0_-4px_16px_rgba(99,102,241,0.3)] hover:-translate-y-1 cursor-pointer" style="height: 90%">
-                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">36% Tổng số</div>
-                <span class="absolute -top-5 text-[12px] font-[900] text-slate-700">450</span>
-             </div>
-             <!-- Senior -->
-             <div class="w-10 md:w-14 bg-gradient-to-t from-blue-500 to-blue-400 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-[0_-4px_16px_rgba(59,130,246,0.3)] hover:-translate-y-1 cursor-pointer" style="height: 76%">
-                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">30% Tổng số</div>
-                <span class="absolute -top-5 text-[12px] font-[900] text-slate-700">380</span>
-             </div>
-             <!-- Manager -->
-             <div class="w-10 md:w-14 bg-gradient-to-t from-cyan-500 to-cyan-400 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-[0_-4px_16px_rgba(6,182,212,0.3)] hover:-translate-y-1 cursor-pointer" style="height: 44%">
-                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">18% Tổng số</div>
-                <span class="absolute -top-5 text-[12px] font-[900] text-slate-700">220</span>
-             </div>
-             <!-- Director -->
-             <div class="w-10 md:w-14 bg-gradient-to-t from-slate-400 to-slate-300 rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-sm hover:-translate-y-1 cursor-pointer" style="height: 15%">
-                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">6% Ban giám đốc</div>
-                <span class="absolute -top-5 text-[12px] font-[900] text-slate-600">75</span>
+             <div v-for="(item, idx) in nhanSuCapBac" :key="idx" class="w-10 md:w-14 bg-gradient-to-t rounded-t-xl group transition-all duration-300 hover:opacity-85 flex justify-center relative shadow-[0_-4px_16px_rgba(59,130,246,0.3)] hover:-translate-y-1 cursor-pointer" :class="item.colorCls" :style="{ height: (item.value / nhanSuCapBacMax * 100) + '%' }">
+                <div class="absolute -top-9 opacity-0 group-hover:opacity-100 transition-all bg-slate-800 text-white text-[11px] font-bold px-2 py-1 rounded shadow-lg pointer-events-none z-20 whitespace-nowrap">{{ item.pct }}% Tổng số</div>
+                <span class="absolute -top-5 text-[12px] font-[900] text-slate-700">{{ item.value }}</span>
              </div>
           </div>
         </div>
 
         <div class="flex justify-around items-end pt-5 ml-8 relative z-10 border-t border-slate-100 mt-2">
-          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Intern</span>
-          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Junior</span>
-          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Senior</span>
-          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Manager</span>
-          <span class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">Director</span>
+          <span v-for="(item, idx) in nhanSuCapBac" :key="idx" class="text-[11px] font-[800] text-slate-500 w-12 md:w-14 text-center">{{ item.rank }}</span>
         </div>
       </div>
 
@@ -159,28 +134,23 @@
               </defs>
 
               <!-- Filled Area (Nghỉ việc) -->
-              <path class="fade-area" d="M 0 160 C 60 140 90 150 140 130 C 190 110 220 120 270 120 C 320 120 360 80 400 90 C 440 100 470 110 500 120 L 500 180 L 0 180 Z" fill="url(#premiumRed)" />
+              <path class="fade-area" :d="nghiViecAreaPath" fill="url(#premiumRed)" />
               <!-- Smooth Line (Nghỉ việc) - Dashed -->
-              <path class="draw-red" d="M 0 160 C 60 140 90 150 140 130 C 190 110 220 120 270 120 C 320 120 360 80 400 90 C 440 100 470 110 500 120" fill="none" stroke="#FB7185" stroke-width="2.5" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+              <path class="draw-red" :d="nghiViecLinePath" fill="none" stroke="#FB7185" stroke-width="2.5" stroke-linecap="round" vector-effect="non-scaling-stroke" />
 
               <!-- Data Points (Nghỉ việc) -->
               <g class="fade-dots">
-                <circle cx="140" cy="130" r="4" fill="#fff" stroke="#FB7185" stroke-width="2.5" vector-effect="non-scaling-stroke" />
-                <circle cx="270" cy="120" r="4" fill="#fff" stroke="#FB7185" stroke-width="2.5" vector-effect="non-scaling-stroke" />
-                <circle cx="400" cy="90" r="4" fill="#fff" stroke="#FB7185" stroke-width="3" filter="url(#glowRed)" vector-effect="non-scaling-stroke" />
+                <circle v-for="(pt, idx) in nghiViecPoints" :key="idx" :cx="pt.x" :cy="pt.y" r="4" fill="#fff" stroke="#FB7185" stroke-width="2.5" vector-effect="non-scaling-stroke" />
               </g>
               
               <!-- Filled Area (Tuyển vào) -->
-              <path class="fade-area" d="M 0 140 C 60 110 90 60 140 70 C 190 80 220 40 270 50 C 320 60 360 20 400 40 C 440 60 470 30 500 45 L 500 180 L 0 180 Z" fill="url(#premiumBlue)" />
+              <path class="fade-area" :d="tuyenVaoAreaPath" fill="url(#premiumBlue)" />
               <!-- Smooth Line (Tuyển vào) -->
-              <path class="draw-blue" d="M 0 140 C 60 110 90 60 140 70 C 190 80 220 40 270 50 C 320 60 360 20 400 40 C 440 60 470 30 500 45" fill="none" stroke="url(#lineBlue)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+              <path class="draw-blue" :d="tuyenVaoLinePath" fill="none" stroke="url(#lineBlue)" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke" />
               
               <!-- Data Points (Tuyển vào) -->
               <g class="fade-dots">
-                <circle cx="140" cy="70" r="4" fill="#fff" stroke="#2563EB" stroke-width="2.5" vector-effect="non-scaling-stroke" />
-                <circle cx="270" cy="50" r="5" fill="#fff" stroke="#4F46E5" stroke-width="3.5" filter="url(#glowBlue)" vector-effect="non-scaling-stroke" />
-                <circle cx="400" cy="40" r="4" fill="#fff" stroke="#6366F1" stroke-width="2.5" vector-effect="non-scaling-stroke" />
-                <circle cx="498" cy="45" r="4" fill="#fff" stroke="#6366F1" stroke-width="2.5" vector-effect="non-scaling-stroke" />
+                <circle v-for="(pt, idx) in tuyenVaoPoints" :key="idx" :cx="pt.x" :cy="pt.y" r="4" fill="#fff" stroke="#6366F1" stroke-width="2.5" vector-effect="non-scaling-stroke" />
               </g>
            </svg>
 
@@ -205,12 +175,7 @@
 
         <!-- X-Axis text -->
         <div class="flex justify-between items-end mt-0 pt-2 relative z-10 w-full pl-10 pr-2 pointer-events-none">
-          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.1</span>
-          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.2</span>
-          <span class="text-[10px] font-[800] text-blue-500 hover:text-blue-600 transition-colors uppercase tracking-widest drop-shadow-sm">Th.3</span>
-          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.4</span>
-          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.5</span>
-          <span class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest">Th.6</span>
+          <span v-for="(pt, idx) in tuyenVaoPoints" :key="idx" class="text-[10px] font-[800] text-slate-400 hover:text-blue-600 transition-colors uppercase tracking-widest pointer-events-auto">{{ pt.month }}</span>
         </div>
       </div>
     </div>
@@ -291,7 +256,58 @@
 </template>
 
 <script setup>
-import { nhanSuKpiCards, topPerformers, deptRankings } from '@/data/sampleData_GiamDoc.js';
+import { computed } from 'vue';
+import { nhanSuKpiCards, topPerformers, deptRankings, nhanSuCapBac, nhanSuCapBacMax, bienDongNhanSuChart, bienDongNhanSuChartMax } from '@/data/sampleData_GiamDoc.js';
+
+const tuyenVaoPoints = computed(() => {
+  const width = 500;
+  const height = 180;
+  const stepX = width / (bienDongNhanSuChart.length - 1);
+  return bienDongNhanSuChart.map((p, i) => {
+    return {
+      month: p.month,
+      x: i * stepX,
+      y: height - (p.tuyenVao / bienDongNhanSuChartMax) * height
+    };
+  });
+});
+
+const nghiViecPoints = computed(() => {
+  const width = 500;
+  const height = 180;
+  const stepX = width / (bienDongNhanSuChart.length - 1);
+  return bienDongNhanSuChart.map((p, i) => {
+    return {
+      month: p.month,
+      x: i * stepX,
+      y: height - (p.nghiViec / bienDongNhanSuChartMax) * height
+    };
+  });
+});
+
+const generateLinePath = (points) => {
+  if (!points.length) return '';
+  let path = `M ${points[0].x} ${points[0].y}`;
+  for(let i=1; i<points.length; i++) {
+    const prev = points[i-1];
+    const curr = points[i];
+    const cpX = (prev.x + curr.x) / 2;
+    path += ` C ${cpX} ${prev.y} ${cpX} ${curr.y} ${curr.x} ${curr.y}`;
+  }
+  return path;
+};
+
+const tuyenVaoLinePath = computed(() => generateLinePath(tuyenVaoPoints.value));
+const nghiViecLinePath = computed(() => generateLinePath(nghiViecPoints.value));
+
+const tuyenVaoAreaPath = computed(() => {
+  if(!tuyenVaoLinePath.value) return '';
+  return `${tuyenVaoLinePath.value} L 500 180 L 0 180 Z`;
+});
+const nghiViecAreaPath = computed(() => {
+  if(!nghiViecLinePath.value) return '';
+  return `${nghiViecLinePath.value} L 500 180 L 0 180 Z`;
+});
 </script>
 
 <style scoped>

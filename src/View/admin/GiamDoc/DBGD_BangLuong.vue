@@ -54,21 +54,13 @@
           <span class="text-[11px] font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-md">Đơn vị: Tỷ VNĐ</span>
         </div>
         
-        <!-- Mock bars -->
-        <div class="absolute inset-x-7 bottom-[60px] top-[70px] flex items-end justify-around pb-0 opacity-[0.03]">
-           <div class="w-12 bg-indigo-600 rounded-t-lg h-[80%]"></div>
-           <div class="w-12 bg-indigo-600 rounded-t-lg h-[50%]"></div>
-           <div class="w-12 bg-indigo-600 rounded-t-lg h-[30%]"></div>
-           <div class="w-12 bg-indigo-600 rounded-t-lg h-[20%]"></div>
-           <div class="w-12 bg-indigo-600 rounded-t-lg h-[10%]"></div>
+        <!-- Dynamic bars -->
+        <div class="absolute inset-x-7 bottom-[60px] top-[70px] flex items-end justify-around pb-0">
+           <div v-for="(bp, index) in bangLuongBoPhans" :key="index" class="w-12 bg-indigo-600 rounded-t-lg transition-all" :style="{ height: bp.phanTram + '%' }"></div>
         </div>
 
         <div class="flex justify-around items-end pt-5 mt-auto relative z-10">
-          <span class="text-[11px] font-bold text-slate-500 w-16 text-center">Kỹ thuật</span>
-          <span class="text-[11px] font-bold text-slate-500 w-16 text-center">Kinh doanh</span>
-          <span class="text-[11px] font-bold text-slate-500 w-16 text-center">Marketing</span>
-          <span class="text-[11px] font-bold text-slate-500 w-16 text-center">Vận hành</span>
-          <span class="text-[11px] font-bold text-slate-500 w-16 text-center">Nhân sự</span>
+          <span v-for="(bp, index) in bangLuongBoPhans" :key="index" class="text-[11px] font-bold text-slate-500 w-16 text-center">{{ bp.tenPhong }}</span>
         </div>
       </div>
 

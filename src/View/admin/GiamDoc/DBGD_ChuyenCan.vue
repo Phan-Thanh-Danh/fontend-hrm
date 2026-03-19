@@ -107,22 +107,17 @@
             
             <!-- Mock Line Chart Path SVG -->
             <div class="relative w-full h-[180px] flex mx-auto mt-4 mb-2 overflow-hidden min-h-0">
-                <svg viewBox="0 0 500 150" class="absolute inset-0 w-full h-full preserve-aspect-ratio-none">
+                <svg viewBox="0 0 500 150" class="absolute inset-0 w-full h-full" preserveAspectRatio="none">
                      <!-- Smooth curve SVG generated -->
-                     <path d="M0,130 C100,110 150,80 250,110 C350,140 380,30 460,30 C480,30 490,60 500,80" fill="none" stroke="var(--sys-brand-solid)" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" class="drop-shadow-lg" />
+                     <path :d="chuyenCanLinePath" fill="none" stroke="var(--sys-brand-solid)" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" class="drop-shadow-lg" />
                 </svg>
                 
                 <!-- Dot for current month -->
-                <div class="absolute right-[0] top-[74px] w-3 h-3 bg-[var(--sys-brand-solid)] rounded-full border-2 border-white shadow-md"></div>
+                <div class="absolute w-3 h-3 bg-[var(--sys-brand-solid)] rounded-full border-2 border-white shadow-md z-10" :style="latestDotStyle"></div>
             </div>
 
             <div class="flex justify-between mt-4">
-                 <span class="text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-wider">Tháng 1</span>
-                 <span class="text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-wider">Tháng 2</span>
-                 <span class="text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-wider">Tháng 3</span>
-                 <span class="text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-wider">Tháng 4</span>
-                 <span class="text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-wider">Tháng 5</span>
-                 <span class="text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-wider">Tháng 6</span>
+                 <span v-for="(p, i) in chuyenCanPoints" :key="i" class="text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-wider">{{ p.month }}</span>
             </div>
         </div>
 
@@ -205,12 +200,51 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import {
   chuyenCanCards,
   depts,
   topUsers,
   badUsers,
+  chuyenCanLineChart,
+  chuyenCanLineChartMax
 } from '@/data/sampleData_GiamDoc.js';
+
+const chuyenCanPoints = computed(() => {
+  const width = 500;
+  const height = 150;
+  const max = chuyenCanLineChartMax;
+  const stepX = width / (chuyenCanLineChart.length - 1);
+  return chuyenCanLineChart.map((p, i) => {
+    return {
+      month: p.month,
+      x: i * stepX,
+      y: height - (p.val / max) * height
+    }
+  });
+});
+
+const chuyenCanLinePath = computed(() => {
+  if (!chuyenCanPoints.value.length) return '';
+  let path = `M ${chuyenCanPoints.value[0].x} ${chuyenCanPoints.value[0].y}`;
+  for(let i=1; i<chuyenCanPoints.value.length; i++) {
+    const prev = chuyenCanPoints.value[i-1];
+    const curr = chuyenCanPoints.value[i];
+    const cpX = (prev.x + curr.x) / 2;
+    path += ` C ${cpX} ${prev.y} ${cpX} ${curr.y} ${curr.x} ${curr.y}`;
+  }
+  return path;
+});
+
+const latestDotStyle = computed(() => {
+  if(!chuyenCanPoints.value.length) return {};
+  const lastPoint = chuyenCanPoints.value[chuyenCanPoints.value.length - 1];
+  return {
+    right: '-1%', // Just slightly padding for the circle
+    top: `${(lastPoint.y / 150) * 100}%`,
+    transform: 'translateY(-50%)' // Align vertically centered on the line
+  };
+});
 </script>
 
 <style scoped>
