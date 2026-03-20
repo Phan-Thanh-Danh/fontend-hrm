@@ -132,14 +132,16 @@
               <div class="grid grid-cols-2 gap-3 mb-5">
                 <div class="space-y-1.5">
                   <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Ngày chọn</label>
-                  <input type="date" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                  <input type="date" v-model="interviewDate" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
                 </div>
                 <div class="space-y-1.5">
                   <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Giờ hẹn</label>
-                  <input type="time" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                  <input type="time" v-model="interviewTime" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
                 </div>
               </div>
-              <button class="w-full h-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
+              <button 
+                @click="handleScheduleInterview"
+                class="w-full h-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
                 <span class="material-symbols-outlined text-[20px]">send</span>
                 Gửi triệu tập phỏng vấn
               </button>
@@ -149,23 +151,24 @@
               <h4 class="text-[12px] font-bold text-[var(--sys-brand-solid)] flex items-center gap-2 mb-5 uppercase tracking-wide">
                 <span class="material-symbols-outlined text-[18px]">fact_check</span> Quyết định tuyển dụng
               </h4>
-              <div class="mb-5">
-                <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1 block mb-2">Nhận định chuyên môn *</label>
-                <textarea class="w-full h-24 p-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm resize-none" placeholder="Nhập nhận xét đánh giá..."></textarea>
+              <!-- Hiển thị nhận định từ Trưởng phòng nếu có -->
+              <div v-if="activeCandidate.managerReview" class="mb-5 p-3 rounded-md bg-[var(--sys-brand-soft)] border border-[var(--sys-brand-border)]">
+                <p class="text-[11px] font-bold text-[var(--sys-brand-solid)] uppercase mb-1">Đánh giá từ Trưởng phòng {{ activeCandidate.department }}:</p>
+                <p class="text-[13px] text-[var(--sys-text-primary)] italic">"{{ activeCandidate.managerReview }}"</p>
               </div>
-              <div class="flex items-center gap-8 mb-6 px-1">
-                <label class="flex items-center gap-2 cursor-pointer text-[var(--sys-success-text)]">
-                  <input type="radio" :name="'res_' + activeCandidate.id" class="w-4 h-4 accent-[var(--sys-success-solid)]">
-                  <span class="text-[12px] font-bold uppercase tracking-wide">Phê duyệt</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer text-[var(--sys-danger-text)]">
-                  <input type="radio" :name="'res_' + activeCandidate.id" class="w-4 h-4 accent-[var(--sys-danger-solid)]">
-                  <span class="text-[12px] font-bold uppercase tracking-wide">Từ chối</span>
-                </label>
+
+              <div class="flex items-center gap-4">
+                <button 
+                  @click="handleFinalDecision('pass')"
+                  class="flex-1 h-10 bg-[var(--sys-success-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all uppercase tracking-wide">
+                  Phê duyệt
+                </button>
+                <button 
+                  @click="handleFinalDecision('fail')"
+                  class="flex-1 h-10 bg-[var(--sys-danger-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all uppercase tracking-wide">
+                  Từ chối
+                </button>
               </div>
-              <button class="w-full h-10 bg-[var(--sys-text-primary)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
-                Hồ sơ quyết nghị
-              </button>
             </div>
           </div>
         </div>
@@ -224,12 +227,23 @@
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import Dropdown from '@/components/Dropdown.vue';
+import { useRecruitmentStore } from '@/composables/useRecruitmentStore';
+import { useConfirm } from '@/composables/useConfirm';
 
 const route = useRoute();
+const store = useRecruitmentStore();
+const { showAlert } = useConfirm();
+
 const activeCandidateId = ref(1);
 const searchQuery = ref('');
 const filterPosition = ref('');
 const filterAiScore = ref('');
+
+// Form state for interview scheduling
+const interviewDate = ref('');
+const interviewTime = ref('');
+
+const candidates = store.candidates;
 
 const positionOptions = [
   { label: 'Vị trí: Tất cả', value: '' },
@@ -244,22 +258,13 @@ const aiScoreOptions = [
   { label: 'AI: > 90%', value: '90' }
 ];
 
-const candidates = ref([
-  { id: 1, name: 'Nguyễn Văn Anh', position: 'Senior Frontend', aiScore: 95, date: '12/10/2023', status: 'pass', interviewDate: '2023-10-15' },
-  { id: 2, name: 'Trần Thị Bích', position: 'UI/UX Designer', aiScore: 88, date: '11/10/2023', status: 'pending', interviewDate: '2026-12-01' },
-  { id: 3, name: 'Lê Văn Chính', position: 'Backend Dev', aiScore: 72, date: '10/10/2023', status: 'fail', interviewDate: '2023-10-10' },
-  { id: 4, name: 'Phạm Thành Đạt', position: 'Business Analyst', aiScore: 92, date: '09/10/2023', status: 'pass', interviewDate: '2023-10-11' },
-  { id: 5, name: 'Vũ Đức Minh', position: 'DevOps Engineer', aiScore: 68, date: '08/10/2023', status: 'fail', interviewDate: null },
-  { id: 6, name: 'Hoàng Phương My', position: 'Product Owner', aiScore: 85, date: '05/10/2023', status: 'pass', interviewDate: '2023-10-06' }
-]);
-
 const activeCandidate = computed(() => {
   return candidates.value.find(c => c.id === activeCandidateId.value) || candidates.value[0];
 });
 
 const needsScheduling = (candidate) => {
-  if (!candidate || !candidate.interviewDate) return true;
-  return new Date(candidate.interviewDate) > new Date(); 
+  if (!candidate || candidate.status !== 'new') return false;
+  return true;
 };
 
 const filteredCandidates = computed(() => {
@@ -293,6 +298,26 @@ const getAiScoreClass = (score) => {
   if (score >= 70) return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
   return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
 };
+
+// ACTIONS
+async function handleScheduleInterview() {
+  if (!interviewDate.value || !interviewTime.value) {
+    await showAlert('THIẾU THÔNG TIN', 'Vui lòng chọn ngày và giờ phỏng vấn!');
+    return;
+  }
+  
+  store.scheduleInterview(activeCandidate.value.id, interviewDate.value, interviewTime.value);
+  await showAlert('THÀNH CÔNG', `Đã gửi lời mời phỏng vấn cho ${activeCandidate.value.name}. Thông báo đã được gửi đến Trưởng phòng ${activeCandidate.value.department}.`);
+  
+  // Clear form
+  interviewDate.value = '';
+  interviewTime.value = '';
+}
+
+async function handleFinalDecision(status) {
+  store.finalizeDecision(activeCandidate.value.id, status);
+  await showAlert('CẬP NHẬT', `Đã cập nhật trạng thái hồ sơ của ${activeCandidate.value.name}.`);
+}
 </script>
 
 <style scoped>

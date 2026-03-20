@@ -158,6 +158,72 @@ const routes = [
                         name: 'admin-cai-dat',
                         component: () => import('../View/admin/Setting_admin.vue'),
                         meta: { index: 14 }
+                  },
+            ]
+      },
+      {
+            path: '/truong-phong',
+            component: () => import('../components/Layout_TruongPhong.vue'),
+            children: [
+                  {
+                        path: 'dashboard',
+                        name: 'tp-dashboard',
+                        component: () => import('../View/truongphong/Dashboard_TP.vue'),
+                        meta: { index: 20 }
+                  },
+                  {
+                        path: 'nhan-su',
+                        name: 'tp-nhan-su',
+                        component: () => import('../View/truongphong/TP_NhanSu.vue'),
+                        meta: { index: 21 }
+                  },
+                  {
+                        path: 'hop-dong',
+                        name: 'tp-hop-dong',
+                        component: () => import('../View/truongphong/TP_HopDong.vue'),
+                        meta: { index: 21.5 }
+                  },
+                  {
+                        path: 'cham-cong',
+                        name: 'tp-cham-cong',
+                        component: () => import('../View/truongphong/TP_ChamCong.vue'),
+                        meta: { index: 22 }
+                  },
+                  {
+                        path: 'nghi-phep',
+                        name: 'tp-nghi-phep',
+                        component: () => import('../View/truongphong/TP_NghiPhep.vue'),
+                        meta: { index: 23 }
+                  },
+                  {
+                        path: 'tuyen-dung',
+                        name: 'tp-tuyen-dung',
+                        component: () => import('../View/truongphong/TP_TuyenDung.vue'),
+                        meta: { index: 24 }
+                  },
+                  {
+                        path: 'bang-luong',
+                        name: 'tp-bang-luong',
+                        component: () => import('../View/truongphong/TP_BangLuong.vue'),
+                        meta: { index: 25 }
+                  },
+                  {
+                        path: 'tai-san',
+                        name: 'tp-tai-san',
+                        component: () => import('../View/truongphong/TP_TaiSan.vue'),
+                        meta: { index: 26 }
+                  },
+                  {
+                        path: 'ho-so',
+                        name: 'tp-ho-so',
+                        component: () => import('../View/truongphong/TP_Profile.vue'),
+                        meta: { index: 27 }
+                  },
+                  {
+                        path: 'danh-gia-ung-vien',
+                        name: 'tp-danh-gia-ung-vien',
+                        component: () => import('../View/truongphong/DanhGiaUngVien.vue'),
+                        meta: { index: 28 }
                   }
             ]
       },

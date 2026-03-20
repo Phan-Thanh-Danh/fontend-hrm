@@ -35,7 +35,7 @@
                 Tài khoản trải nghiệm:
               </p>
               <ul class="list-disc pl-8 space-y-1 text-blue-700">
-                <li>Giám đốc: <b>ceo@hrm.com</b> / <b>ceo</b></li>
+                <li>Trưởng phòng: <b>manager@hrm.com</b> / <b>manager</b></li>
                 <li>Admin: <b>admin@hrm.com</b> / <b>admin</b></li>
                 <li>Nhân viên: <b>user@hrm.com</b> / <b>user</b></li>
               </ul>
@@ -128,6 +128,10 @@ const handleLogin = () => {
       localStorage.setItem('userRole', 'admin');
       router.push('/admin');
     } 
+    else if (email.value === 'manager@hrm.com' && password.value === 'manager') {
+      localStorage.setItem('userRole', 'manager');
+      router.push('/truong-phong/dashboard');
+    }
     else if (email.value === 'user@hrm.com' && password.value === 'user') {
       localStorage.setItem('userRole', 'user');
       router.push('/');

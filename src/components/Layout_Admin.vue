@@ -361,6 +361,7 @@
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/tai-san')" icon="category" label="Quản lý Tài sản" :is-dark="isDark" to="/admin/tai-san" @click="handleNavClick" />
         </div>
 
+
       </nav>
 
       <!-- Sidebar footer: Settings + User -->
@@ -449,7 +450,7 @@ const currentPageLabel = computed(() => {
   if (path.startsWith('/admin/lich-phong-van')) return 'Lịch phỏng vấn';
   if (path.startsWith('/admin/ho-tro')) return 'Hỗ trợ nội bộ';
   return 'Dashboard';
-});
+ });
 
 // ── Sidebar / Menu toggle ──────────────────────────────────────────────────
 const handleMenuToggle = () => {
