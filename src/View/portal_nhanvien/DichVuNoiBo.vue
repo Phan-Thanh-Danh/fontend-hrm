@@ -138,7 +138,6 @@
         </div>
       </div>
     </div>
-  </div>
 
   <!-- ══════════════════════════════════════════════════
        POPUP / MODAL: TẠO TICKET HỖ TRỢ
@@ -336,6 +335,7 @@
       </div>
     </div>
   </Transition>
+  </div>
 </template>
 
 <script setup>
@@ -460,6 +460,14 @@ function getStatusDotClass(s) {
 </script>
 
 <style scoped>
+/* ─── Form Select Custom ────────────────────────────── */
+.form-select-custom {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: none !important;
+}
+
 /* ─── Page ─────────────────────────────────────────── */
 .internal-services-page {
   background-color: var(--sys-bg-page);

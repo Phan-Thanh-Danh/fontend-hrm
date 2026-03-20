@@ -148,10 +148,16 @@ const routes = [
                         meta: { index: 12 }
                   },
                   {
+                        path: 'ho-tro',
+                        name: 'admin-ho-tro',
+                        component: () => import('../View/admin/QuanLy/QuanLyHoTro.vue'),
+                        meta: { index: 13 }
+                  },
+                  {
                         path: 'cai-dat',
                         name: 'admin-cai-dat',
                         component: () => import('../View/admin/Setting_admin.vue'),
-                        meta: { index: 13 }
+                        meta: { index: 14 }
                   }
             ]
       },
