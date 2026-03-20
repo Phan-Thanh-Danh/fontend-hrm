@@ -4,8 +4,8 @@
     <!-- ── Header ─────────────────────────────────────────── -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
-        <h1 class="text-xl font-semibold text-[var(--sys-text-primary)] mb-1">Quản lý Hỗ trợ Nội bộ</h1>
-        <p class="text-sm text-[var(--sys-text-secondary)]">Tiếp nhận, phân công và xử lý ticket hỗ trợ từ nhân viên toàn hệ thống.</p>
+        <h1 class="text-xl font-bold uppercase tracking-tight text-[var(--sys-text-primary)] mb-1">Quản lý Hỗ trợ Nội bộ</h1>
+        <p class="text-[13px] text-[var(--sys-text-secondary)] m-0">Tiếp nhận, phân công và xử lý ticket hỗ trợ từ nhân viên toàn hệ thống.</p>
       </div>
       <div class="hidden xl:block shrink-0">
         <div class="inline-flex items-center gap-2 px-3 h-8 bg-[var(--sys-brand-soft)] rounded border border-[var(--sys-brand-border)] font-black text-[10px] text-[var(--sys-brand-solid)] uppercase tracking-widest shadow-sm">
@@ -20,17 +20,17 @@
       <div
         v-for="stat in stats"
         :key="stat.label"
-        class="bg-white rounded-lg border border-[var(--sys-border-subtle)] shadow-sm p-4 flex items-center gap-4 group hover:border-[var(--sys-brand-solid)] transition-all"
+        class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] shadow-sm p-4 flex items-center gap-4 group hover:border-[var(--sys-brand-solid)] transition-all"
       >
         <div
           :class="stat.iconBg"
           class="w-10 h-10 rounded-md flex items-center justify-center shrink-0 border transition-all group-hover:scale-110"
         >
-          <span class="material-symbols-outlined text-[22px]">{{ stat.icon }}</span>
+          <span class="material-symbols-outlined text-xl">{{ stat.icon }}</span>
         </div>
-        <div>
-          <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-60 leading-none mb-1">{{ stat.label }}</p>
-          <h3 class="text-2xl font-bold text-[var(--sys-text-primary)] leading-none">{{ stat.value }}</h3>
+        <div class="bg-transparent flex flex-col overflow-hidden">
+          <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] mb-0.5 uppercase tracking-widest opacity-60 truncate">{{ stat.label }}</p>
+          <p class="text-xl font-bold text-[var(--sys-text-primary)] m-0 leading-tight tracking-tight">{{ stat.value }}</p>
         </div>
       </div>
     </div>
@@ -39,46 +39,34 @@
     <div class="flex flex-col md:flex-row items-center gap-3 px-1 bg-transparent justify-between">
       <div class="flex flex-1 items-center gap-3 w-full md:w-auto">
         <!-- Search -->
-        <div class="relative w-full md:w-80 group shrink-0 h-9">
-          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[var(--sys-brand-solid)]">search</span>
+        <div class="relative w-full md:w-80 group shrink-0 h-11">
+          <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[var(--sys-brand-solid)] opacity-60">search</span>
           <input
             v-model="searchQuery"
             type="text"
-            placeholder="Mã ticket, tên nhân viên, tiêu đề..."
-            class="w-full h-full pl-9 pr-4 rounded border border-[var(--sys-border-strong)] bg-white text-[12px] font-bold text-[var(--sys-text-primary)] focus:outline-none focus:border-[var(--sys-brand-solid)] transition-all placeholder:font-normal placeholder:opacity-50"
+            placeholder="Mã ticket, nhân viên, tiêu đề..."
+            class="w-full h-full pl-10 pr-4 rounded-md border border-[var(--sys-border-strong)] bg-[var(--sys-bg-surface)] text-[13px] font-bold text-[var(--sys-text-primary)] focus:outline-none focus:border-[var(--sys-brand-solid)] transition-all shadow-sm placeholder:font-normal placeholder:opacity-50"
           >
         </div>
 
         <!-- Category filter -->
-        <div class="relative shrink-0 h-9 w-52">
-          <select
-            v-model="filterCategory"
-            class="w-full h-full pl-3 pr-8 rounded border border-[var(--sys-border-strong)] bg-white text-[12px] font-bold text-[var(--sys-text-primary)] focus:outline-none focus:border-[var(--sys-brand-solid)] appearance-none cursor-pointer transition-all"
-          >
-            <option value="ALL">TẤT CẢ LOẠI DỊCH VỤ</option>
-            <option value="Hỗ trợ IT & Thiết bị">Hỗ trợ IT & Thiết bị</option>
-            <option value="Hành chính & Văn phòng">Hành chính & Văn phòng</option>
-            <option value="Phần mềm & Tài khoản">Phần mềm & Tài khoản</option>
-            <option value="Cơ sở hạ tầng">Cơ sở hạ tầng</option>
-            <option value="Nhân sự & Phúc lợi">Nhân sự & Phúc lợi</option>
-            <option value="Khác">Khác</option>
-          </select>
-          <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--sys-text-secondary)] opacity-60">
-            <span class="material-symbols-outlined text-[16px]">expand_more</span>
-          </span>
-        </div>
+        <Dropdown
+          v-model="filterCategory"
+          :options="categoryOptions"
+          class="w-full md:w-60 h-11 shrink-0 shadow-sm"
+        />
       </div>
 
       <!-- Tab switcher -->
-      <div class="flex items-center gap-1 bg-white p-1 rounded-md border border-[var(--sys-border-subtle)] shadow-sm h-10 shrink-0">
+      <div class="flex items-center gap-1 bg-[var(--sys-bg-page)] p-1 rounded-md border border-[var(--sys-border-subtle)] shadow-sm h-11 shrink-0">
         <button
           v-for="tab in tabs"
           :key="tab.id"
           @click="activeTab = tab.id"
           :class="[
-            'px-4 h-full rounded-md text-[12px] font-semibold transition-all flex items-center gap-2 whitespace-nowrap active:scale-95',
+            'px-4 h-full rounded-md text-[11px] font-bold tracking-wider uppercase transition-all flex items-center gap-2 whitespace-nowrap active:scale-95',
             activeTab === tab.id
-              ? 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] shadow-sm'
+              ? 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)]'
               : 'text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]'
           ]"
         >
@@ -95,19 +83,19 @@
     </div>
 
     <!-- ── Ticket Table ────────────────────────────────────── -->
-    <div class="bg-white rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden px-1">
-      <div class="overflow-x-auto">
-        <table class="w-full text-[13px]">
-          <thead>
-            <tr class="border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/60">
-              <th class="px-4 py-3 text-left font-bold text-[10px] text-[var(--sys-text-secondary)] uppercase tracking-widest whitespace-nowrap">Mã Ticket</th>
-              <th class="px-4 py-3 text-left font-bold text-[10px] text-[var(--sys-text-secondary)] uppercase tracking-widest">Nhân viên</th>
-              <th class="px-4 py-3 text-left font-bold text-[10px] text-[var(--sys-text-secondary)] uppercase tracking-widest">Tiêu đề yêu cầu</th>
-              <th class="px-4 py-3 text-left font-bold text-[10px] text-[var(--sys-text-secondary)] uppercase tracking-widest whitespace-nowrap">Loại dịch vụ</th>
-              <th class="px-4 py-3 text-left font-bold text-[10px] text-[var(--sys-text-secondary)] uppercase tracking-widest whitespace-nowrap">Mức độ</th>
-              <th class="px-4 py-3 text-left font-bold text-[10px] text-[var(--sys-text-secondary)] uppercase tracking-widest whitespace-nowrap">Ngày tạo</th>
-              <th class="px-4 py-3 text-left font-bold text-[10px] text-[var(--sys-text-secondary)] uppercase tracking-widest">Trạng thái</th>
-              <th class="px-4 py-3 text-left font-bold text-[10px] text-[var(--sys-text-secondary)] uppercase tracking-widest">Thao tác</th>
+    <div class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col">
+      <div class="overflow-x-auto custom-scrollbar bg-transparent">
+        <table class="w-full text-[13px] text-left border-collapse">
+          <thead class="bg-[var(--sys-bg-page)]">
+            <tr>
+              <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap">Mã Ticket</th>
+              <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[15%] whitespace-nowrap">Nhân viên</th>
+              <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-auto">Tiêu đề yêu cầu</th>
+              <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap">Loại dịch vụ</th>
+              <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap">Mức độ</th>
+              <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap">Ngày tạo</th>
+              <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap">Trạng thái</th>
+              <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap text-right">Thao tác</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-[var(--sys-border-subtle)]">
@@ -117,53 +105,55 @@
               @click="openDetail(ticket)"
               class="hover:bg-[var(--sys-bg-hover)] transition-colors cursor-pointer group"
             >
-              <td class="px-4 py-3 font-mono text-[11px] font-bold text-[var(--sys-brand-solid)] whitespace-nowrap">{{ ticket.id }}</td>
-              <td class="px-4 py-3">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-7 h-7 rounded-full flex items-center justify-center text-white text-[11px] font-bold shrink-0" :style="`background: ${ticket.avatarColor}`">
-                    {{ ticket.employeeName.charAt(0) }}
-                  </div>
-                  <div>
-                    <p class="text-[12px] font-semibold text-[var(--sys-text-primary)] whitespace-nowrap leading-tight">{{ ticket.employeeName }}</p>
-                    <p class="text-[10px] text-[var(--sys-text-secondary)] opacity-60 leading-none">{{ ticket.department }}</p>
-                  </div>
+              <td class="px-4 py-3 align-middle font-mono text-[11px] font-bold text-[var(--sys-brand-solid)] w-[1%] whitespace-nowrap">{{ ticket.id }}</td>
+              <td class="px-4 py-3 align-middle w-[15%] whitespace-nowrap">
+                <div class="flex flex-col justify-center">
+                  <p class="text-[12px] font-bold text-[var(--sys-text-primary)] leading-tight mb-0.5">{{ ticket.employeeName }}</p>
+                  <p class="text-[11px] text-[var(--sys-text-secondary)] opacity-70 leading-none">{{ ticket.department }}</p>
                 </div>
               </td>
-              <td class="px-4 py-3 max-w-[180px]">
-                <p class="text-[12px] font-medium text-[var(--sys-text-primary)] truncate group-hover:text-[var(--sys-brand-solid)] transition-colors">{{ ticket.title }}</p>
+              <td class="px-4 py-3 align-middle w-auto">
+                <p class="text-[12px] font-medium text-[var(--sys-text-primary)] group-hover:text-[var(--sys-brand-solid)] transition-colors line-clamp-2" title="Nhấn để xem chi tiết">{{ ticket.title }}</p>
               </td>
-              <td class="px-4 py-3 text-[12px] text-[var(--sys-text-secondary)] whitespace-nowrap">{{ ticket.category }}</td>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 align-middle text-[12px] text-[var(--sys-text-secondary)] w-[1%] whitespace-nowrap">{{ ticket.category }}</td>
+              <td class="px-4 py-3 align-middle w-[1%] whitespace-nowrap">
                 <span :class="getPriorityClass(ticket.priority)" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide whitespace-nowrap">
                   {{ ticket.priority }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-[12px] text-[var(--sys-text-secondary)] whitespace-nowrap">{{ ticket.date }}</td>
-              <td class="px-4 py-3">
+              <td class="px-4 py-3 align-middle text-[12px] text-[var(--sys-text-secondary)] w-[1%] whitespace-nowrap">{{ ticket.date }}</td>
+              <td class="px-4 py-3 align-middle w-[1%] whitespace-nowrap">
                 <span :class="getStatusClass(ticket.status)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide whitespace-nowrap">
                   <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotClass(ticket.status)"></span>
                   {{ ticket.status }}
                 </span>
               </td>
-              <td class="px-4 py-3">
-                <div class="flex items-center gap-1.5" @click.stop>
+              <td class="px-4 py-3 text-right bg-transparent align-middle w-[1%] whitespace-nowrap">
+                <div class="flex items-center justify-end gap-1.5" @click.stop>
+                  <button
+                    @click="openDetail(ticket)"
+                    class="w-8 h-8 rounded-md bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] text-[var(--sys-text-secondary)] hover:bg-[var(--sys-brand-soft)] hover:text-[var(--sys-brand-solid)] flex items-center justify-center transition-colors shadow-sm active:scale-95"
+                    title="Xem chi tiết"
+                  >
+                    <span class="material-symbols-outlined text-[16px]">visibility</span>
+                  </button>
                   <template v-if="ticket.status === 'Chờ xử lý' || ticket.status === 'Đang xử lý'">
                     <button
                       @click="handleComplete(ticket)"
-                      class="h-7 px-2.5 bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border border-[var(--sys-success-border)] rounded text-[10px] font-bold uppercase tracking-wide hover:bg-[var(--sys-success-solid)] hover:text-white transition-all whitespace-nowrap flex items-center gap-1 active:scale-95"
+                      class="w-8 h-8 rounded-md bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border border-[var(--sys-success-border)] flex items-center justify-center hover:bg-[var(--sys-success-solid)] hover:text-white transition-all shadow-sm active:scale-95"
+                      title="Hoàn thành"
                     >
-                      <span class="material-symbols-outlined text-[14px]">task_alt</span>
-                      Hoàn thành
+                      <span class="material-symbols-outlined text-[16px]">task_alt</span>
                     </button>
                     <button
                       @click="openReject(ticket)"
-                      class="h-7 px-2.5 bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border border-[var(--sys-danger-border)] rounded text-[10px] font-bold uppercase tracking-wide hover:bg-[var(--sys-danger-solid)] hover:text-white transition-all whitespace-nowrap flex items-center gap-1 active:scale-95"
+                      class="w-8 h-8 rounded-md bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border border-[var(--sys-danger-border)] flex items-center justify-center hover:bg-[var(--sys-danger-solid)] hover:text-white transition-all shadow-sm active:scale-95"
+                      title="Từ chối"
                     >
-                      <span class="material-symbols-outlined text-[14px]">cancel</span>
-                      Từ chối
+                      <span class="material-symbols-outlined text-[16px]">cancel</span>
                     </button>
                   </template>
-                  <span v-else class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-wide opacity-50">Đã xử lý</span>
+                  <span v-else class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-wide opacity-50 px-2 py-1">Đã xử lý</span>
                 </div>
               </td>
             </tr>
@@ -181,9 +171,9 @@
       </div>
 
       <!-- Table Footer -->
-      <div v-if="filteredTickets.length > 0" class="px-4 py-3 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/40 flex items-center justify-between">
-        <p class="text-[11px] font-medium text-[var(--sys-text-secondary)] opacity-70">
-          Hiển thị <strong>{{ filteredTickets.length }}</strong> / {{ tickets.length }} ticket
+      <div v-if="filteredTickets.length > 0" class="px-4 py-3 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 flex items-center justify-between h-12">
+        <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-60">
+          Hiển thị <strong>{{ filteredTickets.length }}</strong> / {{ tickets.length }} yêu cầu
         </p>
         <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-50">
           Cập nhật lần cuối: {{ lastUpdated }}
@@ -198,7 +188,7 @@
       <Transition name="modal-fade">
         <div v-if="showDetailModal" class="fixed inset-0 z-[10001] flex items-center justify-center p-4" @click.self="showDetailModal = false">
           <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showDetailModal = false"></div>
-          <div class="relative bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] w-full max-w-xl rounded-xl shadow-2xl overflow-hidden flex flex-col animate-zoomIn">
+          <div class="relative bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden flex flex-col animate-zoomIn">
             <!-- Header -->
             <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] flex items-center justify-between">
               <div class="flex items-center gap-3">
@@ -297,14 +287,14 @@
           <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="closeReject"></div>
           <div class="relative bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] w-full max-w-lg rounded-xl shadow-2xl overflow-hidden flex flex-col animate-zoomIn">
             <!-- Header -->
-            <div class="px-6 h-14 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] flex items-center justify-between">
+            <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] flex items-center justify-between">
               <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-md bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] flex items-center justify-center border border-[var(--sys-danger-border)]">
-                  <span class="material-symbols-outlined text-[18px]">rule</span>
+                <div class="w-10 h-10 rounded-md bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] flex items-center justify-center border border-[var(--sys-danger-border)]">
+                  <span class="material-symbols-outlined text-[20px]">rule</span>
                 </div>
                 <div>
-                  <h3 class="text-[13px] font-extrabold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight">Từ chối ticket hỗ trợ</h3>
-                  <p class="text-[10px] text-[var(--sys-text-secondary)] font-bold uppercase tracking-widest opacity-60 m-0">Mã: <span class="text-[var(--sys-brand-solid)] font-black">{{ selectedTicket?.id }}</span></p>
+                  <h3 class="text-[14px] font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight">Từ chối ticket hỗ trợ</h3>
+                  <p class="text-[11px] text-[var(--sys-text-secondary)] font-bold uppercase tracking-widest opacity-60 m-0 mt-0.5">Mã: <span class="text-[var(--sys-brand-solid)] font-black">#{{ selectedTicket?.id }}</span></p>
                 </div>
               </div>
               <button @click="closeReject" class="w-8 h-8 rounded flex items-center justify-center hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all">
@@ -313,34 +303,34 @@
             </div>
 
             <!-- Body -->
-            <div class="p-6 space-y-4">
-              <div class="grid grid-cols-2 gap-4">
-                <div>
-                  <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-60 block mb-1">Mã ticket</label>
-                  <input type="text" :value="selectedTicket?.id" readonly class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-[12px] font-black text-[var(--sys-text-disabled)] outline-none uppercase font-mono shadow-inner">
+            <div class="p-6 space-y-5">
+              <div class="grid grid-cols-2 gap-5">
+                <div class="space-y-1.5">
+                  <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest block ml-1">Mã ticket</label>
+                  <input type="text" :value="selectedTicket?.id" readonly class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-disabled)] outline-none uppercase font-mono shadow-sm">
                 </div>
-                <div>
-                  <label class="text-[10px] font-black text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-60 block mb-1">Nhân viên</label>
-                  <input type="text" :value="selectedTicket?.employeeName" readonly class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-[12px] font-bold text-[var(--sys-text-disabled)] outline-none shadow-inner">
+                <div class="space-y-1.5">
+                  <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest block ml-1">Nhân viên</label>
+                  <input type="text" :value="selectedTicket?.employeeName" readonly class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-disabled)] outline-none shadow-sm">
                 </div>
               </div>
-              <div>
-                <label class="text-[10px] font-black text-[var(--sys-text-primary)] uppercase tracking-widest block mb-1.5">Lý do từ chối <span class="text-[var(--sys-danger-solid)]">*</span></label>
+              <div class="space-y-1.5">
+                <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest block ml-1">Lý do từ chối <span class="text-[var(--sys-danger-solid)]">*</span></label>
                 <textarea
                   v-model="rejectNote"
                   rows="4"
                   placeholder="Nêu rõ lý do từ chối để thông báo cho nhân viên..."
-                  class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-[12px] font-medium text-[var(--sys-text-primary)] focus:border-[var(--sys-danger-solid)] outline-none transition-all resize-none shadow-inner placeholder:font-normal placeholder:italic placeholder:opacity-40"
+                  class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] focus:border-[var(--sys-danger-solid)] outline-none transition-all resize-none shadow-sm placeholder:font-normal placeholder:opacity-50"
                 ></textarea>
-                <p class="text-[9px] font-bold text-[var(--sys-danger-text)] uppercase tracking-widest opacity-60 italic mt-1">* Lý do này sẽ được hiển thị cho nhân viên.</p>
+                <p class="text-[10px] font-bold text-[var(--sys-danger-text)] uppercase tracking-widest opacity-70 italic mt-1 ml-1">* Lý do này sẽ được hiển thị cho nhân viên.</p>
               </div>
             </div>
 
             <!-- Footer -->
-            <div class="px-6 h-16 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] flex justify-end items-center gap-3">
-              <button @click="closeReject" class="h-9 px-5 text-[11px] font-bold text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] rounded-md transition-all uppercase tracking-widest">Hủy</button>
-              <button @click="confirmReject" class="h-9 px-6 bg-[var(--sys-danger-solid)] text-white rounded-md font-extrabold text-[11px] hover:brightness-110 shadow-lg transition-all uppercase tracking-widest flex items-center gap-2 active:scale-95">
-                <span class="material-symbols-outlined text-[16px]">verified_user</span>
+            <div class="px-6 py-4 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] flex justify-end items-center gap-3 h-16 shrink-0">
+              <button @click="closeReject" class="h-9 px-6 text-[12px] font-bold text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] rounded-md transition-all uppercase tracking-wide">Hủy</button>
+              <button @click="confirmReject" class="h-9 px-6 bg-[var(--sys-danger-solid)] text-white rounded-md font-bold text-[12px] hover:brightness-110 shadow-lg transition-all uppercase tracking-widest flex items-center gap-2 active:scale-95">
+                <span class="material-symbols-outlined text-[18px]">verified_user</span>
                 Xác nhận từ chối
               </button>
             </div>
@@ -355,6 +345,7 @@
 import { ref, computed } from 'vue'
 import { useConfirm } from '@/composables/useConfirm'
 import { useSupportStore } from '@/composables/useSupportStore'
+import Dropdown from '@/components/Dropdown.vue'
 
 const { showAlert } = useConfirm()
 const store = useSupportStore()
@@ -363,7 +354,17 @@ const tickets = store.tickets
 // ── State ──────────────────────────────────────────────
 const activeTab = ref('pending')
 const searchQuery = ref('')
-const filterCategory = ref('ALL')
+
+const categoryOptions = [
+  { label: 'TẤT CẢ LOẠI DỊCH VỤ', value: 'TẤT CẢ LOẠI DỊCH VỤ' },
+  { label: 'Hỗ trợ IT & Thiết bị', value: 'Hỗ trợ IT & Thiết bị' },
+  { label: 'Hành chính & Văn phòng', value: 'Hành chính & Văn phòng' },
+  { label: 'Phần mềm & Tài khoản', value: 'Phần mềm & Tài khoản' },
+  { label: 'Cơ sở hạ tầng', value: 'Cơ sở hạ tầng' },
+  { label: 'Nhân sự & Phúc lợi', value: 'Nhân sự & Phúc lợi' },
+  { label: 'Khác', value: 'Khác' }
+]
+const filterCategory = ref('TẤT CẢ LOẠI DỊCH VỤ')
 const showDetailModal = ref(false)
 const showRejectModal = ref(false)
 const selectedTicket = ref(null)
@@ -390,7 +391,7 @@ const tabStatusMap = {
 const filteredTickets = computed(() => {
   const statusFilter = tabStatusMap[activeTab.value]
   let list = store.tickets.value.filter(t => t.status === statusFilter)
-  if (filterCategory.value !== 'ALL') {
+  if (filterCategory.value !== 'TẤT CẢ LOẠI DỊCH VỤ') {
     list = list.filter(t => t.category === filterCategory.value)
   }
   if (searchQuery.value.trim()) {
