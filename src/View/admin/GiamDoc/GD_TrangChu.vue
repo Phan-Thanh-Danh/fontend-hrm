@@ -13,7 +13,8 @@
         </p>
       </div>
       <div class="page-header-actions">
-        <button class="flex items-center gap-2.5 px-4 md:px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-[13px] font-[800] text-[#1d3d70] hover:bg-slate-50 transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] font-inherit">
+        <!-- Date filter button -->
+        <button class="flex items-center gap-2.5 px-4 md:px-5 py-2.5 bg-[var(--bg-card,#fff)] border border-[var(--border,#e5e7eb)] rounded-2xl text-[13px] font-[800] text-[#1d3d70] dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] font-inherit">
           <span class="material-symbols-rounded text-[18px] text-slate-500" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
           30 ngày qua
         </button>
@@ -103,17 +104,41 @@
         </div>
 
         <div class="bar-chart">
-          <div class="bar-chart-cols">
-            <div class="bar-col" v-for="(col, i) in dynamicBarChart" :key="i">
-              <div class="bar-col-inner">
-                <div class="bar-target" :style="`height:${col.targetH}%`"></div>
-                <div class="bar-current" :class="col.active ? 'bar-current--active' : ''" :style="`height:${col.currentH}%`">
-                  <div class="bar-tooltip px-3 py-1.5 bg-slate-800 text-white rounded-md text-[11px] z-50 whitespace-nowrap whitespace-pre flex flex-col items-center shadow-lg pointer-events-none transition-opacity duration-200" style="top: -42px;">
-                    <span class="font-bold text-blue-300">Hiện tại: {{ col.current }}</span>
-                    <span class="font-bold text-orange-300">Mục tiêu: {{ col.target }}</span>
-                  </div>
-                </div>
+          <!-- Background Grid Lines -->
+          <div class="absolute inset-0 flex flex-col justify-between pb-[28px] pr-[44px] pointer-events-none z-0">
+            <div v-for="(lab, i) in barChartYLabels" :key="'grid-'+i" class="w-full border-t border-dashed border-slate-200/80" :class="i === barChartYLabels.length - 1 ? 'border-solid border-slate-300' : ''"></div>
+          </div>
+
+          <div class="bar-chart-cols relative z-10">
+            <div class="relative flex items-end justify-center h-full w-full group hover:z-[60] z-20 gap-1.5 sm:gap-2.5" v-for="(col, i) in dynamicBarChart" :key="i">
+              
+              <!-- Phantom Tooltip Top Alignment -->
+              <div class="absolute hidden group-hover:flex flex-col items-center z-50 pointer-events-none w-max"
+                   :style="`bottom: calc(${Math.max(col.currentH, col.targetH)}% + 5px);`">
+                 <div class="bg-slate-800 text-white rounded-md text-[11px] px-3 py-2 shadow-xl whitespace-nowrap flex flex-col items-center gap-0.5 relative">
+                   <span class="font-bold text-amber-400">Mục tiêu: {{ col.target }}</span>
+                   <span class="font-bold text-blue-300 flex items-center gap-1.5">
+                     Hiện tại: {{ col.current }}
+                     <span v-if="col.current >= col.target" class="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse drop-shadow-[0_0_3px_#4ade80]"></span>
+                   </span>
+                 </div>
+                 <div class="w-2.5 h-2.5 bg-slate-800 rotate-45 -mt-1.5"></div>
               </div>
+
+              <!-- Target Col (Amber) -->
+              <div class="w-5 sm:w-8 md:w-10 rounded-t-md transition-all duration-300 group-hover:opacity-90 bg-gradient-to-t from-amber-500 to-amber-300 shadow-sm shadow-amber-500/20 group-hover:-translate-y-1"
+                   :style="`height: ${col.targetH}%`">
+              </div>
+
+              <!-- Current Col (Blue) -->
+              <div class="w-5 sm:w-8 md:w-10 rounded-t-md transition-all duration-300 group-hover:opacity-90 bg-gradient-to-t from-blue-600 to-blue-400 shadow-sm shadow-blue-500/20 relative group-hover:-translate-y-1"
+                   :class="col.active ? 'opacity-100' : 'opacity-85'"
+                   :style="`height: ${col.currentH}%`">
+                   <!-- SPECIAL FEATURE: Vượt mục tiêu hiển thị ngôi sao và hiệu ứng pulse viền sáng cực đẹp đặc quyền của Trang chủ Giám đốc -->
+                   <div v-if="col.current >= col.target" class="absolute -top-6 left-1/2 -translate-x-1/2 text-[14px] text-green-500 font-extrabold opacity-0 group-hover:opacity-100 transition-all duration-[400ms] drop-shadow-[0_0_5px_rgba(74,222,128,0.8)] group-hover:-translate-y-1">★</div>
+                   <div v-if="col.current >= col.target" class="absolute inset-0 bg-gradient-to-t from-transparent to-white/30 rounded-t-md animate-pulse pointer-events-none"></div>
+              </div>
+
               <span class="bar-label" :class="col.active ? 'bar-label--active' : ''">{{ col.label }}</span>
             </div>
           </div>
@@ -167,7 +192,7 @@
           <h4 class="chart-title">Yêu cầu chờ phê duyệt</h4>
           <span class="badge-urgent">
             <span class="material-symbols-rounded" style="font-size:12px">warning</span>
-            {{ urgentCount < 10 ? '0' + urgentCount : urgentCount }} khẩn cấp
+            {{ urgentPendingCount < 10 ? '0' + urgentPendingCount : urgentPendingCount }} khẩn cấp
           </span>
         </div>
 
@@ -175,7 +200,8 @@
           <div
             v-for="item in pendingApprovals"
             :key="item.id"
-            class="approval-item"
+            class="approval-item cursor-pointer"
+            @click="openDetailModal(item)"
           >
             <div class="approval-icon" :class="item.iconClass">
               <span class="material-symbols-rounded">{{ item.icon }}</span>
@@ -189,7 +215,10 @@
                 v-for="(action, ai) in item.actions"
                 :key="ai"
                 :class="ai === item.actions.length - 1 ? 'btn-approve' : 'btn-reject'"
-              >{{ action }}</button>
+                @click.stop="ai === item.actions.length - 1 ? openApproveModal(item) : openRejectModal(item)"
+              >
+                {{ action }}
+              </button>
             </div>
           </div>
         </div>
@@ -244,22 +273,297 @@
       </div>
 
     </div>
+
+    <!-- Detail Modal (Yêu cầu) -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div
+          v-if="showDetailModal && selectedApproval"
+          class="fixed inset-0 z-[10001] flex items-center justify-center p-4"
+        >
+          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeDetailModal"></div>
+
+          <div class="relative max-w-2xl w-full bg-[var(--sys-bg-surface)] rounded-xl shadow-2xl p-6 overflow-hidden flex flex-col text-left">
+            <div class="flex items-center gap-4 mb-6">
+              <div
+                :class="[
+                  'w-14 h-14 rounded-lg flex items-center justify-center shadow-sm border border-[var(--sys-border-subtle)]',
+                  selectedApproval.iconClass || ''
+                ]"
+              >
+                <span class="material-symbols-rounded text-2xl font-bold">{{ selectedApproval.icon }}</span>
+              </div>
+
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-[var(--sys-text-primary)] leading-tight mb-0.5">
+                  {{ selectedApproval.title }}
+                </h3>
+                <p class="text-xs font-bold text-[var(--sys-brand-solid)] uppercase tracking-tight opacity-70">
+                  {{ selectedApproval.meta }}
+                </p>
+              </div>
+
+              <button
+                @click="closeDetailModal"
+                class="w-10 h-10 rounded-full hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] flex items-center justify-center transition-all"
+              >
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 mb-6">
+              <div class="space-y-1">
+                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Trạng thái</span>
+                <p class="text-sm font-bold text-[var(--sys-text-primary)]">
+                  {{ selectedApproval.urgent ? 'Khẩn cấp' : 'Bình thường' }}
+                </p>
+              </div>
+              <div class="space-y-1">
+                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Thao tác</span>
+                <p class="text-sm font-bold text-[var(--sys-text-primary)]">Phê duyệt hoặc Từ chối</p>
+              </div>
+            </div>
+
+            <div class="space-y-2 mb-6">
+              <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest">Ghi chú</span>
+              <div class="bg-[var(--sys-bg-hover)] p-4 rounded-lg border border-[var(--sys-border-subtle)]">
+                <p class="text-sm text-[var(--sys-text-secondary)] leading-relaxed font-medium italic">
+                  {{ selectedApproval.meta }}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-auto pt-4 border-t border-[var(--sys-border-subtle)]">
+              <button class="btn-reject h-10 px-6" @click="openRejectModal(selectedApproval)">
+                Từ chối
+              </button>
+              <button class="btn-approve h-10 px-6" @click="openApproveModal(selectedApproval)">
+                Phê duyệt
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Approve Modal -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div
+          v-if="showApproveModal && selectedApproval"
+          class="fixed inset-0 z-[10001] flex items-center justify-center p-4"
+        >
+          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeApproveModal"></div>
+
+          <div class="relative max-w-xl w-full bg-[var(--sys-bg-surface)] rounded-xl shadow-2xl p-6 overflow-hidden flex flex-col text-left">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-12 h-12 rounded-lg bg-[var(--sys-brand-soft)] border border-[var(--sys-brand-border)] flex items-center justify-center">
+                <span class="material-symbols-outlined text-[26px] font-bold text-[var(--sys-brand-solid)]">task_alt</span>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-sm font-extrabold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight leading-none">
+                  Xác nhận phê duyệt
+                </h3>
+                <p class="text-[10px] text-[var(--sys-text-secondary)] font-bold mt-1 uppercase tracking-widest opacity-70">
+                  {{ selectedApproval.title }}
+                </p>
+              </div>
+              <button
+                @click="closeApproveModal"
+                class="w-8 h-8 flex items-center justify-center rounded hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all"
+              >
+                <span class="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+
+            <div class="bg-[var(--sys-bg-hover)] p-4 rounded-lg border border-[var(--sys-border-subtle)] mb-6">
+              <p class="text-sm text-[var(--sys-text-secondary)] leading-relaxed">
+                Bạn có chắc chắn muốn <span class="font-extrabold text-[var(--sys-brand-solid)]">phê duyệt</span> yêu cầu này không?
+              </p>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-auto pt-4 border-t border-[var(--sys-border-subtle)]">
+              <button class="btn-reject h-10 px-6" @click="closeApproveModal">Hủy bỏ</button>
+              <button class="btn-approve h-10 px-8" @click="confirmApprove">
+                Phê duyệt
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Reject Modal -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div
+          v-if="showRejectModal && selectedApproval"
+          class="fixed inset-0 z-[10001] flex items-center justify-center p-4"
+        >
+          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeRejectModal"></div>
+
+          <div class="relative max-w-xl w-full bg-[var(--sys-bg-surface)] rounded-xl shadow-2xl p-6 overflow-hidden flex flex-col text-left">
+            <div class="flex items-center gap-4 mb-6">
+              <div class="w-12 h-12 rounded-lg bg-[var(--sys-danger-soft)] border border-[var(--sys-danger-border)] flex items-center justify-center">
+                <span class="material-symbols-outlined text-[26px] font-bold text-[var(--sys-danger-solid)]">rule</span>
+              </div>
+              <div class="flex-1">
+                <h3 class="text-sm font-extrabold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight leading-none">
+                  Thẩm định bác bỏ hồ sơ
+                </h3>
+                <p class="text-[10px] text-[var(--sys-text-secondary)] font-bold mt-1 uppercase tracking-widest opacity-70">
+                  {{ selectedApproval.title }}
+                </p>
+              </div>
+              <button
+                @click="closeRejectModal"
+                class="w-8 h-8 flex items-center justify-center rounded hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all"
+              >
+                <span class="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+              <div class="space-y-1.5">
+                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none opacity-60">Phân loại</span>
+                <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ selectedApproval.title }}</p>
+              </div>
+              <div class="space-y-1.5">
+                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none opacity-60">Mức độ</span>
+                <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ selectedApproval.urgent ? 'Khẩn cấp' : 'Bình thường' }}</p>
+              </div>
+            </div>
+
+            <div class="space-y-1.5 mb-6">
+              <label class="text-[10px] font-black text-[var(--sys-text-primary)] uppercase tracking-widest ml-1 opacity-60">Nội dung phản hồi thẩm định *</label>
+              <textarea
+                v-model="rejectReason"
+                rows="4"
+                placeholder="Xác định nguyên nhân bác bỏ hồ sơ chi tiết..."
+                class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-[13px] font-bold text-[var(--sys-text-primary)] outline-none transition-all resize-none shadow-inner placeholder:font-normal placeholder:italic placeholder:opacity-40"
+              ></textarea>
+              <p class="text-[9px] font-bold text-[var(--sys-danger-text)] uppercase tracking-widest opacity-60 italic">
+                * Thông tin này sẽ được gửi trực tiếp đến hộp thư của nhân sự.
+              </p>
+            </div>
+
+            <div class="flex justify-end gap-3 mt-auto pt-4 border-t border-[var(--sys-border-subtle)]">
+              <button class="btn-reject h-10 px-6" @click="closeRejectModal">Hủy bỏ</button>
+              <button class="btn-approve h-10 px-8" @click="confirmReject">
+                XÁC NHẬN BÁC BỎ
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import {
   kpiCards,
   barChartData,
   barChartYLabels,
   donutData,
   donutTotal,
-  pendingApprovals,
-  urgentCount,
+  pendingApprovals as pendingApprovalsData,
   timelineEvents,
   reminderText,
 } from '@/data/sampleData_GiamDoc.js';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showAlert } = useConfirm();
+
+const approvals = ref(
+  pendingApprovalsData.map((item) => ({
+    ...item,
+    status: 'pending',
+    rejectReason: '',
+  }))
+);
+
+const pendingApprovals = computed(() => approvals.value.filter((a) => a.status === 'pending'));
+
+const urgentPendingCount = computed(() => pendingApprovals.value.filter((a) => a.urgent).length);
+
+const selectedApproval = ref(null);
+const showDetailModal = ref(false);
+const showApproveModal = ref(false);
+const showRejectModal = ref(false);
+const returnToDetailAfterAction = ref(false);
+const rejectReason = ref('');
+
+const openDetailModal = (item) => {
+  selectedApproval.value = item;
+  returnToDetailAfterAction.value = false;
+  showDetailModal.value = true;
+  showApproveModal.value = false;
+  showRejectModal.value = false;
+};
+
+const closeDetailModal = () => {
+  showDetailModal.value = false;
+  selectedApproval.value = null;
+  showApproveModal.value = false;
+  showRejectModal.value = false;
+};
+
+const openApproveModal = (item) => {
+  selectedApproval.value = item;
+  returnToDetailAfterAction.value = showDetailModal.value;
+  showApproveModal.value = true;
+  showDetailModal.value = false;
+  showRejectModal.value = false;
+};
+
+const closeApproveModal = () => {
+  showApproveModal.value = false;
+  if (returnToDetailAfterAction.value) showDetailModal.value = true;
+};
+
+const openRejectModal = (item) => {
+  selectedApproval.value = item;
+  returnToDetailAfterAction.value = showDetailModal.value;
+  showRejectModal.value = true;
+  showDetailModal.value = false;
+  showApproveModal.value = false;
+  rejectReason.value = '';
+};
+
+const closeRejectModal = () => {
+  showRejectModal.value = false;
+  rejectReason.value = '';
+  if (returnToDetailAfterAction.value) showDetailModal.value = true;
+};
+
+const confirmApprove = () => {
+  if (!selectedApproval.value) return;
+  selectedApproval.value.status = 'approved';
+  selectedApproval.value = null;
+  showApproveModal.value = false;
+  showRejectModal.value = false;
+  showDetailModal.value = false;
+};
+
+const confirmReject = async () => {
+  if (!selectedApproval.value) return;
+  const reason = rejectReason.value.trim();
+  if (!reason) {
+    await showAlert('THIẾU DỮ LIỆU', 'Vui lòng nhập lý do từ chối!');
+    return;
+  }
+
+  selectedApproval.value.status = 'rejected';
+  selectedApproval.value.rejectReason = reason;
+
+  selectedApproval.value = null;
+  showRejectModal.value = false;
+  showApproveModal.value = false;
+  showDetailModal.value = false;
+  rejectReason.value = '';
+};
 
 // Tính toán conic-gradient động cho Donut Chart
 const donutStyle = computed(() => {
@@ -293,8 +597,8 @@ const dynamicBarChart = computed(() => {
     // Kẹp trong khoảng 0 - 100% để giao diện không bể khi vượt chuẩn
     return {
       ...col,
-      currentH: Math.max(0, Math.min(currentH, 100)),
-      targetH: Math.max(0, Math.min(targetH, 100))
+      currentH: Math.max(0, Math.min(currentH, 115)),
+      targetH: Math.max(0, Math.min(targetH, 115))
     };
   });
 });
@@ -302,7 +606,36 @@ const dynamicBarChart = computed(() => {
 
 <style scoped>
 /* ════════════════════════════════════════════════
-   Layout inherits CSS vars from Layout_GiamDoc
+   Dark Mode Variables Override
+════════════════════════════════════════════════ */
+:global(.dark) {
+  --bg-card: #121827;           /* Executive Deep Navy Blue (Cùng tone với GD_HoSoCaNhan) */
+  --border: rgba(255, 255, 255, 0.05); /* Viền mờ lấp lánh nhẹ (glassmorphism) */
+  --text-title: #ffffff;        /* Trắng tuyệt đối cho tiêu đề */
+  --text-body: #94a3b8;         /* slate-400 cho nội dung */
+  --text-muted: #64748b;        /* slate-500 */
+  --bg-hover: rgba(255, 255, 255, 0.03); /* Lót nền hover */
+  --shadow-card: 0 10px 40px -10px rgba(0, 0, 0, 0.5); /* Bóng đổ gradient tối sang trọng */
+  --shadow-hover: 0 15px 50px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+  /* Fix lỗi hiển thị màu "mờ" của các con số / icon trong Dark Mode */
+  --brand-light: rgba(59, 130, 246, 0.15);
+  --brand: #60a5fa;
+
+  --danger-light: rgba(239, 68, 68, 0.15);
+  --danger: #f87171;
+  --danger-text: #fca5a5;
+
+  --success-light: rgba(34, 197, 94, 0.15);
+  --success: #4ade80;
+  --success-text: #86efac;
+
+  --warning-light: rgba(245, 158, 11, 0.15);
+  --warning: #fbbf24;
+}
+
+/* ════════════════════════════════════════════════
+   Layout Styles
 ════════════════════════════════════════════════ */
 .dashboard {
   max-width: 1600px;
@@ -614,75 +947,11 @@ const dynamicBarChart = computed(() => {
   position: relative;
 }
 
-.bar-col {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
-  height: 100%;
-  justify-content: flex-end;
-}
 
-.bar-col-inner {
-  width: 100%;
-  height: calc(100% - 24px);
-  display: flex;
-  align-items: flex-end;
-  position: relative;
-}
-
-.bar-target {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--border, #E5E7EB);
-  border-radius: 6px 6px 0 0;
-  transition: background 0.3s;
-}
-
-.bar-current {
-  position: absolute;
-  bottom: 0;
-  left: 4px;
-  right: 4px;
-  background: var(--brand, #3B82F6);
-  border-radius: 5px 5px 0 0;
-  opacity: 0.5;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.bar-current--active {
-  opacity: 1;
-  box-shadow: 0 -4px 12px rgba(59,130,246,0.35);
-}
-
-.bar-current:hover { opacity: 0.85; }
-
-.bar-tooltip {
-  position: absolute;
-  top: -28px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--text-title, #111827);
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 7px;
-  border-radius: 5px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s;
-}
-
-.bar-current:hover .bar-tooltip { opacity: 1; }
 
 .bar-label {
   position: absolute;
-  bottom: 0;
+  bottom: -24px;
   font-size: 10px;
   font-weight: 600;
   color: var(--text-muted, #6B7280);
@@ -1149,4 +1418,14 @@ const dynamicBarChart = computed(() => {
 }
 
 .reminder-edit:hover { color: #F59E0B; }
+
+/* Modal fades */
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
+}
 </style>

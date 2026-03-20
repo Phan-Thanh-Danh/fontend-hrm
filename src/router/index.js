@@ -194,6 +194,12 @@ const routes = [
                         name: 'giam-doc-bien-dong',
                         component: () => import('../View/admin/GiamDoc/DBGD_BienDong.vue'),
                         meta: { index: 5 }
+                  },
+                  {
+                        path: 'ho-so',
+                        name: 'giam-doc-ho-so',
+                        component: () => import('../View/admin/GiamDoc/GD_HoSoCaNhan.vue'),
+                        meta: { index: 6 }
                   }
             ]
       }

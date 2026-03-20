@@ -4,7 +4,7 @@
     <header class="h-16 bg-[#161c2d] flex items-center justify-between px-6 shadow-md fixed top-0 left-0 right-0 z-50">
       
       <!-- Logo Left -->
-      <div class="flex items-center gap-2.5 ml-1">
+      <router-link to="/giam-doc" class="flex items-center gap-2.5 ml-1 cursor-pointer hover:opacity-90 transition-opacity">
         <div
           class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-md"
           style="background:linear-gradient(135deg,oklch(0.52 0.22 265),oklch(0.45 0.19 295));box-shadow:0 2px 8px oklch(0.48 0.195 265 / 0.35)"
@@ -15,7 +15,7 @@
           <span class="text-white font-bold text-lg tracking-wide leading-tight">HRM Portal</span>
           <span class="text-white/70 text-[10px] uppercase tracking-[0.2em] font-semibold leading-none">Portal Cao Cấp</span>
         </div>
-      </div>
+      </router-link>
 
       <!-- Right Actions -->
       <div class="flex items-center gap-5">
@@ -83,12 +83,12 @@
         <div class="w-px h-8 bg-white/10 hidden md:block"></div>
 
         <!-- User Profile -->
-        <div class="flex items-center gap-3 cursor-pointer">
+        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-1.5 -mr-1.5 rounded-xl transition-colors" @click="$router.push('/giam-doc/ho-so')">
           <div class="flex flex-col text-right hidden sm:flex">
             <span class="text-white font-semibold text-sm leading-tight">Nguyễn Minh Triết</span>
             <span class="text-white/60 text-xs font-medium mt-0.5">Tổng Giám Đốc</span>
           </div>
-          <div class="w-9 h-9 flex items-center justify-center rounded-full bg-blue-500/20 border border-blue-500/30 overflow-hidden shrink-0">
+          <div class="w-9 h-9 flex items-center justify-center rounded-full bg-blue-500/20 border border-blue-500/30 overflow-hidden shrink-0 relative">
             <span class="text-blue-400 font-bold text-sm">T</span>
           </div>
         </div>
