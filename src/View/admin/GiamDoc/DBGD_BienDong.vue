@@ -7,9 +7,9 @@
         <p class="text-sm text-slate-500 mt-1 font-medium">Báo cáo phân tích nghỉ việc và mức độ gắn kết nhân sự: <span class="text-blue-600 font-semibold cursor-pointer">Tháng 5, 2024</span></p>
       </div>
       <div class="flex items-center gap-3">
-        <button class="flex items-center gap-2 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-sm">
-          <span class="material-symbols-outlined text-[18px]">calendar_today</span>
-          12 tháng qua
+        <button class="flex items-center gap-2.5 px-4 md:px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-[13px] font-[800] text-[#1d3d70] hover:bg-slate-50 transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+          <span class="material-symbols-rounded text-[18px] text-slate-500" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+          30 ngày qua
         </button>
         <button class="flex items-center gap-2 px-5 py-2.5 bg-[#3B5BDB] border border-transparent rounded-xl text-sm font-bold text-white hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20">
           <span class="material-symbols-outlined text-[18px]">download</span>
@@ -52,43 +52,64 @@
           <button class="px-3 md:px-4 py-1.5 md:py-2 border border-slate-200 rounded-lg text-[12px] font-bold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm bg-white whitespace-nowrap">Tất cả bộ phận</button>
         </div>
 
-        <!-- HTML Generated Grid & Y Axis for Sharp text -->
-        <div class="absolute inset-x-7 lg:inset-x-8 top-[102px] bottom-[50px] flex flex-col justify-between pointer-events-none z-0">
-          <div class="border-t border-slate-100 w-full h-0 relative"><span class="absolute -top-[9px] bg-white pr-2 text-[10px] font-bold text-slate-400">4.5%</span></div>
-          <div class="border-t border-slate-100 w-full h-0 relative"><span class="absolute -top-[9px] bg-white pr-2 text-[10px] font-bold text-slate-400">3.5%</span></div>
-          <div class="border-t border-slate-100 w-full h-0 relative"><span class="absolute -top-[9px] bg-white pr-2 text-[10px] font-bold text-slate-400">2.5%</span></div>
-          <div class="border-t border-slate-100 w-full h-0 relative"><span class="absolute -top-[9px] bg-white pr-2 text-[10px] font-bold text-slate-400">1.5%</span></div>
-          <div class="border-t border-slate-100 w-full h-0 relative"><span class="absolute -top-[9px] bg-white pr-2 text-[10px] font-bold text-slate-400">0.5%</span></div>
-          <div class="border-t border-slate-200 w-full h-0 relative"><span class="absolute -top-[9px] bg-white pr-2 text-[10px] font-bold text-slate-400">0%</span></div>
-        </div>
+        <!-- SVG Line Chart Wrapper exactly matching Gold Standard Matrix -->
+        <div class="flex-1 relative w-full mt-10 mb-8 z-10 px-2 lg:px-4">
+          <!-- Background Grid Lines (Y-Axis) -->
+          <div class="absolute inset-x-0 bottom-0 top-0 flex flex-col justify-between pointer-events-none">
+            <div class="border-t border-slate-100 border-dashed w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2 text-[10px] font-bold text-slate-400">{{ bienDongLineChartMax.toFixed(1) }}%</span></div>
+            <div class="border-t border-slate-100 border-dashed w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2 text-[10px] font-bold text-slate-400">{{ (bienDongLineChartMax / 2).toFixed(1) }}%</span></div>
+            <div class="border-t border-slate-200 w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2 text-[10px] font-bold text-slate-400">0.0%</span></div>
+          </div>
+          
+          <!-- The SVG Area Chart (Visuals only, perfectly stretched) -->
+          <div class="absolute left-8 right-3 lg:left-10 lg:right-4 top-0 bottom-0 z-10 pointer-events-none">
+             <svg class="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <defs>
+                   <linearGradient id="chartBlue2" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.25" />
+                      <stop offset="100%" stop-color="#3B82F6" stop-opacity="0" />
+                   </linearGradient>
+                </defs>
+                <path class="transition-all duration-1000 ease-in-out" :d="bienDongAreaPath" fill="url(#chartBlue2)" />
+                <path class="transition-all duration-1000 ease-in-out" :d="bienDongLinePath" fill="none" stroke="#3B82F6" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+             </svg>
+          </div>
 
-        <!-- SVG Line Chart Wrapper -->
-        <div class="flex-1 relative w-full overflow-hidden min-h-0 pl-[52px] z-10 -ml-2">
-          <svg class="absolute inset-0 w-full h-full overflow-visible" viewBox="0 0 800 240" preserveAspectRatio="none">
-            <defs>
-              <linearGradient id="chartBlue" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.15" />
-                <stop offset="100%" stop-color="#3B82F6" stop-opacity="0.0" />
-              </linearGradient>
-            </defs>
-            <path class="transition-all duration-1000 ease-in-out cursor-pointer" :d="bienDongAreaPath" fill="url(#chartBlue)" />
-            <path class="transition-all duration-1000 ease-in-out" :d="bienDongLinePath" fill="none" stroke="#3B82F6" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke" />
-            
-            <g class="cursor-pointer">
-              <circle
-                v-for="(pt, idx) in bienDongLinePoints" :key="idx"
-                :cx="pt.x" :cy="pt.y" r="5" fill="#fff" stroke="#3B82F6" stroke-width="2.5"
-                vector-effect="non-scaling-stroke" class="hover:r-6 hover:stroke-[3px] transition-all"
-              />
-            </g>
-          </svg>
-        </div>
+          <!-- HTML Interactive Hover Zones & Dots (Absolutely mapped to p.x) -->
+          <div class="absolute left-8 right-3 lg:left-10 lg:right-4 top-0 bottom-0 z-20">
+             <div v-for="(p, idx) in bienDongLinePoints" :key="idx"
+                  class="absolute top-0 bottom-0 w-px group cursor-pointer hover:z-[60]"
+                  :style="`left: ${p.x}%`">
+                
+                <!-- Hit target & Phantom Column for mouse hover -->
+                <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[40px] md:w-[60px] bg-transparent group-hover:bg-slate-100/40 rounded-lg transition-colors z-10"></div>
+                
+                <!-- Helper Vertical Line from bottom to the dot to emphasize column connection -->
+                <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-px bg-blue-400 border-l border-dashed border-blue-400 opacity-0 group-hover:opacity-70 transition-opacity z-20 pointer-events-none"
+                     :style="`height: ${p.yPct}%`"></div>
+                
+                <!-- PERMANENTLY VISIBLE Data Dot: Anchors the wave nodes exactly at each month -->
+                <div class="absolute left-1/2 w-3 h-3 md:w-4 md:h-4 rounded-full bg-white border-[2.5px] border-[#3B82F6] shadow shadow-[#3B82F6]/20 z-30 transition-all duration-300 pointer-events-none group-hover:scale-[1.4] group-hover:border-[3px] group-hover:shadow-blue-500/50 -translate-x-1/2 translate-y-1/2"
+                     :style="`bottom: ${p.yPct}%`">
+                </div>
 
-        <div class="flex justify-between items-end pt-2 mt-2 z-10 w-full pl-12 pr-1 pointer-events-none">
-           <span
-              v-for="(pt, index) in bienDongLinePoints" :key="index"
-              class="text-[10px] font-bold text-slate-400/80 hover:text-slate-600 cursor-pointer pointer-events-auto transition-colors"
-           >{{ pt.month }}</span>
+                <!-- Clean, Informative Tooltip (Decoupled & perfectly anchored above the dot) -->
+                <div class="hidden group-hover:flex absolute left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none z-50 animate-fade-in-up"
+                     :style="`bottom: calc(${p.yPct}% + 22px)`">
+                   <div class="bg-slate-800 text-white rounded-xl shadow-xl shadow-slate-800/20 p-2.5 flex flex-col items-center min-w-[110px]">
+                      <span class="text-[10px] font-[800] text-slate-400 uppercase tracking-widest mb-1.5">{{ p.month }}</span>
+                      <div class="flex items-center justify-between w-full gap-3 text-[12px] font-bold">
+                         <span class="text-slate-300 flex items-center gap-1.5">Tỷ lệ:</span>
+                         <span class="text-blue-400 flex items-center gap-1.5">{{ p.val }}%</span>
+                      </div>
+                      <div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-800 rotate-45"></div>
+                   </div>
+                </div>
+
+                <!-- X-Axis Label -->
+                <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[11px] font-[800] text-slate-500 transition-colors group-hover:text-blue-600 whitespace-nowrap">{{ p.month }}</span>
+             </div>
+          </div>
         </div>
       </div>
 
@@ -212,28 +233,32 @@ import {
 
 // --- BIỂU ĐỒ ĐƯỜNG ĐỘNG (Line Chart) ---
 const bienDongLinePoints = computed(() => {
-  const width = 800;
-  const height = 240;
-  const maxY = bienDongLineChartMax;
-  const xStep = width / (bienDongLineChart.length - 1);
-  return bienDongLineChart.map((item, idx) => ({ ...item, x: Math.round(idx * xStep), y: Math.round(height - (item.val/maxY)*height) }));
+  const max = bienDongLineChartMax;
+  const numPoints = bienDongLineChart.length;
+  return bienDongLineChart.map((item, idx) => ({ 
+    month: item.month,
+    val: item.val,
+    x: (idx / (numPoints - 1)) * 100, 
+    y: 100 - (item.val / max) * 100,
+    yPct: Math.min((item.val / max) * 100, 115)
+  }));
 });
 
 const bienDongLinePath = computed(() => {
   if (!bienDongLinePoints.value.length) return '';
-  let path = `M ${bienDongLinePoints.value[0].x} ${bienDongLinePoints.value[0].y}`;
+  let d = `M ${bienDongLinePoints.value[0].x} ${bienDongLinePoints.value[0].y}`;
   for(let i=1; i<bienDongLinePoints.value.length; i++){
     const prev = bienDongLinePoints.value[i-1];
     const curr = bienDongLinePoints.value[i];
     const cpX = (prev.x + curr.x) / 2;
-    path += ` C ${cpX} ${prev.y} ${cpX} ${curr.y} ${curr.x} ${curr.y}`;
+    d += ` C ${cpX} ${prev.y} ${cpX} ${curr.y} ${curr.x} ${curr.y}`;
   }
-  return path;
+  return d;
 });
 
 const bienDongAreaPath = computed(() => {
   if(!bienDongLinePath.value) return '';
-  return `${bienDongLinePath.value} L 800 240 L 0 240 Z`;
+  return `${bienDongLinePath.value} L 100 100 L 0 100 Z`;
 });
 
 // --- BIỂU ĐỒ TRÒN ĐỘNG (Donut Chart) ---

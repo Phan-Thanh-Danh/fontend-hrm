@@ -13,11 +13,10 @@
         </p>
       </div>
       <div class="page-header-actions">
-        <div class="date-filter">
-          <span class="material-symbols-rounded">calendar_month</span>
-          <span>01/01/2024 – 31/01/2024</span>
-          <span class="material-symbols-rounded" style="font-size:16px">expand_more</span>
-        </div>
+        <button class="flex items-center gap-2.5 px-4 md:px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-[13px] font-[800] text-[#1d3d70] hover:bg-slate-50 transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] font-inherit">
+          <span class="material-symbols-rounded text-[18px] text-slate-500" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+          30 ngày qua
+        </button>
         <button class="btn-export">
           <span class="material-symbols-rounded">download</span>
           Xuất báo cáo
@@ -109,7 +108,10 @@
               <div class="bar-col-inner">
                 <div class="bar-target" :style="`height:${col.targetH}%`"></div>
                 <div class="bar-current" :class="col.active ? 'bar-current--active' : ''" :style="`height:${col.currentH}%`">
-                  <div class="bar-tooltip">{{ col.value }}</div>
+                  <div class="bar-tooltip px-3 py-1.5 bg-slate-800 text-white rounded-md text-[11px] z-50 whitespace-nowrap whitespace-pre flex flex-col items-center shadow-lg pointer-events-none transition-opacity duration-200" style="top: -42px;">
+                    <span class="font-bold text-blue-300">Hiện tại: {{ col.current }}</span>
+                    <span class="font-bold text-orange-300">Mục tiêu: {{ col.target }}</span>
+                  </div>
                 </div>
               </div>
               <span class="bar-label" :class="col.active ? 'bar-label--active' : ''">{{ col.label }}</span>

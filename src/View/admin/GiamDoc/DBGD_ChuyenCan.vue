@@ -8,19 +8,18 @@
         </div>
         <div class="flex items-center gap-4">
             <!-- Thoi gian filters -->
-            <div class="flex p-1 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl shadow-sm">
-                 <button class="px-5 py-2 rounded-xl text-xs font-semibold bg-[var(--sys-brand-solid)] text-white shadow-sm transition-all hover:bg-[var(--sys-brand-hover)]">Tháng này</button>
-                 <button class="px-5 py-2 rounded-xl text-xs font-semibold text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] transition-all">Quý này</button>
-                 <button class="px-5 py-2 rounded-xl text-xs font-semibold text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] transition-all">Năm 2024</button>
-            </div>
+            <button class="flex items-center gap-2.5 px-4 md:px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-[13px] font-[800] text-[#1d3d70] hover:bg-slate-50 transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
+              <span class="material-symbols-rounded text-[18px] text-slate-500" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
+              30 ngày qua
+            </button>
             <!-- Phong ban dropdown -->
-            <div class="flex items-center gap-2 px-5 py-2.5 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl text-[var(--sys-text-primary)] text-xs font-semibold shadow-sm cursor-pointer hover:border-[var(--sys-brand-solid)] transition-all">
+            <div class="flex items-center gap-2 px-5 py-2.5 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-[var(--sys-text-primary)] text-xs font-semibold shadow-sm cursor-pointer hover:border-[var(--sys-brand-solid)] transition-all">
                  <span class="material-symbols-rounded text-lg text-[var(--sys-icon-default)]">filter_list</span>
                  <span>Tất cả phòng ban</span>
                  <span class="material-symbols-rounded text-lg text-[var(--sys-icon-default)]">expand_more</span>
             </div>
             <!-- Xuat bao cao -->
-            <button class="px-6 py-2.5 bg-[var(--sys-brand-solid)] text-white rounded-2xl text-xs font-semibold hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid-lch-30)] transition-all flex items-center gap-2">
+            <button class="px-6 py-2.5 bg-[var(--sys-brand-solid)] text-white rounded-xl text-xs font-semibold hover:bg-[var(--sys-brand-hover)] shadow-xl shadow-[var(--sys-brand-solid-lch-30)] transition-all flex items-center gap-2">
                  <span class="material-symbols-rounded text-lg">download</span>
                  Xuất báo cáo
             </button>
@@ -32,13 +31,13 @@
         <div
           v-for="(card, i) in chuyenCanCards"
           :key="card.id"
-          class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-[2rem] p-6 shadow-sm hover:shadow-xl hover:translate-y-[-4px] transition-all cursor-pointer group text-left animate-chart"
+          class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl p-6 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] hover:shadow-xl hover:translate-y-[-4px] transition-all cursor-pointer group text-left animate-chart"
           :style="{ animationDelay: (i * 100) + 'ms' }"
         >
             <div class="flex justify-between items-center mb-6">
                 <p class="text-[13px] font-semibold text-[var(--sys-text-secondary)]">{{ card.label }}</p>
                 <div
-                  class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-inner"
+                  class="w-10 h-10 rounded-xl flex items-center justify-center shadow-inner"
                   :style="`background:${card.iconBg}; color:${card.iconColor}`"
                 >
                     <span class="material-symbols-rounded text-xl">{{ card.icon }}</span>
@@ -87,14 +86,14 @@
     </div>
 
     <!-- Charts Row -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 mb-8">
         <!-- Line Chart Xu Hướng -->
-        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-[2.5rem] p-8 shadow-sm flex flex-col justify-between text-left">
+        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl p-6 lg:p-7 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] flex flex-col justify-between text-left min-h-[400px]">
             <div class="flex justify-between items-start mb-6">
                 <div>
                    <h4 class="text-[18px] font-bold text-[var(--sys-text-primary)]">Xu hướng chuyên cần</h4>
                    <p class="text-[13px] font-semibold text-[var(--sys-text-secondary)] mt-4">
-                       <span class="text-[24px] font-bold text-[var(--sys-text-primary)] mr-2">98.5%</span> 
+                       <span class="text-[24px] font-bold text-[var(--sys-text-primary)] mr-2">{{ defaultAvg }}%</span> 
                        Trung bình 6 tháng qua
                    </p>
                 </div>
@@ -105,24 +104,69 @@
                 </div>
             </div>
             
-            <!-- Mock Line Chart Path SVG -->
-            <div class="relative w-full h-[180px] flex mx-auto mt-4 mb-2 overflow-hidden min-h-0">
-                <svg viewBox="0 0 500 150" class="absolute inset-0 w-full h-full" preserveAspectRatio="none">
-                     <!-- Smooth curve SVG generated -->
-                     <path :d="chuyenCanLinePath" fill="none" stroke="var(--sys-brand-solid)" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" class="drop-shadow-lg" />
-                </svg>
-                
-                <!-- Dot for current month -->
-                <div class="absolute w-3 h-3 bg-[var(--sys-brand-solid)] rounded-full border-2 border-white shadow-md z-10" :style="latestDotStyle"></div>
-            </div>
+            <!-- SVG Line Chart Wrapper exactly matching Gold Standard Matrix -->
+            <div class="flex-1 relative w-full mt-10 mb-8 z-10 px-2 lg:px-4">
+              <!-- Background Grid Lines (Y-Axis) -->
+              <div class="absolute inset-x-0 bottom-0 top-0 flex flex-col justify-between pointer-events-none">
+                <div class="border-t border-[var(--sys-border-subtle)] border-dashed w-full h-0 relative"><span class="absolute -top-2.5 bg-[var(--sys-bg-surface)] pr-2 text-[10px] font-bold text-[var(--sys-text-secondary)]/60">100.0%</span></div>
+                <div class="border-t border-[var(--sys-border-subtle)] border-dashed w-full h-0 relative"><span class="absolute -top-2.5 bg-[var(--sys-bg-surface)] pr-2 text-[10px] font-bold text-[var(--sys-text-secondary)]/60">98.5%</span></div>
+                <div class="border-t border-[var(--sys-border-subtle)] border-dashed w-full h-0 relative"><span class="absolute -top-2.5 bg-[var(--sys-bg-surface)] pr-2 text-[10px] font-bold text-[var(--sys-text-secondary)]/60">97.0%</span></div>
+              </div>
+              
+              <!-- The SVG Area Chart (Visuals only, perfectly stretched) -->
+              <div class="absolute left-8 right-3 lg:left-10 lg:right-4 top-0 bottom-0 z-10 pointer-events-none">
+                 <svg class="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <defs>
+                       <linearGradient id="chartBlueCC" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#3B82F6" stop-opacity="0.25" />
+                          <stop offset="100%" stop-color="#3B82F6" stop-opacity="0" />
+                       </linearGradient>
+                    </defs>
+                    <path class="transition-all duration-1000 ease-in-out" :d="areaPathData" fill="url(#chartBlueCC)" />
+                    <path class="transition-all duration-1000 ease-in-out" :d="linePathData" fill="none" stroke="var(--sys-brand-solid)" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                 </svg>
+              </div>
 
-            <div class="flex justify-between mt-4">
-                 <span v-for="(p, i) in chuyenCanPoints" :key="i" class="text-[10px] font-bold text-[var(--sys-text-secondary)]/50 uppercase tracking-wider">{{ p.month }}</span>
+              <!-- HTML Interactive Hover Zones & Dots (Absolutely mapped to p.x) -->
+              <div class="absolute left-8 right-3 lg:left-10 lg:right-4 top-0 bottom-0 z-20">
+                 <div v-for="(p, idx) in points" :key="idx"
+                      class="absolute top-0 bottom-0 w-px group cursor-pointer hover:z-[60]"
+                      :style="`left: ${p.x}%`">
+                    
+                    <!-- Hit target & Phantom Column for mouse hover -->
+                    <div class="absolute inset-y-0 left-1/2 -translate-x-1/2 w-[40px] md:w-[60px] bg-transparent group-hover:bg-[var(--sys-bg-hover)] rounded-lg transition-colors z-10"></div>
+                    
+                    <!-- Helper Vertical Line from bottom to the dot to emphasize column connection -->
+                    <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-px bg-[var(--sys-brand-solid)] border-l border-dashed border-[var(--sys-brand-solid)] opacity-0 group-hover:opacity-70 transition-opacity z-20 pointer-events-none"
+                         :style="`height: ${p.yPct}%`"></div>
+                    
+                    <!-- PERMANENTLY VISIBLE Data Dot: Anchors the wave nodes exactly at each month -->
+                    <div class="absolute left-1/2 w-3 h-3 md:w-4 md:h-4 rounded-full bg-[var(--sys-bg-surface)] border-[2.5px] border-[var(--sys-brand-solid)] shadow shadow-[var(--sys-brand-solid-lch-30)] z-30 transition-all duration-300 pointer-events-none group-hover:scale-[1.4] group-hover:border-[3px] -translate-x-1/2 translate-y-1/2"
+                         :style="`bottom: ${p.yPct}%`">
+                    </div>
+
+                    <!-- Clean, Informative Tooltip (Decoupled & perfectly anchored above the dot) -->
+                    <div class="hidden group-hover:flex absolute left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none z-50 animate-fade-in-up"
+                         :style="`bottom: calc(${p.yPct}% + 22px)`">
+                       <div class="bg-slate-800 text-white rounded-xl shadow-xl shadow-slate-800/20 p-2.5 flex flex-col items-center min-w-[110px]">
+                          <span class="text-[10px] font-[800] text-slate-400 uppercase tracking-widest mb-1.5">{{ p.month }}</span>
+                          <div class="flex items-center justify-between w-full gap-3 text-[12px] font-bold">
+                             <span class="text-slate-300 flex items-center gap-1.5">Tỷ lệ:</span>
+                             <span class="text-blue-400 flex items-center gap-1.5">{{ p.val }}%</span>
+                          </div>
+                          <div class="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-slate-800 rotate-45"></div>
+                       </div>
+                    </div>
+
+                    <!-- X-Axis Label -->
+                    <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-[11px] font-[800] text-[var(--sys-text-secondary)]/80 transition-colors group-hover:text-[var(--sys-brand-solid)] whitespace-nowrap">{{ p.month }}</span>
+                 </div>
+              </div>
             </div>
         </div>
 
         <!-- Phân Tích Phòng Ban -->
-        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-[2.5rem] p-8 shadow-sm text-left">
+        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl p-6 lg:p-8 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)] text-left">
              <div class="flex justify-between items-center mb-8">
                  <h4 class="text-[18px] font-bold text-[var(--sys-text-primary)]">Phân tích theo Phòng ban</h4>
                  <span class="material-symbols-rounded text-[var(--sys-text-secondary)] cursor-pointer">more_horiz</span>
@@ -143,9 +187,9 @@
     </div>
 
     <!-- Bottom Lists -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 text-left">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-5 text-left">
         <!-- Top Xuat Sac -->
-        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-[2.5rem] p-8 shadow-sm">
+        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl p-6 lg:p-8 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)]">
              <div class="flex justify-between items-center mb-6">
                  <h4 class="text-[16px] font-bold text-[var(--sys-text-primary)] flex items-center gap-2">
                      <span class="material-symbols-rounded text-[var(--sys-success-text)] text-xl" style="font-variation-settings: 'FILL' 1;">verified</span> 
@@ -171,7 +215,7 @@
         </div>
         
         <!-- Can Luu Y -->
-        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-[2.5rem] p-8 shadow-sm">
+        <div class="bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-2xl p-6 lg:p-8 shadow-[0_2px_12px_-4px_rgba(0,0,0,0.04)]">
              <div class="flex justify-between items-center mb-6">
                  <h4 class="text-[16px] font-bold text-[var(--sys-text-primary)] flex items-center gap-2">
                      <span class="material-symbols-rounded text-[var(--sys-danger-text)] text-xl" style="font-variation-settings: 'FILL' 1;">warning</span>
@@ -206,44 +250,49 @@ import {
   depts,
   topUsers,
   badUsers,
-  chuyenCanLineChart,
-  chuyenCanLineChartMax
+  chuyenCanLineChart
 } from '@/data/sampleData_GiamDoc.js';
 
-const chuyenCanPoints = computed(() => {
-  const width = 500;
-  const height = 150;
-  const max = chuyenCanLineChartMax;
-  const stepX = width / (chuyenCanLineChart.length - 1);
-  return chuyenCanLineChart.map((p, i) => {
-    return {
-      month: p.month,
-      x: i * stepX,
-      y: height - (p.val / max) * height
-    }
+const defaultAvg = chuyenCanLineChart.length ? (chuyenCanLineChart.reduce((a,b) => a+b, 0) / chuyenCanLineChart.length).toFixed(1) : '98.5';
+
+const points = computed(() => {
+  const minVal = 97.0;
+  const maxVal = 100.0;
+  const maxDiff = maxVal - minVal;
+  const numPoints = chuyenCanLineChart.length;
+
+  return chuyenCanLineChart.map((val, idx) => {
+    // 0-100 coordinates
+    const x = (idx / (numPoints - 1)) * 100;
+    // Y percentage mapped to 100% chart bounds
+    let yPct = ((val - minVal) / maxDiff) * 100;
+    yPct = Math.min(Math.max(yPct, 0), 115);
+    
+    return { 
+      month: 'T' + (idx + 1), 
+      val: val, 
+      x: x.toFixed(2), 
+      y: (100 - yPct).toFixed(2), 
+      yPct: yPct.toFixed(2) 
+    };
   });
 });
 
-const chuyenCanLinePath = computed(() => {
-  if (!chuyenCanPoints.value.length) return '';
-  let path = `M ${chuyenCanPoints.value[0].x} ${chuyenCanPoints.value[0].y}`;
-  for(let i=1; i<chuyenCanPoints.value.length; i++) {
-    const prev = chuyenCanPoints.value[i-1];
-    const curr = chuyenCanPoints.value[i];
-    const cpX = (prev.x + curr.x) / 2;
-    path += ` C ${cpX} ${prev.y} ${cpX} ${curr.y} ${curr.x} ${curr.y}`;
+const linePathData = computed(() => {
+  if (!points.value.length) return '';
+  let d = `M ${points.value[0].x} ${points.value[0].y}`;
+  for(let i=1; i<points.value.length; i++){
+    const prev = points.value[i-1];
+    const curr = points.value[i];
+    const cpX = (parseFloat(prev.x) + parseFloat(curr.x)) / 2;
+    d += ` C ${cpX} ${prev.y} ${cpX} ${curr.y} ${curr.x} ${curr.y}`;
   }
-  return path;
+  return d;
 });
 
-const latestDotStyle = computed(() => {
-  if(!chuyenCanPoints.value.length) return {};
-  const lastPoint = chuyenCanPoints.value[chuyenCanPoints.value.length - 1];
-  return {
-    right: '-1%', // Just slightly padding for the circle
-    top: `${(lastPoint.y / 150) * 100}%`,
-    transform: 'translateY(-50%)' // Align vertically centered on the line
-  };
+const areaPathData = computed(() => {
+  if(!linePathData.value) return '';
+  return `${linePathData.value} L 100 100 L 0 100 Z`;
 });
 </script>
 
