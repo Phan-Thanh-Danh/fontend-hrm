@@ -88,7 +88,7 @@
             </div>
             Phân bổ nguồn lực
           </h5>
-          <button class="text-[11px] font-bold text-[var(--sys-brand-solid)] hover:underline flex items-center gap-1 uppercase tracking-widest">
+          <button class="text-[11px] font-bold text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity flex items-center gap-1 uppercase tracking-widest">
             Báo cáo chi tiết
             <span class="material-symbols-outlined text-[16px]">arrow_right_alt</span>
           </button>
@@ -179,7 +179,7 @@
       </div>
 
       <div class="px-4 py-2.5 bg-[var(--sys-bg-page)] border-t border-[var(--sys-border-subtle)] flex justify-end">
-        <button class="text-[11px] font-bold text-[var(--sys-brand-solid)] hover:underline flex items-center gap-1 uppercase tracking-widest">
+        <button class="text-[11px] font-bold text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity flex items-center gap-1 uppercase tracking-widest">
           Truy xuất toàn bộ danh mục đề xuất
           <span class="material-symbols-outlined text-[18px]">arrow_right_alt</span>
         </button>
@@ -189,30 +189,47 @@
 </template>
 
 <script setup>
-/**
- * TRANG TỔNG QUAN HỆ THỐNG (ADMIN) - ENTERPRISE REFINEMENT
- * Tuân thủ 5 Chỉ thị UX/UI SaaS Final:
- * 1. Icon Wrapper chuẩn w-10 h-10 rounded-md.
- * 2. Lưới dữ liệu mật độ cao.
- * 5. Extreme Density: p-4 card padding, py-2.5 table cells.
- * 100% Tiếng Việt.
- */
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 
 const timeRange = ref('6months');
-const timeRangeOptions = [
+const timeRangeOptions = ref([
   { label: '06 tháng gần nhất', value: '6months' },
   { label: '01 năm tài chính', value: '1year' },
   { label: 'Toàn bộ lịch sử', value: 'all' }
-];
+]);
 
-const stats = [
-  { label: 'Tổng nhân viên', value: '1,250', change: '+2.4%', icon: 'groups', color: 'brand' },
-  { label: 'Nhân sự mới', value: '45', change: 'Tháng này', icon: 'person_add', color: 'success' },
-  { label: 'Nghỉ việc', value: '12', change: '-12%', icon: 'person_remove', color: 'danger' },
-  { label: 'Chờ phê duyệt', value: '28', change: 'Khẩn cấp', icon: 'assignment_late', color: 'warning' }
-];
+const stats = ref([]);
+const departmentData = ref([]);
+const taskItems = ref([]);
+
+const fetchData = async () => {
+  try {
+    const [statsRes, deptsRes, requestsRes] = await Promise.all([
+      fetch('http://localhost:3000/dashboardStats').then(res => res.json()),
+      fetch('http://localhost:3000/departments').then(res => res.json()),
+      fetch('http://localhost:3000/leaveRequests').then(res => res.json())
+    ]);
+    
+    stats.value = statsRes.admin;
+    departmentData.value = deptsRes;
+    
+    // Ánh xạ dữ liệu từ leaveRequests sang giao diện taskItems
+    taskItems.value = requestsRes.map(req => ({
+      name: req.name,
+      role: 'Nhân viên / Chuyên viên',
+      action: req.type + ' (' + req.reason + ')',
+      time: req.requestDate,
+      status: req.status === 'pending' ? 'Chờ thẩm định' : 'Đã xử lý',
+      statusClass: req.status === 'pending' 
+        ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]' 
+        : 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]',
+      dotClass: req.status === 'pending' ? 'bg-[var(--sys-warning-solid)]' : 'bg-[var(--sys-success-solid)]'
+    }));
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu từ server:', error);
+  }
+};
 
 const getStatIconClass = (color) => {
   switch(color) {
@@ -224,19 +241,9 @@ const getStatIconClass = (color) => {
   }
 };
 
-const departmentData = [
-  { name: 'Kỹ thuật Cloud', count: 750, percent: 60, color: 'bg-[var(--sys-brand-solid)]' },
-  { name: 'Khối Kinh doanh', count: 562, percent: 45, color: 'bg-[var(--sys-success-solid)]' },
-  { name: 'Marketing & PR', count: 312, percent: 25, color: 'bg-[var(--sys-warning-solid)]' },
-  { name: 'Quản trị Nhân sự', count: 187, percent: 15, color: 'bg-indigo-600' },
-  { name: 'Tài chính - Kế toán', count: 250, percent: 20, color: 'bg-slate-600' }
-];
-
-const taskItems = [
-  { name: 'Trần Lan Anh', role: 'UI/UX Lead', action: 'Phỏng vấn cấp Chuyên gia (V2)', time: 'Hôm nay, 14:00', status: 'Sắp diễn ra', statusClass: 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]', dotClass: 'bg-[var(--sys-warning-solid)]' },
-  { name: 'Quang Huy', role: 'DevOps Engineer', action: 'Nghỉ phép năm (03 ngày)', time: '2 giờ trước', status: 'Chờ thẩm định', statusClass: 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]', dotClass: 'bg-[var(--sys-brand-solid)]' },
-  { name: 'Nguyễn Bích Diệp', role: 'CFO', action: 'Phê duyệt Quyết toán Q4', time: 'Mai, 09:00', status: 'Cần xử lý', statusClass: 'bg-blue-50 text-blue-600 border-blue-100', dotClass: 'bg-blue-600' }
-];
+onMounted(() => {
+  fetchData();
+});
 </script>
 
 <style scoped>

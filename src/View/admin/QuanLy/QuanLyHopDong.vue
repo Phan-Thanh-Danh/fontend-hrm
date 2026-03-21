@@ -133,7 +133,7 @@
           </table>
         </div>
         <div class="px-4 py-3 bg-[var(--sys-bg-page)] border-t border-[var(--sys-border-subtle)] flex justify-end">
-          <button class="text-[12px] font-semibold text-[var(--sys-brand-solid)] hover:underline flex items-center gap-1">
+          <button class="text-[12px] font-semibold text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity flex items-center gap-1">
             Xem tất cả hợp đồng
             <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
           </button>

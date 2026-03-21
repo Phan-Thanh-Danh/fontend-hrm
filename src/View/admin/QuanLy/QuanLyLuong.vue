@@ -60,8 +60,8 @@
             </div>
           </div>
         </div>
-        <div class="px-4 py-3 bg-[var(--sys-bg-page)] border-t border-[var(--sys-border-subtle)] flex items-center justify-between">
-          <button @click="viewDetails(period)" class="text-[13px] font-semibold text-[var(--sys-brand-solid)] hover:underline flex items-center gap-1">
+        <div class="px-4 py-3 bg-[var(--sys-bg-page)] border-t border-[var(--sys-border-subtle)] flex items-center justify-between transition-all">
+          <button @click="viewDetails(period)" class="text-[13px] font-semibold text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity flex items-center gap-1">
             Chi tiết bảng lương
             <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
           </button>

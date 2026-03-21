@@ -113,7 +113,7 @@
                 </div>
               </div>
               <div class="mt-6 pt-4 flex justify-center bg-transparent border-t border-[var(--sys-border-subtle)]">
-                <a href="#" class="text-[var(--sys-brand-solid)] text-[11px] font-bold uppercase tracking-wide hover:underline flex items-center gap-1">
+                <a href="#" class="text-[var(--sys-brand-solid)] text-[11px] font-bold uppercase tracking-wide hover:opacity-80 transition-opacity flex items-center gap-1">
                   Bảng chi tiết <span class="material-symbols-outlined text-[18px]">chevron_right</span>
                 </a>
               </div>
@@ -133,49 +133,25 @@
             </div>
             
             <div class="flex-grow overflow-y-auto custom-scrollbar bg-transparent divide-y divide-[var(--sys-border-subtle)]">
-              <!-- Notif 1 -->
-              <router-link :to="{ name: 'thong-bao' }" class="block px-5 py-4 hover:bg-[var(--sys-bg-hover)] transition-all cursor-pointer group no-underline text-left">
+              <router-link v-for="notif in notifications" :key="notif.id" :to="{ name: 'thong-bao' }" class="block px-5 py-4 hover:bg-[var(--sys-bg-hover)] transition-all cursor-pointer group no-underline text-left">
                 <div class="flex gap-4 bg-transparent text-left">
-                  <div class="w-10 h-10 rounded-md bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] flex items-center justify-center shrink-0 border border-[var(--sys-success-border)] group-hover:bg-[var(--sys-success-solid)] group-hover:text-white transition-all">
-                    <span class="material-symbols-outlined text-[20px]">verified</span>
+                  <div :class="['w-10 h-10 rounded-md flex items-center justify-center shrink-0 border transition-all', 
+                    notif.type === 'success' ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)] group-hover:bg-[var(--sys-success-solid)] group-hover:text-white' : 
+                    notif.type === 'info' ? 'bg-[var(--sys-info-soft)] text-[var(--sys-info-text)] border-[var(--sys-info-border)] group-hover:bg-[var(--sys-info-solid)] group-hover:text-white' : 
+                    'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)] group-hover:bg-[var(--sys-warning-solid)] group-hover:text-white']">
+                    <span class="material-symbols-outlined text-[20px]">{{ notif.icon }}</span>
                   </div>
                   <div class="bg-transparent text-left">
-                    <h4 class="text-[13px] font-semibold text-[var(--sys-text-primary)] mb-1 group-hover:text-[var(--sys-brand-solid)] transition-colors uppercase tracking-tight">Đơn nghỉ phép đã duyệt</h4>
-                    <p class="text-[12px] font-medium text-[var(--sys-text-secondary)] leading-snug mb-2 opacity-80">Đơn nghỉ phép ngày 28/10 của bạn đã được quản lý phê duyệt thành công.</p>
-                    <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest opacity-60">10 phút trước</span>
-                  </div>
-                </div>
-              </router-link>
-              <!-- Notif 2 -->
-              <router-link :to="{ name: 'thong-bao' }" class="block px-5 py-4 hover:bg-[var(--sys-bg-hover)] transition-all cursor-pointer group no-underline text-left">
-                <div class="flex gap-4 bg-transparent text-left">
-                  <div class="w-10 h-10 rounded-md bg-[var(--sys-info-soft)] text-[var(--sys-info-text)] flex items-center justify-center shrink-0 border border-[var(--sys-info-border)] group-hover:bg-[var(--sys-info-solid)] group-hover:text-white transition-all">
-                    <span class="material-symbols-outlined text-[20px]">payments</span>
-                  </div>
-                  <div class="bg-transparent text-left">
-                    <h4 class="text-[13px] font-semibold text-[var(--sys-text-primary)] mb-1 group-hover:text-[var(--sys-brand-solid)] transition-colors uppercase tracking-tight">Đã có phiếu lương</h4>
-                    <p class="text-[12px] font-medium text-[var(--sys-text-secondary)] leading-snug mb-2 opacity-80">Phiếu lương tháng 09/2023 đã sẵn sàng. Bạn có thể xem ngay bây giờ.</p>
-                    <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest opacity-60">2 giờ trước</span>
-                  </div>
-                </div>
-              </router-link>
-              <!-- Notif 3 -->
-              <router-link :to="{ name: 'thong-bao' }" class="block px-5 py-4 hover:bg-[var(--sys-bg-hover)] transition-all cursor-pointer group no-underline text-left">
-                <div class="flex gap-4 bg-transparent text-left">
-                  <div class="w-10 h-10 rounded-md bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] flex items-center justify-center shrink-0 border border-[var(--sys-warning-border)] group-hover:bg-[var(--sys-warning-solid)] group-hover:text-white transition-all">
-                    <span class="material-symbols-outlined text-[20px]">campaign</span>
-                  </div>
-                  <div class="bg-transparent text-left">
-                    <h4 class="text-[13px] font-semibold text-[var(--sys-text-primary)] mb-1 group-hover:text-[var(--sys-brand-solid)] transition-colors uppercase tracking-tight">Thông báo Công ty</h4>
-                    <p class="text-[12px] font-medium text-[var(--sys-text-secondary)] leading-snug mb-2 opacity-80">Lịch nghỉ lễ Quốc khánh và các quy định trực Tết Dương lịch...</p>
-                    <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest opacity-60">Hôm qua</span>
+                    <h4 class="text-[13px] font-semibold text-[var(--sys-text-primary)] mb-1 group-hover:text-[var(--sys-brand-solid)] transition-colors uppercase tracking-tight">{{ notif.title }}</h4>
+                    <p class="text-[12px] font-medium text-[var(--sys-text-secondary)] leading-snug mb-2 opacity-80">{{ notif.desc }}</p>
+                    <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest opacity-60">{{ notif.time }}</span>
                   </div>
                 </div>
               </router-link>
             </div>
 
             <div class="px-5 py-3 bg-[var(--sys-bg-page)]/50 border-t border-[var(--sys-border-subtle)] text-center">
-              <router-link :to="{ name: 'thong-bao' }" class="text-[var(--sys-brand-solid)] text-[11px] font-bold uppercase tracking-wider hover:underline inline-flex items-center gap-1 active:scale-95 no-underline">
+              <router-link :to="{ name: 'thong-bao' }" class="text-[var(--sys-brand-solid)] text-[11px] font-bold uppercase tracking-wider hover:opacity-80 transition-opacity inline-flex items-center gap-1 active:scale-95 no-underline">
                 Tất cả thông báo <span class="material-symbols-outlined text-[18px]">chevron_right</span>
               </router-link>
             </div>
@@ -226,7 +202,7 @@
           </table>
         </div>
         <div class="px-6 py-3 bg-[var(--sys-bg-page)]/50 border-t border-[var(--sys-border-subtle)] flex justify-end">
-          <a href="#" class="text-[var(--sys-brand-solid)] text-[11px] font-bold uppercase tracking-wide hover:underline flex items-center gap-1 active:scale-95 no-underline">
+          <a href="#" class="text-[var(--sys-brand-solid)] text-[11px] font-bold uppercase tracking-wide hover:opacity-80 transition-opacity flex items-center gap-1 active:scale-95 no-underline">
             Toàn bộ lịch sử <span class="material-symbols-outlined text-[18px]">chevron_right</span>
           </a>
         </div>
@@ -237,13 +213,6 @@
 </template>
 
 <script setup>
-/**
- * PORTAL DASHBOARD (NHÂN VIÊN) - PHIÊN BẢN ENTERPRISE SaaS
- * Tuân thủ 7 Golden Rules:
- * - Font Inter 14px (text-sm), Tỉ lệ high-density
- * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button, 8px (LG) cho Card/Table
- * - Hệ màu Blue/White/Semantic đồng bộ, xóa bỏ font-black/italic thái quá
- */
 import { ref, onMounted, onUnmounted } from 'vue';
 
 const currentHours = ref('00');
@@ -252,11 +221,21 @@ const currentSeconds = ref('00');
 const currentDateStr = ref('');
 let timerInterval = null;
 
-const activities = [
-  { date: 'Thứ Tư, 25/10/2023', type: 'Check-in (Vào ca)', icon: 'login', color: 'success', time: '08:02:45 AM', status: 'Thành công' },
-  { date: 'Thứ Ba, 24/10/2023', type: 'Check-out (Ra về)', icon: 'logout', color: 'brand', time: '17:35:10 PM', status: 'Thành công' },
-  { date: 'Thứ Ba, 24/10/2023', type: 'Gửi đơn nghỉ phép', icon: 'event_note', color: 'warning', time: '14:20:05 PM', status: 'Đã duyệt' }
-];
+const activities = ref([]);
+const notifications = ref([]);
+
+const fetchData = async () => {
+  try {
+    const [actRes, notifRes] = await Promise.all([
+      fetch('http://localhost:3000/attendanceHistory').then(res => res.json()),
+      fetch('http://localhost:3000/notifications').then(res => res.json())
+    ]);
+    activities.value = actRes;
+    notifications.value = notifRes.filter(n => n.userId === 'NV002' || n.userId === 'any');
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu nhân viên:', error);
+  }
+};
 
 const updateTime = () => {
   const now = new Date();
@@ -271,6 +250,7 @@ const updateTime = () => {
 onMounted(() => {
   updateTime();
   timerInterval = setInterval(updateTime, 1000);
+  fetchData();
 });
 
 onUnmounted(() => {

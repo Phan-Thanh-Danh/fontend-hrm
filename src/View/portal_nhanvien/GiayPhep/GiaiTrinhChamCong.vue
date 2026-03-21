@@ -116,7 +116,7 @@
                   Chấm công gần đây
                 </h3>
               </div>
-              <a href="#" class="text-[var(--sys-brand-solid)] font-bold text-[11px] hover:underline uppercase tracking-tight">TẤT CẢ</a>
+              <a href="#" class="text-[var(--sys-brand-solid)] font-bold text-[11px] hover:opacity-80 transition-opacity uppercase tracking-tight">TẤT CẢ</a>
             </div>
             
             <div class="divide-y divide-[var(--sys-border-subtle)]">

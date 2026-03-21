@@ -76,7 +76,11 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-[var(--sys-border-subtle)]">
-              <tr v-for="(item, index) in leaveHistory" :key="index" class="hover:bg-[var(--sys-bg-hover)] transition-colors">
+              <tr v-for="(item, index) in leaveHistory" :key="index" 
+                @dblclick="handleDeleteRequest(item)"
+                class="hover:bg-[var(--sys-bg-hover)] transition-colors cursor-pointer"
+                title="Nhấn đúp để xóa đơn (chỉ đơn chờ duyệt)"
+              >
                 <td class="px-5 py-3 whitespace-nowrap bg-transparent">
                   <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ item.type }}</span>
                 </td>
@@ -112,25 +116,24 @@
               </div>
               
               <!-- Modal Body -->
-              <form @submit.prevent="showModal = false" class="p-6 space-y-5 overflow-y-auto custom-scrollbar">
+              <form @submit.prevent="submitRequest" class="p-6 space-y-5 overflow-y-auto custom-scrollbar">
                 <div>
                   <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider mb-2">Loại nghỉ phép <span class="text-[var(--sys-danger-solid)]">*</span></label>
-                  <select class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
-                    <option selected disabled>Chọn loại nghỉ phép...</option>
-                    <option>Nghỉ phép năm</option>
-                    <option>Nghỉ ốm</option>
-                    <option>Nghỉ không lương</option>
+                  <select v-model="leaveType" class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                    <option value="Nghỉ phép năm">Nghỉ phép năm</option>
+                    <option value="Nghỉ ốm">Nghỉ ốm</option>
+                    <option value="Nghỉ không lương">Nghỉ không lương</option>
                   </select>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                   <div>
                     <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider mb-2">Từ ngày <span class="text-[var(--sys-danger-solid)]">*</span></label>
-                    <input type="date" class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                    <input type="date" v-model="startDate" class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
                   </div>
                   <div>
                     <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider mb-2">Đến ngày <span class="text-[var(--sys-danger-solid)]">*</span></label>
-                    <input type="date" class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                    <input type="date" v-model="endDate" class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
                   </div>
                 </div>
 
@@ -139,12 +142,14 @@
                     <span class="material-symbols-outlined text-[18px]">calculate</span>
                     Tổng số ngày nghỉ dự kiến:
                   </span>
-                  <span class="text-[14px] font-bold text-[var(--sys-brand-solid)]">0 ngày</span>
+                  <span class="text-[14px] font-bold text-[var(--sys-brand-solid)]">
+                    {{ (startDate && endDate) ? (Math.ceil(Math.abs(new Date(endDate) - new Date(startDate)) / (1000 * 60 * 60 * 24)) + 1) : 0 }} ngày
+                  </span>
                 </div>
 
                 <div>
                   <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider mb-2">Lý do nghỉ phép <span class="text-[var(--sys-danger-solid)]">*</span></label>
-                  <textarea class="w-full h-24 p-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm resize-none" placeholder="Nhập chi tiết lý do..."></textarea>
+                  <textarea v-model="reason" class="w-full h-24 p-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm resize-none" placeholder="Nhập chi tiết lý do..."></textarea>
                 </div>
 
                 <div>
@@ -176,22 +181,123 @@
 </template>
 
 <script setup>
-/**
- * TRANG NGHỈ PHÉP (PORTAL) - PHIÊN BẢN ENTERPRISE SaaS
- * Tuân thủ 7 Golden Rules:
- * - Font Inter 14px (text-sm), Tỉ lệ table cao (text-13px)
- * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button, 8px (LG) cho Card/Table
- * - Hệ màu Semantic đồng bộ, loại bỏ font-black/italic
- */
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 const showModal = ref(false);
+const leaveHistory = ref([]);
 
-const leaveHistory = ref([
-  { type: 'Nghỉ phép năm', duration: '15/10/2023 - 16/10/2023', total: '2 ngày', status: 'Đã duyệt' },
-  { type: 'Nghỉ ốm', duration: '05/11/2023', total: '1 ngày', status: 'Đã duyệt' },
-  { type: 'Nghỉ phép năm', duration: '20/11/2023 - 21/11/2023', total: '2 ngày', status: 'Chờ duyệt' }
-]);
+// Form states
+const leaveType = ref('Nghỉ phép năm');
+const startDate = ref('');
+const endDate = ref('');
+const reason = ref('');
+
+const fetchData = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/leaveRequests');
+    const data = await response.json();
+    
+    // Map data từ server sang định dạng hiển thị của bảng
+    leaveHistory.value = data.map(item => {
+      const start = new Date(item.startDate);
+      const end = new Date(item.endDate);
+      const diffTime = Math.abs(end - start);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+      return {
+        id: item.id,
+        type: item.type,
+        duration: `${item.startDate} - ${item.endDate}`,
+        total: `${diffDays} ngày`,
+        status: item.status === 'pending' ? 'Chờ duyệt' : (item.status === 'approved' ? 'Đã duyệt' : 'Từ chối')
+      };
+    });
+  } catch (error) {
+    console.error('Lỗi khi tải lịch sử nghỉ phép:', error);
+  }
+};
+
+const submitRequest = async () => {
+  if (!leaveType.value || !startDate.value || !endDate.value || !reason.value) {
+    alert('Vui lòng điền đầy đủ thông tin bắt buộc.');
+    return;
+  }
+  const start = new Date(startDate.value);
+  const end = new Date(endDate.value);
+  const diffDays = Math.ceil(Math.abs(end - start) / (1000 * 60 * 60 * 24)) + 1;
+
+  // Logic nghiệp vụ: 
+  // - Luôn đổ cho Admin
+  // - >= 3 ngày: Đổ cho Trưởng phòng
+  // - >= 7 ngày: Đổ cho Giám đốc
+  let visibility = ['Admin'];
+  if (diffDays >= 7) {
+    visibility.push('Director', 'Manager');
+  } else if (diffDays >= 3) {
+    visibility.push('Manager');
+  }
+
+  const newRequest = {
+    employeeId: 'NV002',
+    name: 'Nguyên Văn Đạt',
+    deptId: 1, // Kỹ thuật
+    type: leaveType.value,
+    reason: reason.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
+    days: diffDays,
+    status: 'pending',
+    urgent: diffDays >= 3,
+    requestDate: new Date().toISOString().split('T')[0],
+    visibleTo: visibility 
+  };
+
+  try {
+    const response = await fetch('http://localhost:3000/leaveRequests', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(newRequest)
+    });
+
+    if (response.ok) {
+      showModal.value = false;
+      // Reset form
+      startDate.value = '';
+      endDate.value = '';
+      reason.value = '';
+      // Tải lại dữ liệu
+      await fetchData();
+    }
+  } catch (error) {
+    console.error('Lỗi khi gửi đơn nghỉ phép:', error);
+  }
+};
+
+const handleDeleteRequest = async (item) => {
+  if (item.status !== 'Chờ duyệt') {
+    alert('Không thể xóa đơn đã được duyệt hoặc từ chối!');
+    return;
+  }
+  
+  if (confirm(`Bạn có chắc chắn muốn xóa đơn nghỉ phép này?`)) {
+    try {
+      const res = await fetch(`http://localhost:3000/leaveRequests/${item.id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        await fetchData();
+      }
+    } catch (err) {
+      console.error('Lỗi khi xóa đơn:', err);
+    }
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
 
 const getStatusBadgeClass = (status) => {
   switch (status) {

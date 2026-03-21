@@ -1,52 +1,52 @@
 <template>
   <div class="space-y-4 pb-6">
-    <!-- Header Area: Refined for Full Width Experience -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left">
+    <!-- Header Area: SaaS Enterprise Style -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
-        <h1 class="text-xl font-bold text-[var(--sys-text-primary)] mb-0.5 tracking-tight uppercase italic">Quản lý Chấm công & Chuyên cần</h1>
-        <p class="text-[13px] text-[var(--sys-text-secondary)] opacity-100 italic">Kiểm soát và phê duyệt dữ liệu chuyên cần nhân sự phòng IT.</p>
+        <h1 class="text-xl font-bold text-[var(--sys-text-primary)] mb-0.5 tracking-tight uppercase">Quản lý Chấm công & Chuyên cần</h1>
+        <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium">Kiểm soát và phê duyệt dữ liệu chuyên cần nhân sự phòng IT.</p>
       </div>
       <div class="flex items-center gap-3 shrink-0">
-        <button class="h-11 px-6 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md font-semibold text-sm border border-[var(--sys-brand-border)] hover:bg-[var(--sys-brand-solid)] hover:text-white transition-all flex items-center gap-2.5 shadow-sm active:scale-95">
-          <span class="material-symbols-outlined text-[20px]">cloud_download</span> 
+        <button class="h-11 px-6 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md font-bold text-[13px] uppercase tracking-widest border border-[var(--sys-brand-border)] hover:bg-[var(--sys-brand-solid)] hover:text-white transition-all flex items-center gap-2.5 shadow-sm active:scale-95">
+          <span class="material-symbols-outlined text-[20px] font-bold">cloud_download</span> 
           Xuất dữ liệu công
         </button>
       </div>
     </div>
 
     <!-- Main Content Container: Refined Harmony -->
-    <div class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] shadow-[0_2px_8px_-2px_oklch(0_0_0/0.06)] overflow-hidden flex flex-col">
+    <div class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col">
       <!-- Toolbar: Consistent and Compact -->
       <div class="px-3.5 py-3 border-b border-[var(--sys-border-subtle)] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3.5 bg-[var(--sys-bg-page)]/20">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)] shadow-sm">
-            <span class="material-symbols-outlined text-[24px]">date_range</span>
+            <span class="material-symbols-outlined text-[24px] font-bold">date_range</span>
           </div>
           <div class="bg-transparent text-left">
-            <h5 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 leading-none mb-1">BẢNG CÔNG CHI TIẾT</h5>
-            <p class="text-[11px] font-medium text-[var(--sys-text-secondary)] m-0 uppercase tracking-widest opacity-60">Tháng {{ selectedMonth }}/{{ selectedYear }}</p>
+            <h5 class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest m-0 leading-none mb-1 shadow-none">BẢNG CÔNG CHI TIẾT</h5>
+            <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] m-0 uppercase tracking-widest opacity-60">Tháng {{ selectedMonth }}/{{ selectedYear }}</p>
           </div>
         </div>
 
         <div class="flex flex-wrap items-center gap-4 w-full xl:w-auto">
           <div class="flex items-center gap-2">
-            <Dropdown v-model="selectedMonth" :options="monthOptions" class="min-w-[160px] h-11 shadow-sm border-[var(--sys-border-subtle)]" />
-            <Dropdown v-model="selectedYear" :options="yearOptions" class="min-w-[110px] h-11 shadow-sm border-[var(--sys-border-subtle)]" />
+            <Dropdown v-model="selectedMonth" :options="monthOptions" class="min-w-[150px] h-10 shadow-sm" />
+            <Dropdown v-model="selectedYear" :options="yearOptions" class="min-w-[100px] h-10 shadow-sm" />
           </div>
           
           <!-- Legend: Balanced and Clear -->
-          <div class="h-11 px-5 bg-[var(--sys-bg-surface)] rounded-md border border-[var(--sys-border-subtle)] flex items-center gap-6 shadow-sm overflow-hidden">
+          <div class="h-10 px-5 bg-[var(--sys-bg-surface)] rounded-md border border-[var(--sys-border-subtle)] flex items-center gap-6 shadow-sm overflow-hidden">
             <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-[var(--sys-success-solid)] shadow-[0_0_0_3px_var(--sys-success-soft)]"></span>
-              <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Đúng giờ</span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[var(--sys-success-solid)]"></span>
+              <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Đúng giờ</span>
             </div>
             <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-[var(--sys-warning-solid)] shadow-[0_0_0_3px_var(--sys-warning-soft)]"></span>
-              <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Đi muộn</span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[var(--sys-warning-solid)]"></span>
+              <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Đi muộn</span>
             </div>
             <div class="flex items-center gap-2.5">
-              <span class="w-2.5 h-2.5 rounded-full bg-[var(--sys-danger-solid)] shadow-[0_0_0_3px_var(--sys-danger-soft)]"></span>
-              <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Vắng mặt</span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[var(--sys-danger-solid)]"></span>
+              <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Vắng mặt</span>
             </div>
           </div>
         </div>
@@ -57,27 +57,27 @@
         <table class="w-full text-left border-collapse min-w-[1200px]">
           <thead class="bg-[var(--sys-bg-page)]/40">
             <tr>
-              <th class="px-6 py-4 text-[12px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-[0.1em] sticky left-0 z-20 bg-[var(--sys-bg-page)] shadow-[2px_0_5px_-2px_var(--sys-bg-active)]">NHÂN SỰ PHÒNG</th>
+              <th class="px-6 py-4 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest sticky left-0 z-20 bg-[var(--sys-bg-page)] shadow-sm">NHÂN SỰ PHÒNG</th>
               <th v-for="d in daysInMonth" :key="d" 
-                class="px-1 py-4 text-[11px] font-black text-center border-b border-[var(--sys-border-subtle)] transition-colors"
+                class="px-1 py-4 text-[11px] font-bold text-center border-b border-[var(--sys-border-subtle)] transition-colors"
                 :class="isWeekend(d) ? 'bg-[var(--sys-bg-page)] text-[var(--sys-text-disabled)] opacity-60' : 'text-[var(--sys-text-secondary)]'">
                 {{ d < 10 ? '0' + d : d }}
               </th>
-              <th class="px-6 py-4 text-[12px] font-bold text-right border-b border-[var(--sys-border-subtle)] uppercase tracking-[0.1em] sticky right-0 z-20 bg-[var(--sys-bg-page)] shadow-[-2px_0_5px_-2px_var(--sys-bg-active)]">TỔNG CÔNG</th>
+              <th class="px-6 py-4 text-[11px] font-bold text-right border-b border-[var(--sys-border-subtle)] uppercase tracking-widest sticky right-0 z-20 bg-[var(--sys-bg-page)] shadow-sm">TỔNG CÔNG</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-[var(--sys-border-subtle)]">
             <tr v-for="staff in attendanceList" :key="staff.id" class="group hover:bg-[var(--sys-bg-hover)] transition-all duration-200">
               <!-- Sticky Name Cell -->
-              <td class="px-6 py-4 sticky left-0 z-10 bg-[var(--sys-bg-surface)] border-r border-[var(--sys-border-subtle)] group-hover:bg-[var(--sys-bg-hover)] shadow-[2px_0_5px_-2px_var(--sys-bg-active)]">
+              <td class="px-6 py-4 sticky left-0 z-10 bg-[var(--sys-bg-surface)] border-r border-[var(--sys-border-subtle)] group-hover:bg-[var(--sys-bg-hover)] shadow-sm">
                 <div class="flex items-center gap-4">
-                  <div class="w-9 h-9 rounded-md bg-gradient-to-br from-[var(--sys-brand-soft)] to-[var(--sys-brand-soft)]/50 text-[var(--sys-brand-solid)] flex items-center justify-center font-black text-xs uppercase italic border border-[var(--sys-brand-border)]">
+                  <div class="w-9 h-9 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center font-bold text-xs uppercase border border-[var(--sys-brand-border)]">
                     {{ staff.name.charAt(0) }}
                   </div>
                   <div class="flex flex-col">
-                    <span class="text-[13.5px] font-bold text-[var(--sys-text-primary)] leading-none mb-1 group-hover:text-[var(--sys-brand-solid)] transition-colors">{{ staff.name }}</span>
-                    <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] opacity-100 items-center flex gap-1.5 uppercase tracking-wider">
-                      {{ staff.id }} <span class="w-1 h-1 rounded-full bg-[var(--sys-border)]"></span> {{ staff.dept }}
+                    <span class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-none mb-1 group-hover:text-[var(--sys-brand-solid)] transition-colors">{{ staff.name }}</span>
+                    <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] items-center flex gap-1.5 uppercase tracking-widest opacity-60">
+                      {{ staff.id }} <span class="w-1 h-1 rounded-full bg-[var(--sys-border-strong)]"></span> {{ staff.dept }}
                     </span>
                   </div>
                 </div>
@@ -88,19 +88,19 @@
                 class="px-1 py-3 border-r border-[var(--sys-border-subtle)]/50 text-center transition-colors"
                 :class="isWeekend(d) ? 'bg-[var(--sys-bg-page)] opacity-40' : ''">
                 <div v-if="!isWeekend(d)" class="flex justify-center h-7 items-center">
-                   <div v-if="staff.data[d] === 'on'" class="w-7 h-7 rounded-md flex items-center justify-center font-black text-[10px] bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border border-[var(--sys-success-border)] shadow-sm scale-95 hover:scale-110 transition-transform cursor-help" title="Đúng giờ">✔</div>
-                   <div v-if="staff.data[d] === 'late'" class="w-7 h-7 rounded-md flex items-center justify-center font-black text-[10px] bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border border-[var(--sys-warning-border)] shadow-sm scale-95 hover:scale-110 transition-transform cursor-help" title="Đi muộn">M</div>
-                   <div v-if="staff.data[d] === 'off'" class="w-7 h-7 rounded-md flex items-center justify-center font-black text-[10px] bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border border-[var(--sys-danger-border)] shadow-sm scale-95 hover:scale-110 transition-transform cursor-help" title="Vắng mặt">V</div>
-                   <div v-if="!staff.data[d]" class="w-1.5 h-1.5 rounded-full bg-[var(--sys-border)] opacity-20"></div>
+                   <div v-if="staff.data[d] === 'on'" class="w-7 h-7 rounded-md flex items-center justify-center font-bold text-[10px] bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border border-[var(--sys-success-border)] shadow-sm scale-95 hover:scale-105 transition-transform" title="Đúng giờ">✔</div>
+                   <div v-if="staff.data[d] === 'late'" class="w-7 h-7 rounded-md flex items-center justify-center font-bold text-[10px] bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border border-[var(--sys-warning-border)] shadow-sm scale-95 hover:scale-105 transition-transform" title="Đi muộn">M</div>
+                   <div v-if="staff.data[d] === 'off'" class="w-7 h-7 rounded-md flex items-center justify-center font-bold text-[10px] bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border border-[var(--sys-danger-border)] shadow-sm scale-95 hover:scale-105 transition-transform" title="Vắng mặt">V</div>
+                   <div v-if="!staff.data[d]" class="w-1.5 h-1.5 rounded-full bg-[var(--sys-border-strong)] opacity-20"></div>
                 </div>
-                <div v-else class="text-[8px] font-black text-[var(--sys-text-secondary)] uppercase tracking-tighter opacity-70">OFF</div>
+                <div v-else class="text-[9px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-tighter opacity-60">OFF</div>
               </td>
 
               <!-- Sticky Total Cell -->
-              <td class="px-6 py-4 text-right whitespace-nowrap sticky right-0 z-10 bg-[var(--sys-bg-surface)] border-l border-[var(--sys-border-subtle)] group-hover:bg-[var(--sys-bg-hover)] shadow-[-2px_0_5px_-2px_var(--sys-bg-active)]">
+              <td class="px-6 py-4 text-right whitespace-nowrap sticky right-0 z-10 bg-[var(--sys-bg-surface)] border-l border-[var(--sys-border-subtle)] group-hover:bg-[var(--sys-bg-hover)] shadow-sm">
                 <div class="flex items-center justify-end gap-2">
-                  <span class="text-sm font-black text-[var(--sys-text-primary)] italic">{{ staff.total }}</span>
-                  <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest">/ 22</span>
+                  <span class="text-sm font-bold text-[var(--sys-text-primary)]">{{ staff.total }}</span>
+                  <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest opacity-60">/ 22</span>
                 </div>
               </td>
             </tr>
@@ -111,18 +111,85 @@
       <!-- Footer: Refined Compact Spacing -->
       <div class="px-4 py-2.5 bg-[var(--sys-bg-page)]/30 border-t border-[var(--sys-border-subtle)] flex flex-col sm:flex-row justify-between items-center gap-3">
         <div class="flex items-center gap-5">
-          <p class="text-[10px] text-[var(--sys-text-secondary)] font-bold italic flex items-center gap-4">
+          <p class="text-[11px] text-[var(--sys-text-secondary)] font-bold flex items-center gap-4 uppercase tracking-widest">
             <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded bg-[var(--sys-success-solid)]"></span> ✔ ĐỦ CÔNG</span>
             <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded bg-[var(--sys-warning-solid)]"></span> M ĐI MUỘN</span>
             <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded bg-[var(--sys-danger-solid)]"></span> V VẮNG MẶT</span>
           </p>
         </div>
-        <button class="text-xs font-black uppercase italic tracking-widest text-[var(--sys-brand-solid)] hover:text-indigo-700 transition-colors flex items-center gap-2 group">
+        <button @click="showHistoryModal = true" class="text-[11px] font-bold uppercase tracking-widest text-[var(--sys-brand-solid)] hover:opacity-80 transition-all flex items-center gap-2 group">
           Toàn bộ lịch sử chấm công
-          <span class="material-symbols-outlined text-[18px] group-hover:translate-x-1 transition-transform">trending_flat</span>
+          <span class="material-symbols-outlined text-[18px] font-bold group-hover:translate-x-1 transition-transform">trending_flat</span>
         </button>
       </div>
     </div>
+
+    <!-- History Modal -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div v-if="showHistoryModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 w-screen h-screen bg-black/50 z-[9999]" @click="showHistoryModal = false"></div>
+          <div class="relative z-[10000] bg-[var(--sys-bg-surface-elevated)] border border-[var(--sys-border-subtle)] w-full max-w-4xl max-h-[90vh] rounded-lg shadow-2xl overflow-hidden flex flex-col text-left">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-page)]/50">
+              <div class="bg-transparent text-left flex items-center gap-3">
+                <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[24px]">history</span>
+                <div>
+                  <h3 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-wide">Nhật trình chấm công & Điểm danh</h3>
+                  <p class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">THÁNG {{ selectedMonth }}/{{ selectedYear }}</p>
+                </div>
+              </div>
+              <button @click="showHistoryModal = false" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)] shadow-sm border border-transparent hover:border-[var(--sys-border-strong)]">
+                <span class="material-symbols-outlined text-xl">close</span>
+              </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="flex-1 overflow-y-auto p-0 custom-scrollbar bg-[var(--sys-bg-surface)]">
+              <table class="w-full text-left border-collapse">
+                <thead class="bg-[var(--sys-bg-page)]/90 sticky top-0 backdrop-blur-sm z-10 shadow-sm border-b border-[var(--sys-border-subtle)]">
+                  <tr>
+                    <th class="px-6 py-3 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Thời gian</th>
+                    <th class="px-6 py-3 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Họ Tên Nhân Sự</th>
+                    <th class="px-6 py-3 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">In / Out</th>
+                    <th class="px-6 py-3 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Trạng thái</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[var(--sys-border-subtle)]">
+                  <tr v-for="(log, idx) in historyLogs" :key="idx" class="hover:bg-[var(--sys-bg-hover)] transition-colors">
+                    <td class="px-6 py-3 text-[12px] font-bold text-[var(--sys-text-primary)]">{{ log.date }}</td>
+                    <td class="px-6 py-3">
+                      <p class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-none m-0 mb-0.5">{{ log.name }}</p>
+                      <p class="text-[10px] font-semibold text-[var(--sys-text-secondary)] uppercase tracking-wider m-0 opacity-70">{{ log.role }}</p>
+                    </td>
+                    <td class="px-6 py-3">
+                      <div class="flex items-center gap-2">
+                        <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)]">{{ log.in }}</span>
+                        <span class="material-symbols-outlined text-[14px] text-[var(--sys-text-disabled)]">arrow_forward</span>
+                        <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)]">{{ log.out || '--:--' }}</span>
+                      </div>
+                    </td>
+                    <td class="px-6 py-3 text-[10px] font-bold uppercase tracking-wide">
+                      <span :class="getStatusClass(log.status)">
+                        {{ log.statusLabel }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 flex justify-end gap-3">
+              <button class="px-6 py-2 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] rounded-md font-bold text-[11px] uppercase tracking-widest hover:bg-[var(--sys-brand-solid)] hover:text-white transition-all shadow-sm">
+                Xuất Excel Tổng Hợp
+              </button>
+              <button @click="showHistoryModal = false" class="px-6 py-2 bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[11px] hover:bg-[var(--sys-bg-hover)] shadow-sm uppercase tracking-widest transition-all">Đóng</button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -130,6 +197,7 @@
 import { ref } from 'vue'
 import Dropdown from '@/components/Dropdown.vue'
 
+const showHistoryModal = ref(false)
 const selectedMonth = ref('03')
 const selectedYear = ref('2026')
 
@@ -160,6 +228,23 @@ const attendanceList = ref([
   { id: '1042', name: 'Phạm Thành Nam', dept: 'BACKEND DEV', total: '21.5', data: { 1: 'on', 2: 'on', 3: 'on', 5: 'on', 6: 'on', 10: 'on', 15: 'on', 20: 'on' } },
   { id: '1105', name: 'Hoàng Kim Yến', dept: 'QA TESTER', total: '22.0', data: { 1: 'on', 2: 'on', 3: 'on', 6: 'on', 7: 'on', 10: 'on' } },
 ])
+
+const historyLogs = ref([
+  { date: '21/03/2026', name: 'Nguyễn Văn Anh', role: 'IT DEVELOPER', in: '07:58', out: '17:35', status: 'ontime', statusLabel: 'Đúng giờ' },
+  { date: '21/03/2026', name: 'Lê Diệu Linh', role: 'UI/UX LEAD', in: '08:15', out: '18:02', status: 'late', statusLabel: 'Đi muộn' },
+  { date: '20/03/2026', name: 'Hoàng Kim Yến', role: 'QA TESTER', in: '08:02', out: '17:30', status: 'ontime', statusLabel: 'Đúng giờ' },
+  { date: '20/03/2026', name: 'Phạm Thành Nam', role: 'BACKEND DEV', in: '07:45', out: '17:15', status: 'ontime', statusLabel: 'Đúng giờ' },
+  { date: '19/03/2026', name: 'Trần Minh Hải', role: 'DEVOPS ENG', in: '--:--', out: '--:--', status: 'off', statusLabel: 'Vắng mặt' },
+  { date: '19/03/2026', name: 'Lê Diệu Linh', role: 'UI/UX LEAD', in: '08:00', out: '17:40', status: 'ontime', statusLabel: 'Đúng giờ' },
+  { date: '18/03/2026', name: 'Nguyễn Văn Anh', role: 'IT DEVELOPER', in: '08:40', out: '18:15', status: 'late', statusLabel: 'Đi muộn' }
+])
+
+const getStatusClass = (status) => {
+  if (status === 'ontime') return 'text-[var(--sys-success-text)] bg-[var(--sys-success-soft)] px-2 py-0.5 rounded border border-[var(--sys-success-border)]';
+  if (status === 'late') return 'text-[var(--sys-warning-text)] bg-[var(--sys-warning-soft)] px-2 py-0.5 rounded border border-[var(--sys-warning-border)]';
+  if (status === 'off') return 'text-[var(--sys-danger-text)] bg-[var(--sys-danger-soft)] px-2 py-0.5 rounded border border-[var(--sys-danger-border)]';
+  return 'text-[var(--sys-text-secondary)] bg-[var(--sys-bg-hover)] px-2 py-0.5 rounded border border-[var(--sys-border-strong)]';
+}
 </script>
 
 <style scoped>
@@ -187,5 +272,15 @@ const attendanceList = ref([
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.modal-fade-enter-active,
+.modal-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.modal-fade-enter-from,
+.modal-fade-leave-to {
+  opacity: 0;
 }
 </style>

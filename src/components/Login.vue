@@ -126,18 +126,22 @@ const handleLogin = () => {
     isLoggingIn.value = false;
     if (email.value === 'admin@hrm.com' && password.value === 'admin') {
       localStorage.setItem('userRole', 'admin');
+      localStorage.setItem('userId', 'NV001');
       router.push('/admin');
     } 
     else if (email.value === 'manager@hrm.com' && password.value === 'manager') {
       localStorage.setItem('userRole', 'manager');
-      router.push('/truong-phong/dashboard');
+      localStorage.setItem('userId', 'NV008');
+      router.push('/truong-phong');
     }
     else if (email.value === 'user@hrm.com' && password.value === 'user') {
       localStorage.setItem('userRole', 'user');
+      localStorage.setItem('userId', 'NV002');
       router.push('/');
     } 
     else if (email.value === 'ceo@hrm.com' && password.value === 'ceo') {
       localStorage.setItem('userRole', 'ceo');
+      localStorage.setItem('userId', 'NV001');
       router.push('/giam-doc');
     } 
     else {

@@ -131,7 +131,7 @@
 
           <div class="mt-10 pt-6 border-t border-[var(--sys-border-subtle)] text-center">
             <p class="text-[11px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-tight mb-2">Hỗ trợ nhanh</p>
-            <a href="#" class="text-[var(--sys-brand-solid)] font-bold text-[11px] hover:underline uppercase tracking-wide">BP. Hành chính Nhân sự</a>
+            <a href="#" class="text-[var(--sys-brand-solid)] font-bold text-[11px] hover:opacity-80 transition-opacity uppercase tracking-wide">BP. Hành chính Nhân sự</a>
           </div>
         </div>
       </div>

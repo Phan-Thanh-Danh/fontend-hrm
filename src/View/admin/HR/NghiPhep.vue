@@ -87,9 +87,13 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-[var(--sys-border-subtle)]">
-                <tr v-for="req in filteredRequests" :key="req.id" @click="activeRequestId = req.id" 
+                <tr v-for="req in filteredRequests" :key="req.id" 
+                  @click="activeRequestId = req.id" 
+                  @dblclick="handleDeleteRequest(req)"
                   class="group cursor-pointer hover:bg-[var(--sys-bg-hover)] transition-all" 
-                  :class="activeRequestId === req.id ? 'bg-[var(--sys-brand-soft)]/30' : ''">
+                  :class="activeRequestId === req.id ? 'bg-[var(--sys-brand-soft)]/30' : ''"
+                  title="Nhấn đúp để xóa đơn (chỉ đơn chưa duyệt)"
+                >
                   <td class="px-4 py-3 whitespace-nowrap bg-transparent">
                     <div class="flex flex-col bg-transparent">
                       <span class="text-[13px] font-semibold text-[var(--sys-text-primary)] transition-colors line-clamp-1 max-w-[200px]">{{ req.name }}</span>
@@ -217,17 +221,27 @@
             <!-- Approval Textarea -->
             <div v-if="activeRequest.status === 'pending'" class="space-y-1.5 bg-transparent border-none">
               <label class="text-[12px] font-semibold text-[var(--sys-text-secondary)] uppercase tracking-wider block ml-1">Ý kiến phê chuẩn</label>
-              <textarea class="w-full h-24 px-3 py-2 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-sm text-[var(--sys-text-primary)] focus:border-[var(--sys-brand-solid)] outline-none transition-all resize-none shadow-inner" placeholder="Nhập nội dung phản hồi..."></textarea>
+              <textarea 
+                v-model="rejectComment"
+                class="w-full h-24 px-3 py-2 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-sm text-[var(--sys-text-primary)] focus:border-[var(--sys-brand-solid)] outline-none transition-all resize-none shadow-inner" 
+                placeholder="Nhập nội dung phản hồi..."
+              ></textarea>
             </div>
           </div>
 
           <!-- Sticky Footer -->
           <div v-if="activeRequest.status === 'pending'" class="p-6 border-t border-[var(--sys-border-subtle)] flex gap-3 bg-[var(--sys-bg-surface)] shadow-lg mt-auto">
-            <button class="flex-1 h-11 px-4 text-sm font-semibold text-[var(--sys-text-secondary)] hover:bg-[var(--sys-danger-soft)] hover:text-[var(--sys-danger-solid)] border border-[var(--sys-border-strong)] rounded-md transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
+            <button 
+              @click="confirmRejectAction(activeRequest)"
+              class="flex-1 h-11 px-4 text-sm font-semibold text-[var(--sys-text-secondary)] hover:bg-[var(--sys-danger-soft)] hover:text-[var(--sys-danger-solid)] border border-[var(--sys-border-strong)] rounded-md transition-all flex items-center justify-center gap-2 uppercase tracking-wide"
+            >
               <span class="material-symbols-outlined text-[20px]">cancel</span>
               Từ chối
             </button>
-            <button class="flex-[2] h-11 px-6 bg-[var(--sys-brand-solid)] text-white rounded-md text-sm font-bold shadow-sm hover:brightness-90 transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
+            <button 
+              @click="handleApprove(activeRequest)"
+              class="flex-[2] h-11 px-6 bg-[var(--sys-brand-solid)] text-white rounded-md text-sm font-bold shadow-sm hover:brightness-90 transition-all flex items-center justify-center gap-2 uppercase tracking-wide"
+            >
               <span class="material-symbols-outlined text-[20px]">check_circle</span> 
               Phê chuẩn
             </button>
@@ -246,7 +260,7 @@
  * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button/Dropdown, 8px (LG) cho Card/Thẻ/Modal
  * - Hệ màu Blue/White đồng nhất cho Action Icons (Approve)
  */
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 
 const filterDept = ref('ALL');
@@ -280,65 +294,55 @@ const rangeOptions = [
   { label: 'Chu kỳ: Trong quý', value: 'quarter' }
 ];
 
-const requests = ref([
-  {
-    id: 1,
-    name: 'Nguyễn Văn An',
-    msnv: '202401',
-    department: 'Kỹ thuật',
-    role: 'Frontend Systems Engineer',
-    type: 'Phép năm',
-    typeDetail: 'Nghỉ phép thường niên',
-    dateRange: '10/10 - 12/10/2024',
-    fullDateRange: '10/10/2024 - 12/10/2024',
-    days: 3,
-    status: 'pending',
-    statusText: 'Chờ duyệt',
-    reason: 'Giải quyết công việc gia đình đột xuất tại địa phương. Đã hoàn tất việc bàn giao mã nguồn và tài liệu kỹ thuật cho nhóm trực vận hành.',
-    balance: 5,
-    warnings: [
-      'Xung đột lịch bảo trì hệ thống định kỳ (11/10)',
-      'Khối Kỹ thuật đã đạt ngưỡng 20% định mức vắng mặt an toàn'
-    ]
-  },
-  {
-    id: 2,
-    name: 'Trần Thu Hà',
-    msnv: '202405',
-    department: 'Nhân sự',
-    role: 'Senior Talent Acquisition',
-    type: 'Nghỉ ốm',
-    typeDetail: 'Nghỉ điều trị y tế',
-    dateRange: '05/10 - 05/10/2024',
-    fullDateRange: '05/10/2024 - 05/10/2024',
-    days: 1,
-    status: 'approved',
-    statusText: 'Đã duyệt',
-    reason: 'Vấn đề sức khỏe cá nhân cần can thiệp y tế. Đã cung cấp hồ sơ bệnh án điện tử từ cơ sở chuyên khoa.',
-    balance: 10,
-    warnings: []
-  },
-  {
-    id: 3,
-    name: 'Lưu Trọng Trí',
-    msnv: '202409',
-    department: 'Marketing',
-    role: 'Digital Marketing Lead',
-    type: 'Việc riêng',
-    typeDetail: 'Nghỉ không lương',
-    dateRange: '12/10 - 13/10/2024',
-    fullDateRange: '12/10/2024 - 13/10/2024',
-    days: 2,
-    status: 'rejected',
-    statusText: 'Đã từ chối',
-    reason: 'Giải quyết kế hoạch cá nhân kết hợp du lịch định kỳ.',
-    balance: 7,
-    warnings: [
-      'Trùng giai đoạn khởi chạy chiến dịch (Stage-Gate 3)',
-      'Đơn vị Marketing đang trong chu kỳ cao điểm vận hành'
-    ]
+const requests = ref([]);
+
+const fetchData = async () => {
+  try {
+    const [requestsRes, employeesRes] = await Promise.all([
+      fetch('http://localhost:3000/leaveRequests').then(res => res.json()),
+      fetch('http://localhost:3000/employees').then(res => res.json())
+    ]);
+
+    // Map dữ liệu từ server sang cấu trúc giao diện
+    requests.value = requestsRes.map(req => {
+      const emp = employeesRes.find(e => e.id === req.employeeId) || {};
+      return {
+        id: req.id,
+        name: req.name,
+        msnv: req.employeeId,
+        department: emp.deptId === 1 ? 'Kỹ thuật' : (emp.deptId === 2 ? 'Kinh doanh' : 'Khác'),
+        role: emp.position || 'Nhân viên',
+        type: req.type,
+        typeDetail: req.type,
+        dateRange: `${req.startDate} - ${req.endDate}`,
+        fullDateRange: `${req.startDate} - ${req.endDate}`,
+        days: req.days || 1,
+        status: req.status,
+        statusText: req.status === 'pending' ? 'Chờ duyệt' : (req.status === 'approved' ? 'Đã duyệt' : 'Từ chối'),
+        reason: req.reason,
+        balance: 12, // Giả định
+        warnings: req.urgent ? ['Yêu cầu khẩn cấp'] : []
+      };
+    });
+    
+    // Đồng bộ số lượng tab & thống kê
+    tabOptions[0].count = 0; 
+    tabOptions[1].count = requests.value.filter(r => r.status === 'pending').length;
+    
+    // Cập nhật leaveStats
+    leaveStats.value[0].value = String(requests.value.filter(r => r.status === 'pending').length);
+    leaveStats.value[1].value = String(requests.value.filter(r => r.status === 'approved').length);
+    leaveStats.value[2].value = String(requests.value.filter(r => r.status === 'approved').length); // Giả định
+    
+    rejectComment.value = ''; // Reset nội dung ý kiến
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu nghỉ phép Admin:', error);
   }
-]);
+};
+
+onMounted(() => {
+  fetchData();
+});
 
 const activeRequestId = ref(1);
 
@@ -360,6 +364,73 @@ const filteredRequests = computed(() => {
   }
   return list;
 });
+
+const rejectComment = ref('');
+
+const handleApprove = async (req) => {
+  try {
+    const res = await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        status: 'approved',
+        approverComment: rejectComment.value 
+      })
+    });
+    if (res.ok) {
+      rejectComment.value = '';
+      await fetchData();
+      activeRequestId.value = null;
+    }
+  } catch (err) {
+    console.error('Lỗi khi phê duyệt:', err);
+  }
+};
+
+const confirmRejectAction = async (req) => {
+  if (!rejectComment.value) {
+    alert('Vui lòng nhập lý do từ chối');
+    return;
+  }
+  try {
+    const res = await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        status: 'rejected',
+        rejectReason: rejectComment.value 
+      })
+    });
+    if (res.ok) {
+      rejectComment.value = '';
+      await fetchData();
+      activeRequestId.value = null;
+    }
+  } catch (err) {
+    console.error('Lỗi khi từ chối:', err);
+  }
+};
+
+const handleDeleteRequest = async (req) => {
+  if (req.status !== 'pending') {
+    alert('Không thể xóa đơn đã được duyệt hoặc từ chối!');
+    return;
+  }
+  
+  if (confirm(`Bạn có chắc chắn muốn xóa đơn của ${req.name}?`)) {
+    try {
+      const res = await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
+        method: 'DELETE'
+      });
+      if (res.ok) {
+        await fetchData();
+        activeRequestId.value = null;
+      }
+    } catch (err) {
+      console.error('Lỗi khi xóa đơn:', err);
+    }
+  }
+};
 
 const getLeaveTypeClass = (type) => {
   if (type.includes('Phép')) return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]';

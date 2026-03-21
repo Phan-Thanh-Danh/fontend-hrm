@@ -9,96 +9,83 @@ const AVATAR_COLORS = [
   'linear-gradient(135deg,#0891b2,#0e7490)',
 ]
 
-// Shared state for all tickets
-const STORAGE_KEY = 'hrm_support_tickets'
-
-const loadTickets = () => {
-  const saved = localStorage.getItem(STORAGE_KEY)
-  if (saved) {
-    try {
-      return JSON.parse(saved)
-    } catch (e) {
-      console.error('Lỗi đọc dữ liệu hỗ trợ:', e)
-    }
-  }
-  return [
-    {
-      id: 'TK-00101',
-      employeeName: 'Nguyễn Văn An',
-      department: 'IT',
-      category: 'Hỗ trợ IT & Thiết bị',
-      title: 'Máy tính bị hỏng bàn phím',
-      priority: 'Cao',
-      status: 'Chờ xử lý',
-      date: '19/03/2026',
-      deadline: '20/03/2026',
-      asset: 'PC-NV-042',
-      description: 'Bàn phím máy tính của tôi không hoạt động từ sáng nay, không gõ được phím nào, đã thử khởi động lại nhưng không được.',
-      avatarColor: AVATAR_COLORS[0],
-    },
-    {
-      id: 'TK-00098',
-      employeeName: 'Trần Thị Thu',
-      department: 'Kế toán',
-      category: 'Phần mềm & Tài khoản',
-      title: 'Quên mật khẩu phần mềm kế toán',
-      priority: 'Trung bình',
-      status: 'Đang xử lý',
-      date: '18/03/2026',
-      deadline: '',
-      asset: 'MISA SME',
-      description: 'Tôi bị quên mật khẩu đăng nhập MISA sau kỳ nghỉ lễ. Cần được reset lại để tiếp tục công việc.',
-      avatarColor: AVATAR_COLORS[1],
-    },
-    {
-      id: 'TK-00087',
-      employeeName: 'Hoàng Thị My',
-      department: 'Nhân sự',
-      category: 'Nhân sự & Phúc lợi',
-      title: 'Hỏi về chính sách thưởng tháng 3',
-      priority: 'Thấp',
-      status: 'Từ chối',
-      date: '16/03/2026',
-      deadline: '',
-      asset: '',
-      description: 'Tôi muốn hỏi về chính sách thưởng hiệu suất quý 1 năm 2026 và cách tính mức thưởng.',
-      note: 'Vui lòng liên hệ trực tiếp phòng Nhân sự hoặc xem tài liệu nội quy công ty mục 4.3.',
-      avatarColor: AVATAR_COLORS[4],
-    }
-  ]
-}
-
 const state = reactive({
-  tickets: loadTickets()
+  tickets: []
 })
 
-const saveTickets = () => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.tickets))
-}
+const API_URL = 'http://localhost:3000/supportRequests'
+const EMP_API_URL = 'http://localhost:3000/employees'
 
 export function useSupportStore() {
-  const addTicket = (ticketData) => {
-    const id = `TK-${Date.now().toString().slice(-5)}`
-    const newTicket = {
-      id,
-      employeeName: 'Lê Quản Trị Staff', // Mocking current user
-      department: 'Vận hành',
-      avatarColor: AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
-      status: 'Chờ xử lý',
-      date: new Date().toLocaleDateString('vi-VN'),
-      ...ticketData
+  const fetchTickets = async () => {
+    try {
+      const [reqRes, empRes] = await Promise.all([
+        fetch(API_URL),
+        fetch(EMP_API_URL)
+      ])
+      const reqs = await reqRes.json()
+      const emps = await empRes.json()
+
+      state.tickets = reqs.map(req => {
+        const emp = emps.find(e => e.id === req.employeeId)
+        return {
+          id: req.id.toString(),
+          employeeName: emp ? emp.name : 'Unknown',
+          department: emp ? emp.position.split(' / ')[0] : 'N/A',
+          category: req.type || 'Khác',
+          title: req.title,
+          priority: req.priority || 'Trung bình',
+          status: req.status === 'resolved' ? 'Hoàn thành' : (req.status === 'pending' ? 'Chờ xử lý' : (req.status === 'rejected' ? 'Từ chối' : 'Đang xử lý')),
+          date: req.date || new Date().toLocaleDateString('vi-VN'),
+          deadline: req.deadline || '',
+          asset: req.asset || '',
+          description: req.desc || '',
+          avatarColor: AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
+        }
+      })
+    } catch (error) {
+      console.error('Lỗi khi tải dữ liệu hỗ trợ:', error)
     }
-    state.tickets.unshift(newTicket)
-    saveTickets()
-    return id
   }
 
-  const updateStatus = (ticketId, newStatus, note = '') => {
-    const ticket = state.tickets.find(t => t.id === ticketId)
-    if (ticket) {
-      ticket.status = newStatus
-      if (note) ticket.note = note
-      saveTickets()
+  const addTicket = async (ticketData) => {
+    try {
+      const currentUserId = localStorage.getItem('userId') || 'NV002'
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          employeeId: currentUserId,
+          type: ticketData.category,
+          title: ticketData.title,
+          desc: ticketData.description,
+          status: 'pending',
+          date: new Date().toLocaleDateString('vi-VN'),
+          priority: ticketData.priority || 'Trung bình'
+        })
+      })
+      await fetchTickets()
+      const result = await res.json()
+      return result.id
+    } catch (error) {
+      console.error('Lỗi khi gửi yêu cầu hỗ trợ:', error)
+    }
+  }
+
+  const updateStatus = async (ticketId, newStatus, note = '') => {
+    try {
+      const backendStatus = newStatus === 'Hoàn thành' ? 'resolved' : (newStatus === 'Chờ xử lý' ? 'pending' : (newStatus === 'Từ chối' ? 'rejected' : 'processing'))
+      await fetch(`${API_URL}/${ticketId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          status: backendStatus,
+          note: note || undefined
+        })
+      })
+      await fetchTickets()
+    } catch (error) {
+      console.error('Lỗi khi cập nhật trạng thái:', error)
     }
   }
 
@@ -106,6 +93,7 @@ export function useSupportStore() {
 
   return {
     tickets,
+    fetchTickets,
     addTicket,
     updateStatus
   }

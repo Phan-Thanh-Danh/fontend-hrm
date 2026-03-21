@@ -478,17 +478,53 @@ const router = useRouter();
 
 const selectedDateRange = ref('30_days');
 
-const approvals = ref(
-  pendingApprovalsData.map((item) => ({
-    ...item,
-    status: 'pending',
-    rejectReason: '',
-  }))
-);
+const approvals = ref([]);
+
+const fetchData = async () => {
+  try {
+    const response = await fetch('http://localhost:3000/leaveRequests');
+    const data = await response.json();
+    
+    // Lọc đơn dành cho Giám đốc (visibleTo chứa Director)
+    const directorRequests = data.filter(req => 
+      req.status === 'pending' && 
+      (req.visibleTo && req.visibleTo.includes('Director'))
+    ).map(req => ({
+      id: req.id,
+      isReal: true, // Đánh dấu là dữ liệu từ DB
+      title: 'Đơn nghỉ phép: ' + req.name,
+      meta: `${req.type} • ${req.days} ngày • ${req.urgent ? 'Khẩn cấp' : 'Thường'}`,
+      icon: 'event_busy',
+      iconClass: 'kpi-icon--blue',
+      urgent: req.urgent,
+      actions: ['Từ chối', 'Phê duyệt'],
+      status: 'pending',
+      rejectReason: ''
+    }));
+
+    // Gộp với dữ liệu mẫu hiện có
+    approvals.value = [
+      ...directorRequests,
+      ...pendingApprovalsData.map((item) => ({
+        ...item,
+        status: 'pending',
+        rejectReason: '',
+      }))
+    ];
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu Giám đốc:', error);
+  }
+};
+
+onMounted(() => {
+  fetchData();
+});
 
 const pendingApprovals = computed(() => approvals.value.filter((a) => a.status === 'pending'));
 
-const urgentPendingCount = computed(() => pendingApprovals.value.filter((a) => a.urgent).length);
+const urgentPendingCount = computed(() => {
+  return pendingApprovals.value.filter((a) => a.urgent).length;
+});
 
 const selectedApproval = ref(null);
 const showDetailModal = ref(false);
@@ -540,13 +576,28 @@ const closeRejectModal = () => {
   if (returnToDetailAfterAction.value) showDetailModal.value = true;
 };
 
-const confirmApprove = () => {
+const confirmApprove = async () => {
   if (!selectedApproval.value) return;
+
+  if (selectedApproval.value.isReal) {
+    try {
+      await fetch(`http://localhost:3000/leaveRequests/${selectedApproval.value.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'approved' })
+      });
+    } catch (error) {
+      console.error('Lỗi khi phê duyệt đơn:', error);
+    }
+  }
+
   selectedApproval.value.status = 'approved';
   selectedApproval.value = null;
   showApproveModal.value = false;
   showRejectModal.value = false;
   showDetailModal.value = false;
+  
+  if (selectedApproval.value?.isReal) fetchData();
 };
 
 const confirmReject = async () => {
@@ -557,6 +608,18 @@ const confirmReject = async () => {
     return;
   }
 
+  if (selectedApproval.value.isReal) {
+    try {
+      await fetch(`http://localhost:3000/leaveRequests/${selectedApproval.value.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: 'rejected', rejectReason: reason })
+      });
+    } catch (error) {
+      console.error('Lỗi khi từ chối đơn:', error);
+    }
+  }
+
   selectedApproval.value.status = 'rejected';
   selectedApproval.value.rejectReason = reason;
 
@@ -565,6 +628,8 @@ const confirmReject = async () => {
   showApproveModal.value = false;
   showDetailModal.value = false;
   rejectReason.value = '';
+  
+  if (selectedApproval.value?.isReal) fetchData();
 };
 
 // Tính toán conic-gradient động cho Donut Chart

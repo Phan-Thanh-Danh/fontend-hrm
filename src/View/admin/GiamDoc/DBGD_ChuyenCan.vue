@@ -193,7 +193,7 @@
                      <span class="material-symbols-rounded text-[var(--sys-success-text)] text-xl" style="font-variation-settings: 'FILL' 1;">verified</span> 
                      Top chuyên cần xuất sắc
                  </h4>
-                 <button class="text-xs font-semibold text-[var(--sys-brand-solid)] hover:underline">Xem tất cả</button>
+                 <button class="text-xs font-semibold text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity">Xem tất cả</button>
              </div>
              <div class="space-y-6 mt-8">
                   <div class="flex items-center gap-4 border-b border-[var(--sys-border-subtle)] pb-4 last:border-0 last:pb-0" v-for="user in topUsers" :key="user.name">
@@ -219,7 +219,7 @@
                      <span class="material-symbols-rounded text-[var(--sys-danger-text)] text-xl" style="font-variation-settings: 'FILL' 1;">warning</span>
                      Cần lưu ý (Vi phạm nhiều)
                  </h4>
-                 <button class="text-xs font-semibold text-[var(--sys-brand-solid)] hover:underline">Xem tất cả</button>
+                 <button class="text-xs font-semibold text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity">Xem tất cả</button>
              </div>
              <div class="space-y-6 mt-8">
                   <div class="flex items-center gap-4 border-b border-[var(--sys-border-subtle)] pb-4 last:border-0 last:pb-0" v-for="user in badUsers" :key="user.name">

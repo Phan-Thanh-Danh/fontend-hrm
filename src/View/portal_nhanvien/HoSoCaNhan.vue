@@ -139,7 +139,7 @@
                     <td class="px-6 py-3 text-[12px] font-medium text-[var(--sys-text-secondary)] bg-transparent">Đại học Bách Khoa TP.HCM</td>
                     <td class="px-6 py-3 text-[13px] font-bold text-center bg-transparent">2014</td>
                     <td class="px-6 py-3 text-right bg-transparent">
-                      <a href="#" class="text-[var(--sys-brand-solid)] hover:underline inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-tight">
+                      <a href="#" class="text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-tight">
                         <span class="material-symbols-outlined text-[16px]">attachment</span>
                         Xem PDF
                       </a>
@@ -150,7 +150,7 @@
                     <td class="px-6 py-3 text-[12px] font-medium text-[var(--sys-text-secondary)] bg-transparent">AWS Training Center</td>
                     <td class="px-6 py-3 text-[13px] font-bold text-center bg-transparent">2022</td>
                     <td class="px-6 py-3 text-right bg-transparent">
-                      <a href="#" class="text-[var(--sys-brand-solid)] hover:underline inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-tight">
+                      <a href="#" class="text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity inline-flex items-center gap-1 font-bold text-[11px] uppercase tracking-tight">
                         <span class="material-symbols-outlined text-[16px]">verified</span>
                         Verify
                       </a>

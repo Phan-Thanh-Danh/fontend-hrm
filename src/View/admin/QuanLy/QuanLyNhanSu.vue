@@ -116,7 +116,7 @@
       </div>
       <div class="px-4 py-3 bg-[var(--sys-bg-page)]/50 border-t border-[var(--sys-border-subtle)] flex justify-between items-center h-12">
         <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-60">Hiển thị {{ filteredEmployees.length }} hồ sơ khả dụng</span>
-        <button class="text-[var(--sys-brand-solid)] text-[11px] font-bold hover:underline flex items-center gap-1 group uppercase tracking-widest">
+        <button class="text-[var(--sys-brand-solid)] text-[11px] font-bold hover:opacity-80 flex items-center gap-1 group uppercase tracking-widest transition-opacity">
           Truy xuất toàn bộ danh mục
           <span class="material-symbols-outlined text-[16px] group-hover:translate-x-0.5 transition-transform">arrow_right_alt</span>
         </button>

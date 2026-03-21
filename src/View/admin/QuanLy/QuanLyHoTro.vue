@@ -90,6 +90,7 @@
             <tr>
               <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap">Mã Ticket</th>
               <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[15%] whitespace-nowrap">Nhân viên</th>
+              <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap">Phòng ban</th>
               <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-auto">Tiêu đề yêu cầu</th>
               <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap">Loại dịch vụ</th>
               <th class="px-4 py-2.5 font-bold text-[11px] text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] w-[1%] whitespace-nowrap">Mức độ</th>
@@ -107,10 +108,15 @@
             >
               <td class="px-4 py-3 align-middle font-mono text-[11px] font-bold text-[var(--sys-brand-solid)] w-[1%] whitespace-nowrap">{{ ticket.id }}</td>
               <td class="px-4 py-3 align-middle w-[15%] whitespace-nowrap">
-                <div class="flex flex-col justify-center">
-                  <p class="text-[12px] font-bold text-[var(--sys-text-primary)] leading-tight mb-0.5">{{ ticket.employeeName }}</p>
-                  <p class="text-[11px] text-[var(--sys-text-secondary)] opacity-70 leading-none">{{ ticket.department }}</p>
+                <div class="flex items-center gap-2.5">
+                  <div class="w-7 h-7 rounded-full bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center font-bold text-[10px] uppercase border border-[var(--sys-brand-border)]">
+                    {{ ticket.employeeName.charAt(0) }}
+                  </div>
+                  <p class="text-[12px] font-bold text-[var(--sys-text-primary)] leading-tight">{{ ticket.employeeName }}</p>
                 </div>
+              </td>
+              <td class="px-4 py-3 align-middle w-[1%] whitespace-nowrap">
+                <span class="px-2 py-0.5 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] rounded text-[10px] font-bold uppercase tracking-tight shadow-sm">{{ ticket.department }}</span>
               </td>
               <td class="px-4 py-3 align-middle w-auto">
                 <p class="text-[12px] font-medium text-[var(--sys-text-primary)] group-hover:text-[var(--sys-brand-solid)] transition-colors line-clamp-2" title="Nhấn để xem chi tiết">{{ ticket.title }}</p>
@@ -188,7 +194,7 @@
       <Transition name="modal-fade">
         <div v-if="showDetailModal" class="fixed inset-0 z-[10001] flex items-center justify-center p-4" @click.self="showDetailModal = false">
           <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showDetailModal = false"></div>
-          <div class="relative bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden flex flex-col animate-zoomIn">
+          <div class="relative bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden flex flex-col animate-zoomIn">
             <!-- Header -->
             <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] flex items-center justify-between">
               <div class="flex items-center gap-3">
@@ -260,15 +266,15 @@
 
             <!-- Footer actions -->
             <div class="px-6 py-4 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] flex justify-end gap-3">
-              <button v-if="selectedTicket?.status === 'Chờ xử lý'" @click="handleProcess(selectedTicket)" class="h-9 px-5 bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border border-[var(--sys-warning-border)] rounded-md text-[11px] font-bold uppercase tracking-wide hover:bg-[var(--sys-warning-solid)] hover:text-white transition-all flex items-center gap-1.5 active:scale-95">
+              <button v-if="selectedTicket?.status === 'Chờ xử lý'" @click="handleProcess(selectedTicket)" class="h-9 px-5 bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border border-[var(--sys-warning-border)] rounded-md text-[11px] font-bold uppercase tracking-wide hover:bg-[var(--sys-warning-solid)] hover:text-white transition-all flex items-center gap-1.5 active:scale-95 whitespace-nowrap">
                 <span class="material-symbols-outlined text-[16px]">engineering</span>
                 Tiếp nhận & Xử lý
               </button>
-              <button v-if="selectedTicket?.status === 'Chờ xử lý' || selectedTicket?.status === 'Đang xử lý'" @click="handleComplete(selectedTicket); showDetailModal = false" class="h-9 px-5 bg-[var(--sys-brand-solid)] text-white rounded-md text-[11px] font-bold uppercase tracking-wide hover:brightness-95 transition-all flex items-center gap-1.5 shadow-sm active:scale-95">
+              <button v-if="selectedTicket?.status === 'Chờ xử lý' || selectedTicket?.status === 'Đang xử lý'" @click="handleComplete(selectedTicket); showDetailModal = false" class="h-9 px-5 bg-[var(--sys-brand-solid)] text-white rounded-md text-[11px] font-bold uppercase tracking-wide hover:brightness-95 transition-all flex items-center gap-1.5 shadow-sm active:scale-95 whitespace-nowrap">
                 <span class="material-symbols-outlined text-[16px]">task_alt</span>
                 Đánh dấu Hoàn thành
               </button>
-              <button v-if="selectedTicket?.status === 'Chờ xử lý' || selectedTicket?.status === 'Đang xử lý'" @click="showDetailModal = false; openReject(selectedTicket)" class="h-9 px-4 border border-[var(--sys-danger-border)] text-[var(--sys-danger-text)] rounded-md text-[11px] font-bold uppercase tracking-wide hover:bg-[var(--sys-danger-soft)] transition-all flex items-center gap-1.5 active:scale-95">
+              <button v-if="selectedTicket?.status === 'Chờ xử lý' || selectedTicket?.status === 'Đang xử lý'" @click="showDetailModal = false; openReject(selectedTicket)" class="h-9 px-4 border border-[var(--sys-danger-border)] text-[var(--sys-danger-text)] rounded-md text-[11px] font-bold uppercase tracking-wide hover:bg-[var(--sys-danger-soft)] transition-all flex items-center gap-1.5 active:scale-95 whitespace-nowrap">
                 <span class="material-symbols-outlined text-[16px]">cancel</span>
                 Từ chối
               </button>
@@ -342,7 +348,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useConfirm } from '@/composables/useConfirm'
 import { useSupportStore } from '@/composables/useSupportStore'
 import Dropdown from '@/components/Dropdown.vue'
@@ -354,6 +360,7 @@ const tickets = store.tickets
 // ── State ──────────────────────────────────────────────
 const activeTab = ref('pending')
 const searchQuery = ref('')
+const intervalId = ref(null)
 
 const categoryOptions = [
   { label: 'TẤT CẢ LOẠI DỊCH VỤ', value: 'TẤT CẢ LOẠI DỊCH VỤ' },
@@ -371,6 +378,19 @@ const selectedTicket = ref(null)
 const rejectNote = ref('')
 
 const lastUpdated = ref(new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }))
+
+// ── Lifecycle ──────────────────────────────────────────
+onMounted(async () => {
+  await store.fetchTickets()
+  intervalId.value = setInterval(async () => {
+    await store.fetchTickets()
+    lastUpdated.value = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })
+  }, 10000) // 10s auto-refresh
+})
+
+onUnmounted(() => {
+  if (intervalId.value) clearInterval(intervalId.value)
+})
 
 // ── Tabs ───────────────────────────────────────────────
 const tabs = [

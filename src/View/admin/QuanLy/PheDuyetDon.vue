@@ -74,7 +74,10 @@
                 <span class="text-[13px] font-semibold text-[var(--sys-text-primary)] group-hover/card:text-[var(--sys-brand-solid)] transition-colors whitespace-nowrap">{{ request.employeeName }}</span>
                 <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] opacity-40">#{{ request.employeeId.split('-')[1] }}</span>
               </div>
-              <p class="text-[11px] font-medium text-[var(--sys-brand-solid)] opacity-80 leading-tight truncate">{{ request.title }}</p>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="px-1.5 py-0.5 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] rounded text-[9px] font-bold uppercase tracking-tight">{{ request.department }}</span>
+                <p class="text-[11px] font-medium text-[var(--sys-text-secondary)] opacity-80 leading-tight truncate">{{ request.title }}</p>
+              </div>
             </div>
           </div>
 
@@ -148,6 +151,10 @@
 
             <!-- Modal Body (Grid) -->
             <div class="grid grid-cols-2 gap-6 mb-6">
+              <div class="space-y-1">
+                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Phòng ban đơn vị</span>
+                <p class="text-sm font-bold text-[var(--sys-brand-solid)] uppercase tracking-tight">{{ selectedRequest?.department }}</p>
+              </div>
               <div class="space-y-1">
                 <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Loại đề xuất</span>
                 <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ selectedRequest?.title }}</p>
@@ -266,7 +273,7 @@
  * Tuân thủ 7 Chỉ thị UI/UX SaaS Final (Directive 1, 2, 3, 4, 6)
  * Fix: "Không cho rớt chữ" - Áp dụng whitespace-nowrap & Flex dynamic layout.
  */
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
 
@@ -279,6 +286,49 @@ const showRejectModal = ref(false);
 const showDetailModal = ref(false);
 const rejectReason = ref('');
 const selectedRequest = ref(null);
+const intervalId = ref(null);
+
+const requests = ref([]);
+
+const fetchData = async () => {
+  try {
+    const [reqRes, deptRes] = await Promise.all([
+      fetch('http://localhost:3000/leaveRequests'),
+      fetch('http://localhost:3000/departments')
+    ]);
+    
+    const data = await reqRes.json();
+    const depts = await deptRes.json();
+    
+    // Map dữ liệu từ backend sang cấu trúc Card UI
+    requests.value = data.map(req => {
+      const dept = depts.find(d => String(d.id) === String(req.deptId));
+      return {
+        id: req.id,
+        employeeName: req.name,
+        employeeId: 'EMP-' + req.employeeId,
+        department: dept ? dept.name.toUpperCase() : 'N/A',
+        title: req.type,
+        icon: req.type.includes('Phép') ? 'event_busy' : (req.type.includes('ốm') ? 'medical_services' : 'flight'),
+        dateRange: `${req.startDate} - ${req.endDate}`,
+        duration: `${req.days || 1} NGÀY`,
+        reason: req.reason,
+        status: req.status || 'pending'
+      };
+    });
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu phê duyệt:', error);
+  }
+};
+
+onMounted(() => {
+  fetchData();
+  intervalId.value = setInterval(fetchData, 10000); // Tự động làm mới mỗi 10 giây
+});
+
+onUnmounted(() => {
+  if (intervalId.value) clearInterval(intervalId.value);
+});
 
 const openDetailModal = (r) => {
   selectedRequest.value = r;
@@ -317,12 +367,46 @@ const tabs = ref([
   { id: 'rejected', label: 'Đã bác bỏ' },
 ]);
 
-const requests = ref([
-  { id: 1, employeeName: 'Nguyễn Văn An', employeeId: 'EMP-1001', title: 'Nghỉ phép năm 2024', icon: 'event_busy', dateRange: '20/11 - 22/11/2023', duration: '03 NGÀY', reason: 'Giải quyết công việc gia đình quan trọng tại quê quán. Đã bàn giao xong công việc cho tổ kỹ thuật.', status: 'pending' },
-  { id: 2, employeeName: 'Trần Thị Thu', employeeId: 'EMP-1042', title: 'Đăng ký làm thêm (OT)', icon: 'schedule', dateRange: '18/11/2023', duration: '04 GIỜ (18H-22H)', reason: 'Xử lý báo cáo quyết toán quý 4. Cần hoàn thiện gấp để nộp cho ban tài chính dự án ERP.', status: 'pending' },
-  { id: 3, employeeName: 'Lê Quản Trị', employeeId: 'EMP-1005', title: 'Công tác Hà Nội', icon: 'flight', dateRange: '25/11 - 28/11/2023', duration: '04 NGÀY', reason: 'Tham dự sự kiện kết nối đối tác tại chi nhánh miền Bắc và kiểm định hệ thống mới triển khai.', status: 'pending' },
-  { id: 4, employeeName: 'Hoàng My', employeeId: 'EMP-1088', title: 'Nghiên cứu thị trường', icon: 'manage_search', dateRange: '15/11/2023', duration: '01 NGÀY', reason: 'Khảo sát thực tế hành vi người dùng tại các store đại lý khu vực Quận 1 và Quận 3.', status: 'pending' }
-]);
+const handleReject = (r) => { selectedRequest.value = r; showRejectModal.value = true; };
+const closeRejectModal = () => { showRejectModal.value = false; rejectReason.value = ''; selectedRequest.value = null; };
+
+const handleApprove = async (r) => {
+  try {
+    await fetch(`http://localhost:3000/leaveRequests/${r.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'approved' })
+    });
+    await fetchData();
+    closeDetailModal();
+  } catch (error) {
+    console.error('Lỗi khi duyệt đơn:', error);
+  }
+};
+
+const confirmReject = async () => {
+  if (!rejectReason.value) { 
+    await showAlert('THIẾU DỮ LIỆU', 'Vui lòng xác định nội dung bác bỏ hồ sơ!'); 
+    return; 
+  }
+  if (selectedRequest.value) {
+    try {
+      await fetch(`http://localhost:3000/leaveRequests/${selectedRequest.value.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          status: 'rejected',
+          rejectReason: rejectReason.value
+        })
+      });
+      await fetchData();
+      closeRejectModal();
+      closeDetailModal();
+    } catch (error) {
+      console.error('Lỗi khi bác bỏ đơn:', error);
+    }
+  }
+};
 
 const getIconWrapperClass = (request) => {
   if (request.status === 'approved') return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
@@ -342,13 +426,6 @@ const filteredRequests = computed(() => {
 });
 
 const getTabCount = (id) => requests.value.filter(r => r.status === id).length;
-const handleApprove = (r) => { r.status = 'approved'; };
-const handleReject = (r) => { selectedRequest.value = r; showRejectModal.value = true; };
-const confirmReject = async () => {
-  if (!rejectReason.value) { await showAlert('THIẾU DỮ LIỆU', 'Vui lòng xác định nội dung bác bỏ hồ sơ!'); return; }
-  if (selectedRequest.value) { selectedRequest.value.status = 'rejected'; selectedRequest.value.reason = `[Bác bỏ]: ${rejectReason.value}`; closeRejectModal(); }
-};
-const closeRejectModal = () => { showRejectModal.value = false; rejectReason.value = ''; selectedRequest.value = null; };
 </script>
 
 <style scoped>

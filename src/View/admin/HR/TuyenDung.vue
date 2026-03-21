@@ -206,7 +206,7 @@
         </div>
 
         <div class="text-center pt-6 mt-6 border-t border-[var(--sys-border-subtle)] border-dashed">
-          <button class="text-[12px] font-bold text-[var(--sys-brand-solid)] hover:underline flex items-center justify-center gap-1 mx-auto uppercase tracking-wide">
+          <button class="text-[12px] font-bold text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity flex items-center justify-center gap-1 mx-auto uppercase tracking-wide">
             Truy xuất toàn bộ danh mục hồ sơ
             <span class="material-symbols-outlined text-[18px]">keyboard_double_arrow_right</span>
           </button>

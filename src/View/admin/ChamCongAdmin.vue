@@ -184,7 +184,7 @@
 
       <!-- Footer -->
       <div class="px-4 py-3 bg-[var(--sys-bg-page)] border-t border-[var(--sys-border-subtle)] flex justify-end">
-        <button class="text-[13px] font-semibold text-[var(--sys-brand-solid)] hover:underline flex items-center gap-1">
+        <button class="text-[13px] font-semibold text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity flex items-center gap-1">
           Xem toàn bộ nhật trình
           <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
         </button>

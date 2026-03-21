@@ -339,7 +339,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useSupportStore } from '@/composables/useSupportStore'
 
 // ── Shared Store ───────────────────────────────────────
@@ -352,6 +352,17 @@ const showToast = ref(false)
 const isSubmitting = ref(false)
 const lastCreatedId = ref('')
 const searchQuery = ref('')
+const intervalId = ref(null)
+
+// ── Lifecycle ──────────────────────────────────────────
+onMounted(async () => {
+  await store.fetchTickets()
+  intervalId.value = setInterval(store.fetchTickets, 10000)
+})
+
+onUnmounted(() => {
+  if (intervalId.value) clearInterval(intervalId.value)
+})
 
 // ── Form State ─────────────────────────────────────────
 const defaultForm = () => ({
@@ -413,7 +424,7 @@ async function submitTicket() {
   // Simulate API delay
   await new Promise(r => setTimeout(r, 900))
 
-  const newId = store.addTicket({
+  const newId = await store.addTicket({
     title: form.value.title,
     category: form.value.category,
     priority: form.value.priority,
