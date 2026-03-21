@@ -13,11 +13,8 @@
         </p>
       </div>
       <div class="page-header-actions">
-        <!-- Date filter button -->
-        <button class="flex items-center gap-2.5 px-4 md:px-5 py-2.5 bg-[var(--bg-card,#fff)] border border-[var(--border,#e5e7eb)] rounded-2xl text-[13px] font-[800] text-[#1d3d70] dark:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] font-inherit">
-          <span class="material-symbols-rounded text-[18px] text-slate-500" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
-          30 ngày qua
-        </button>
+        <!-- Date filter button using GD_DateFilter component -->
+        <GD_DateFilter v-model="selectedDateRange" />
         <button class="btn-export">
           <span class="material-symbols-rounded">download</span>
           Xuất báo cáo
@@ -223,7 +220,7 @@
           </div>
         </div>
 
-        <button class="list-card-footer">
+        <button class="list-card-footer" @click="router.push('/giam-doc/thong-bao')">
           <span class="material-symbols-rounded" style="font-size:15px">expand_more</span>
           Xem toàn bộ {{ pendingApprovals.length }} yêu cầu
         </button>
@@ -462,6 +459,8 @@
 
 <script setup>
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import GD_DateFilter from '@/components/GD_DateFilter.vue';
 import {
   kpiCards,
   barChartData,
@@ -475,6 +474,9 @@ import {
 import { useConfirm } from '@/composables/useConfirm';
 
 const { showAlert } = useConfirm();
+const router = useRouter();
+
+const selectedDateRange = ref('30_days');
 
 const approvals = ref(
   pendingApprovalsData.map((item) => ({

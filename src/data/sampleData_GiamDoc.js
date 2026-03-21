@@ -12,7 +12,7 @@ export const barChartData = [
   { label: 'Tháng 10', current: 920, target: 950 },
   { label: 'Tháng 11', current: 1080, target: 1100 },
   { label: 'Tháng 12', current: 1150, target: 1200 },
-  { label: 'Tháng 1', current: 1250, target: 1250, active: true }
+  { label: 'Tháng 1', current: 1300, target: 1250, active: true }
 ];
 
 export const barChartYLabels = ['1,500', '1,250', '1,000', '750', '500', '250', '0'];
@@ -207,3 +207,189 @@ export const bienDongNhanLucData = [
   { month: 'Th.5', tuyenVao: 95, nghiViec: 70 },
   { month: 'Th.6', tuyenVao: 115, nghiViec: 55 }
 ];
+
+// ══════════════════════════════════════════
+// Dữ liệu mock cho GD_TTThongBao.vue
+// ══════════════════════════════════════════
+export const approvalRequests = [
+  {
+    id: 1,
+    name: 'Lê Thị Minh Anh',
+    dept: 'Trưởng phòng Marketing',
+    avatar: null,
+    initials: 'LA',
+    avatarBg: 'bg-pink-100',
+    avatarColor: 'text-pink-600',
+    type: 'Nghỉ phép',
+    typeIcon: 'event_busy',
+    typeColor: 'text-blue-600',
+    typeBg: 'bg-blue-50',
+    title: 'Nghỉ phép năm (03 ngày)',
+    time: 'Giờ lúc: 08:30 - 24/10/2023',
+    urgent: true,
+    category: 'nghi_phep',
+    status: 'pending'
+  },
+  {
+    id: 2,
+    name: 'Phòng Kỹ thuật',
+    dept: 'Yêu cầu từ: CTO',
+    avatar: null,
+    initials: 'KT',
+    avatarBg: 'bg-indigo-100',
+    avatarColor: 'text-indigo-600',
+    type: 'Tuyển dụng',
+    typeIcon: 'person_add',
+    typeColor: 'text-indigo-600',
+    typeBg: 'bg-indigo-50',
+    title: '02 Kỹ sư Hệ thống Cloud',
+    time: 'Giờ lúc: 15:20 - 23/10/2023',
+    urgent: false,
+    category: 'tuyen_dung',
+    status: 'pending'
+  },
+  {
+    id: 3,
+    name: 'Trần Hoàng Nam',
+    dept: 'Chuyên viên Phân tích Dữ liệu',
+    avatar: null,
+    initials: 'TN',
+    avatarBg: 'bg-green-100',
+    avatarColor: 'text-green-600',
+    type: 'Điều chỉnh lương',
+    typeIcon: 'payments',
+    typeColor: 'text-green-600',
+    typeBg: 'bg-green-50',
+    title: 'Tăng bậc lương định kỳ (Lên Senior)',
+    time: 'Giờ lúc: 10:15 - 23/10/2023',
+    urgent: false,
+    category: 'luong',
+    status: 'pending'
+  },
+  {
+    id: 4,
+    name: 'Phạm Gia Linh',
+    dept: 'Ứng viên tầm năng',
+    avatar: null,
+    initials: 'GL',
+    avatarBg: 'bg-amber-100',
+    avatarColor: 'text-amber-600',
+    type: 'Nhân sự mới',
+    typeIcon: 'badge',
+    typeColor: 'text-amber-600',
+    typeBg: 'bg-amber-50',
+    title: 'Phê duyệt HĐLĐ thử việc',
+    time: 'Giờ lúc: 09:00 - 23/10/2023',
+    urgent: false,
+    category: 'hop_dong',
+    status: 'pending'
+  },
+  {
+    id: 5,
+    name: 'Nguyễn Văn Hùng',
+    dept: 'Trưởng phòng Kinh doanh',
+    avatar: null,
+    initials: 'VH',
+    avatarBg: 'bg-teal-100',
+    avatarColor: 'text-teal-600',
+    type: 'Nghỉ phép',
+    typeIcon: 'event_busy',
+    typeColor: 'text-blue-600',
+    typeBg: 'bg-blue-50',
+    title: 'Nghỉ công tác nước ngoài (05 ngày)',
+    time: 'Giờ lúc: 08:00 - 22/10/2023',
+    urgent: true,
+    category: 'nghi_phep',
+    status: 'pending'
+  },
+  {
+    id: 6,
+    name: 'Phòng Tài chính',
+    dept: 'Yêu cầu từ: CFO',
+    avatar: null,
+    initials: 'TC',
+    avatarBg: 'bg-purple-100',
+    avatarColor: 'text-purple-600',
+    type: 'Ngân sách',
+    typeIcon: 'account_balance_wallet',
+    typeColor: 'text-purple-600',
+    typeBg: 'bg-purple-50',
+    title: 'Đề xuất điều chỉnh ngân sách Q4',
+    time: 'Giờ lúc: 14:30 - 21/10/2023',
+    urgent: false,
+    category: 'khac',
+    status: 'pending'
+  }
+];
+
+export const importantNotifications = [
+  {
+    id: 1,
+    level: 'bao_cao',
+    levelLabel: 'BÁO CÁO MỚI',
+    levelColor: 'text-blue-700',
+    levelBg: 'bg-blue-50',
+    dotColor: 'bg-blue-500',
+    icon: 'trending_down',
+    iconColor: 'text-blue-500',
+    title: 'Đã có báo cáo tình hình biến động nhân sự Tháng 10/2023',
+    desc: 'Dữ liệu cho thấy tỷ lệ thêm việc giảm 2.4% so với quý trước.',
+    action: 'Xem báo cáo →',
+    actionRoute: '/giam-doc/bien-dong',
+    time: '08:30, 24/10'
+  },
+  {
+    id: 2,
+    level: 'canh_bao',
+    levelLabel: 'CẢNH BÁO',
+    levelColor: 'text-orange-700',
+    levelBg: 'bg-orange-50',
+    dotColor: 'bg-orange-500',
+    icon: 'warning',
+    iconColor: 'text-orange-500',
+    title: 'Cảnh báo biến động nhân sự tại Khối Vận hành',
+    desc: 'Phòng Giao vận đang thiếu 15% nhân sự so với định biên an toàn.',
+    action: 'Phân tích chi tiết →',
+    actionRoute: '/giam-doc/nhan-su',
+    time: '10:15, 23/10'
+  },
+  {
+    id: 3,
+    level: 'lich_hop',
+    levelLabel: 'LỊCH HỌP',
+    levelColor: 'text-green-700',
+    levelBg: 'bg-green-50',
+    dotColor: 'bg-green-500',
+    icon: 'groups',
+    iconColor: 'text-green-600',
+    title: 'Nhắc nhở họp Hội đồng Quản trị định kỳ',
+    desc: 'Thời gian: 14:00 - Thứ Sáu, ngày 27/10/2023 tại Phòng họp Grand.',
+    action: 'Xác nhận tham gia',
+    actionRoute: null,
+    time: '09:00, 23/10'
+  },
+  {
+    id: 4,
+    level: 'su_kien',
+    levelLabel: 'SỰ KIỆN',
+    levelColor: 'text-purple-700',
+    levelBg: 'bg-purple-50',
+    dotColor: 'bg-purple-400',
+    icon: 'celebration',
+    iconColor: 'text-purple-500',
+    title: 'Kỷ niệm 10 năm thành lập Tập đoàn',
+    desc: 'Các phòng ban đã hoàn tất khâu chuẩn bị quà tặng nhân viên.',
+    action: null,
+    actionRoute: null,
+    time: '08:00, 22/10'
+  }
+];
+
+export const approvalStats = {
+  rate: 92,
+  rateLabel: 'HIỆU SUẤT PHÊ DUYỆT',
+  rateDesc: 'Tốc độ xử lý yêu cầu của bạn nhanh hơn 15% so với mức trung bình của ban điều hành.',
+  todayPending: 12,
+  todayApproved: 8,
+  todayRejected: 2
+};

@@ -7,10 +7,8 @@
         <p class="text-sm text-slate-500 mt-1 font-medium">Dữ liệu chiến lược cập nhật theo thời gian thực: Thứ Hai, 24 Tháng 5, 2024</p>
       </div>
       <div class="flex items-center gap-3">
-        <button class="flex items-center gap-2.5 px-4 md:px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-[13px] font-[800] text-[#1d3d70] hover:bg-slate-50 transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
-          <span class="material-symbols-rounded text-[18px] text-slate-500" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
-          30 ngày qua
-        </button>
+        <!-- Date filter button using GD_DateFilter component -->
+        <GD_DateFilter v-model="selectedDateRange" />
         <button class="flex items-center gap-2 px-5 py-2.5 bg-[#3B5BDB] border border-transparent rounded-xl text-sm font-bold text-white hover:bg-blue-700 transition-colors shadow-lg shadow-blue-500/20">
           <span class="material-symbols-outlined text-[18px]">download</span>
           Xuất báo cáo CEO
@@ -228,8 +226,11 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import GD_DateFilter from '@/components/GD_DateFilter.vue';
 import { nhanSuKpiCards, topPerformers, deptRankings, nhanSuCapBac, bienDongNhanLucData } from '@/data/sampleData_GiamDoc.js';
+
+const selectedDateRange = ref('30_days');
 
 const maxNhanSu = 500;
 const totalNhanSu = computed(() => nhanSuCapBac.reduce((acc, curr) => acc + curr.count, 0));

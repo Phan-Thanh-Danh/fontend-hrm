@@ -8,10 +8,8 @@
         </div>
         <div class="flex items-center gap-4">
             <!-- Thoi gian filters -->
-            <button class="flex items-center gap-2.5 px-4 md:px-5 py-2.5 bg-white border border-slate-200 rounded-2xl text-[13px] font-[800] text-[#1d3d70] hover:bg-slate-50 transition-all shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)]">
-              <span class="material-symbols-rounded text-[18px] text-slate-500" style="font-variation-settings: 'FILL' 1;">calendar_today</span>
-              30 ngày qua
-            </button>
+            <!-- Date filter button using GD_DateFilter component -->
+            <GD_DateFilter v-model="selectedDateRange" />
             <!-- Phong ban dropdown -->
             <div class="flex items-center gap-2 px-5 py-2.5 bg-[var(--sys-bg-surface)] border border-[var(--sys-border-subtle)] rounded-xl text-[var(--sys-text-primary)] text-xs font-semibold shadow-sm cursor-pointer hover:border-[var(--sys-brand-solid)] transition-all">
                  <span class="material-symbols-rounded text-lg text-[var(--sys-icon-default)]">filter_list</span>
@@ -244,7 +242,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
+import GD_DateFilter from '@/components/GD_DateFilter.vue';
 import {
   chuyenCanCards,
   depts,
@@ -252,6 +251,8 @@ import {
   badUsers,
   chuyenCanLineChart
 } from '@/data/sampleData_GiamDoc.js';
+
+const selectedDateRange = ref('30_days');
 
 const defaultAvg = chuyenCanLineChart.length ? (chuyenCanLineChart.reduce((a,b) => a+b, 0) / chuyenCanLineChart.length).toFixed(1) : '98.5';
 

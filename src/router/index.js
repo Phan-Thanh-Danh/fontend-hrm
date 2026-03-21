@@ -200,6 +200,12 @@ const routes = [
                         name: 'giam-doc-ho-so',
                         component: () => import('../View/admin/GiamDoc/GD_HoSoCaNhan.vue'),
                         meta: { index: 6 }
+                  },
+                  {
+                        path: 'thong-bao',
+                        name: 'giam-doc-thong-bao',
+                        component: () => import('../View/admin/GiamDoc/GD_TTThongBao.vue'),
+                        meta: { index: 7 }
                   }
             ]
       }
