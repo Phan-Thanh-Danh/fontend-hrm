@@ -7,6 +7,11 @@ import Layout_GiamDoc from '../components/Layout_GiamDoc.vue'
 
 const routes = [
       {
+            path: '/landing',
+            name: 'landing',
+            component: () => import('../View/LandingPage.vue')
+      },
+      {
             path: '/login',
             name: 'login',
             component: () => import('../components/Login.vue')
