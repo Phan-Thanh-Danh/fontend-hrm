@@ -290,7 +290,10 @@ const selectedRequest = ref(null);
 
 const requests = computed(() => {
   const allReqTypes = requestTypesAPI.getAll();
-  return mockDB.requests.map(req => {
+  // Lấy toàn bộ và sắp xếp mới nhất
+  const rawList = [...mockDB.requests].sort((a,b) => new Date(b.request_date||0) - new Date(a.request_date||0));
+  
+  return rawList.map(req => {
     const emp = employeesAPI.getById(req.requester_id || req.employee_id);
     const dept = departmentsAPI.getById(req.department_id || (emp ? emp.department_id : null));
     const typeObj = allReqTypes.find(t => t.request_type_id === req.request_type_id);
@@ -299,7 +302,8 @@ const requests = computed(() => {
     let mappedStatus = 'pending';
     if (req.status === 'ĐÃ_DUYỆT') mappedStatus = 'approved';
     if (req.status === 'TỪ_CHỐI') mappedStatus = 'rejected';
-    if (req.status === 'CHỜ_DUYỆT' || req.status === 'ĐANG_XỬ_LÝ') mappedStatus = 'pending';
+    // CHỜ_GIÁM_ĐỐC_DUYỆT cũng là pending đối với Admin
+    if (req.status === 'CHỜ_DUYỆT' || req.status === 'ĐANG_XỬ_LÝ' || req.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT') mappedStatus = 'pending';
 
     const reqTitle = req.title || typeObj?.request_type_name || 'Yêu cầu';
     let icon = 'event_note'; 
@@ -314,7 +318,7 @@ const requests = computed(() => {
       department: dept ? dept.department_name.toUpperCase() : 'N/A',
       title: reqTitle,
       icon: icon,
-      dateRange: req.start_date && req.end_date ? `${req.start_date} - ${req.end_date}` : (req.request_date ? req.request_date.split(' ')[0] : 'Hôm nay'),
+      dateRange: req.start_date && req.end_date ? `${req.start_date} - ${req.end_date}` : (req.request_date ? req.request_date.split(' '||'T')[0] : 'Hôm nay'),
       duration: req.days ? `${req.days} ngày` : 'N/A',
       reason: req.notes || req.reason || 'Không có ghi chú',
       status: mappedStatus

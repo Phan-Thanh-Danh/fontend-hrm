@@ -1,203 +1,271 @@
 <template>
-  <div class="leave-wrapper min-h-screen bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] p-4 md:p-6 lg:p-8">
-    <div class="max-w-7xl mx-auto space-y-6 bg-transparent">
+  <div class="space-y-6 pb-8 text-left bg-[var(--sys-bg-page)] min-h-screen p-4 md:p-6 lg:p-8">
+    
+    <!-- Header Area -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left">
+      <div class="bg-transparent text-left">
+        <h1 class="text-xl font-bold text-[var(--sys-text-primary)] mb-1 uppercase tracking-tight flex items-center gap-3">
+          <span class="material-symbols-rounded text-[var(--sys-brand-solid)] text-[24px]">event_available</span>
+          Quản lý Nghỉ phép & Vắng mặt
+        </h1>
+        <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium">Theo dõi quỹ phép năm và đăng ký các yêu cầu nghỉ phép cá nhân.</p>
+      </div>
       
-      <!-- Header Area -->
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
-        <div class="bg-transparent text-left">
-          <h1 class="text-xl font-bold text-[var(--sys-text-primary)] mb-0.5 tracking-tight uppercase">Quản lý Nghỉ phép & Vắng mặt</h1>
-          <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium">Theo dõi quỹ phép năm và lịch sử các yêu cầu vắng mặt cá nhân.</p>
-        </div>
-        <button @click="showModal = true" class="h-11 px-6 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[13px] uppercase tracking-wide hover:brightness-95 transition-all flex items-center justify-center gap-2 shadow-sm shrink-0">
+      <div class="flex items-center gap-3 bg-transparent">
+        <button 
+          @click="showModal = true; isSuccess = false" 
+          class="h-11 px-6 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[12px] uppercase tracking-wider flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-[var(--sys-brand-solid)]/10"
+        >
           <span class="material-symbols-rounded text-[20px]">add</span>
           Tạo đơn nghỉ phép
         </button>
       </div>
+    </div>
 
-      <!-- Metric Cards Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <!-- Balance Card -->
-        <div class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] p-6 shadow-sm hover:border-[var(--sys-brand-solid)] transition-all flex flex-col group">
-          <div class="flex justify-between items-start mb-6">
-            <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-60">Số dư phép năm</span>
-            <div class="w-12 h-12 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)] group-hover:scale-105 transition-transform">
-              <span class="material-symbols-rounded text-2xl">account_balance_wallet</span>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-2 mt-auto">
-            <span class="text-4xl font-bold text-[var(--sys-text-primary)] tracking-tight">12</span>
-            <span class="text-[11px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest opacity-40">ngày</span>
-          </div>
+    <!-- Stats Cards Grid (Matching Admin/Director style) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Total Leave Days -->
+      <div class="bg-[var(--sys-bg-surface)] p-4 rounded-lg border border-[var(--sys-border-subtle)] shadow-sm hover:border-[var(--sys-brand-solid)] transition-all group flex items-center gap-4">
+        <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] flex items-center justify-center shrink-0">
+          <span class="material-symbols-rounded text-xl">account_balance_wallet</span>
         </div>
-        
-        <!-- Used Card -->
-        <div class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] p-6 shadow-sm hover:border-[var(--sys-warning-border)] transition-all flex flex-col group">
-          <div class="flex justify-between items-start mb-6">
-            <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-60">Đã sử dụng</span>
-            <div class="w-12 h-12 rounded-md bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] flex items-center justify-center border border-[var(--sys-warning-border)] group-hover:scale-105 transition-transform">
-              <span class="material-symbols-rounded text-2xl">event_available</span>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-2 mt-auto">
-            <span class="text-4xl font-bold text-[var(--sys-warning-text)] tracking-tight">3</span>
-            <span class="text-[11px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest opacity-40">ngày</span>
-          </div>
+        <div class="bg-transparent flex flex-col overflow-hidden">
+          <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] mb-0.5 uppercase tracking-widest opacity-60 truncate">Tổng quỹ phép</p>
+          <p class="text-xl font-bold text-[var(--sys-text-primary)] m-0 leading-tight tracking-tight">14 <small class="text-[10px] opacity-40">ngày</small></p>
         </div>
-        
-        <!-- Pending Card -->
-        <div class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] p-6 shadow-sm hover:border-[var(--sys-brand-solid)] transition-all flex flex-col group">
-          <div class="flex justify-between items-start mb-6">
-            <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-60">Đang chờ duyệt</span>
-            <div class="w-12 h-12 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)] group-hover:scale-105 transition-transform">
-              <span class="material-symbols-rounded text-2xl">pending_actions</span>
-            </div>
-          </div>
-          <div class="flex items-baseline gap-2 mt-auto">
-            <span class="text-4xl font-bold text-[var(--sys-brand-solid)] tracking-tight">{{ pendingCount }}</span>
-            <span class="text-[11px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest opacity-40">ngày</span>
-          </div>
+      </div>
+      
+      <!-- Used Days -->
+      <div class="bg-[var(--sys-bg-surface)] p-4 rounded-lg border border-[var(--sys-border-subtle)] shadow-sm hover:border-[var(--sys-warning-border)] transition-all group flex items-center gap-4">
+        <div class="w-10 h-10 rounded-md bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border border-[var(--sys-warning-border)] flex items-center justify-center shrink-0">
+          <span class="material-symbols-rounded text-xl">event_available</span>
+        </div>
+        <div class="bg-transparent flex flex-col overflow-hidden">
+          <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] mb-0.5 uppercase tracking-widest opacity-60 truncate">Đã sử dụng</p>
+          <p class="text-xl font-bold text-[var(--sys-warning-text)] m-0 leading-tight tracking-tight">02 <small class="text-[10px] opacity-40 text-[var(--sys-text-disabled)]">ngày</small></p>
         </div>
       </div>
 
-      <!-- History Table -->
-      <div class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col">
-        <div class="px-5 py-4 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 flex justify-between items-center">
-          <h2 class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest m-0 flex items-center gap-2">
-             <span class="material-symbols-rounded text-[18px] text-[var(--sys-brand-solid)]">history</span>
-             Lịch sử yêu cầu nghỉ phép
-          </h2>
-          <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] opacity-50 italic">Double-click đơn CHỜ DUYỆT để hủy</span>
+      <!-- Pending Requests -->
+      <div class="bg-[var(--sys-bg-surface)] p-4 rounded-lg border border-[var(--sys-border-subtle)] shadow-sm hover:border-[var(--sys-brand-solid)] transition-all group flex items-center gap-4">
+        <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] flex items-center justify-center shrink-0">
+          <span class="material-symbols-rounded text-xl">pending_actions</span>
         </div>
-        
-        <div class="overflow-x-auto custom-scrollbar">
-          <table class="w-full text-left border-collapse">
-            <thead class="bg-[var(--sys-bg-page)]">
-              <tr>
-                <th class="px-6 py-4 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest">Loại phép</th>
-                <th class="px-6 py-4 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest">Thời gian nghỉ</th>
-                <th class="px-6 py-4 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest text-center">Tổng ngày</th>
-                <th class="px-6 py-4 text-[11px] font-bold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-widest text-right">Trạng thái</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-[var(--sys-border-subtle)]">
-              <tr v-for="item in leaveHistory" :key="item.id" 
-                @dblclick="handleDeleteRequest(item)"
-                class="hover:bg-[var(--sys-bg-hover)] transition-all cursor-pointer group"
+        <div class="bg-transparent flex flex-col overflow-hidden">
+          <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] mb-0.5 uppercase tracking-widest opacity-60 truncate">Đang chờ duyệt</p>
+          <p class="text-xl font-bold text-[var(--sys-brand-solid)] m-0 leading-tight tracking-tight">{{ pendingCount }} <small class="text-[10px] opacity-40 text-[var(--sys-text-disabled)]">đơn</small></p>
+        </div>
+      </div>
+
+      <!-- Remaining Balance -->
+      <div class="bg-[var(--sys-bg-surface)] p-4 rounded-lg border border-[var(--sys-border-subtle)] shadow-sm hover:border-[var(--sys-success-border)] transition-all group flex items-center gap-4 border-l-4 border-l-[var(--sys-success-solid)]">
+        <div class="w-10 h-10 rounded-md bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border border-[var(--sys-success-border)] flex items-center justify-center shrink-0">
+          <span class="material-symbols-rounded text-xl">payments</span>
+        </div>
+        <div class="bg-transparent flex flex-col overflow-hidden">
+          <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] mb-0.5 uppercase tracking-widest opacity-60 truncate">Còn lại</p>
+          <p class="text-xl font-bold text-[var(--sys-success-text)] m-0 leading-tight tracking-tight">12 <small class="text-[10px] opacity-40 text-[var(--sys-text-disabled)]">ngày</small></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Table (Enterprise Layout) -->
+    <div class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col">
+      <div class="px-5 py-3 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 flex justify-between items-center h-14">
+        <h3 class="text-[13px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest m-0 flex items-center gap-2 leading-none">
+          <span class="material-symbols-rounded text-[var(--sys-brand-solid)] text-[20px]">history</span>
+          Lịch sử yêu cầu vắng mặt
+        </h3>
+        <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase opacity-50 tracking-tighter">Click đơn CHỜ DUYỆT để xóa</span>
+      </div>
+      
+      <div class="overflow-x-auto custom-scrollbar">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-[var(--sys-bg-page)]">
+              <th class="px-6 py-3 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)]">Loại hình</th>
+              <th class="px-6 py-3 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)]">Thời gian</th>
+              <th class="px-6 py-3 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] text-center">Tổng ngày</th>
+              <th class="px-6 py-3 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] text-right">Trạng thái</th>
+              <th class="px-6 py-3 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest border-b border-[var(--sys-border-subtle)] text-right">Tác vụ</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-[var(--sys-border-subtle)]">
+            <tr v-for="item in leaveHistory" :key="item.id" class="group hover:bg-[var(--sys-bg-hover)] transition-all">
+              <td class="px-6 py-4 whitespace-nowrap bg-transparent">
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] uppercase tracking-tight group-hover:text-[var(--sys-brand-solid)]">{{ item.type }}</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap bg-transparent">
+                <span class="text-[13px] font-medium text-[var(--sys-text-secondary)] uppercase tracking-tighter">{{ item.duration }}</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap bg-transparent text-center">
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ item.total }}</span>
+              </td>
+              <td class="px-6 py-4 text-right whitespace-nowrap bg-transparent">
+                <span :class="[
+                  'px-3 py-1 rounded-md text-[10px] font-bold inline-flex items-center gap-2 border transition-all uppercase tracking-widest shadow-sm',
+                  getStatusBadgeClass(item.statusRaw)
+                ]">
+                  <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotClass(item.statusRaw)"></span>
+                  {{ item.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 text-right whitespace-nowrap bg-transparent">
+                <button 
+                  v-if="item.statusRaw === 'CHỜ_DUYỆT'" 
+                  @click="handleDeleteRequest(item)"
+                  class="w-8 h-8 flex items-center justify-center rounded-md text-[var(--sys-text-secondary)] hover:text-[var(--sys-danger-solid)] hover:bg-[var(--sys-danger-soft)] transition-all border border-transparent hover:border-[var(--sys-danger-border)]"
+                >
+                  <span class="material-symbols-rounded text-[20px]">delete</span>
+                </button>
+                <span v-else class="material-symbols-rounded text-[var(--sys-text-disabled)] opacity-20">lock</span>
+              </td>
+            </tr>
+            <tr v-if="leaveHistory.length === 0">
+               <td colspan="5" class="px-6 py-20 text-center opacity-40">
+                  <span class="material-symbols-rounded text-4xl block mb-2">inbox</span>
+                  <p class="text-[12px] font-bold uppercase tracking-widest">Chưa có lịch sử yêu cầu</p>
+               </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Modal: Create Request (Matching Admin Form style) -->
+    <Teleport to="body">
+      <Transition name="modal">
+        <div v-if="showModal" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-all duration-300">
+          <div class="bg-white w-full max-w-xl rounded-lg border border-[var(--sys-border-subtle)] flex flex-col max-h-[90vh] overflow-hidden shadow-2xl transform transition-all">
+            
+            <!-- Success State -->
+            <div v-if="isSuccess" class="p-12 flex flex-col items-center justify-center text-center space-y-6">
+              <div class="w-16 h-16 rounded-full bg-[var(--sys-success-soft)] flex items-center justify-center border-2 border-[var(--sys-success-border)] relative">
+                <span class="material-symbols-rounded text-[32px] text-[var(--sys-success-solid)]">check</span>
+              </div>
+              <div class="bg-transparent text-center">
+                <h3 class="text-lg font-bold text-[var(--sys-text-primary)] tracking-tight uppercase">Gửi yêu cầu thành công</h3>
+                <p class="text-[13px] text-[var(--sys-text-secondary)] mt-1 font-medium max-w-xs mx-auto">
+                  Đơn nghỉ phép của bạn đã được chuyển đến quản lý trực tiếp phê duyệt.
+                </p>
+              </div>
+              <button 
+                @click="closeSuccessModal" 
+                class="h-10 px-8 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold uppercase tracking-widest text-[11px] hover:brightness-95 transition-all shadow-md shadow-[var(--sys-brand-solid)]/10"
               >
-                <td class="px-6 py-4 whitespace-nowrap bg-transparent">
-                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)] uppercase tracking-tight group-hover:text-[var(--sys-brand-solid)]">{{ item.type }}</span>
-                </td>
-                <td class="px-6 py-4 text-[13px] font-medium text-[var(--sys-text-secondary)] bg-transparent">
-                  {{ item.duration }}
-                </td>
-                <td class="px-6 py-4 text-center bg-transparent">
-                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ item.total }}</span>
-                </td>
-                <td class="px-6 py-4 text-right bg-transparent">
-                  <span :class="getStatusBadgeClass(item.statusRaw)" class="px-3 py-1 rounded-md text-[10px] font-bold uppercase tracking-widest inline-flex items-center gap-2 border shadow-sm">
-                    <span class="w-1.5 h-1.5 rounded-full animate-pulse" :class="getStatusDotClass(item.statusRaw)"></span>
-                    {{ item.status }}
-                  </span>
-                </td>
-              </tr>
-              <tr v-if="leaveHistory.length === 0">
-                 <td colspan="4" class="px-6 py-12 text-center">
-                    <p class="text-[13px] font-medium text-[var(--sys-text-disabled)] italic">Chưa có dữ liệu yêu cầu nghỉ phép.</p>
-                 </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
+                Đồng ý
+              </button>
+            </div>
 
-      <!-- Modal: Create Request -->
-      <Teleport to="body">
-        <Transition name="modal">
-          <div v-if="showModal" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md">
-            <div class="bg-white w-full max-w-xl rounded-lg shadow-2xl border border-[var(--sys-border-subtle)] flex flex-col max-h-[90vh] overflow-hidden transform transition-all">
+            <!-- Validation Error State -->
+            <div v-else-if="isValidationError" class="p-12 flex flex-col items-center justify-center text-center space-y-6">
+              <div class="w-16 h-16 rounded-full bg-[var(--sys-danger-soft)] flex items-center justify-center border-2 border-[var(--sys-danger-border)] relative">
+                <span class="material-symbols-rounded text-[32px] text-[var(--sys-danger-solid)]">error</span>
+              </div>
+              <div class="bg-transparent text-center">
+                <h3 class="text-lg font-bold text-[var(--sys-text-primary)] tracking-tight uppercase">Thông tin chưa hợp lệ</h3>
+                <p class="text-[13px] text-[var(--sys-text-secondary)] mt-1 font-bold max-w-xs mx-auto">
+                  {{ validationMessage }}
+                </p>
+              </div>
+              <button 
+                @click="isValidationError = false" 
+                class="h-10 px-8 bg-[var(--sys-danger-solid)] text-white rounded-md font-bold uppercase tracking-widest text-[11px] hover:brightness-95 transition-all shadow-md shadow-[var(--sys-danger-solid)]/10"
+              >
+                Quay lại chỉnh sửa
+              </button>
+            </div>
+
+            <!-- Form State -->
+            <template v-else>
               <!-- Modal Header -->
-              <div class="px-6 py-5 border-b border-[var(--sys-border-subtle)] flex justify-between items-center bg-[var(--sys-bg-page)]/50">
-                <h3 class="text-[12px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest m-0 flex items-center gap-2">
-                   <div class="w-8 h-8 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)]">
-                      <span class="material-symbols-rounded text-[20px]">post_add</span>
-                   </div>
-                   Tạo đơn nghỉ phép mới
-                </h3>
-                <button @click="showModal = false" class="w-9 h-9 flex items-center justify-center rounded-md hover:bg-[var(--sys-danger-soft)] text-[var(--sys-text-secondary)] hover:text-[var(--sys-danger-text)] transition-all border border-transparent hover:border-[var(--sys-danger-border)]">
+              <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex justify-between items-center bg-[var(--sys-bg-surface)]">
+                <div class="flex items-center gap-3 bg-transparent text-left">
+                  <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)]">
+                    <span class="material-symbols-rounded text-[22px]">post_add</span>
+                  </div>
+                  <div class="bg-transparent text-left">
+                    <h3 class="text-[14px] font-bold text-[var(--sys-text-primary)] uppercase tracking-tight m-0 leading-none">Thiết lập đơn nghỉ phép</h3>
+                    <p class="text-[10px] text-[var(--sys-text-secondary)] mt-1 font-bold opacity-60 uppercase tracking-tighter">Vui lòng điền đầy đủ thông tin định danh</p>
+                  </div>
+                </div>
+                <button @click="showModal = false" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all">
                   <span class="material-symbols-rounded text-[22px]">close</span>
                 </button>
               </div>
               
-              <!-- Modal Body -->
-              <div class="p-8 space-y-6 overflow-y-auto custom-scrollbar bg-white">
-                <div class="space-y-2">
-                  <label class="block text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5">Loại hình nghỉ phép <span class="text-[var(--sys-danger-solid)]">*</span></label>
-                  <Dropdown v-model="leaveType" :options="leaveTypeOptions" placeholder="-- Chọn loại hình nghỉ --" class="h-11 shadow-sm" />
+              <!-- Modal Body (Grid 2 columns where needed) -->
+              <div class="p-6 space-y-6 overflow-y-auto custom-scrollbar bg-white flex-1 text-left">
+                <!-- Row 1: Type -->
+                <div class="space-y-1.5 bg-transparent">
+                   <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest ml-1">Loại hình nghỉ phép *</label>
+                   <Dropdown v-model="leaveType" :options="leaveTypeOptions" placeholder="-- Chọn loại hình nghỉ --" class="h-11 shadow-sm" />
                 </div>
 
-                <div class="grid grid-cols-2 gap-5">
-                  <div class="space-y-2">
-                    <label class="block text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5">Từ ngày <span class="text-[var(--sys-danger-solid)]">*</span></label>
-                    <CalendarCustom v-model="startDate" placeholder="Chọn ngày bắt đầu" />
+                <!-- Row 2: Dates -->
+                <div class="grid grid-cols-2 gap-4 bg-transparent">
+                  <div class="space-y-1.5 bg-transparent">
+                    <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest ml-1">Từ ngày *</label>
+                    <CalendarCustom v-model="startDate" placeholder="Bắt đầu từ..." disable-past />
                   </div>
-                  <div class="space-y-2">
-                    <label class="block text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5">Đến ngày <span class="text-[var(--sys-danger-solid)]">*</span></label>
-                    <CalendarCustom v-model="endDate" placeholder="Chọn ngày kết thúc" />
-                  </div>
-                </div>
-
-                <div class="bg-[var(--sys-brand-soft)] p-5 rounded-md border border-[var(--sys-brand-border)] flex justify-between items-center shadow-inner">
-                  <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)]">
-                       <span class="material-symbols-rounded text-[20px]">calendar_month</span>
-                    </div>
-                    <span class="text-[12px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-tight">Tổng số ngày nghỉ dự kiến:</span>
-                  </div>
-                  <span class="text-xl font-black text-[var(--sys-brand-solid)]">
-                    {{ calculateDays }} ngày
-                  </span>
-                </div>
-
-                <div class="space-y-2">
-                  <label class="block text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5">Lý do nghỉ phép chi tiết <span class="text-[var(--sys-danger-solid)]">*</span></label>
-                  <textarea v-model="reason" class="w-full h-28 p-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm resize-none transition-all placeholder:opacity-50" placeholder="Vui lòng nhập lý do cụ thể để cấp trên dễ dàng phê duyệt..."></textarea>
-                </div>
-
-                <div class="space-y-2">
-                  <label class="block text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1.5">Tài liệu đính kèm (Minh chứng)</label>
-                  <div class="border-2 border-dashed border-[var(--sys-border-subtle)] rounded-md p-8 flex flex-col items-center justify-center text-center bg-[var(--sys-bg-page)] hover:border-[var(--sys-brand-solid)] hover:bg-[var(--sys-brand-soft)]/20 cursor-pointer transition-all group">
-                    <span class="material-symbols-rounded text-5xl text-[var(--sys-text-disabled)] group-hover:text-[var(--sys-brand-solid)] opacity-30 mb-3 transition-colors">cloud_upload</span>
-                    <p class="text-[12px] font-extrabold text-[var(--sys-text-primary)] mb-1 uppercase tracking-tight">Nhấp để tải lên hoặc kéo thả tệp tin</p>
-                    <p class="text-[10px] font-bold text-[var(--sys-text-disabled)] opacity-60">PDF, JPG, PNG (Tối đa 5MB)</p>
+                  <div class="space-y-1.5 bg-transparent">
+                    <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest ml-1">Đến ngày *</label>
+                    <CalendarCustom v-model="endDate" placeholder="Kết thúc vào..." disable-past />
                   </div>
                 </div>
 
-                <div class="flex gap-4 pt-6 border-t border-[var(--sys-border-subtle)]">
-                  <button @click="submitRequest" class="flex-grow h-12 bg-[var(--sys-brand-solid)] text-white rounded-md font-black text-[13px] uppercase tracking-wider hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 shadow-lg">
-                    <span class="material-symbols-rounded text-[20px] font-bold">send</span>
-                    GỬI YÊU CẦU NGAY
-                  </button>
-                  <button @click="showModal = false" class="h-12 px-8 bg-white border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)] rounded-md font-bold text-[12px] uppercase tracking-widest hover:bg-[var(--sys-bg-hover)] shadow-sm transition-all">
-                    HỦY BỎ
-                  </button>
+                <!-- Row 3: Reason -->
+                <div class="space-y-1.5 bg-transparent text-left">
+                  <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest ml-1">Lý do chi tiết *</label>
+                  <textarea 
+                    v-model="reason" 
+                    placeholder="Ghi chú thêm về lý do nghỉ phép..."
+                    class="w-full h-24 px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-inner transition-all resize-none"
+                  ></textarea>
+                </div>
+
+                <!-- Info summary -->
+                <div class="p-4 bg-[var(--sys-bg-page)] rounded-md border border-[var(--sys-border-subtle)] border-dashed flex items-center justify-between">
+                   <div class="flex items-center gap-3">
+                      <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Tổng thời gian:</span>
+                      <span class="text-sm font-black text-[var(--sys-brand-solid)]">{{ calculateDays }} NGÀY</span>
+                   </div>
+                   <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase italic" v-if="calculateDays > 0">Khả dụng: 12 ngày</span>
                 </div>
               </div>
-            </div>
-          </div>
-        </Transition>
-      </Teleport>
 
-    </div>
+              <!-- Modal Footer -->
+              <div class="px-6 py-4 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] flex gap-3">
+                <button @click="showModal = false" class="flex-1 h-10 rounded-md text-[11px] font-bold uppercase tracking-widest text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] transition-all">Hủy bỏ</button>
+                <button 
+                  @click="submitRequest" 
+                  class="flex-[1.5] h-10 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold uppercase tracking-widest text-[11px] hover:brightness-95 active:scale-[0.98] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[var(--sys-brand-solid)]/10"
+                >
+                  <span class="material-symbols-rounded text-[18px]">send</span>
+                  Xác nhận gửi đơn
+                </button>
+              </div>
+            </template>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import CalendarCustom from '@/components/CalendarCustom.vue';
 import Dropdown from '@/components/Dropdown.vue';
+import { useConfirm } from '@/composables/useConfirm';
 import { requestsAPI, requestTypesAPI, employeesAPI, departmentsAPI } from '@/data/mockDB.js';
 
+const { showAlert, showConfirm } = useConfirm();
+
 const showModal = ref(false);
+const isSuccess = ref(false);
+const isValidationError = ref(false);
+const validationMessage = ref('');
 const leaveType = ref(null);
 const startDate = ref('');
 const endDate = ref('');
@@ -205,6 +273,11 @@ const reason = ref('');
 
 const requestTypes = ref([]);
 const leaveHistory = ref([]);
+
+const closeSuccessModal = () => {
+  isSuccess.value = false;
+  showModal.value = false;
+};
 
 const leaveTypeOptions = computed(() => {
   return requestTypes.value.map(t => ({
@@ -216,12 +289,6 @@ const leaveTypeOptions = computed(() => {
 
 // Mock Current User (Nhân viên IT)
 const CURRENT_EMP_ID = 2; // Quang Huy
-
-// Form states (Defined above)
-// const leaveType = ref(null);
-// const startDate = ref('');
-// const endDate = ref('');
-// const reason = ref('');
 
 const calculateDays = computed(() => {
   if (!startDate.value || !endDate.value) return 0;
@@ -237,10 +304,7 @@ const pendingCount = computed(() => {
 });
 
 const fetchData = () => {
-  // Load Request Types
   requestTypes.value = requestTypesAPI.getAll().filter(t => t.category === 'NGHỈ_PHÉP' || t.request_type_id === 1);
-
-  // Load History
   const allReqs = requestsAPI.getAll();
   const myReqs = allReqs.filter(r => r.requester_id === CURRENT_EMP_ID);
 
@@ -259,19 +323,17 @@ const fetchData = () => {
 
 const submitRequest = () => {
   if (!leaveType.value || !startDate.value || !endDate.value || !reason.value) {
-    alert('Vui lòng điền đầy đủ thông tin bắt buộc.');
+    validationMessage.value = 'Vui lòng hoàn tất tất cả các trường thông tin có dấu (*)';
+    isValidationError.value = true;
     return;
   }
 
   const days = calculateDays.value;
   if (days <= 0) {
-    alert('Ngày nghỉ không hợp lệ. Vui lòng kiểm tra lại Từ ngày và Đến ngày.');
+    validationMessage.value = 'Khoảng thời gian nghỉ phép không hợp lệ (Ngày bắt đầu phải trước ngày kết thúc)';
+    isValidationError.value = true;
     return;
   }
-
-  // WORKFLOW: Tất cả đơn đi qua Manager và Admin trước.
-  // Việc chuyển tiếp lên Giám đốc sẽ do hệ thống tự động xử lý khi Manager duyệt đơn > 3 ngày.
-  let visibility = ['Admin', 'Manager'];
 
   const typeObj = requestTypesAPI.getById(leaveType.value);
   const employee = employeesAPI.getById(CURRENT_EMP_ID);
@@ -287,34 +349,30 @@ const submitRequest = () => {
     status: 'CHỜ_DUYỆT',
     is_urgent: days >= 3,
     request_date: new Date().toISOString().split('T')[0],
-    visible_to: visibility,
+    visible_to: ['Admin', 'Manager'],
     department_id: employee?.department_id || 2
   };
 
   try {
     requestsAPI.add(newRequest);
-    showModal.value = false;
-    
-    // Reset form
+    isSuccess.value = true;
     startDate.value = '';
     endDate.value = '';
     reason.value = '';
-    
-    // Re-load
     fetchData();
-    alert('Gửi yêu cầu nghỉ phép thành công! Phép của bạn đang được chuyển đến cấp có thẩm quyền.');
   } catch (error) {
     console.error('Lỗi khi gửi đơn nghỉ phép:', error);
   }
 };
 
-const handleDeleteRequest = (item) => {
+const handleDeleteRequest = async (item) => {
   if (item.statusRaw !== 'CHỜ_DUYỆT') {
-    alert('Không thể xóa đơn đã được duyệt hoặc từ chối!');
+    await showAlert('Không khả dụng', 'Không thể xóa đơn đã được duyệt hoặc từ chối!');
     return;
   }
   
-  if (confirm(`Bạn có chắc chắn muốn xóa đơn nghỉ phép này?`)) {
+  const ok = await showConfirm('Xác nhận xóa', 'Bạn có chắc chắn muốn hủy bỏ và xóa đơn nghỉ phép này không?');
+  if (ok) {
     try {
       requestsAPI.delete(item.id);
       fetchData();
@@ -330,14 +388,10 @@ onMounted(() => {
 
 const getStatusBadgeClass = (status) => {
   switch (status) {
-    case 'ĐÃ_DUYỆT':
-      return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
-    case 'CHỜ_DUYỆT':
-      return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]';
-    case 'TỪ_CHỐI':
-      return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
-    default:
-      return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
+    case 'ĐÃ_DUYỆT': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
+    case 'CHỜ_DUYỆT': return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]';
+    case 'TỪ_CHỐI': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
+    default: return 'bg-[var(--sys-bg-page)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
   }
 };
 
@@ -346,15 +400,12 @@ const getStatusDotClass = (status) => {
     case 'ĐÃ_DUYỆT': return 'bg-[var(--sys-success-solid)]';
     case 'CHỜ_DUYỆT': return 'bg-[var(--sys-brand-solid)]';
     case 'TỪ_CHỐI': return 'bg-[var(--sys-danger-solid)]';
-    default: return 'bg-[var(--sys-text-disabled)]';
+    default: return 'bg-[var(--sys-text-disabled)] opacity-40';
   }
 };
 </script>
 
 <style scoped>
-.leave-wrapper {
-  background-color: var(--sys-bg-page);
-}
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -371,17 +422,10 @@ const getStatusDotClass = (status) => {
 }
 
 .modal-enter-active, .modal-leave-active {
-  transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .modal-enter-from, .modal-leave-to {
   opacity: 0;
-  transform: scale(0.9) translateY(20px);
-}
-
-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1.25rem;
+  transform: scale(0.98) translateY(10px);
 }
 </style>

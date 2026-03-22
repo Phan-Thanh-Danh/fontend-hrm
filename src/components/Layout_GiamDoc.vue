@@ -195,9 +195,10 @@
 import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  importantNotifications,
-  approvalRequests
+  importantNotifications as staticNotifs,
+  approvalRequests as staticApprovals
 } from '@/data/sampleData_GiamDoc.js';
+import { requestsAPI, employeesAPI, requestTypesAPI } from '@/data/mockDB.js';
 
 const route  = useRoute();
 const router = useRouter();
@@ -231,18 +232,34 @@ const handleNotifClick = (item) => {
   }
 };
 
-// Lấy 3 thông báo mới nhất
+// Lấy 3 thông báo mới nhất (vẫn dùng staticNotifs vì đây là thông báo hệ thống/sự kiện)
 const recentNotifications = computed(() =>
-  importantNotifications.slice(0, 3)
+  staticNotifs.slice(0, 3)
 );
 
-// Lấy 2 yêu cầu phê duyệt đầu (ưu tiên khẩn)
-const recentApprovals = computed(() => {
-  const sorted = [...approvalRequests].sort((a, b) => b.urgent - a.urgent);
-  return sorted.slice(0, 2);
+// Lấy yêu cầu phê duyệt REAL từ mockDB (CHỜ_GIÁM_ĐỐC_DUYỆT)
+const realApprovals = computed(() => {
+  const allReqs = requestsAPI.getAll();
+  return allReqs.filter(r => r.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT').map(r => {
+    const emp = employeesAPI.getById(r.requester_id);
+    const type = requestTypesAPI.getById(r.request_type_id);
+    return {
+      id: r.request_id,
+      name: emp?.full_name || 'Nhân viên',
+      title: type?.request_type_name || 'Nghi phép',
+      initials: emp?.full_name?.charAt(0) || 'N',
+      urgent: r.is_urgent || false,
+      avatarBg: 'bg-indigo-100',
+      avatarColor: 'text-indigo-600'
+    };
+  });
 });
 
-const approvalCount = computed(() => approvalRequests.length);
+const recentApprovals = computed(() => {
+  return realApprovals.value.slice(0, 3);
+});
+
+const approvalCount = computed(() => realApprovals.value.length);
 
 // ── Transition Logic ────────────────────────────────────────────────────────
 const transitionName = ref('fade');

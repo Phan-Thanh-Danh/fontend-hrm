@@ -379,7 +379,14 @@ const approvalStats = computed(() => {
 
 // ── Mapped Reactive Requests ────────────────────────────
 const mappedRequests = computed(() => {
-  return requestsAPI.getAll().map(req => {
+  // Lấy toàn bộ yêu cầu và sắp xếp mới nhất lên đầu
+  const allRequests = [...requestsAPI.getAll()].sort((a, b) => {
+    const dateA = new Date(a.request_date || 0);
+    const dateB = new Date(b.request_date || 0);
+    return dateB - dateA;
+  });
+
+  return allRequests.map(req => {
     const emp = employeesAPI.getById(req.requester_id) || {};
     const dept = departmentsAPI.getById(emp.department_id) || {};
     const reqTypeObj = requestTypesAPI.getById(req.request_type_id) || {};
@@ -388,6 +395,11 @@ const mappedRequests = computed(() => {
       icon: 'help', color: 'text-gray-600', bg: 'bg-gray-50', catKey: 'khac'
     };
     const avatarUI = getAvatarColors(emp.employee_id || 1);
+
+    // Trạng thái 'pending' cụ thể cho Giám đốc giải quyết là CHỜ_GIÁM_ĐỐC_DUYỆT
+    // Nếu muốn hiển thị cả CHỜ_DUYỆT của TP thì thêm vào, nhưng user nói Icon Nav (chỉ lọc CHỜ_GD) là đúng
+    // Vậy ta thống nhất: Giám đốc chỉ thấy những gì CẦN GIÁM ĐỐC DUYỆT
+    const isPendingForDirector = req.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT';
 
     return {
       id: req.request_id,
@@ -402,9 +414,9 @@ const mappedRequests = computed(() => {
       typeBg: ui.bg,
       title: req.title || 'Không có nội dung',
       time: req.request_date || new Date().toISOString(),
-      urgent: !!req.is_urgent,
+      urgent: !!req.is_urgent || req.days >= 3,
       category: ui.catKey,
-      status: req.status === 'CHỜ_DUYỆT' ? 'pending' : (req.status === 'ĐÃ_DUYỆT' ? 'approved' : 'rejected')
+      status: isPendingForDirector ? 'pending' : (req.status === 'ĐÃ_DUYỆT' ? 'approved' : 'rejected')
     };
   });
 });

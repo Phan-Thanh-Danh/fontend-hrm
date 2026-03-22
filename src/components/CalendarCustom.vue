@@ -51,10 +51,12 @@
               v-if="day"
               type="button"
               @click="selectDate(day)"
+              :disabled="isPast(day)"
               :class="[
                 'w-8 h-8 rounded-md text-[12px] font-bold transition-all relative z-10 flex items-center justify-center',
                 isToday(day) ? 'text-[var(--sys-brand-solid)] after:content-[\'\'] after:absolute after:bottom-1 after:w-1 after:h-1 after:bg-[var(--sys-brand-solid)] after:rounded-full' : '',
-                isSelected(day) ? 'bg-[var(--sys-brand-solid)] text-white shadow-lg scale-105' : 'text-[var(--sys-text-primary)] hover:bg-[var(--sys-brand-soft)] hover:text-[var(--sys-brand-solid)]'
+                isSelected(day) ? 'bg-[var(--sys-brand-solid)] text-white shadow-lg scale-105' : '',
+                isPast(day) ? 'text-[var(--sys-text-disabled)] opacity-30 cursor-not-allowed line-through' : (isSelected(day) ? '' : 'text-[var(--sys-text-primary)] hover:bg-[var(--sys-brand-soft)] hover:text-[var(--sys-brand-solid)]')
               ]"
             >
               {{ day }}
@@ -77,7 +79,8 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
-  placeholder: { type: String, default: 'Chọn ngày...' }
+  placeholder: { type: String, default: 'Chọn ngày...' },
+  disablePast: { type: Boolean, default: false }
 });
 
 const emit = defineEmits(['update:modelValue', 'change']);
@@ -90,15 +93,33 @@ const viewYear = ref(new Date().getFullYear());
 
 const formattedValue = computed(() => {
   if (!props.modelValue) return '';
-  const [y, m, d] = props.modelValue.split('-');
+  const parts = props.modelValue.split('-');
+  if (parts.length < 3) return props.modelValue;
+  const [y, m, d] = parts;
   return `${d}/${m}/${y}`;
 });
+
+const isPast = (day) => {
+  if (!day || !props.disablePast) return false;
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const checkDate = new Date(viewYear.value, viewMonth.value, day);
+  return checkDate < today;
+};
 
 const daysInMonth = computed(() => {
   const firstDay = new Date(viewYear.value, viewMonth.value, 1).getDay();
   const days = new Date(viewYear.value, viewMonth.value + 1, 0).getDate();
-  const arr = Array(firstDay).fill(null);
-  for (let i = 1; i <= days; i++) arr.push(i);
+  
+  // Create empty slots for days before the 1st
+  const arr = [];
+  for (let i = 0; i < (firstDay === 0 ? 0 : firstDay); i++) {
+    arr.push(null);
+  }
+  
+  for (let i = 1; i <= days; i++) {
+    arr.push(i);
+  }
   return arr;
 });
 
@@ -123,6 +144,7 @@ const nextMonth = () => {
 };
 
 const selectDate = (day) => {
+  if (isPast(day)) return;
   const dateStr = `${viewYear.value}-${String(viewMonth.value + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   emit('update:modelValue', dateStr);
   emit('change', dateStr);

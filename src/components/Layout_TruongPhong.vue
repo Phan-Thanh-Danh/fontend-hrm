@@ -75,26 +75,30 @@
             >
               <div class="flex justify-between items-center px-4 py-3 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]">
                 <h6 class="text-sm font-semibold mb-0 text-[var(--sys-text-primary)]">Thông báo</h6>
-                <span class="text-[10px] font-semibold text-[var(--sys-brand-solid)] uppercase tracking-wider">2 Mới</span>
+                <span v-if="pendingLeaveRequests.length > 0" class="text-[10px] font-semibold text-[var(--sys-brand-solid)] uppercase tracking-wider">{{ pendingLeaveRequests.length }} Mới</span>
               </div>
-              <div class="max-h-[300px] overflow-y-auto">
-                <div class="p-3 flex gap-3 transition-colors cursor-default border-b border-[var(--sys-border-subtle)] hover:bg-[var(--sys-bg-hover)]">
-                  <div class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)]">
-                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">person_add</span>
+              <div class="max-h-[300px] overflow-y-auto custom-scrollbar">
+                <div 
+                  v-for="req in recentPendingRequests" 
+                  :key="req.id"
+                  class="p-3 flex gap-3 transition-colors cursor-pointer border-b border-[var(--sys-border-subtle)] hover:bg-[var(--sys-bg-hover)]"
+                  @click="router.push('/truong-phong/nghi-phep'); isNotificationOpen = false"
+                >
+                  <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)]">
+                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1">{{ req.urgent ? 'priority_high' : 'event_busy' }}</span>
                   </div>
-                  <div>
-                    <p class="text-xs font-medium mb-0.5 text-[var(--sys-text-primary)]">Có 5 ứng viên mới đang chờ đánh giá</p>
-                    <p class="text-[10px] text-[var(--sys-text-secondary)] font-medium">Recruitment · 15 phút trước</p>
+                  <div class="bg-transparent flex-1">
+                    <p class="text-xs font-bold mb-0.5 text-[var(--sys-text-primary)] uppercase tracking-tight">{{ req.requester }} xin nghỉ phép</p>
+                    <p class="text-[11px] text-[var(--sys-text-secondary)] font-medium line-clamp-1 opacity-70">{{ req.title }}</p>
+                    <div class="flex items-center justify-between mt-1">
+                       <span class="text-[9px] text-[var(--sys-text-disabled)] font-bold uppercase tracking-wider">{{ req.time }}</span>
+                       <span v-if="req.urgent" class="text-[8px] px-1.5 py-0.5 bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] rounded border border-[var(--sys-danger-border)] font-black uppercase tracking-widest">Khẩn</span>
+                    </div>
                   </div>
                 </div>
-                <div class="p-3 flex gap-3 transition-colors cursor-default hover:bg-[var(--sys-bg-hover)]">
-                  <div class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-[var(--sys-success-soft)] text-[var(--sys-success-text)]">
-                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">task_alt</span>
-                  </div>
-                  <div>
-                    <p class="text-xs font-medium mb-0.5 text-[var(--sys-text-primary)]">Đơn nghỉ phép đã được duyệt</p>
-                    <p class="text-[10px] text-[var(--sys-text-secondary)] font-medium">Phê duyệt · 1 giờ trước</p>
-                  </div>
+                <div v-if="recentPendingRequests.length === 0" class="p-8 text-center bg-transparent">
+                  <span class="material-symbols-rounded text-4xl text-[var(--sys-text-disabled)] opacity-20">notifications_off</span>
+                  <p class="text-[11px] font-bold text-[var(--sys-text-disabled)] mt-2 uppercase tracking-widest">Không có yêu cầu mới</p>
                 </div>
               </div>
               <div class="border-t p-2 text-center border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]">
@@ -324,9 +328,26 @@ watch(isDark, (val) => {
 
 // Badge: đếm số đơn nghỉ phép CHỜ_DUYỆT của phòng IT
 const DEPT_ID = 2;
-const pendingLeaveCount = computed(() => {
+const pendingLeaveRequests = computed(() => {
   const deptEmpIds = employeesAPI.getAll().filter(e => e.department_id === DEPT_ID).map(e => e.employee_id);
-  return requestsAPI.getAll().filter(r => deptEmpIds.includes(r.requester_id) && r.status === 'CHỜ_DUYỆT').length || undefined;
+  return requestsAPI.getAll().filter(r => deptEmpIds.includes(r.requester_id) && r.status === 'CHỜ_DUYỆT');
+});
+
+const pendingLeaveCount = computed(() => {
+  return pendingLeaveRequests.value.length || undefined;
+});
+
+const recentPendingRequests = computed(() => {
+  return pendingLeaveRequests.value.slice(0, 5).map(r => {
+    const emp = employeesAPI.getById(r.requester_id);
+    return {
+      id: r.request_id,
+      requester: emp?.full_name || 'Nhân viên',
+      title: r.title,
+      time: r.request_date || 'Hôm nay',
+      urgent: r.is_urgent
+    };
+  });
 });
 
 const isActive = (path) => route.path.startsWith(path);
