@@ -280,11 +280,24 @@ const closeSuccessModal = () => {
 };
 
 const leaveTypeOptions = computed(() => {
-  return requestTypes.value.map(t => ({
-    label: t.request_type_name,
-    value: t.request_type_id,
-    icon: t.request_type_id === 1 ? 'event_busy' : 'sick'
-  }));
+  return requestTypes.value.map(t => {
+    let icon = 'event_available';
+    // Mapping icons dựa trên ID hoặc tên
+    switch (t.request_type_id) {
+      case 1: icon = 'event_busy'; break;     // Nghỉ phép năm
+      case 6: icon = 'sick'; break;           // Nghỉ ốm
+      case 7: icon = 'child_care'; break;     // Thai sản
+      case 8: icon = 'money_off'; break;      // Không lương
+      case 9: icon = 'family_restroom'; break;// Việc riêng
+      case 10: icon = 'history'; break;       // Nghỉ bù
+      default: icon = 'article';
+    }
+    return {
+      label: t.request_type_name,
+      value: t.request_type_id,
+      icon: icon
+    };
+  });
 });
 
 // Mock Current User (Nhân viên IT)

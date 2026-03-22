@@ -24,8 +24,13 @@ export const positions = [
 // 3. Dữ liệu loại đơn (request_types)
 export const requestTypes = [
   { request_type_id: 1, request_type_name: 'Nghỉ phép năm', category: 'NGHỈ_PHÉP' },
+  { request_type_id: 6, request_type_name: 'Nghỉ ốm (Đau ốm)', category: 'NGHỈ_PHÉP' },
+  { request_type_id: 7, request_type_name: 'Nghỉ thai sản', category: 'NGHỈ_PHÉP' },
+  { request_type_id: 8, request_type_name: 'Nghỉ không lương', category: 'NGHỈ_PHÉP' },
+  { request_type_id: 9, request_type_name: 'Nghỉ việc riêng (Hiếu, hỉ)', category: 'NGHỈ_PHÉP' },
+  { request_type_id: 10, request_type_name: 'Nghỉ bù', category: 'NGHỈ_PHÉP' },
   { request_type_id: 2, request_type_name: 'Tuyển dụng nhân sự mới', category: 'KHÁC' },
-  { request_type_id: 3, request_type_name: 'Đề xuất tăng lương', category: 'DIỀU_CHỈNH_CÔNG' }, // Gộp tạm vào điều chỉnh
+  { request_type_id: 3, request_type_name: 'Đề xuất tăng lương', category: 'DIỀU_CHỈNH_CÔNG' },
   { request_type_id: 4, request_type_name: 'Tạm ứng lương', category: 'TẠM_ỨNG_LƯƠNG' },
   { request_type_id: 5, request_type_name: 'Thanh toán công tác phí', category: 'THANH_TOÁN' },
 ];
