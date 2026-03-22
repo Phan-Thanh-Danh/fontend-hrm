@@ -40,8 +40,12 @@
 
           <div class="space-y-3 py-4 border-t border-b border-[var(--sys-border-subtle)] border-dashed border-t-2 border-b-2">
             <div class="flex justify-between items-center text-[12.5px] font-bold text-[var(--sys-text-primary)]">
+              <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-text-secondary)] opacity-60">Loại hình:</span>
+              <span class="text-[var(--sys-brand-solid)]">{{ leave.typeName }}</span>
+            </div>
+            <div class="flex justify-between items-center text-[12.5px] font-bold text-[var(--sys-text-primary)]">
               <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-text-secondary)] opacity-60">Thời gian thực tế:</span>
-              <span class="text-[var(--sys-text-primary)]">{{ leave.range }}</span>
+              <span class="text-[var(--sys-text-primary)]">{{ leave.range.split('(')[0] }}</span>
             </div>
             <div class="flex justify-between items-center text-[12.5px] font-bold text-[var(--sys-text-primary)]">
               <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-text-secondary)] opacity-60">Lý do xin nghỉ:</span>
@@ -74,32 +78,32 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { requestsAPI, employeesAPI, positionsAPI } from '@/data/mockDB.js'
+import { requestsAPI, employeesAPI, positionsAPI, requestTypesAPI } from '@/data/mockDB.js'
 
 const activeTab = ref('Chờ duyệt')
 
 const DEPT_ID = 2 // Phòng Công nghệ IT
 
-const leaveRequestTypeIds = [1] // request_type_id 1 = Nghỉ phép năm
+// Lấy tất cả loại hình có category là NGHỈ_PHÉP
+const leaveRequestTypeIds = computed(() => {
+  return requestTypesAPI.getAll()
+    .filter(t => t.category === 'NGHỈ_PHÉP')
+    .map(t => t.request_type_id);
+});
 
-const pendingLeaves = ref([])
-const approvedLeaves = ref([])
-const rejectedLeaves = ref([])
-
-const loadData = () => {
+const allBaseData = computed(() => {
   const allReqs = requestsAPI.getAll()
   const allEmps = employeesAPI.getAll()
   const allPositions = positionsAPI.getAll()
-
+  const allTypes = requestTypesAPI.getAll()
+  
   const deptEmpIds = allEmps
     .filter(e => e.department_id === DEPT_ID)
     .map(e => e.employee_id)
 
   const deptLeaveReqs = allReqs.filter(r => {
     const isDeptEmp = deptEmpIds.includes(r.requester_id)
-    const isLeaveType = leaveRequestTypeIds.includes(r.request_type_id)
-    // WORKFLOW: Only show to Manager if visible_to includes 'Manager'
-    // If visible_to is missing (old data), assume it's visible by default to its department manager
+    const isLeaveType = leaveRequestTypeIds.value.includes(r.request_type_id)
     const isVisible = r.visible_to ? r.visible_to.includes('Manager') : true
     return isDeptEmp && isLeaveType && isVisible
   })
@@ -107,29 +111,40 @@ const loadData = () => {
   const mapReq = (r) => {
     const emp = allEmps.find(e => e.employee_id === r.requester_id)
     const pos = allPositions.find(p => p.position_id === emp?.position_id)
+    const typeObj = allTypes.find(t => t.request_type_id === r.request_type_id)
+    
+    // Xử lý loại nghỉ khác
+    const typeName = r.request_type_id === 99 ? r.other_reason_name : (typeObj?.request_type_name || 'Nghỉ phép')
+
     return {
       id: r.request_id,
       name: emp?.full_name || 'N/A',
       position: pos?.position_name?.toUpperCase() || 'NHÂN VIÊN IT',
-      range: r.title || 'N/A',
-      days: r.days || (Math.floor(Math.random() * 3) + 1), // Ưu tiên data thật
-      reason: r.notes || r.title || 'Nghỉ phép theo kế hoạch'
+      range: r.start_date && r.end_date ? `${r.start_date} - ${r.end_date}` : (r.request_date || 'N/A'),
+      typeName: typeName,
+      days: r.days || 0,
+      reason: r.notes || r.reason || 'Nghỉ phép theo kế hoạch',
+      statusRaw: r.status
     }
   }
 
-  pendingLeaves.value = deptLeaveReqs.filter(r => r.status === 'CHỜ_DUYỆT').map(r => ({ ...mapReq(r), statusRaw: r.status, days: r.days }))
-  approvedLeaves.value = deptLeaveReqs.filter(r => ['ĐÃ_DUYỆT', 'CHỜ_GIÁM_ĐỐC_DUYỆT'].includes(r.status)).map(r => ({ ...mapReq(r), statusRaw: r.status, days: r.days }))
-  rejectedLeaves.value = deptLeaveReqs.filter(r => r.status === 'TỪ_CHỐI').map(mapReq)
-}
+  return {
+    pending: deptLeaveReqs.filter(r => r.status === 'CHỜ_DUYỆT').map(mapReq),
+    approved: deptLeaveReqs.filter(r => ['ĐÃ_DUYỆT', 'CHỜ_GIÁM_ĐỐC_DUYỆT'].includes(r.status)).map(mapReq),
+    rejected: deptLeaveReqs.filter(r => r.status === 'TỪ_CHỐI').map(mapReq)
+  }
+})
+
+const pendingLeaves = computed(() => allBaseData.value.pending)
+const approvedLeaves = computed(() => allBaseData.value.approved)
+const rejectedLeaves = computed(() => allBaseData.value.rejected)
 
 const approve = (id) => {
   requestsAPI.approve(id)
-  loadData()
 }
 
 const reject = (id) => {
   requestsAPI.reject(id, 'Không phù hợp thời điểm')
-  loadData()
 }
 
 const currentList = computed(() => {
@@ -137,8 +152,6 @@ const currentList = computed(() => {
   if (activeTab.value === 'Đã từ chối') return rejectedLeaves.value
   return pendingLeaves.value
 })
-
-onMounted(loadData)
 </script>
 
 <style scoped>

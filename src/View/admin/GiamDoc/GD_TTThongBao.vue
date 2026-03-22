@@ -239,9 +239,18 @@
                 </div>
                 <div class="tt-modal-info-row">
                   <span class="tt-modal-info-label">Người yêu cầu</span>
-                  <span class="tt-modal-info-val">{{ selectedItem.dept }}</span>
+                  <span class="tt-modal-info-val">{{ selectedItem.dept }} ({{ selectedItem.name }})</span>
                 </div>
               </div>
+
+              <!-- Detailed Reason Box -->
+              <div class="mt-4 p-4 bg-[var(--bg-hover)] border border-[var(--border)] rounded-xl text-left">
+                 <p class="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-1 opacity-60">Lý do chi tiết</p>
+                 <p class="italic text-[13px] text-[var(--text-body)] font-bold">
+                    "{{ selectedItem.reasonText || 'Không có ghi chú thêm.' }}"
+                 </p>
+              </div>
+
               <p class="tt-modal-confirm-text">
                 Bạn có chắc chắn muốn <strong style="color: var(--brand, #2563EB)">phê duyệt</strong> yêu cầu này không?
               </p>
@@ -416,6 +425,7 @@ const mappedRequests = computed(() => {
       time: req.request_date || new Date().toISOString(),
       urgent: !!req.is_urgent || req.days >= 3,
       category: ui.catKey,
+      reasonText: req.notes || req.reason || req.title,
       status: isPendingForDirector ? 'pending' : (req.status === 'ĐÃ_DUYỆT' ? 'approved' : 'rejected')
     };
   });

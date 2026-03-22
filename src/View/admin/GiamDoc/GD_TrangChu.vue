@@ -321,11 +321,11 @@
               </div>
             </div>
 
-            <div class="space-y-2 mb-6">
-              <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest">Ghi chú</span>
-              <div class="bg-[var(--sys-bg-hover)] p-4 rounded-lg border border-[var(--sys-border-subtle)]">
-                <p class="text-sm text-[var(--sys-text-secondary)] leading-relaxed font-medium italic">
-                  {{ selectedApproval.meta }}
+            <div class="space-y-2 mb-6 text-left">
+              <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest pl-1">Lý do giải trình chi tiết</span>
+              <div class="bg-[var(--sys-bg-page)] p-4 rounded-lg border border-[var(--sys-border-subtle)] shadow-inner">
+                <p class="text-[13px] text-[var(--sys-text-secondary)] leading-relaxed font-bold italic opacity-90">
+                  "{{ selectedApproval.fullReason || 'Không có ghi chú thêm.' }}"
                 </p>
               </div>
             </div>
@@ -556,15 +556,17 @@ const fetchData = () => {
         return isDirectorQueue && isVisible;
     }).map(r => {
         const emp = allEmps.find(e => e.employee_id === r.requester_id) || {};
+        const dateStr = r.start_date && r.end_date ? `[${r.start_date} -> ${r.end_date}]` : '';
         return {
             id: r.request_id,
             isReal: true,
             statusRaw: r.status,
             title: r.title,
-            meta: `${emp.full_name || 'Khuyết danh'} • Yêu cầu lúc ${r.request_date ? r.request_date.substring(11,16) : 'N/A'}`,
+            meta: `${emp.full_name || 'Khuyết danh'} ${dateStr} • Lý do: ${r.notes || 'Không có'}`,
             icon: r.is_urgent ? 'warning' : 'event_note',
             iconClass: r.is_urgent ? 'kpi-icon--amber' : 'kpi-icon--blue',
             urgent: r.is_urgent,
+            fullReason: r.notes || r.reason || r.title,
             actions: ['Từ chối', 'Phê duyệt'],
             status: 'pending',
             rejectReason: ''
@@ -639,21 +641,22 @@ const closeRejectModal = () => {
 const confirmApprove = () => {
   if (!selectedApproval.value) return;
 
-  if (selectedApproval.value.isReal) {
+  const isReal = selectedApproval.value.isReal;
+  const requestId = selectedApproval.value.id;
+
+  if (isReal) {
     if (selectedApproval.value.status === 'pending' || selectedApproval.value.statusRaw === 'CHỜ_GIÁM_ĐỐC_DUYỆT') {
-      requestsAPI.directorApprove(selectedApproval.value.id);
+      requestsAPI.directorApprove(requestId);
     } else {
-      requestsAPI.approve(selectedApproval.value.id);
+      requestsAPI.approve(requestId);
     }
+    fetchData();
   }
 
-  selectedApproval.value.status = 'approved';
-  selectedApproval.value = null;
   showApproveModal.value = false;
   showRejectModal.value = false;
   showDetailModal.value = false;
-  
-  if (selectedApproval.value?.isReal) fetchData();
+  selectedApproval.value = null;
 };
 
 const confirmReject = async () => {
@@ -664,20 +667,17 @@ const confirmReject = async () => {
     return;
   }
 
-  if (selectedApproval.value.isReal) {
+  const isReal = selectedApproval.value.isReal;
+  if (isReal) {
     requestsAPI.reject(selectedApproval.value.id, reason);
+    fetchData();
   }
 
-  selectedApproval.value.status = 'rejected';
-  selectedApproval.value.rejectReason = reason;
-
-  selectedApproval.value = null;
   showRejectModal.value = false;
   showApproveModal.value = false;
   showDetailModal.value = false;
   rejectReason.value = '';
-  
-  if (selectedApproval.value?.isReal) fetchData();
+  selectedApproval.value = null;
 };
 
 // Tính toán conic-gradient động cho Donut Chart
