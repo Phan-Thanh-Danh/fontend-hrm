@@ -65,7 +65,7 @@
           <div class="space-y-5">
             <div>
               <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider mb-2">Ngày làm việc cuối cùng <span class="text-[var(--sys-danger-solid)]">*</span></label>
-              <input type="date" class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+              <CalendarCustom v-model="finalDate" placeholder="Chọn ngày cuối công tác" />
               <p class="text-[11px] text-[var(--sys-text-disabled)] mt-2 italic font-medium">Báo trước tối thiểu 30 ngày (Dựa trên HĐLĐ hiện tại).</p>
             </div>
 
@@ -158,6 +158,9 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import CalendarCustom from '@/components/CalendarCustom.vue';
+const finalDate = ref('');
 /**
  * TRANG ĐƠN XIN THÔI VIỆC (PORTAL) - PHIÊN BẢN ENTERPRISE SaaS
  * Tuân thủ 7 Golden Rules:

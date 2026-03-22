@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
@@ -56,7 +56,12 @@
 
         <div class="p-3 bg-[var(--sys-bg-page)]/30 px-4 pb-4 flex gap-2">
           <button @click="approve(leave.id)" class="flex-1 h-10 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[10px] uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-sm">
-            <span class="material-symbols-rounded text-[18px] font-bold">check_circle</span> DUYỆT ĐƠN
+            <template v-if="leave.days > 3">
+              <span class="material-symbols-rounded text-[18px] font-bold">forward</span> GỬI GIÁM ĐỐC
+            </template>
+            <template v-else>
+              <span class="material-symbols-rounded text-[18px] font-bold">check_circle</span> DUYỆT ĐƠN
+            </template>
           </button>
           <button @click="reject(leave.id)" class="flex-1 h-10 bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border border-[var(--sys-danger-border)] rounded-md font-bold text-[10px] uppercase tracking-widest hover:bg-[var(--sys-danger-solid)] hover:text-white transition-all flex items-center justify-center gap-2">
             <span class="material-symbols-rounded text-[18px] font-bold">cancel</span> TỪ CHỐI
@@ -90,10 +95,14 @@ const loadData = () => {
     .filter(e => e.department_id === DEPT_ID)
     .map(e => e.employee_id)
 
-  const deptLeaveReqs = allReqs.filter(r =>
-    deptEmpIds.includes(r.requester_id) &&
-    leaveRequestTypeIds.includes(r.request_type_id)
-  )
+  const deptLeaveReqs = allReqs.filter(r => {
+    const isDeptEmp = deptEmpIds.includes(r.requester_id)
+    const isLeaveType = leaveRequestTypeIds.includes(r.request_type_id)
+    // WORKFLOW: Only show to Manager if visible_to includes 'Manager'
+    // If visible_to is missing (old data), assume it's visible by default to its department manager
+    const isVisible = r.visible_to ? r.visible_to.includes('Manager') : true
+    return isDeptEmp && isLeaveType && isVisible
+  })
 
   const mapReq = (r) => {
     const emp = allEmps.find(e => e.employee_id === r.requester_id)
@@ -103,13 +112,13 @@ const loadData = () => {
       name: emp?.full_name || 'N/A',
       position: pos?.position_name?.toUpperCase() || 'NHÂN VIÊN IT',
       range: r.title || 'N/A',
-      days: Math.floor(Math.random() * 3) + 1,
-      reason: r.title || 'Nghỉ phép theo kế hoạch'
+      days: r.days || (Math.floor(Math.random() * 3) + 1), // Ưu tiên data thật
+      reason: r.notes || r.title || 'Nghỉ phép theo kế hoạch'
     }
   }
 
-  pendingLeaves.value = deptLeaveReqs.filter(r => r.status === 'CHỜ_DUYỆT').map(mapReq)
-  approvedLeaves.value = deptLeaveReqs.filter(r => r.status === 'ĐÃ_DUYỆT').map(mapReq)
+  pendingLeaves.value = deptLeaveReqs.filter(r => r.status === 'CHỜ_DUYỆT').map(r => ({ ...mapReq(r), statusRaw: r.status, days: r.days }))
+  approvedLeaves.value = deptLeaveReqs.filter(r => ['ĐÃ_DUYỆT', 'CHỜ_GIÁM_ĐỐC_DUYỆT'].includes(r.status)).map(r => ({ ...mapReq(r), statusRaw: r.status, days: r.days }))
   rejectedLeaves.value = deptLeaveReqs.filter(r => r.status === 'TỪ_CHỐI').map(mapReq)
 }
 

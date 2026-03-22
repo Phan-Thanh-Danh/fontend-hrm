@@ -162,7 +162,7 @@
                   
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Ngày tháng năm sinh</label>
-                    <input v-model="form.date_of_birth" type="date" class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all">
+                    <CalendarCustom v-model="form.date_of_birth" placeholder="Chọn ngày sinh" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Giới tính định danh</label>
@@ -204,7 +204,7 @@
 
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Ngày gia nhập chính thức *</label>
-                    <input v-model="form.hire_date" type="date" class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all">
+                    <CalendarCustom v-model="form.hire_date" placeholder="Chọn ngày gia nhập" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Phân loại nhân sự</label>
@@ -247,6 +247,7 @@
  */
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
+import CalendarCustom from '@/components/CalendarCustom.vue';
 import { useConfirm } from '@/composables/useConfirm';
 import { employeesAPI, departmentsAPI, positionsAPI } from '@/data/mockDB.js';
 

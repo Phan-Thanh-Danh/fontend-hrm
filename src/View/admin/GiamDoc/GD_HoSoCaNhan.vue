@@ -312,9 +312,7 @@
             
             <div>
               <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1 mb-2">Ngày sinh</label>
-              <div class="relative">
-                <input type="date" value="1982-05-15" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#1d3d70] text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-semibold">
-              </div>
+              <CalendarCustom v-model="birthDate" placeholder="Chọn ngày sinh" class="w-full" />
             </div>
 
             <div>
@@ -353,6 +351,7 @@
 
 <script setup>
 import { ref, computed } from 'vue';
+import CalendarCustom from '@/components/CalendarCustom.vue';
 import { employeesAPI, positionsAPI } from '@/data/mockDB.js';
 
 const ceoData = computed(() => {
@@ -370,6 +369,7 @@ const ceoData = computed(() => {
 
 const isChangePasswordModalOpen = ref(false);
 const isChangeProfileModalOpen = ref(false);
+const birthDate = ref('1982-05-15');
 
 const avatarUrl = ref(ceoData.value?.avatar_url || 'https://i.pravatar.cc/300?img=3');
 const fileInput = ref(null);

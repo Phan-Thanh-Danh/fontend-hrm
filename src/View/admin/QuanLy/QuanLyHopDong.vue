@@ -180,11 +180,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-transparent border-none">
                   <div class="space-y-1.5 bg-transparent border-none">
                     <label class="text-[13px] font-medium text-[var(--sys-text-primary)] block">Ngày ký *</label>
-                    <input v-model="form.sign_date" type="date" class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-sm text-[var(--sys-text-primary)] focus:border-[var(--sys-brand-solid)] outline-none transition-all">
+                    <CalendarCustom v-model="form.sign_date" placeholder="Chọn ngày ký" />
                   </div>
                   <div class="space-y-1.5 bg-transparent border-none">
                     <label class="text-[13px] font-medium text-[var(--sys-text-primary)] block">Ngày hiệu lực *</label>
-                    <input v-model="form.start_date" type="date" class="w-full h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-sm text-[var(--sys-text-primary)] focus:border-[var(--sys-brand-solid)] outline-none transition-all">
+                    <CalendarCustom v-model="form.start_date" placeholder="Chọn ngày hiệu lực" />
                   </div>
                 </div>
 
@@ -224,6 +224,7 @@
  */
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
+import CalendarCustom from '@/components/CalendarCustom.vue';
 import { useConfirm } from '@/composables/useConfirm';
 import { contractsAPI, employeesAPI } from '@/data/mockDB.js';
 

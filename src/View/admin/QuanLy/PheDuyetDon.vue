@@ -276,7 +276,7 @@
 import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { requestsAPI, employeesAPI, departmentsAPI, mockDB } from '@/data/mockDB.js';
+import { requestsAPI, employeesAPI, departmentsAPI, requestTypesAPI, mockDB } from '@/data/mockDB.js';
 
 const { showAlert } = useConfirm();
 
@@ -289,9 +289,11 @@ const rejectReason = ref('');
 const selectedRequest = ref(null);
 
 const requests = computed(() => {
+  const allReqTypes = requestTypesAPI.getAll();
   return mockDB.requests.map(req => {
-    const emp = employeesAPI.getById(req.employee_id);
+    const emp = employeesAPI.getById(req.requester_id || req.employee_id);
     const dept = departmentsAPI.getById(req.department_id || (emp ? emp.department_id : null));
+    const typeObj = allReqTypes.find(t => t.request_type_id === req.request_type_id);
     
     // Convert status to match UI tab identifiers
     let mappedStatus = 'pending';
@@ -299,21 +301,22 @@ const requests = computed(() => {
     if (req.status === 'TỪ_CHỐI') mappedStatus = 'rejected';
     if (req.status === 'CHỜ_DUYỆT' || req.status === 'ĐANG_XỬ_LÝ') mappedStatus = 'pending';
 
-    const reqType = req.request_type || '';
-    let icon = 'flight'; // Default to work trip icon
-    if (reqType.toLowerCase().includes('phép')) icon = 'event_busy';
-    if (reqType.toLowerCase().includes('ốm') || reqType.toLowerCase().includes('bệnh')) icon = 'medical_services';
+    const reqTitle = req.title || typeObj?.request_type_name || 'Yêu cầu';
+    let icon = 'event_note'; 
+    if (req.request_type_id === 1) icon = 'event_busy'; // Nghỉ phép
+    if (req.request_type_id === 2) icon = 'person_add'; // Tuyển dụng
+    if (req.request_type_id === 4) icon = 'payments';   // Tạm ứng
 
     return {
       id: req.request_id,
       employeeName: emp ? emp.full_name : 'N/A',
-      employeeId: 'EMP-' + req.employee_id,
+      employeeId: emp ? emp.employee_code : 'N/A',
       department: dept ? dept.department_name.toUpperCase() : 'N/A',
-      title: reqType,
+      title: reqTitle,
       icon: icon,
-      dateRange: req.created_at || 'Hôm nay',
-      duration: 'Tùy chọn',
-      reason: req.reason || 'Không có ghi chú',
+      dateRange: req.start_date && req.end_date ? `${req.start_date} - ${req.end_date}` : (req.request_date ? req.request_date.split(' ')[0] : 'Hôm nay'),
+      duration: req.days ? `${req.days} ngày` : 'N/A',
+      reason: req.notes || req.reason || 'Không có ghi chú',
       status: mappedStatus
     };
   });

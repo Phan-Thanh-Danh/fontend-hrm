@@ -549,11 +549,17 @@ const fetchData = () => {
     ];
 
     // 4. Pending Approvals
-    approvals.value = allReqs.filter(r => r.status === 'CHỜ_DUYỆT').map(r => {
+    // WORKFLOW NEW: Chỉ hiển thị những đơn đã qua Trưởng phòng duyệt (CHỜ_GIÁM_ĐỐC_DUYỆT)
+    approvals.value = allReqs.filter(r => {
+        const isDirectorQueue = r.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT' || (r.status === 'CHỜ_DUYỆT' && r.is_urgent);
+        const isVisible = r.visible_to ? r.visible_to.includes('Director') : true;
+        return isDirectorQueue && isVisible;
+    }).map(r => {
         const emp = allEmps.find(e => e.employee_id === r.requester_id) || {};
         return {
             id: r.request_id,
             isReal: true,
+            statusRaw: r.status,
             title: r.title,
             meta: `${emp.full_name || 'Khuyết danh'} • Yêu cầu lúc ${r.request_date ? r.request_date.substring(11,16) : 'N/A'}`,
             icon: r.is_urgent ? 'warning' : 'event_note',
@@ -634,7 +640,11 @@ const confirmApprove = () => {
   if (!selectedApproval.value) return;
 
   if (selectedApproval.value.isReal) {
-    requestsAPI.approve(selectedApproval.value.id);
+    if (selectedApproval.value.status === 'pending' || selectedApproval.value.statusRaw === 'CHỜ_GIÁM_ĐỐC_DUYỆT') {
+      requestsAPI.directorApprove(selectedApproval.value.id);
+    } else {
+      requestsAPI.approve(selectedApproval.value.id);
+    }
   }
 
   selectedApproval.value.status = 'approved';

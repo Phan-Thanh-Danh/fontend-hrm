@@ -108,10 +108,7 @@
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
-          <div class="flex items-center gap-2 bg-white px-3 h-11 rounded-md border border-[var(--sys-border-subtle)] shadow-sm flex-1 min-w-[180px]">
-            <span class="material-symbols-outlined text-[18px] text-[var(--sys-brand-solid)]">calendar_month</span>
-            <input type="date" class="bg-transparent border-none text-[13px] font-medium text-[var(--sys-text-primary)] outline-none w-full" value="2023-10-05">
-          </div>
+          <CalendarCustom v-model="filterDate" placeholder="Chọn ngày" class="flex-1" />
           <Dropdown v-model="filterDept" :options="deptOptions" class="min-w-[180px] h-11" />
           <Dropdown v-model="filterStatus" :options="statusOptions" class="min-w-[180px] h-11" />
         </div>
@@ -203,7 +200,9 @@
  */
 import { ref } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
+import CalendarCustom from '@/components/CalendarCustom.vue';
 
+const filterDate = ref('2023-10-05');
 const filterDept = ref('ALL');
 const filterStatus = ref('ALL');
 

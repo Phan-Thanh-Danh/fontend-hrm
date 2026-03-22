@@ -43,8 +43,26 @@ export const requestsAPI = {
   },
   approve(id) {
     const req = mockDB.requests.find(r => r.request_id == id);
+    if (!req) return;
+
+    // WORKFLOW NEW:
+    // - <= 3 ngày: Trưởng phòng duyệt là Xong (ĐÃ_DUYỆT)
+    // - > 3 ngày: Trưởng phòng duyệt -> Chuyển trạng thái sang CHỜ_GIÁM_ĐỐC_DUYỆT
+    if (req.days > 3 && req.status === 'CHỜ_DUYỆT') {
+      req.status = 'CHỜ_GIÁM_ĐỐC_DUYỆT';
+      req.manager_approved_date = new Date().toISOString();
+      if (!req.visible_to) req.visible_to = [];
+      if (!req.visible_to.includes('Director')) req.visible_to.push('Director');
+    } else {
+      req.status = 'ĐÃ_DUYỆT';
+      req.completed_date = new Date().toISOString();
+    }
+  },
+  directorApprove(id) {
+    const req = mockDB.requests.find(r => r.request_id == id);
     if (req) {
       req.status = 'ĐÃ_DUYỆT';
+      req.director_approved_date = new Date().toISOString();
       req.completed_date = new Date().toISOString();
     }
   },
