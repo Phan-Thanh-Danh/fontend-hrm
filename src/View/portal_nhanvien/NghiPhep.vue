@@ -333,7 +333,24 @@ const pendingCount = computed(() => {
 });
 
 const fetchData = () => {
-  requestTypes.value = requestTypesAPI.getAll().filter(t => t.category === 'NGHỈ_PHÉP' || t.request_type_id === 1);
+  const allTypes = requestTypesAPI.getAll() || [];
+  const leaveCategories = ['NGHỈ_PHÉP', 'NGHỈ PHÉP', 'NGHI_PHEP', 'NGHI PHÉP'];
+  const leaveTypeIds = [1, 6, 7, 8, 9, 10, 99];
+
+  requestTypes.value = allTypes.filter(t => {
+    // Ép kiểu ID về Number để đảm bảo so sánh chính xác (tránh lỗi String vs Number)
+    const typeId = Number(t.request_type_id);
+    const cat = String(t.category || '').trim().toUpperCase();
+    
+    // Lọc theo danh sách ID hoặc theo Category (Nghi phep)
+    return leaveTypeIds.includes(typeId) || leaveCategories.includes(cat);
+  });
+
+  // Fallback: nếu lọc không ra gì thì lấy các loại có ID trong danh sách (ép kiểu)
+  if (requestTypes.value.length === 0) {
+    requestTypes.value = allTypes.filter(t => [1, 6, 7, 8, 9, 10, 99].includes(Number(t.request_type_id)));
+  }
+
   const allReqs = requestsAPI.getAll();
   const myReqs = allReqs.filter(r => r.requester_id === CURRENT_EMP_ID);
 
