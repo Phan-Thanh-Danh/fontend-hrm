@@ -327,11 +327,10 @@
 <script setup>
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import {
-  approvalRequests as rawRequests,
-  importantNotifications,
-  approvalStats
-} from '@/data/sampleData_GiamDoc.js';
+// Import Functional MockDB
+import { requestsAPI, employeesAPI, departmentsAPI, requestTypesAPI } from '@/data/mockDB.js';
+import { getInitials, getAvatarColors, getRequestTypeUI } from '@/utils/uiMapper.js';
+import { importantNotifications as staticNotifications } from '@/data/sampleData_GiamDoc.js';
 
 const router = useRouter();
 
@@ -342,36 +341,92 @@ const showApproveModal = ref(false);
 const showRejectModal  = ref(false);
 const selectedItem = ref(null);
 const rejectReason = ref('');
-
-const requests = ref(
-  rawRequests.map(r => ({ ...r, status: 'pending' }))
-);
-
 const toast = ref({ show: false, type: '', msg: '' });
 
-// ── Tabs ────────────────────────────────────────────────
-const tabs = computed(() => [
-  { key: 'all',       label: 'Tất cả',          icon: 'apps',          count: pendingList.value.length },
-  { key: 'nghi_phep', label: 'Nghỉ phép',        icon: 'event_busy',    count: requests.value.filter(r => r.status === 'pending' && r.category === 'nghi_phep').length },
-  { key: 'tuyen_dung',label: 'Tuyển dụng',       icon: 'person_add',    count: requests.value.filter(r => r.status === 'pending' && r.category === 'tuyen_dung').length },
-  { key: 'luong',     label: 'Điều chỉnh lương', icon: 'payments',      count: requests.value.filter(r => r.status === 'pending' && r.category === 'luong').length },
-  { key: 'hop_dong',  label: 'Hợp đồng',         icon: 'badge',         count: requests.value.filter(r => r.status === 'pending' && r.category === 'hop_dong').length },
-  { key: 'khac',      label: 'Khác',             icon: 'more_horiz',    count: requests.value.filter(r => r.status === 'pending' && r.category === 'khac').length },
-]);
+// ── Mock Notifications ──────────────────────────────────
+const importantNotifications = computed(() => {
+  // Kết hợp thông báo tĩnh và thông báo từ yêu cầu khẩn cấp
+  const dynamicNotifs = pendingList.value.filter(r => r.urgent).slice(0, 2).map(r => ({
+    id: `urgent-${r.id}`,
+    level: 'canh_bao',
+    levelLabel: 'KHẨN CẤP',
+    levelColor: 'text-orange-700',
+    levelBg: 'bg-orange-50',
+    dotColor: 'bg-orange-500',
+    icon: 'warning',
+    iconColor: 'text-orange-500',
+    title: `Yêu cầu phê duyệt khẩn: ${r.name}`,
+    desc: `${r.title} cần được xử lý ngay trong ngày.`,
+    action: 'Xử lý ngay',
+    actionRoute: null,
+    time: 'Vừa xong'
+  }));
+
+  return [...dynamicNotifs, ...staticNotifications.slice(0, 2)];
+});
+
+const approvalStats = computed(() => {
+  const all = mappedRequests.value;
+  const today = all.length;
+  const approved = all.filter(r => r.status === 'approved').length;
+  const rejected = all.filter(r => r.status === 'rejected').length;
+  return {
+    todayApproved: approved,
+    todayRejected: rejected,
+    total: today
+  };
+});
+
+// ── Mapped Reactive Requests ────────────────────────────
+const mappedRequests = computed(() => {
+  return requestsAPI.getAll().map(req => {
+    const emp = employeesAPI.getById(req.requester_id) || {};
+    const dept = departmentsAPI.getById(emp.department_id) || {};
+    const reqTypeObj = requestTypesAPI.getById(req.request_type_id) || {};
+    // Dùng category string để lấy cấu hình UI, fallback 'KHÁC' tránh crash
+    const ui = getRequestTypeUI(reqTypeObj.category || 'KHÁC') || {
+      icon: 'help', color: 'text-gray-600', bg: 'bg-gray-50', catKey: 'khac'
+    };
+    const avatarUI = getAvatarColors(emp.employee_id || 1);
+
+    return {
+      id: req.request_id,
+      name: emp.full_name || 'Khuyết danh',
+      dept: dept.department_name ? `Phòng ${dept.department_name}` : '',
+      initials: getInitials(emp.full_name || '?'),
+      avatarBg: avatarUI.bg,
+      avatarColor: avatarUI.text,
+      type: reqTypeObj.request_type_name || 'Khác',
+      typeIcon: ui.icon,
+      typeColor: ui.color,
+      typeBg: ui.bg,
+      title: req.title || 'Không có nội dung',
+      time: req.request_date || new Date().toISOString(),
+      urgent: !!req.is_urgent,
+      category: ui.catKey,
+      status: req.status === 'CHỜ_DUYỆT' ? 'pending' : (req.status === 'ĐÃ_DUYỆT' ? 'approved' : 'rejected')
+    };
+  });
+});
 
 // ── Computed ────────────────────────────────────────────
-const pendingList = computed(() =>
-  requests.value.filter(r => r.status === 'pending')
-);
-
-const processedList = computed(() =>
-  requests.value.filter(r => r.status !== 'pending')
-);
+const pendingList = computed(() => mappedRequests.value.filter(r => r.status === 'pending'));
+const processedList = computed(() => mappedRequests.value.filter(r => r.status !== 'pending'));
 
 const filteredRequests = computed(() => {
   if (activeTab.value === 'all') return pendingList.value;
   return pendingList.value.filter(r => r.category === activeTab.value);
 });
+
+// ── Tabs ────────────────────────────────────────────────
+const tabs = computed(() => [
+  { key: 'all',       label: 'Tất cả',          icon: 'apps',          count: pendingList.value.length },
+  { key: 'nghi_phep', label: 'Nghỉ phép',       icon: 'event_busy',    count: pendingList.value.filter(r => r.category === 'nghi_phep').length },
+  { key: 'tuyen_dung',label: 'Tuyển dụng',      icon: 'person_add',    count: pendingList.value.filter(r => r.category === 'tuyen_dung').length },
+  { key: 'luong',     label: 'Điều chỉnh',      icon: 'payments',      count: pendingList.value.filter(r => r.category === 'luong').length },
+  { key: 'hop_dong',  label: 'Hợp đồng',        icon: 'badge',         count: pendingList.value.filter(r => r.category === 'hop_dong').length },
+  { key: 'khac',      label: 'Khác',            icon: 'more_horiz',    count: pendingList.value.filter(r => r.category === 'khac').length },
+]);
 
 // ── Actions ─────────────────────────────────────────────
 const openApprove = (item) => {
@@ -384,7 +439,8 @@ const closeApprove = () => {
 };
 const confirmApprove = () => {
   if (!selectedItem.value) return;
-  selectedItem.value.status = 'approved';
+  // GỌI API THỰC TẾ
+  requestsAPI.approve(selectedItem.value.id);
   showToast('approve', `Đã phê duyệt yêu cầu của ${selectedItem.value.name}`);
   closeApprove();
 };
@@ -406,8 +462,8 @@ const confirmReject = () => {
     if (ta) { ta.focus(); ta.classList.add('tt-input-error'); setTimeout(() => ta.classList.remove('tt-input-error'), 800); }
     return;
   }
-  selectedItem.value.status = 'rejected';
-  selectedItem.value.rejectReason = rejectReason.value;
+  // GỌI API THỰC TẾ
+  requestsAPI.reject(selectedItem.value.id, rejectReason.value);
   showToast('reject', `Đã từ chối yêu cầu của ${selectedItem.value.name}`);
   closeReject();
 };

@@ -243,52 +243,36 @@
 <script setup>
 /**
  * QUẢN LÝ NHÂN SỰ - PHIÊN BẢN ENTERPRISE REFINEMENT
- * Tuân thủ 5 Chỉ thị UX/UI SaaS Final:
- * 1. Icon Wrapper chuẩn w-10 h-10.
- * 4. Modal mở rộng max-w-3xl + Lưới form chuyên nghiệp.
- * 5. Extreme Density: p-4 card padding, py-2.5 table cells.
- * 100% Tiếng Việt.
+ * Đã kết nối Mock Database (Functional CRUD)
  */
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { employeesAPI, departmentsAPI, positionsAPI } from '@/data/mockDB.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
-const employees = ref([
-  { 
-    id: 1, 
-    employee_code: '2023-001', 
-    full_name: 'Nguyễn Văn An', 
-    department: 'Công nghệ thông tin', 
-    position: 'Frontend Software Lead', 
-    status: 'ĐANG_LÀM_VIỆC', 
-    hire_date: '10/05/2023',
-    gender: 'NAM',
-    phone_number: '0912345678',
-    id_card: '001099002345',
-    company_email: 'an.nv@company.com',
-    personal_email: 'an.dev@gmail.com',
-    date_of_birth: '1995-05-10',
-    permanent_address: '123 Đường Láng, Hà Nội'
-  },
-  { 
-    id: 2, 
-    employee_code: '2023-005', 
-    full_name: 'Trần Thị Thu', 
-    department: 'Quản trị Nhân sự', 
-    position: 'Senior HR Executive', 
-    status: 'ĐANG_LÀM_VIỆC', 
-    hire_date: '01/08/2023',
-    gender: 'NỮ',
-    phone_number: '0901234888',
-    id_card: '001095006789',
-    company_email: 'thu.tt@company.com',
-    personal_email: 'thu.tran@gmail.com',
-    date_of_birth: '1990-08-01',
-    permanent_address: 'Ngõ 2, Lạch Tray, Hải Phòng'
-  }
-]);
+// Mapping Global Employees -> Component Table Format
+const employees = computed(() => {
+  return employeesAPI.getAll().map(e => ({
+    id: e.employee_id,
+    employee_code: e.employee_code || `EMP-${e.employee_id}`,
+    full_name: e.full_name || '',
+    department: departmentsAPI.getById(e.department_id)?.department_name || '',
+    department_id: e.department_id,
+    position: positionsAPI.getById(e.position_id)?.position_name || '',
+    position_id: e.position_id,
+    status: e.status || 'THỬ_VIỆC',
+    hire_date: e.hire_date || '2023-01-01',
+    gender: e.gender || 'NAM',
+    phone_number: e.phone_number || '',
+    id_card: e.id_card || '',
+    company_email: e.company_email || '',
+    personal_email: e.personal_email || '',
+    date_of_birth: e.date_of_birth || '',
+    permanent_address: e.permanent_address || ''
+  }));
+});
 
 const searchQuery = ref('');
 const filterDepartment = ref('ALL');
@@ -296,17 +280,16 @@ const filterStatus = ref('ALL');
 const showModal = ref(false);
 const editMode = ref(false);
 
-const stats = ref([
-  { label: 'Tổng nhân lực', value: '1,250', icon: 'groups', semantic: 'brand' },
-  { label: 'Đang thử việc', value: '24', icon: 'explore', semantic: 'warning' },
-  { label: 'Vắng mặt/Nghỉ phép', value: '12', icon: 'person_off', semantic: 'danger' },
-  { label: 'Tuyển dụng mới', value: '45', icon: 'trending_up', semantic: 'success' }
+const stats = computed(() => [
+  { label: 'Tổng nhân lực', value: employees.value.length.toString(), icon: 'groups', semantic: 'brand' },
+  { label: 'Đang thử việc', value: employees.value.filter(e => e.status === 'THỬ_VIỆC').length.toString(), icon: 'explore', semantic: 'warning' },
+  { label: 'Đã Thôi việc', value: employees.value.filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC').length.toString(), icon: 'person_off', semantic: 'danger' },
+  { label: 'Chính thức', value: employees.value.filter(e => e.status === 'ĐANG_LÀM_VIỆC').length.toString(), icon: 'verified', semantic: 'success' }
 ]);
 
-const departments = ['Công nghệ thông tin', 'Quản trị Nhân sự', 'Tài chính - Kế toán', 'Marketing', 'Khối Kinh doanh', 'Vận hành hệ thống'];
 const departmentOptions = computed(() => [
   { label: 'Toàn bộ phòng ban', value: 'ALL' },
-  ...departments.map(dept => ({ label: dept, value: dept }))
+  ...departmentsAPI.getAll().map(d => ({ label: d.department_name, value: d.department_name }))
 ]);
 
 const statusOptions = [
@@ -316,16 +299,15 @@ const statusOptions = [
   { label: 'Đã thôi việc', value: 'ĐÃ_NGHỈ_VIỆC' }
 ];
 
-const positions = ['Frontend Software Lead', 'Backend Engineer', 'UI/UX Visual Architect', 'HR Director', 'Senior HR Executive', 'Senior Accountant', 'Sales Execution'];
-
 const genderOptions = [
   { label: 'Nam giới', value: 'NAM' },
   { label: 'Nữ giới', value: 'NỮ' },
   { label: 'Định danh khác', value: 'KHÁC' }
 ];
 
-const departmentFormOptions = departments.map(dept => ({ label: dept, value: dept }));
-const positionOptionsList = positions.map(pos => ({ label: pos, value: pos }));
+// Mapping Forms
+const departmentFormOptions = computed(() => departmentsAPI.getAll().map(d => ({ label: d.department_name, value: d.department_id })));
+const positionOptionsList = computed(() => positionsAPI.getAll().map(p => ({ label: p.position_name, value: p.position_id })));
 
 const statusOptionsForm = [
   { label: 'Chính thức (Đang làm việc)', value: 'ĐANG_LÀM_VIỆC' },
@@ -341,8 +323,8 @@ const emptyForm = {
   id_card: '',
   personal_email: '',
   permanent_address: '',
-  department: 'Công nghệ thông tin',
-  position: 'Frontend Software Lead',
+  department: 1, // department_id in DB
+  position: 1, // position_id in DB
   company_email: '',
   hire_date: new Date().toISOString().substr(0, 10),
   status: 'THỬ_VIỆC',
@@ -361,7 +343,7 @@ const filteredEmployees = computed(() => {
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    list = list.filter(e => e.full_name.toLowerCase().includes(q) || e.employee_code.toLowerCase().includes(q) || e.id_card.includes(q));
+    list = list.filter(e => e.full_name.toLowerCase().includes(q) || e.employee_code.toLowerCase().includes(q));
   }
   return list;
 });
@@ -387,33 +369,52 @@ const getStatusDotClass = (status) => {
 const openAddModal = () => {
   editMode.value = false;
   form.value = { ...emptyForm };
-  form.value.employee_code = `${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 899)}`;
+  form.value.employee_code = `EMP${(employees.value.length + 1).toString().padStart(3,'0')}`;
+  form.value.department = 1;
+  form.value.position = 1;
   showModal.value = true;
 };
 
 const editEmployee = (emp) => {
   editMode.value = true;
-  form.value = { ...emp };
+  form.value = { ...emp, department: emp.department_id, position: emp.position_id };
   showModal.value = true;
 };
 
 const saveEmployee = async () => {
-  if (!form.value.full_name || !form.value.company_email) {
-    await showAlert('Thiếu dữ liệu', 'Họ tên và Email công ty là thông tin bắt buộc xác thực!');
+  if (!form.value.full_name) {
+    await showAlert('Thiếu dữ liệu', 'Họ tên là thông tin bắt buộc xác thực!');
     return;
   }
+  
+  // Convert component form to DB DTO
+  const dto = {
+    employee_code: form.value.employee_code,
+    full_name: form.value.full_name,
+    department_id: form.value.department,
+    position_id: form.value.position,
+    status: form.value.status,
+    hire_date: form.value.hire_date,
+    gender: form.value.gender,
+    phone_number: form.value.phone_number,
+    id_card: form.value.id_card,
+    company_email: form.value.company_email,
+    date_of_birth: form.value.date_of_birth
+  };
+
   if (editMode.value) {
-    const index = employees.value.findIndex(e => e.id === form.value.id);
-    if (index !== -1) employees.value[index] = { ...form.value };
+    employeesAPI.update(form.value.id, dto);
   } else {
-    employees.value.unshift({ ...form.value, id: Date.now() });
+    employeesAPI.add(dto);
   }
   showModal.value = false;
 };
 
 const confirmResign = async (emp) => {
   const ok = await showConfirm('Chấm dứt hồ sơ', `Xác nhận thực hiện quy trình thôi việc cho nhân sự ${emp.full_name}?`);
-  if (ok) emp.status = 'ĐÃ_NGHỈ_VIỆC';
+  if (ok) {
+    employeesAPI.delete(emp.id);
+  }
 };
 </script>
 

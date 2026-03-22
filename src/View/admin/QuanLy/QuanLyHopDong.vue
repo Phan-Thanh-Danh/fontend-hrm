@@ -225,6 +225,7 @@
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { contractsAPI, employeesAPI } from '@/data/mockDB.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -235,23 +236,47 @@ const filterStatus = ref('ALL');
 
 const statusOptions = [
   { label: 'Mọi trạng thái', value: 'ALL' },
-  { label: 'Đang hiệu lực', value: 'ĐANG_HIỆU_LỰC' },
+  { label: 'Đang hiệu lực', value: 'HIỆU_LỰC' },
   { label: 'Sắp hết hạn', value: 'SẮP_HẾT_HẠN' },
-  { label: 'Đã thanh lý', value: 'ĐÃ_THANH_LÝ' }
+  { label: 'Đã thanh lý/Chấm dứt', value: 'ĐÃ_CHẤM_DỨT' }
 ];
 
 const contractTypeOptions = [
   { label: 'Thử việc (02 tháng)', value: 'THỬ_VIỆC' },
-  { label: 'Xác định thời hạn (01 năm)', value: 'XÁC_ĐỊNH_THỜI_HẠN_1_NĂM' },
-  { label: 'Xác định thời hạn (03 năm)', value: 'XÁC_ĐỊNH_THỜI_HẠN_3_NĂM' },
-  { label: 'Không xác định thời hạn', value: 'KHÔNG_XÁC_ĐỊNH_THỜI_HẠN' }
+  { label: 'Xác định thời hạn (01 năm)', value: 'CHÍNH_THỨC_1_NĂM' },
+  { label: 'Xác định thời hạn (03 năm)', value: 'CHÍNH_THỨC_3_NĂM' },
+  { label: 'Không xác định thời hạn', value: 'VÔ_THỜI_HẠN' },
+  { label: 'Thực tập sinh', value: 'THỰC_TẬP' }
 ];
 
-const contracts = ref([
-  { id: 1, contract_no: 'HD-2023-1001', employee_name: 'Nguyễn Văn An', contract_type: 'THỬ_VIỆC', start_date: '10/10/2023', end_date: '10/12/2023', status: 'ĐANG_HIỆU_LỰC', salary: 15000000 },
-  { id: 2, contract_no: 'HD-2022-0945', employee_name: 'Trần Thị Thu', contract_type: 'XÁC_ĐỊNH_THỜI_HẠN_1_NĂM', start_date: '01/01/2023', end_date: '01/01/2024', status: 'SẮP_HẾT_HẠN', salary: 25000000 },
-  { id: 3, contract_no: 'HD-2021-0021', employee_name: 'Lê Quản Trị', contract_type: 'KHÔNG_XÁC_ĐỊNH_THỜI_HẠN', start_date: '01/01/2021', end_date: null, status: 'ĐANG_HIỆU_LỰC', salary: 45000000 }
-]);
+const contracts = computed(() => {
+  return contractsAPI.getAll().map(c => {
+    const emp = employeesAPI.getById(c.employee_id);
+    // Tính toán nếu sắp hết hạn (trong vòng 30 ngày)
+    let dynamicStatus = c.status;
+    if (dynamicStatus === 'HIỆU_LỰC' && c.end_date) {
+      const end = new Date(c.end_date);
+      const now = new Date();
+      const diffTime = Math.abs(end - now);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
+      if (diffDays <= 30 && end >= now) {
+        dynamicStatus = 'SẮP_HẾT_HẠN';
+      }
+    }
+
+    return {
+      id: c.contract_id,
+      contract_no: c.contract_code,
+      employee_id: c.employee_id,
+      employee_name: emp ? emp.full_name : `NV #${c.employee_id}`,
+      contract_type: c.contract_type,
+      start_date: c.start_date,
+      end_date: c.end_date,
+      status: dynamicStatus,
+      salary: c.basic_salary
+    }
+  });
+});
 
 const filteredContracts = computed(() => {
   let list = contracts.value;
@@ -268,30 +293,29 @@ const filteredContracts = computed(() => {
   return list;
 });
 
-const contractStats = [
-  { label: 'Hợp đồng hiệu lực', value: '185' },
-  { label: 'Đang thử việc', value: '24' },
-  { label: 'Hợp đồng vô thời hạn', value: '120' },
-  { label: 'Vừa thanh lý', value: '15' }
-];
+const contractStats = computed(() => [
+  { label: 'Hợp đồng hiệu lực', value: contracts.value.filter(c => c.status === 'HIỆU_LỰC' || c.status === 'SẮP_HẾT_HẠN').length.toString() },
+  { label: 'Đang thử việc', value: contracts.value.filter(c => c.contract_type === 'THỬ_VIỆC').length.toString() },
+  { label: 'Hợp đồng vô thời hạn', value: contracts.value.filter(c => c.contract_type === 'VÔ_THỜI_HẠN').length.toString() },
+  { label: 'Đã chấm dứt', value: contracts.value.filter(c => c.status === 'ĐÃ_CHẤM_DỨT').length.toString() }
+]);
 
 const historyLogs = [
-  { id: 1, content: 'Ký mới HĐ Thử việc - NV An', user: 'Admin HR', time: '10:00 AM, 10/10/2023', icon: 'person_add', bg: 'bg-[var(--sys-brand-solid)]' },
-  { id: 2, content: 'Phê chuẩn phụ lục lương - NV Thu', user: 'Lê Quản Trị', time: '02:30 PM, 15/09/2023', icon: 'payments', bg: 'bg-[var(--sys-warning-solid)]' },
-  { id: 3, content: 'Tất toán thanh lý hợp đồng', user: 'Lê Quản Trị', time: '09:00 AM, 01/09/2023', icon: 'gavel', bg: 'bg-[var(--sys-danger-solid)]' }
+  { id: 1, content: 'Hệ thống quét 50 hợp đồng mẫu từ Database', user: 'Mock System', time: '10:00 AM, 25/10/2023', icon: 'description', bg: 'bg-[var(--sys-brand-solid)]' }
 ];
 
 const expiringCount = computed(() => contracts.value.filter(c => c.status === 'SẮP_HẾT_HẠN').length);
 
 const emptyForm = {
   id: null,
+  employee_id: '',
   employee_name: '',
   contract_no: '',
   contract_type: 'THỬ_VIỆC',
   sign_date: new Date().toISOString().substr(0, 10),
   start_date: new Date().toISOString().substr(0, 10),
   salary: 0,
-  status: 'ĐANG_HIỆU_LỰC'
+  status: 'HIỆU_LỰC'
 };
 
 const form = ref({ ...emptyForm });
@@ -299,13 +323,13 @@ const form = ref({ ...emptyForm });
 const openAddModal = () => {
   editMode.value = false;
   form.value = { ...emptyForm };
-  form.value.contract_no = `HD-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  form.value.contract_no = `HDLD-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
   showModal.value = true;
 };
 
 const editContract = (item) => {
   editMode.value = true;
-  form.value = { ...item };
+  form.value = { ...item, salary: item.salary };
   showModal.value = true;
 };
 
@@ -313,32 +337,32 @@ const closeModal = () => { showModal.value = false; };
 
 const getStatusBadgeClass = (status) => {
   switch (status) {
-    case 'ĐANG_HIỆU_LỰC': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
+    case 'HIỆU_LỰC': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
     case 'SẮP_HẾT_HẠN': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
-    case 'ĐÃ_THANH_LÝ': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
+    case 'ĐÃ_CHẤM_DỨT': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
     default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
   }
 };
 
 const getStatusDotClass = (status) => {
   switch (status) {
-    case 'ĐANG_HIỆU_LỰC': return 'bg-[var(--sys-success-solid)]';
+    case 'HIỆU_LỰC': return 'bg-[var(--sys-success-solid)]';
     case 'SẮP_HẾT_HẠN': return 'bg-[var(--sys-warning-solid)]';
-    case 'ĐÃ_THANH_LÝ': return 'bg-[var(--sys-danger-solid)]';
+    case 'ĐÃ_CHẤM_DỨT': return 'bg-[var(--sys-danger-solid)]';
     default: return 'bg-[var(--sys-icon-default)] opacity-40';
   }
 };
 
 const calculateEndDate = () => {
-  if (!form.value.start_date || form.value.contract_type === 'KHÔNG_XÁC_ĐỊNH_THỜI_HẠN') return null;
+  if (!form.value.start_date || form.value.contract_type === 'VÔ_THỜI_HẠN') return null;
   const start = new Date(form.value.start_date);
   let monthsToAdd = 0;
-  if (form.value.contract_type === 'THỬ_VIỆC') monthsToAdd = 2;
-  if (form.value.contract_type === 'XÁC_ĐỊNH_THỜI_HẠN_1_NĂM') monthsToAdd = 12;
-  if (form.value.contract_type === 'XÁC_ĐỊNH_THỜI_HẠN_3_NĂM') monthsToAdd = 36;
+  if (form.value.contract_type === 'THỬ_VIỆC' || form.value.contract_type === 'THỰC_TẬP') monthsToAdd = 2;
+  if (form.value.contract_type === 'CHÍNH_THỨC_1_NĂM') monthsToAdd = 12;
+  if (form.value.contract_type === 'CHÍNH_THỨC_3_NĂM') monthsToAdd = 36;
   
   start.setMonth(start.getMonth() + monthsToAdd);
-  return start.toLocaleDateString('vi-VN');
+  return start.toISOString().substr(0, 10);
 };
 
 const handleSave = async () => {
@@ -347,17 +371,26 @@ const handleSave = async () => {
     return;
   }
   
+  let emp_id = form.value.employee_id;
+  if (!emp_id) {
+    const emp = employeesAPI.getAll().find(e => e.full_name.includes(form.value.employee_name) || e.employee_code.includes(form.value.employee_name));
+    emp_id = emp ? emp.employee_id : 1;
+  }
+
+  const dto = {
+    contract_code: form.value.contract_no,
+    employee_id: emp_id,
+    contract_type: form.value.contract_type,
+    start_date: form.value.start_date,
+    end_date: calculateEndDate() || null,
+    basic_salary: form.value.salary,
+    status: form.value.status === 'SẮP_HẾT_HẠN' ? 'HIỆU_LỰC' : form.value.status
+  };
+
   if (editMode.value) {
-    const idx = contracts.value.findIndex(c => c.id === form.value.id);
-    if (idx !== -1) {
-      contracts.value[idx] = { ...form.value, end_date: calculateEndDate() };
-    }
+    contractsAPI.update(form.value.id, dto);
   } else {
-    contracts.value.unshift({
-      ...form.value,
-      id: Date.now(),
-      end_date: calculateEndDate()
-    });
+    contractsAPI.add(dto);
   }
   closeModal();
 };
@@ -367,7 +400,8 @@ const extendContract = async (item) => {
   if (ok) {
     openAddModal();
     form.value.employee_name = item.employee_name;
-    form.value.contract_type = 'XÁC_ĐỊNH_THỜI_HẠN_1_NĂM';
+    form.value.employee_id = item.employee_id;
+    form.value.contract_type = 'CHÍNH_THỨC_1_NĂM';
   }
 };
 </script>

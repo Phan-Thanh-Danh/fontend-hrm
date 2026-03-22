@@ -171,6 +171,7 @@
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { positionsAPI } from '@/data/mockDB.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -208,13 +209,19 @@ const statusOptions = [
   { label: 'Tạm ngưng', value: 'inactive' }
 ];
 
-const jobTitles = ref([
-  { code: 'DEV-01', title: 'Senior Backend Developer', group: 'Kỹ thuật', level: 'Senior', status: 'active' },
-  { code: 'MKT-05', title: 'Content Marketing Specialist', group: 'Marketing', level: 'Junior', status: 'active' },
-  { code: 'HR-02', title: 'HR Recruitment Intern', group: 'Nhân sự', level: 'Intern', status: 'inactive' }
-]);
+const jobTitles = computed(() => {
+  return positionsAPI.getAll().map(p => ({
+    id: p.position_id,
+    code: p.position_code || `POS-${p.position_id}`,
+    title: p.position_name || '',
+    group: p.group || 'Kỹ thuật',
+    level: p.level || 'Middle',
+    status: p.status !== false ? 'active' : 'inactive' 
+  }));
+});
 
 const emptyForm = {
+  id: null,
   code: '',
   title: '',
   group: 'Kỹ thuật',
@@ -255,6 +262,7 @@ const openModal = (type, job = null) => {
     };
   } else {
     form.value = { ...emptyForm };
+    form.value.code = `POS-${(jobTitles.value.length + 1).toString().padStart(3,'0')}`;
   }
   showModal.value = true;
 };
@@ -266,19 +274,21 @@ const saveJobTitle = async () => {
   }
 
   const jobData = {
-    ...form.value,
-    status: form.value.isActiveCheckbox ? 'active' : 'inactive'
+    position_code: form.value.code,
+    position_name: form.value.title,
+    group: form.value.group,
+    level: form.value.level,
+    status: form.value.isActiveCheckbox
   };
 
   if (isEdit.value) {
-    const idx = jobTitles.value.findIndex(j => j.code === form.value.code);
-    if (idx !== -1) jobTitles.value[idx] = jobData;
+    positionsAPI.update(form.value.id, jobData);
   } else {
     if (jobTitles.value.some(j => j.code === form.value.code)) {
       await showAlert('Dữ liệu trùng lặp', 'Mã chức danh này đã tồn tại trên hệ thống!');
       return;
     }
-    jobTitles.value.unshift(jobData);
+    positionsAPI.add(jobData);
   }
   showModal.value = false;
 };
@@ -286,7 +296,7 @@ const saveJobTitle = async () => {
 const deleteJobTitle = async (job) => {
   const ok = await showConfirm('Xác nhận xóa', `Bạn có chắc muốn loại bỏ chức danh "${job.title}" khỏi hệ thống?`);
   if (ok) {
-    jobTitles.value = jobTitles.value.filter(j => j.code !== job.code);
+    positionsAPI.delete(job.id);
   }
 };
 </script>

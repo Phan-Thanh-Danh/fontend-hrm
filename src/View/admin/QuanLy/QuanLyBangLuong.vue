@@ -216,35 +216,50 @@
  */
 import { ref, computed } from 'vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { salariesAPI, employeesAPI } from '@/data/mockDB.js';
 
 const { showConfirm } = useConfirm();
 
 const searchQuery = ref('');
+const currentMonth = new Date().getMonth() + 1;
+const currentYear = new Date().getFullYear();
 
-const stats = ref([
-  { label: 'Tổng ngân quỹ lương', value: '2.45B', icon: 'account_balance', trend: '+5.2%' },
-  { label: 'Nhân sự thụ hưởng', value: '156', icon: 'badge', trend: '+2' },
-  { label: 'Thu nhập bình quân', value: '15.7M', icon: 'query_stats', trend: '+1.5%' },
-  { label: 'Qũy dự phòng rủi ro', value: '125M', icon: 'savings', trend: '-0.8%' },
-]);
+const employees = computed(() => {
+  return salariesAPI.getAll().map(s => {
+    const emp = employeesAPI.getById(s.employee_id);
+    return {
+      id: s.salary_id,
+      empId: emp ? emp.employee_code : `EMP-${s.employee_id}`,
+      name: emp ? emp.full_name : `NV #${s.employee_id}`,
+      role: emp ? emp.department_name : 'Nhân viên',
+      baseSalary: s.basic_salary,
+      totalIncome: s.basic_salary + s.allowance,
+      deduction: s.tax,
+      netSalary: s.net_salary,
+      status: s.status === 'ĐÃ_THANH_TOÁN' ? 'Đã thanh toán' : 'Chờ thanh toán',
+      period: `Tháng ${s.month} / ${s.year}`,
+      extraAllowance: s.allowance,
+      employee_id: s.employee_id
+    };
+  });
+});
 
-const employees = ref([
-  { id: 'EMP-001', name: 'Nguyễn Văn An', role: 'Staff UI Software Engineer', baseSalary: 18000000, totalIncome: 21500000, deduction: 1200000, netSalary: 20300000, status: 'Đã thanh toán', period: 'Tháng 10 / 2023' },
-  { id: 'EMP-042', name: 'Lê Thị Mai', role: 'Head of Marketing Lead', baseSalary: 25000000, totalIncome: 28000000, deduction: 2500000, netSalary: 25500000, status: 'Chờ thanh toán', period: 'Tháng 10 / 2023' },
-  { id: 'EMP-105', name: 'Trần Hoàng Nam', role: 'Fullstack Systems Engineer', baseSalary: 20000000, totalIncome: 20000000, deduction: 1500000, netSalary: 18500000, status: 'Đã khóa hồ sơ', period: 'Tháng 10 / 2023' },
-  { id: 'EMP-018', name: 'Phạm Minh Đức', role: 'Principal Product Manager', baseSalary: 35000000, totalIncome: 42000000, deduction: 4800000, netSalary: 37200000, status: 'Đã thanh toán', period: 'Tháng 10 / 2023' },
+const stats = computed(() => [
+  { label: 'Tổng ngân quỹ lương', value: formatCurrency(employees.value.reduce((acc, curr) => acc + curr.totalIncome, 0)), icon: 'account_balance', trend: '+5.2%' },
+  { label: 'Nhân sự thụ hưởng', value: employees.value.length.toString(), icon: 'badge', trend: '+2' },
+  { label: 'Thu nhập bình quân', value: employees.value.length > 0 ? formatCurrency(Math.floor(employees.value.reduce((acc, curr) => acc + curr.totalIncome, 0) / employees.value.length)) : '0', icon: 'query_stats', trend: '+1.5%' },
+  { label: 'Tổng khấu trừ thuế', value: formatCurrency(employees.value.reduce((acc, curr) => acc + curr.deduction, 0)), icon: 'savings', trend: '-0.8%' },
 ]);
 
 const filteredEmployees = computed(() => {
   if (!searchQuery.value) return employees.value;
   const q = searchQuery.value.toLowerCase();
-  return employees.value.filter(e => e.name.toLowerCase().includes(q) || e.id.toLowerCase().includes(q));
+  return employees.value.filter(e => e.name.toLowerCase().includes(q) || e.empId.toLowerCase().includes(q));
 });
 
 const isAddEditModalOpen = ref(false);
 const modalMode = ref('add');
 const formData = ref({});
-const selectedIndex = ref(-1);
 
 const modalTitle = computed(() => {
   if (modalMode.value === 'add') return 'Tạo hồ sơ quyết toán mới';
@@ -264,13 +279,20 @@ const getStatusClasses = (status) => {
 
 const openAddModal = () => {
   modalMode.value = 'add';
-  formData.value = { id: `EMP-${Math.floor(Math.random()*900)+100}`, name: '', role: 'Nhân sự', period: 'Tháng 10 / 2023', baseSalary: 0, totalIncome: 0, deduction: 0, status: 'Chờ thanh toán' };
+  formData.value = {
+    employee_id: null,
+    name: 'Nhân viên mới', 
+    period: `Tháng ${currentMonth} / ${currentYear}`, 
+    baseSalary: 0, 
+    totalIncome: 0, 
+    deduction: 0,
+    netSalary: 0
+  };
   isAddEditModalOpen.value = true;
 };
 
 const openEditModal = (item, index) => {
   modalMode.value = 'edit';
-  selectedIndex.value = index;
   formData.value = { ...item };
   isAddEditModalOpen.value = true;
 };
@@ -287,10 +309,23 @@ const closeModal = () => {
 
 const saveData = () => {
   const net = formData.value.totalIncome - formData.value.deduction;
+  const targetId = formData.value.id;
+
+  const dataToSave = {
+    basic_salary: Number(formData.value.baseSalary),
+    allowance: Number(formData.value.totalIncome) - Number(formData.value.baseSalary),
+    tax: Number(formData.value.deduction),
+    net_salary: net,
+    status: 'CHỜ_THANH_TOÁN'
+  };
+
   if (modalMode.value === 'add') {
-    employees.value.unshift({ ...formData.value, netSalary: net });
+    dataToSave.employee_id = 999; // Mock new emp id
+    dataToSave.month = currentMonth;
+    dataToSave.year = currentYear;
+    salariesAPI.add(dataToSave);
   } else {
-    employees.value[selectedIndex.value] = { ...formData.value, netSalary: net };
+    salariesAPI.update(targetId, dataToSave);
   }
   closeModal();
 };
@@ -298,7 +333,7 @@ const saveData = () => {
 const openDeleteModal = async (item, index) => {
   const ok = await showConfirm('Xác nhận xóa', `Bạn có chắc muốn loại bỏ hồ sơ quyết toán của ${item.name}?`);
   if (ok) {
-    employees.value.splice(index, 1);
+    salariesAPI.delete(item.id);
   }
 };
 </script>

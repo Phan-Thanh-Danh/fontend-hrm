@@ -1,5 +1,5 @@
-<template>
-  <div class="space-y-4 pb-6">
+﻿<template>
+  <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
@@ -18,7 +18,7 @@
       <div v-for="stat in stats" :key="stat.label" 
         class="bg-[var(--sys-bg-surface)] p-5 rounded-lg border border-[var(--sys-border-subtle)] shadow-sm hover:shadow-md transition-all flex items-center gap-5 group cursor-default">
         <div :class="['w-12 h-12 rounded-md', stat.bg, stat.color, 'flex items-center justify-center shrink-0 border', stat.border, 'group-hover:scale-105 transition-all duration-300 shadow-sm']">
-          <span class="material-symbols-outlined text-[24px] font-bold">{{ stat.icon }}</span>
+          <span class="material-symbols-rounded text-[24px] font-bold">{{ stat.icon }}</span>
         </div>
         <div class="flex flex-col min-w-0">
           <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 shadow-none whitespace-nowrap">{{ stat.label }}</p>
@@ -37,7 +37,7 @@
           <div class="px-5 py-3.5 border-b border-[var(--sys-border-subtle)] flex justify-between items-center bg-[var(--sys-bg-page)]/30">
             <h3 class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest m-0 flex items-center gap-2.5">
               <div class="w-8 h-8 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[20px] font-bold">analytics</span>
+                <span class="material-symbols-rounded text-[20px] font-bold">analytics</span>
               </div>
               CHỈ SỐ CHUYÊN CẦN TUẦN
             </h3>
@@ -56,7 +56,7 @@
           <div class="px-5 py-3.5 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/30">
             <h3 class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest m-0 flex items-center gap-2.5">
               <div class="w-8 h-8 rounded-md bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border border-[var(--sys-warning-border)] flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[20px] font-bold">pending_actions</span>
+                <span class="material-symbols-rounded text-[20px] font-bold">pending_actions</span>
               </div>
               YÊU CẦU CHỜ PHÊ DUYỆT ({{ pendingItems.length }})
             </h3>
@@ -96,7 +96,7 @@
       <div class="xl:col-span-4 space-y-5">
         <!-- Dept Identity -->
         <div class="bg-gradient-to-br from-[var(--sys-brand-solid)] via-indigo-700 to-violet-800 text-white p-6 rounded-lg shadow-xl relative overflow-hidden group">
-          <span class="material-symbols-outlined absolute -right-4 -bottom-4 text-[140px] opacity-10 rotate-12 transition-transform duration-700 group-hover:rotate-0 group-hover:scale-110">schema</span>
+          <span class="material-symbols-rounded absolute -right-4 -bottom-4 text-[140px] opacity-10 rotate-12 transition-transform duration-700 group-hover:rotate-0 group-hover:scale-110">schema</span>
           <div class="relative z-10 space-y-4 text-left">
             <h4 class="text-[11px] font-bold uppercase tracking-widest opacity-80 m-0">ĐƠN VỊ VẬN HÀNH</h4>
             <h2 class="text-2xl font-bold uppercase m-0 tracking-tighter leading-tight">{{ deptInfo.name || 'KỸ THUẬT VÀ CLOUD' }}</h2>
@@ -118,7 +118,7 @@
         <div class="bg-[var(--sys-bg-surface)] p-6 rounded-lg border border-[var(--sys-border-subtle)] shadow-sm space-y-5 text-left">
           <h3 class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest m-0 flex items-center gap-2.5">
             <div class="w-8 h-8 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] flex items-center justify-center shrink-0">
-              <span class="material-symbols-outlined text-[20px] font-bold">equalizer</span>
+              <span class="material-symbols-rounded text-[20px] font-bold">equalizer</span>
             </div>
             KPI VẬN HÀNH THÁNG 3
           </h3>
@@ -147,58 +147,51 @@ const projects = ref([])
 const deptInfo = ref({ name: 'Đang tải...', count: 0, budget: '0' })
 const chartData = ref([65, 80, 45, 90, 85, 40, 75])
 
-const fetchData = async () => {
-  try {
-    const [statsRes, requestsRes, projectsRes, deptRes, empRes, attRes] = await Promise.all([
-      fetch('http://localhost:3000/dashboardStats').then(res => res.json()),
-      fetch('http://localhost:3000/leaveRequests').then(res => res.json()),
-      fetch('http://localhost:3000/projects').then(res => res.json()),
-      fetch('http://localhost:3000/departments/1').then(res => res.json()),
-      fetch('http://localhost:3000/employees?deptId=1').then(res => res.json()),
-      fetch('http://localhost:3000/attendance').then(res => res.json())
-    ]);
-    
-    deptInfo.value = deptRes;
-    
-    // Lọc yêu cầu chờ duyệt
-    pendingItems.value = requestsRes.filter(req => {
-      const isMyDept = String(req.deptId) === '1';
-      const isVisible = req.visibleTo && req.visibleTo.includes('Manager');
-      const isPending = req.status === 'pending';
-      return isMyDept && isVisible && isPending;
-    }).map(req => ({
-      ...req,
-      date: req.startDate 
-    }));
+import { employeesAPI, departmentsAPI, requestsAPI } from '@/data/mockDB.js';
 
-    const deptProjects = projectsRes.filter(p => String(p.deptId) === '1');
+const fetchData = () => {
+  try {
+    const allEmps = employeesAPI.getAll();
+    const allReqs = requestsAPI.getAll();
+    // Giả sử trưởng phòng này quản lý phòng 1 
+    const myDept = departmentsAPI.getById(1) || { department_name: 'Phòng Kỹ Thuật (IT)', budget: '1.2 Tỷ' };
+    
+    deptInfo.value = {
+        name: myDept.department_name,
+        count: allEmps.filter(e => e.department_id === 1 && e.status !== 'ĐÃ_THÔI_VIỆC').length,
+        budget: myDept.budget || '1.2 Tỷ VNĐ'
+    };
+    
+    // Lọc yêu cầu chờ duyệt thuộc phòng ban 1
+    pendingItems.value = allReqs.filter(req => {
+      const emp = allEmps.find(e => e.employee_id === req.employee_id);
+      return emp && emp.department_id === 1 && req.status === 'CHỜ_DUYỆT';
+    }).map(req => {
+      const emp = allEmps.find(e => e.employee_id === req.employee_id);
+      return {
+          id: req.request_id,
+          name: emp ? emp.full_name : 'N/A',
+          type: req.request_type,
+          date: req.created_at || new Date().toISOString().split('T')[0]
+      };
+    });
+
+    const deptProjects = [
+        { name: 'Nâng cấp CRM v3.0', progress: 85 },
+        { name: 'Tích hợp AI Tuyển dụng', progress: 40 },
+        { name: 'Bảo mật dữ liệu nhân sự', progress: 92 }
+    ];
     projects.value = deptProjects;
     
-    // Tìm số người đi muộn thuộc phòng ban này hôm nay
-    const myDeptEmployees = empRes.map(e => e.id);
-    const lateCount = attRes.filter(a => a.status === 'late' && myDeptEmployees.includes(a.employeeId)).length;
+    const lateCount = 2; // Mock
 
-    // Cập nhật stats động
-    const deptStats = statsRes.manager.map(s => {
-      if (s.id === 1) {
-         return { ...s, value: String(empRes.length).padStart(2, '0') };
-      }
-      if (s.id === 2) {
-         return { ...s, value: String(lateCount).padStart(2, '0') };
-      }
-      if (s.id === 3) {
-         return { ...s, value: String(pendingItems.value.length).padStart(2, '0') };
-      }
-      if (s.id === 4) {
-         const avgKPI = deptProjects.length ? Math.round(deptProjects.reduce((sum, p) => sum + p.progress, 0) / deptProjects.length) : 0;
-         return { ...s, value: `${avgKPI}%` };
-      }
-      return s;
-    });
+    stats.value = [
+        { label: 'TỔNG NHÂN SỰ', value: String(deptInfo.value.count).padStart(2, '0'), icon: 'groups', bg: 'bg-[var(--sys-brand-soft)]', color: 'text-[var(--sys-brand-solid)]', border: 'border-[var(--sys-brand-border)]' },
+        { label: 'ĐI MUỘN HÔM NAY', value: String(lateCount).padStart(2, '0'), icon: 'alarm_off', bg: 'bg-[var(--sys-danger-soft)]', color: 'text-[var(--sys-danger-text)]', border: 'border-[var(--sys-danger-border)]' },
+        { label: 'CHỜ THẨM ĐỊNH', value: String(pendingItems.value.length).padStart(2, '0'), icon: 'pending_actions', bg: 'bg-[var(--sys-warning-soft)]', color: 'text-[var(--sys-warning-text)]', border: 'border-[var(--sys-warning-border)]' },
+        { label: 'TIẾN ĐỘ DỰ ÁN', value: `72%`, icon: 'trending_up', bg: 'bg-[var(--sys-success-soft)]', color: 'text-[var(--sys-success-text)]', border: 'border-[var(--sys-success-border)]' }
+    ];
     
-    stats.value = deptStats;
-    
-    // Randomize chart data based on KPIs for visual effect
     chartData.value = [65 + Math.random()*20, 80 + Math.random()*10, 45 + Math.random()*30, 90, 85, 40, 75];
     
   } catch (error) {
@@ -206,32 +199,16 @@ const fetchData = async () => {
   }
 };
 
-const handleApprove = async (req) => {
-  try {
-    await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'approved', approverId: 'NV008' })
-    });
-    await fetchData();
-  } catch (error) {
-    console.error('Lỗi phê duyệt:', error);
-  }
+const handleApprove = (req) => {
+  requestsAPI.approve(req.id);
+  fetchData();
 };
 
-const handleReject = async (req) => {
+const handleReject = (req) => {
   const reason = prompt('Lý do từ chối:');
   if (reason) {
-    try {
-      await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'rejected', rejectReason: reason, approverId: 'NV008' })
-      });
-      await fetchData();
-    } catch (error) {
-      console.error('Lỗi từ chối:', error);
-    }
+    requestsAPI.reject(req.id, reason);
+    fetchData();
   }
 };
 

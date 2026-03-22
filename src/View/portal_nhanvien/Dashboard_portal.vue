@@ -224,14 +224,19 @@ let timerInterval = null;
 const activities = ref([]);
 const notifications = ref([]);
 
-const fetchData = async () => {
+const fetchData = () => {
   try {
-    const [actRes, notifRes] = await Promise.all([
-      fetch('http://localhost:3000/attendanceHistory').then(res => res.json()),
-      fetch('http://localhost:3000/notifications').then(res => res.json())
-    ]);
-    activities.value = actRes;
-    notifications.value = notifRes.filter(n => n.userId === 'NV002' || n.userId === 'any');
+    activities.value = [
+        { date: '12/10/2023', type: 'Chấm công', time: '08:15 Vào - 17:35 Ra', color: 'success', status: 'Hợp lệ' },
+        { date: '11/10/2023', type: 'Nghỉ phép', time: 'Buổi chiều (13:00 - 17:00)', color: 'warning', status: 'Đã duyệt' },
+        { date: '10/10/2023', type: 'Chấm công', time: '08:20 Vào - 17:40 Ra', color: 'success', status: 'Hợp lệ' },
+        { date: '09/10/2023', type: 'Chấm công', time: '08:10 Vào - 17:30 Ra', color: 'success', status: 'Hợp lệ' }
+    ];
+    notifications.value = [
+        { id: 1, type: 'warning', icon: 'campaign', title: 'Thông báo Nội bộ', desc: 'Cuộc họp toàn công ty vào Thứ 6 lúc 15:00.', time: '10 phút trước' },
+        { id: 2, type: 'success', icon: 'done_all', title: 'Nghỉ phép', desc: 'Đơn nghỉ phép ngày 15/10 đã được duyệt.', time: '2 giờ trước' },
+        { id: 3, type: 'success', icon: 'payments', title: 'Lương & Thưởng', desc: 'Bảng lương tháng 9 đã được cập nhật.', time: '1 ngày trước' }
+    ];
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu nhân viên:', error);
   }

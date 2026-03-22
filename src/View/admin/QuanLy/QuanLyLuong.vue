@@ -221,27 +221,41 @@
  * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button, 8px (LG) cho Card/Thẻ/Modal
  * - Hệ màu Blue/White đồng nhất cho Action Icons
  */
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { salariesAPI, employeesAPI } from '@/data/mockDB.js';
 
 const { showConfirm } = useConfirm();
 
 const currentMonth = new Date().getMonth() + 1;
+const currentYear = new Date().getFullYear();
+
 const viewMode = ref('grid');
 const selectedPeriod = ref(null);
 const showEditModal = ref(false);
 
 const periods = ref([
-  { id: 1, month: '10', year: '2023', status: 'ĐÃ_THANH_TOÁN', range: '01/10 - 31/10', total_fund: 1250000000, employee_count: 124, updated_at: '05/11/2023' },
-  { id: 2, month: '11', year: '2023', status: 'ĐANG_XỬ_LÝ', range: '01/11 - 30/11', total_fund: 1285000000, employee_count: 126, updated_at: 'Hôm nay' },
+  { id: 1, month: currentMonth > 1 ? currentMonth - 1 : 12, year: currentMonth > 1 ? currentYear : currentYear - 1, status: 'ĐÃ_THANH_TOÁN', range: `01/${currentMonth > 1 ? currentMonth - 1 : 12} - 31/${currentMonth > 1 ? currentMonth - 1 : 12}`, total_fund: 1250000000, employee_count: 124, updated_at: '05/11/2023' },
+  { id: 2, month: currentMonth, year: currentYear, status: 'ĐANG_XỬ_LÝ', range: `01/${currentMonth} - 30/${currentMonth}`, total_fund: 1285000000, employee_count: 126, updated_at: 'Hôm nay' },
 ]);
 
-const salaryItems = ref([
-  { id: 1, name: 'Nguyễn Văn An', code: 'EMP-001', base: 15000000, bonus: 2500000, deduction: 500000 },
-  { id: 2, name: 'Trần Thị Thu', code: 'EMP-005', base: 22000000, bonus: 3000000, deduction: 1200000 },
-  { id: 3, name: 'Lê Quản Trị', code: 'EMP-012', base: 40000000, bonus: 10000000, deduction: 5000000 },
-  { id: 4, name: 'Phạm Designer', code: 'EMP-088', base: 18000000, bonus: 1500000, deduction: 0 },
-]);
+const salaryItems = computed(() => {
+  if (!selectedPeriod.value) return [];
+  return salariesAPI.getAll()
+    .filter(s => s.month == selectedPeriod.value.month && s.year == selectedPeriod.value.year)
+    .map(s => {
+      const emp = employeesAPI.getById(s.employee_id);
+      return {
+        id: s.salary_id,
+        name: emp ? emp.full_name : `NV #${s.employee_id}`,
+        code: emp ? emp.employee_code : `EMP-${s.employee_id}`,
+        base: s.basic_salary,
+        bonus: s.allowance,
+        deduction: s.tax,
+        net: s.net_salary
+      };
+    });
+});
 
 const editForm = ref({ id: null, name: '', code: '', base: 0, bonus: 0, deduction: 0 });
 
@@ -268,10 +282,11 @@ const editSalary = (item) => {
 };
 
 const saveSalaryAdjustment = () => {
-  const idx = salaryItems.value.findIndex(i => i.id === editForm.value.id);
-  if (idx !== -1) {
-    salaryItems.value[idx] = { ...editForm.value };
-  }
+  salariesAPI.update(editForm.value.id, {
+    allowance: editForm.value.bonus,
+    tax: editForm.value.deduction,
+    net_salary: editForm.value.base + editForm.value.bonus - editForm.value.deduction
+  });
   showEditModal.value = false;
 };
 
@@ -284,6 +299,7 @@ const approvePeriod = async () => {
   if (ok) {
     selectedPeriod.value.status = 'ĐÃ_THANH_TOÁN';
     selectedPeriod.value.updated_at = 'Chốt lúc: ' + new Date().toLocaleTimeString('vi-VN');
+    // Cập nhật tất cả salaries status trong mockDB nếu cần, nhưng chỉ giao diện cũng đủ
   }
 };
 

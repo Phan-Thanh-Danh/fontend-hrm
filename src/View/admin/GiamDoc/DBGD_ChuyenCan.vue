@@ -244,25 +244,50 @@
 <script setup>
 import { computed, ref } from 'vue';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
-import {
-  chuyenCanCards,
-  depts,
-  topUsers,
-  badUsers,
-  chuyenCanLineChart
-} from '@/data/sampleData_GiamDoc.js';
+import { employeesAPI, departmentsAPI, requestsAPI } from '@/data/mockDB.js';
 
 const selectedDateRange = ref('30_days');
 
-const defaultAvg = chuyenCanLineChart.length ? (chuyenCanLineChart.reduce((a,b) => a+b, 0) / chuyenCanLineChart.length).toFixed(1) : '98.5';
+const chuyenCanCards = computed(() => {
+  const reqs = requestsAPI.getAll().filter(r => r.status === 'ĐÃ_DUYỆT');
+  return [
+    { id: 'ty-le', label: 'Tỷ lệ chuyên cần', icon: 'timelapse', iconBg: 'var(--sys-brand-solid-lch-90)', iconColor: 'var(--sys-brand-solid)', value: '98.5%', badgeGood: true, badgeTrend: 'up', badge: '1.2%', progress: 98.5 },
+    { id: 'di-tre', label: 'Đi trễ / Về sớm', icon: 'schedule', iconBg: 'var(--sys-warning-light)', iconColor: 'var(--sys-warning)', value: '45', valueSub: 'lần', badgeGood: false, badgeTrend: 'up', badge: '5%', note: 'Vs trung bình tháng trước' },
+    { id: 'nghi-phep', label: 'Đơn nghỉ phép/vắng mặt', icon: 'event_busy', iconBg: 'var(--sys-danger-light)', iconColor: 'var(--sys-danger)', value: reqs.length.toString(), valueSub: 'đơn', badgeGood: true, badgeTrend: 'down', badge: '10%', note: 'Đã duyệt toàn hệ thống' }
+  ];
+});
+
+const depts = computed(() => {
+  return departmentsAPI.getAll().slice(0, 4).map((d, index) => {
+    return { name: d.department_name, val: (99.5 - (index * 0.8)).toFixed(1) };
+  });
+});
+
+const topUsers = computed(() => {
+  return employeesAPI.getAll().filter(e => e.status === 'ĐANG_LÀM_VIỆC').slice(0, 2).map((e, index) => {
+    const d = departmentsAPI.getById(e.department_id);
+    return { name: e.full_name, dept: d ? d.department_name : '', avatar: e.avatar_url || `https://i.pravatar.cc/150?u=${index}`, val: '100%', subval: 'Chuyên cần' };
+  });
+});
+
+const badUsers = computed(() => {
+  return employeesAPI.getAll().filter(e => e.status === 'ĐANG_LÀM_VIỆC').slice(2, 4).map((e, index) => {
+    const d = departmentsAPI.getById(e.department_id);
+    return { name: e.full_name, dept: d ? d.department_name : '', avatar: e.avatar_url || `https://i.pravatar.cc/150?u=${index+10}`, val: (8 - index).toString(), subval: 'Lần đi trễ' };
+  });
+});
+
+const chuyenCanLineChart = ref([98.5, 98.2, 98.6, 99.0, 98.8, 98.5]);
+
+const defaultAvg = chuyenCanLineChart.value.length ? (chuyenCanLineChart.value.reduce((a,b) => a+b, 0) / chuyenCanLineChart.value.length).toFixed(1) : '98.5';
 
 const points = computed(() => {
   const minVal = 97.0;
   const maxVal = 100.0;
   const maxDiff = maxVal - minVal;
-  const numPoints = chuyenCanLineChart.length;
+  const numPoints = chuyenCanLineChart.value.length;
 
-  return chuyenCanLineChart.map((val, idx) => {
+  return chuyenCanLineChart.value.map((val, idx) => {
     // 0-100 coordinates
     const x = (idx / (numPoints - 1)) * 100;
     // Y percentage mapped to 100% chart bounds

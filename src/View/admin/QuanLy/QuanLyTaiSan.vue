@@ -188,6 +188,7 @@
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { assetsAPI, employeesAPI } from '@/data/mockDB.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -197,7 +198,7 @@ const filterStatus = ref('ALL');
 const showModal = ref(false);
 const editMode = ref(false);
 
-const categories = ['Thiết bị IT', 'Nội thất khối VP', 'Phương tiện vận chuyển', 'Dụng cụ văn phòng'];
+const categories = ['Laptop', 'Màn hình', 'Bàn phím', 'Chuột', 'Máy in', 'Server'];
 const categoryOptions = computed(() => [
   { label: 'Tất cả danh mục', value: 'ALL' },
   ...categories.map(cat => ({ label: cat, value: cat }))
@@ -205,42 +206,53 @@ const categoryOptions = computed(() => [
 
 const statusOptions = [
   { label: 'Mọi trạng thái', value: 'ALL' },
-  { label: 'Sẵn sàng', value: 'SẴN_SÀNG' },
+  { label: 'Sẵn sàng / Trong kho', value: 'TRONG_KHO' },
   { label: 'Đang sử dụng', value: 'ĐANG_SỬ_DỤNG' },
-  { label: 'Đang bảo trì', value: 'ĐANG_SỬA_CHỮA' },
+  { label: 'Đang bảo trì / Hỏng', value: 'HỎNG' },
   { label: 'Đã thanh lý', value: 'ĐÃ_THANH_LÝ' }
 ];
 
 const categoryOptionsForm = categories.map(cat => ({ label: cat, value: cat }));
 const statusOptionsForm = [
-  { label: 'Sẵn sàng cấp phát', value: 'SẴN_SÀNG' },
+  { label: 'Sẵn sàng (Trong kho)', value: 'TRONG_KHO' },
   { label: 'Đang bàn giao sử dụng', value: 'ĐANG_SỬ_DỤNG' },
-  { label: 'Đang bảo trì / Sửa chữa', value: 'ĐANG_SỬA_CHỮA' },
+  { label: 'Đang bảo trì / Hỏng', value: 'HỎNG' },
   { label: 'Đã thanh lý định kỳ', value: 'ĐÃ_THANH_LÝ' }
 ];
 
-const stats = ref([
-  { label: 'Tổng số thiết bị', value: '1,240', icon: 'devices_other', semantic: 'brand' },
-  { label: 'Đang bàn giao', value: '864', icon: 'assignment_ind', semantic: 'brand' },
-  { label: 'Trong kho dự phòng', value: '320', icon: 'warehouse', semantic: 'success' },
-  { label: 'Bảo trì hệ thống', value: '56', icon: 'settings_suggest', semantic: 'danger' }
-]);
+const assets = computed(() => {
+  return assetsAPI.getAll().map(a => {
+    let userName = null;
+    if (a.assigned_to) {
+      const emp = employeesAPI.getById(a.assigned_to);
+      userName = emp ? emp.full_name : `NV #${a.assigned_to}`;
+    }
+    return {
+      id: a.asset_id,
+      name: a.asset_name,
+      code: a.asset_code,
+      category: a.category,
+      user: userName,
+      assigned_to: a.assigned_to,
+      status: a.status
+    };
+  });
+});
 
-const assets = ref([
-  { id: 1, name: 'MacBook Pro M2 14" Silver', code: 'TS-2023-001', category: 'Thiết bị IT', user: 'Lưu Trọng Trí', status: 'ĐANG_SỬ_DỤNG' },
-  { id: 2, name: 'Màn hình Dell UltraSharp 27" 4K', code: 'TS-2023-002', category: 'Thiết bị IT', user: 'Lưu Trọng Trí', status: 'ĐANG_SỬ_DỤNG' },
-  { id: 3, name: 'Bàn ghế văn phòng Pro Series', code: 'TS-2022-045', category: 'Nội thất khối VP', user: 'Nguyễn Thị Hoa', status: 'ĐANG_SỬ_DỤNG' },
-  { id: 4, name: 'iPhone 15 Pro Max 256GB', code: 'TS-2023-089', category: 'Thiết bị IT', user: null, status: 'SẴN_SÀNG' },
-  { id: 5, name: 'Máy chiếu Sony 4K Cinematic', code: 'TS-2021-012', category: 'Thiết bị IT', user: null, status: 'ĐANG_SỬA_CHỮA' },
+const stats = computed(() => [
+  { label: 'Tổng số thiết bị', value: assets.value.length.toString(), icon: 'devices_other', semantic: 'brand' },
+  { label: 'Đang bàn giao', value: assets.value.filter(a => a.status === 'ĐANG_SỬ_DỤNG').length.toString(), icon: 'assignment_ind', semantic: 'brand' },
+  { label: 'Trong kho dự phòng', value: assets.value.filter(a => a.status === 'TRONG_KHO').length.toString(), icon: 'warehouse', semantic: 'success' },
+  { label: 'Bảo trì hệ thống', value: assets.value.filter(a => a.status === 'HỎNG').length.toString(), icon: 'settings_suggest', semantic: 'danger' }
 ]);
 
 const emptyForm = {
   id: null,
   name: '',
   code: '',
-  category: 'Thiết bị IT',
-  status: 'SẴN_SÀNG',
-  user: null
+  category: 'Laptop',
+  status: 'TRONG_KHO',
+  user: ''
 };
 
 const form = ref({ ...emptyForm });
@@ -267,8 +279,8 @@ const filteredAssets = computed(() => {
 const getStatusBadgeClass = (status) => {
   switch (status) {
     case 'ĐANG_SỬ_DỤNG': return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]';
-    case 'SẴN_SÀNG': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
-    case 'ĐANG_SỬA_CHỮA': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
+    case 'TRONG_KHO': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
+    case 'HỎNG': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
     case 'ĐÃ_THANH_LÝ': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
     default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
   }
@@ -277,8 +289,8 @@ const getStatusBadgeClass = (status) => {
 const getStatusDotClass = (status) => {
   switch (status) {
     case 'ĐANG_SỬ_DỤNG': return 'bg-[var(--sys-brand-solid)]';
-    case 'SẴN_SÀNG': return 'bg-[var(--sys-success-solid)]';
-    case 'ĐANG_SỬA_CHỮA': return 'bg-[var(--sys-warning-solid)]';
+    case 'TRONG_KHO': return 'bg-[var(--sys-success-solid)]';
+    case 'HỎNG': return 'bg-[var(--sys-warning-solid)]';
     case 'ĐÃ_THANH_LÝ': return 'bg-[var(--sys-danger-solid)]';
     default: return 'bg-[var(--sys-icon-default)] opacity-40';
   }
@@ -287,7 +299,7 @@ const getStatusDotClass = (status) => {
 const openAddModal = () => {
   editMode.value = false;
   form.value = { ...emptyForm };
-  form.value.code = `TS-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  form.value.code = `AST-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
   showModal.value = true;
 };
 
@@ -304,11 +316,25 @@ const handleSave = async () => {
     await showAlert('Thiếu thông tin', 'Vui lòng xác định tên gọi và mã tài sản!');
     return;
   }
+  
+  let assigned_id = null;
+  if (form.value.status === 'ĐANG_SỬ_DỤNG' && form.value.user) {
+    const emp = employeesAPI.getAll().find(e => e.full_name.includes(form.value.user) || e.employee_code.includes(form.value.user));
+    assigned_id = emp ? emp.employee_id : form.value.assigned_to;
+  }
+
+  const dto = {
+    asset_code: form.value.code,
+    asset_name: form.value.name,
+    category: form.value.category,
+    status: form.value.status,
+    assigned_to: assigned_id
+  };
+
   if (editMode.value) {
-    const idx = assets.value.findIndex(a => a.id === form.value.id);
-    if (idx !== -1) assets.value[idx] = { ...form.value };
+    assetsAPI.update(form.value.id, dto);
   } else {
-    assets.value.unshift({ ...form.value, id: Date.now() });
+    assetsAPI.add(dto);
   }
   closeModal();
 };
@@ -320,16 +346,14 @@ const assignAsset = (asset) => {
 const recoverAsset = async (asset) => {
   const ok = await showConfirm('Xác nhận thu hồi', `Bạn có chắc muốn thu hồi thiết bị ${asset.name} từ nhân sự ${asset.user}?`);
   if (ok) {
-    asset.user = null;
-    asset.status = 'SẴN_SÀNG';
+    assetsAPI.update(asset.id, { assigned_to: null, status: 'TRONG_KHO' });
   }
 };
 
 const confirmLiquidate = async (asset) => {
   const ok = await showConfirm('Xác nhận thanh lý', `Bạn có chắc muốn thực hiện quy trình thanh lý cho thiết bị ${asset.name}?`);
   if (ok) {
-    asset.status = 'ĐÃ_THANH_LÝ';
-    asset.user = null;
+    assetsAPI.update(asset.id, { status: 'ĐÃ_THANH_LÝ', assigned_to: null });
   }
 };
 </script>

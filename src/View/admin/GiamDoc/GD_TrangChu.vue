@@ -458,16 +458,11 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
+import { employeesAPI, departmentsAPI, requestsAPI } from '@/data/mockDB.js';
 import {
-  kpiCards,
-  barChartData,
-  barChartYLabels,
-  donutData,
-  donutTotal,
-  pendingApprovals as pendingApprovalsData,
   timelineEvents,
   reminderText,
 } from '@/data/sampleData_GiamDoc.js';
@@ -479,38 +474,97 @@ const router = useRouter();
 const selectedDateRange = ref('30_days');
 
 const approvals = ref([]);
+const kpiCards = ref([]);
+const barChartData = ref([]);
+const barChartYLabels = ref(['300,000', '250,000', '200,000', '150,000', '100,000', '50,000', '0']);
+const donutData = ref([]);
+const donutTotal = ref(0);
 
-const fetchData = async () => {
+const fetchData = () => {
   try {
-    const response = await fetch('http://localhost:3000/leaveRequests');
-    const data = await response.json();
-    
-    // Lọc đơn dành cho Giám đốc (visibleTo chứa Director)
-    const directorRequests = data.filter(req => 
-      req.status === 'pending' && 
-      (req.visibleTo && req.visibleTo.includes('Director'))
-    ).map(req => ({
-      id: req.id,
-      isReal: true, // Đánh dấu là dữ liệu từ DB
-      title: 'Đơn nghỉ phép: ' + req.name,
-      meta: `${req.type} • ${req.days} ngày • ${req.urgent ? 'Khẩn cấp' : 'Thường'}`,
-      icon: 'event_busy',
-      iconClass: 'kpi-icon--blue',
-      urgent: req.urgent,
-      actions: ['Từ chối', 'Phê duyệt'],
-      status: 'pending',
-      rejectReason: ''
-    }));
+    const allEmps = employeesAPI.getAll();
+    const allDepts = departmentsAPI.getAll();
+    const allReqs = requestsAPI.getAll();
 
-    // Gộp với dữ liệu mẫu hiện có
-    approvals.value = [
-      ...directorRequests,
-      ...pendingApprovalsData.map((item) => ({
-        ...item,
-        status: 'pending',
-        rejectReason: '',
-      }))
+    const activeEmps = allEmps.filter(e => e.status !== 'ĐÃ_NGHỈ_VIỆC');
+    
+    // 1. KPI Cards
+    const totalHeadcount = activeEmps.length;
+    const pendingReqs = allReqs.filter(r => r.status === 'CHỜ_DUYỆT').length;
+    
+    kpiCards.value = [
+      {
+        id: 1, label: 'Tổng số nhân sự', value: totalHeadcount,
+        icon: 'groups', iconClass: 'kpi-icon--blue',
+        badge: '+12% so với tháng trước', badgeIcon: 'trending_up', badgeClass: 'kpi-badge--success',
+        route: '/giam-doc/nhan-su', footerType: 'sparkline',
+        sparkline: [30, 45, 60, 50, 75, 40, 85, 100], sparklineDanger: false, meta: 'Dữ liệu tăng đều'
+      },
+      {
+        id: 2, label: 'Quỹ lương tháng này', value: '2.5 Tỷ',
+        icon: 'payments', iconClass: 'kpi-icon--green',
+        badge: '-1.5% so với Dữ Toán', badgeIcon: 'trending_down', badgeClass: 'kpi-badge--danger',
+        route: '/giam-doc/luong', footerType: 'progress',
+        progress: 75, progressClass: 'kpi-progress-fill--green', meta: 'Ngân sách thực chi'
+      },
+      {
+        id: 3, label: 'Hồ sơ cần duyệt', value: pendingReqs,
+        icon: 'task', iconClass: 'kpi-icon--amber',
+        badge: 'Ưu tiên xử lý', badgeIcon: 'priority_high', badgeClass: 'kpi-badge--warning',
+        route: '/giam-doc/phe-duyet', footerType: 'none', meta: `${pendingReqs} yêu cầu mới`
+      },
+      {
+        id: 4, label: 'Tỉ lệ nghỉ việc / tháng', value: '2.1%',
+        icon: 'person_remove', iconClass: 'kpi-icon--purple',
+        badge: 'Bình thường', badgeIcon: 'done_all', badgeClass: 'kpi-badge--success',
+        route: '/giam-doc/nhan-su', footerType: 'sparkline',
+        sparkline: [15, 20, 25, 10, 5, 20, 30, 15], sparklineDanger: true, meta: 'Thấp hơn trung bình'
+      }
     ];
+
+    // 2. Donut Data
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#14b8a6'];
+    donutTotal.value = activeEmps.length;
+    
+    let chartItems = allDepts.map((d, i) => {
+        const count = activeEmps.filter(e => e.department_id === d.department_id).length;
+        const pct = Math.round((count / (donutTotal.value || 1)) * 100);
+        return {
+            label: d.department_name,
+            pct: pct,
+            color: colors[i % colors.length]
+        };
+    }).filter(d => d.pct > 0).sort((a,b) => b.pct - a.pct);
+
+    donutData.value = chartItems;
+
+    // 3. Bar Chart Mock 
+    barChartData.value = [
+      { label: 'T1', current: 120000, target: 150000, active: false },
+      { label: 'T2', current: 140000, target: 155000, active: false },
+      { label: 'T3', current: 135000, target: 160000, active: false },
+      { label: 'T4', current: 180000, target: 165000, active: false },
+      { label: 'T5', current: 210000, target: 170000, active: false },
+      { label: 'T6', current: 240000, target: 200000, active: true },
+    ];
+
+    // 4. Pending Approvals
+    approvals.value = allReqs.filter(r => r.status === 'CHỜ_DUYỆT').map(r => {
+        const emp = allEmps.find(e => e.employee_id === r.requester_id) || {};
+        return {
+            id: r.request_id,
+            isReal: true,
+            title: r.title,
+            meta: `${emp.full_name || 'Khuyết danh'} • Yêu cầu lúc ${r.request_date ? r.request_date.substring(11,16) : 'N/A'}`,
+            icon: r.is_urgent ? 'warning' : 'event_note',
+            iconClass: r.is_urgent ? 'kpi-icon--amber' : 'kpi-icon--blue',
+            urgent: r.is_urgent,
+            actions: ['Từ chối', 'Phê duyệt'],
+            status: 'pending',
+            rejectReason: ''
+        };
+    }).slice(0, 5);
+
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu Giám đốc:', error);
   }
@@ -576,19 +630,11 @@ const closeRejectModal = () => {
   if (returnToDetailAfterAction.value) showDetailModal.value = true;
 };
 
-const confirmApprove = async () => {
+const confirmApprove = () => {
   if (!selectedApproval.value) return;
 
   if (selectedApproval.value.isReal) {
-    try {
-      await fetch(`http://localhost:3000/leaveRequests/${selectedApproval.value.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'approved' })
-      });
-    } catch (error) {
-      console.error('Lỗi khi phê duyệt đơn:', error);
-    }
+    requestsAPI.approve(selectedApproval.value.id);
   }
 
   selectedApproval.value.status = 'approved';
@@ -609,15 +655,7 @@ const confirmReject = async () => {
   }
 
   if (selectedApproval.value.isReal) {
-    try {
-      await fetch(`http://localhost:3000/leaveRequests/${selectedApproval.value.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: 'rejected', rejectReason: reason })
-      });
-    } catch (error) {
-      console.error('Lỗi khi từ chối đơn:', error);
-    }
+    requestsAPI.reject(selectedApproval.value.id, reason);
   }
 
   selectedApproval.value.status = 'rejected';
@@ -636,7 +674,7 @@ const confirmReject = async () => {
 const donutStyle = computed(() => {
   let gradientStr = [];
   let currentPct = 0;
-  donutData.forEach(item => {
+  donutData.value.forEach(item => {
     let nextPct = currentPct + item.pct;
     gradientStr.push(`${item.color} ${currentPct}% ${nextPct}%`);
     currentPct = nextPct;
@@ -649,11 +687,14 @@ const donutStyle = computed(() => {
 // Tính toán Scale động cho Bar Chart từ Data
 const dynamicBarChart = computed(() => {
   // Lấy giá trị nhỏ nhất và lớn nhất trực tiếp từ mảng nhãn trục Y
-  const maxLabel = parseFloat(barChartYLabels[0].replace(/,/g, ''));
-  const minLabel = parseFloat(barChartYLabels[barChartYLabels.length - 1].replace(/,/g, ''));
+  const yLabels = barChartYLabels.value || [];
+  if (yLabels.length === 0) return [];
+
+  const maxLabel = parseFloat(yLabels[0].replace(/,/g, ''));
+  const minLabel = parseFloat(yLabels[yLabels.length - 1].replace(/,/g, ''));
   const range = maxLabel - minLabel;
 
-  return barChartData.map(col => {
+  return barChartData.value.map(col => {
     // Trực tiếp dùng dữ liệu dạng raw integer mới từ sampleData_GiamDoc
     const valCurrentNum = col.current || 0;
     const targetNum = col.target || 0;

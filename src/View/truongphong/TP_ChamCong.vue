@@ -1,5 +1,5 @@
-<template>
-  <div class="space-y-4 pb-6">
+﻿<template>
+  <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
@@ -8,7 +8,7 @@
       </div>
       <div class="flex items-center gap-3 shrink-0">
         <button class="h-11 px-6 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md font-bold text-[13px] uppercase tracking-widest border border-[var(--sys-brand-border)] hover:bg-[var(--sys-brand-solid)] hover:text-white transition-all flex items-center gap-2.5 shadow-sm active:scale-95">
-          <span class="material-symbols-outlined text-[20px] font-bold">cloud_download</span> 
+          <span class="material-symbols-rounded text-[20px] font-bold">cloud_download</span> 
           Xuất dữ liệu công
         </button>
       </div>
@@ -20,7 +20,7 @@
       <div class="px-3.5 py-3 border-b border-[var(--sys-border-subtle)] flex flex-col xl:flex-row justify-between items-start xl:items-center gap-3.5 bg-[var(--sys-bg-page)]/20">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)] shadow-sm">
-            <span class="material-symbols-outlined text-[24px] font-bold">date_range</span>
+            <span class="material-symbols-rounded text-[24px] font-bold">date_range</span>
           </div>
           <div class="bg-transparent text-left">
             <h5 class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest m-0 leading-none mb-1 shadow-none">BẢNG CÔNG CHI TIẾT</h5>
@@ -119,7 +119,7 @@
         </div>
         <button @click="showHistoryModal = true" class="text-[11px] font-bold uppercase tracking-widest text-[var(--sys-brand-solid)] hover:opacity-80 transition-all flex items-center gap-2 group">
           Toàn bộ lịch sử chấm công
-          <span class="material-symbols-outlined text-[18px] font-bold group-hover:translate-x-1 transition-transform">trending_flat</span>
+          <span class="material-symbols-rounded text-[18px] font-bold group-hover:translate-x-1 transition-transform">trending_flat</span>
         </button>
       </div>
     </div>
@@ -133,14 +133,14 @@
             <!-- Modal Header -->
             <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-page)]/50">
               <div class="bg-transparent text-left flex items-center gap-3">
-                <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[24px]">history</span>
+                <span class="material-symbols-rounded text-[var(--sys-brand-solid)] text-[24px]">history</span>
                 <div>
                   <h3 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-wide">Nhật trình chấm công & Điểm danh</h3>
                   <p class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">THÁNG {{ selectedMonth }}/{{ selectedYear }}</p>
                 </div>
               </div>
               <button @click="showHistoryModal = false" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)] shadow-sm border border-transparent hover:border-[var(--sys-border-strong)]">
-                <span class="material-symbols-outlined text-xl">close</span>
+                <span class="material-symbols-rounded text-xl">close</span>
               </button>
             </div>
 
@@ -165,7 +165,7 @@
                     <td class="px-6 py-3">
                       <div class="flex items-center gap-2">
                         <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)]">{{ log.in }}</span>
-                        <span class="material-symbols-outlined text-[14px] text-[var(--sys-text-disabled)]">arrow_forward</span>
+                        <span class="material-symbols-rounded text-[14px] text-[var(--sys-text-disabled)]">arrow_forward</span>
                         <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)]">{{ log.out || '--:--' }}</span>
                       </div>
                     </td>
@@ -194,12 +194,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Dropdown from '@/components/Dropdown.vue'
+import { employeesAPI, mockDB } from '@/data/mockDB.js'
 
 const showHistoryModal = ref(false)
 const selectedMonth = ref('03')
 const selectedYear = ref('2026')
+
+const DEPT_ID = 2 // Phòng Công nghệ IT
 
 const monthOptions = [
   { label: 'Tháng 01', value: '01' },
@@ -221,23 +224,77 @@ const isWeekend = (day) => {
   return d === 0 || d === 6
 }
 
-const attendanceList = ref([
-  { id: '1023', name: 'Nguyễn Văn Anh', dept: 'IT DEVELOPER', total: '21.0', data: { 1: 'on', 2: 'late', 3: 'on', 5: 'off', 6: 'on', 10: 'on', 15: 'on', 20: 'on' } },
-  { id: '1025', name: 'Lê Diệu Linh', dept: 'UI/UX LEAD', total: '22.0', data: { 1: 'on', 2: 'on', 3: 'on', 4: 'on', 5: 'on', 6: 'on', 10: 'on', 15: 'late', 20: 'on' } },
-  { id: '1030', name: 'Trần Minh Hải', dept: 'DEVOPS ENG', total: '19.5', data: { 1: 'off', 2: 'off', 3: 'on', 4: 'on', 5: 'on', 6: 'on', 10: 'on', 15: 'on', 20: 'on' } },
-  { id: '1042', name: 'Phạm Thành Nam', dept: 'BACKEND DEV', total: '21.5', data: { 1: 'on', 2: 'on', 3: 'on', 5: 'on', 6: 'on', 10: 'on', 15: 'on', 20: 'on' } },
-  { id: '1105', name: 'Hoàng Kim Yến', dept: 'QA TESTER', total: '22.0', data: { 1: 'on', 2: 'on', 3: 'on', 6: 'on', 7: 'on', 10: 'on' } },
-])
+// Trạng thái chấm công giả lập dựa trên attendance_id
+const getAttStatus = (seed) => {
+  const r = seed % 10
+  if (r < 7) return 'on'
+  if (r === 7) return 'late'
+  return 'off'
+}
 
-const historyLogs = ref([
-  { date: '21/03/2026', name: 'Nguyễn Văn Anh', role: 'IT DEVELOPER', in: '07:58', out: '17:35', status: 'ontime', statusLabel: 'Đúng giờ' },
-  { date: '21/03/2026', name: 'Lê Diệu Linh', role: 'UI/UX LEAD', in: '08:15', out: '18:02', status: 'late', statusLabel: 'Đi muộn' },
-  { date: '20/03/2026', name: 'Hoàng Kim Yến', role: 'QA TESTER', in: '08:02', out: '17:30', status: 'ontime', statusLabel: 'Đúng giờ' },
-  { date: '20/03/2026', name: 'Phạm Thành Nam', role: 'BACKEND DEV', in: '07:45', out: '17:15', status: 'ontime', statusLabel: 'Đúng giờ' },
-  { date: '19/03/2026', name: 'Trần Minh Hải', role: 'DEVOPS ENG', in: '--:--', out: '--:--', status: 'off', statusLabel: 'Vắng mặt' },
-  { date: '19/03/2026', name: 'Lê Diệu Linh', role: 'UI/UX LEAD', in: '08:00', out: '17:40', status: 'ontime', statusLabel: 'Đúng giờ' },
-  { date: '18/03/2026', name: 'Nguyễn Văn Anh', role: 'IT DEVELOPER', in: '08:40', out: '18:15', status: 'late', statusLabel: 'Đi muộn' }
-])
+const attendanceList = ref([])
+const historyLogs = ref([])
+
+const loadData = () => {
+  const allEmps = employeesAPI.getAll().filter(e => e.department_id === DEPT_ID && e.status !== 'ĐÃ_NGHỈ_VIỆC')
+  const allAtts = mockDB.attendances || []
+
+  // Xây dựng bảng công
+  attendanceList.value = allEmps.slice(0, 8).map(emp => {
+    const empAtts = allAtts.filter(a => a.employee_id === emp.employee_id)
+    const data = {}
+    let totalDays = 0
+
+    empAtts.forEach(att => {
+      const d = new Date(att.attendance_date)
+      if (!isNaN(d)) {
+        const day = d.getDate()
+        const status = getAttStatus(att.attendance_id + emp.employee_id)
+        data[day] = status
+        if (status !== 'off') totalDays += status === 'late' ? 0.5 : 1
+      }
+    })
+
+    // Điền ngẫu nhiên các ngày chưa có data cho đủ thực tế
+    for (let d = 1; d <= 22; d++) {
+      if (!data[d] && !isWeekend(d)) {
+        const seed = (emp.employee_id * 31 + d) % 10
+        data[d] = seed < 8 ? 'on' : (seed === 8 ? 'late' : 'off')
+        totalDays += data[d] === 'on' ? 1 : (data[d] === 'late' ? 0.5 : 0)
+      }
+    }
+
+    return {
+      id: emp.employee_code,
+      name: emp.full_name,
+      dept: `IT DEPT`,
+      total: totalDays.toFixed(1),
+      data
+    }
+  })
+
+  // Xây dựng lịch sử logs từ attendances
+  historyLogs.value = allAtts
+    .filter(a => allEmps.find(e => e.employee_id === a.employee_id))
+    .slice(0, 15)
+    .map(att => {
+      const emp = allEmps.find(e => e.employee_id === att.employee_id)
+      const statusKey = getAttStatus(att.attendance_id + (emp?.employee_id || 0))
+      const inTime = att.check_in_time ? att.check_in_time.split(' ')[1]?.substring(0, 5) : '08:00'
+      const outTime = att.check_out_time ? att.check_out_time.split(' ')[1]?.substring(0, 5) : '17:30'
+      const dateStr = att.attendance_date ? new Date(att.attendance_date).toLocaleDateString('vi-VN') : ''
+
+      return {
+        date: dateStr,
+        name: emp?.full_name || 'N/A',
+        role: 'IT DEPT',
+        in: statusKey === 'off' ? '--:--' : inTime,
+        out: statusKey === 'off' ? '--:--' : outTime,
+        status: statusKey === 'on' ? 'ontime' : (statusKey === 'late' ? 'late' : 'off'),
+        statusLabel: statusKey === 'on' ? 'Đúng giờ' : (statusKey === 'late' ? 'Đi muộn' : 'Vắng mặt')
+      }
+    })
+}
 
 const getStatusClass = (status) => {
   if (status === 'ontime') return 'text-[var(--sys-success-text)] bg-[var(--sys-success-soft)] px-2 py-0.5 rounded border border-[var(--sys-success-border)]';
@@ -245,6 +302,8 @@ const getStatusClass = (status) => {
   if (status === 'off') return 'text-[var(--sys-danger-text)] bg-[var(--sys-danger-soft)] px-2 py-0.5 rounded border border-[var(--sys-danger-border)]';
   return 'text-[var(--sys-text-secondary)] bg-[var(--sys-bg-hover)] px-2 py-0.5 rounded border border-[var(--sys-border-strong)]';
 }
+
+onMounted(loadData)
 </script>
 
 <style scoped>

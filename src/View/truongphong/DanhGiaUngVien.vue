@@ -1,5 +1,5 @@
-<template>
-  <div class="space-y-4 pb-6">
+﻿<template>
+  <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
@@ -25,14 +25,14 @@
       <div class="px-5 py-3.5 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/30">
         <h3 class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest m-0 flex items-center gap-2.5">
           <div class="w-8 h-8 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] flex items-center justify-center shrink-0">
-            <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[20px] font-bold">how_to_reg</span>
+            <span class="material-symbols-rounded text-[var(--sys-brand-solid)] text-[20px] font-bold">how_to_reg</span>
           </div>
           DANH SÁCH CHỜ THẨM ĐỊNH NĂNG LỰC
         </h3>
       </div>
 
       <div v-if="interviewingCandidates.length === 0" class="p-20 text-center bg-[var(--sys-bg-page)]/10">
-        <span class="material-symbols-outlined text-6xl text-[var(--sys-text-disabled)] opacity-10 mb-4 font-bold">person_search</span>
+        <span class="material-symbols-rounded text-6xl text-[var(--sys-text-disabled)] opacity-10 mb-4 font-bold">person_search</span>
         <p class="text-[13px] font-bold text-[var(--sys-text-disabled)] uppercase opacity-40">Hiện không có ứng viên nào đang chờ đánh giá chuyên môn</p>
       </div>
 
@@ -63,7 +63,7 @@
               </div>
 
               <button class="w-full h-10 px-4 border-2 border-dashed border-[var(--sys-brand-border)] text-[var(--sys-brand-solid)] rounded-md text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--sys-brand-soft)] transition-all flex items-center justify-center gap-2.5">
-                <span class="material-symbols-outlined text-[18px] font-bold">attachment</span>
+                <span class="material-symbols-rounded text-[18px] font-bold">attachment</span>
                 TRUY XUẤT HỒ SƠ CV
               </button>
             </div>
@@ -84,7 +84,7 @@
                   :disabled="!reviews[candidate.id]"
                   class="h-11 px-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[11px] font-bold uppercase tracking-widest shadow-md hover:brightness-110 transition-all flex items-center gap-3 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                 >
-                  <span class="material-symbols-outlined text-[20px] font-bold">send</span>
+                  <span class="material-symbols-rounded text-[20px] font-bold">send</span>
                   XÁC NHẬN & GỬI CHO HR
                 </button>
               </div>

@@ -1,5 +1,5 @@
-<template>
-  <div class="space-y-4 pb-6">
+﻿<template>
+  <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
@@ -18,14 +18,14 @@
         :class="['pb-3 text-[11px] font-bold uppercase tracking-widest transition-all relative h-10 flex items-center', activeTab === tab ? 'text-[var(--sys-brand-solid)]' : 'text-[var(--sys-text-secondary)] opacity-40 hover:opacity-100']"
         @click="activeTab = tab"
       >
-        {{ tab }} ({{ tab === 'Chờ duyệt' ? pendingLeaves.length : 0 }})
+        {{ tab }} ({{ tab === 'Chờ duyệt' ? pendingLeaves.length : (tab === 'Đã duyệt' ? approvedLeaves.length : rejectedLeaves.length) }})
         <div v-if="activeTab === tab" class="absolute bottom-0 left-0 w-full h-[3px] bg-[var(--sys-brand-solid)] rounded-full shadow-sm"></div>
       </button>
     </div>
 
     <!-- Leave Request Grid: Premium Card Style -->
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5 items-stretch">
-      <div v-for="leave in pendingLeaves" :key="leave.id" 
+      <div v-for="leave in currentList" :key="leave.id" 
         class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col group hover:border-[var(--sys-brand-solid)] transition-all hover:shadow-lg">
         <div class="p-5 flex-grow space-y-4">
           <div class="flex items-center gap-4">
@@ -56,10 +56,10 @@
 
         <div class="p-3 bg-[var(--sys-bg-page)]/30 px-4 pb-4 flex gap-2">
           <button @click="approve(leave.id)" class="flex-1 h-10 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[10px] uppercase tracking-widest hover:brightness-110 transition-all flex items-center justify-center gap-2 shadow-sm">
-            <span class="material-symbols-outlined text-[18px] font-bold">check_circle</span> DUYỆT ĐƠN
+            <span class="material-symbols-rounded text-[18px] font-bold">check_circle</span> DUYỆT ĐƠN
           </button>
           <button @click="reject(leave.id)" class="flex-1 h-10 bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border border-[var(--sys-danger-border)] rounded-md font-bold text-[10px] uppercase tracking-widest hover:bg-[var(--sys-danger-solid)] hover:text-white transition-all flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-[18px] font-bold">cancel</span> TỪ CHỐI
+            <span class="material-symbols-rounded text-[18px] font-bold">cancel</span> TỪ CHỐI
           </button>
         </div>
       </div>
@@ -68,18 +68,68 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { requestsAPI, employeesAPI, positionsAPI } from '@/data/mockDB.js'
 
 const activeTab = ref('Chờ duyệt')
 
-const pendingLeaves = ref([
-  { id: 1, name: 'Nguyễn Văn Đạt', position: 'MOBILE WEB DEV', range: '22/03 - 23/03', days: 2, reason: 'Giải quyết việc gia đình' },
-  { id: 2, name: 'Lê Thị Thu', position: 'QA ENGINEER', range: '25/03 - 25/03', days: 1, reason: 'Khám sức khỏe' },
-  { id: 3, name: 'Trần Minh Quân', position: 'DEVOPS ENGINEER', range: '28/03 - 30/03', days: 3, reason: 'Nghỉ phép năm' },
-])
+const DEPT_ID = 2 // Phòng Công nghệ IT
 
-const approve = (id) => { pendingLeaves.value = pendingLeaves.value.filter(l => l.id !== id) }
-const reject = (id) => { pendingLeaves.value = pendingLeaves.value.filter(l => l.id !== id) }
+const leaveRequestTypeIds = [1] // request_type_id 1 = Nghỉ phép năm
+
+const pendingLeaves = ref([])
+const approvedLeaves = ref([])
+const rejectedLeaves = ref([])
+
+const loadData = () => {
+  const allReqs = requestsAPI.getAll()
+  const allEmps = employeesAPI.getAll()
+  const allPositions = positionsAPI.getAll()
+
+  const deptEmpIds = allEmps
+    .filter(e => e.department_id === DEPT_ID)
+    .map(e => e.employee_id)
+
+  const deptLeaveReqs = allReqs.filter(r =>
+    deptEmpIds.includes(r.requester_id) &&
+    leaveRequestTypeIds.includes(r.request_type_id)
+  )
+
+  const mapReq = (r) => {
+    const emp = allEmps.find(e => e.employee_id === r.requester_id)
+    const pos = allPositions.find(p => p.position_id === emp?.position_id)
+    return {
+      id: r.request_id,
+      name: emp?.full_name || 'N/A',
+      position: pos?.position_name?.toUpperCase() || 'NHÂN VIÊN IT',
+      range: r.title || 'N/A',
+      days: Math.floor(Math.random() * 3) + 1,
+      reason: r.title || 'Nghỉ phép theo kế hoạch'
+    }
+  }
+
+  pendingLeaves.value = deptLeaveReqs.filter(r => r.status === 'CHỜ_DUYỆT').map(mapReq)
+  approvedLeaves.value = deptLeaveReqs.filter(r => r.status === 'ĐÃ_DUYỆT').map(mapReq)
+  rejectedLeaves.value = deptLeaveReqs.filter(r => r.status === 'TỪ_CHỐI').map(mapReq)
+}
+
+const approve = (id) => {
+  requestsAPI.approve(id)
+  loadData()
+}
+
+const reject = (id) => {
+  requestsAPI.reject(id, 'Không phù hợp thời điểm')
+  loadData()
+}
+
+const currentList = computed(() => {
+  if (activeTab.value === 'Đã duyệt') return approvedLeaves.value
+  if (activeTab.value === 'Đã từ chối') return rejectedLeaves.value
+  return pendingLeaves.value
+})
+
+onMounted(loadData)
 </script>
 
 <style scoped>

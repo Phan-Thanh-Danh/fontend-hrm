@@ -221,22 +221,99 @@
 <script setup>
 import { computed, ref } from 'vue';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
-import {
-  bienDongKpiCards,
-  nghiViecBoPhan,
-  danhSachNghiViec,
-  bienDongLineChart,
-  bienDongLineChartMax,
-  bienDongDonut,
-} from '@/data/sampleData_GiamDoc.js';
+import { employeesAPI, departmentsAPI, positionsAPI } from '@/data/mockDB.js';
 
 const selectedDateRange = ref('30_days');
+
+const bienDongKpiCards = computed(() => {
+  const emps = employeesAPI.getAll();
+  const thoiViec = emps.filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC').length;
+  const tyLeNghi = emps.length > 0 ? ((thoiViec / emps.length) * 100).toFixed(1) : 0;
+  return [
+    {
+      id: 1, label: 'Tổng nghỉ việc', value: thoiViec.toString(), suffix: 'nhân sự', suffixCls: 'text-lg text-slate-500 font-bold',
+      icon: 'group_remove', iconBg: 'bg-red-50', iconColor: 'text-red-500',
+      badge: { icon: 'trending_up', text: '+5%', cls: 'bg-red-50 text-red-600 border-red-100' },
+      note: 'So với cùng kỳ năm trước'
+    },
+    {
+      id: 2, label: 'Tỷ lệ biến động', value: tyLeNghi.toString(), suffix: '%', suffixCls: 'text-lg text-slate-500 font-bold',
+      icon: 'show_chart', iconBg: 'bg-orange-50', iconColor: 'text-orange-500',
+      badge: { icon: 'warning', text: 'Cao', cls: 'bg-orange-50 text-orange-600 border-orange-100' },
+      note: 'Vượt mục tiêu 0.6%'
+    },
+    {
+      id: 3, label: 'Chi phí thay thế', value: '1.2', suffix: 'Tỷ', suffixCls: 'text-lg text-slate-500 font-bold',
+      icon: 'currency_exchange', iconBg: 'bg-blue-50', iconColor: 'text-blue-500',
+      badge: null,
+      note: 'Ước tính phí tuyển dụng & đào tạo'
+    },
+    {
+      id: 4, label: 'Tỷ lệ giữ chân', value: (100 - tyLeNghi).toFixed(1), suffix: '%', suffixCls: 'text-lg text-slate-500 font-bold',
+      icon: 'loyalty', iconBg: 'bg-green-50', iconColor: 'text-green-500',
+      badge: { icon: 'task_alt', text: 'Tốt', cls: 'bg-green-50 text-green-600 border-green-100' },
+      note: 'Nhân sự thâm niên > 1 năm'
+    }
+  ];
+});
+
+const nghiViecBoPhan = computed(() => {
+  const depts = departmentsAPI.getAll();
+  const emps = employeesAPI.getAll();
+  return depts.map(d => {
+    const deptEmps = emps.filter(e => e.department_id === d.department_id);
+    const deptThoiViec = deptEmps.filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC').length;
+    const tyLe = deptEmps.length > 0 ? ((deptThoiViec / deptEmps.length) * 100).toFixed(1) : 0;
+    return {
+      tenPhong: d.department_name,
+      soNhanSu: deptEmps.length,
+      soNghiViec: deptThoiViec,
+      tyLe: tyLe,
+      alert: tyLe > 5
+    };
+  }).filter(d => d.soNhanSu > 0).sort((a,b) => b.soNghiViec - a.soNghiViec);
+});
+
+const danhSachNghiViec = computed(() => {
+  const emps = employeesAPI.getAll().filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC');
+  return emps.slice(0, 5).map(e => {
+    const deptName = departmentsAPI.getById(e.department_id)?.department_name || 'Không rõ';
+    const posName = positionsAPI.getById(e.position_id)?.position_name || 'Nhân viên';
+    return {
+      id: e.employee_id,
+      initials: e.full_name ? e.full_name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : 'NV',
+      name: e.full_name,
+      chucVu: posName,
+      phongBan: deptName,
+      ngayNghi: new Date().toLocaleDateString('vi-VN'),
+      lyDo: 'Lý do cá nhân',
+      hinhThucCls: 'bg-orange-50 text-orange-600 border-orange-100',
+      hinhThuc: 'Tự nguyện'
+    };
+  });
+});
+
+const bienDongLineChart = ref([
+  { month: 'Tháng 1', val: 2.5 },
+  { month: 'Tháng 2', val: 3.0 },
+  { month: 'Tháng 3', val: 2.8 },
+  { month: 'Tháng 4', val: 3.5 },
+  { month: 'Tháng 5', val: 4.0 },
+  { month: 'Tháng 6', val: 3.6 }
+]);
+const bienDongLineChartMax = 5.0;
+
+const bienDongDonut = ref([
+  { label: 'Dưới 1 năm', pct: 45, color: '#FB7185' },
+  { label: '1 - 3 năm', pct: 35, color: '#FCD34D' },
+  { label: 'Trên 3 năm', pct: 20, color: '#34D399' }
+]);
 
 // --- BIỂU ĐỒ ĐƯỜNG ĐỘNG (Line Chart) ---
 const bienDongLinePoints = computed(() => {
   const max = bienDongLineChartMax;
-  const numPoints = bienDongLineChart.length;
-  return bienDongLineChart.map((item, idx) => ({ 
+  const numPoints = bienDongLineChart.value.length;
+  return bienDongLineChart.value.map((item, idx) => ({ 
     month: item.month,
     val: item.val,
     x: (idx / (numPoints - 1)) * 100, 
@@ -268,7 +345,7 @@ const bienDongDonutSegments = computed(() => {
   let currentAngle = 0;
   const circumference = 219.9;
   
-  bienDongDonut.forEach((item) => {
+  bienDongDonut.value.forEach((item) => {
     const dashoffset = circumference - (item.pct / 100) * circumference;
     segments.push({
       ...item,

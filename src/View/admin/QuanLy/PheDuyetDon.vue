@@ -273,9 +273,10 @@
  * Tuân thủ 7 Chỉ thị UI/UX SaaS Final (Directive 1, 2, 3, 4, 6)
  * Fix: "Không cho rớt chữ" - Áp dụng whitespace-nowrap & Flex dynamic layout.
  */
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { requestsAPI, employeesAPI, departmentsAPI, mockDB } from '@/data/mockDB.js';
 
 const { showAlert } = useConfirm();
 
@@ -286,48 +287,36 @@ const showRejectModal = ref(false);
 const showDetailModal = ref(false);
 const rejectReason = ref('');
 const selectedRequest = ref(null);
-const intervalId = ref(null);
 
-const requests = ref([]);
-
-const fetchData = async () => {
-  try {
-    const [reqRes, deptRes] = await Promise.all([
-      fetch('http://localhost:3000/leaveRequests'),
-      fetch('http://localhost:3000/departments')
-    ]);
+const requests = computed(() => {
+  return mockDB.requests.map(req => {
+    const emp = employeesAPI.getById(req.employee_id);
+    const dept = departmentsAPI.getById(req.department_id || (emp ? emp.department_id : null));
     
-    const data = await reqRes.json();
-    const depts = await deptRes.json();
-    
-    // Map dữ liệu từ backend sang cấu trúc Card UI
-    requests.value = data.map(req => {
-      const dept = depts.find(d => String(d.id) === String(req.deptId));
-      return {
-        id: req.id,
-        employeeName: req.name,
-        employeeId: 'EMP-' + req.employeeId,
-        department: dept ? dept.name.toUpperCase() : 'N/A',
-        title: req.type,
-        icon: req.type.includes('Phép') ? 'event_busy' : (req.type.includes('ốm') ? 'medical_services' : 'flight'),
-        dateRange: `${req.startDate} - ${req.endDate}`,
-        duration: `${req.days || 1} NGÀY`,
-        reason: req.reason,
-        status: req.status || 'pending'
-      };
-    });
-  } catch (error) {
-    console.error('Lỗi khi tải dữ liệu phê duyệt:', error);
-  }
-};
+    // Convert status to match UI tab identifiers
+    let mappedStatus = 'pending';
+    if (req.status === 'ĐÃ_DUYỆT') mappedStatus = 'approved';
+    if (req.status === 'TỪ_CHỐI') mappedStatus = 'rejected';
+    if (req.status === 'CHỜ_DUYỆT' || req.status === 'ĐANG_XỬ_LÝ') mappedStatus = 'pending';
 
-onMounted(() => {
-  fetchData();
-  intervalId.value = setInterval(fetchData, 10000); // Tự động làm mới mỗi 10 giây
-});
+    const reqType = req.request_type || '';
+    let icon = 'flight'; // Default to work trip icon
+    if (reqType.toLowerCase().includes('phép')) icon = 'event_busy';
+    if (reqType.toLowerCase().includes('ốm') || reqType.toLowerCase().includes('bệnh')) icon = 'medical_services';
 
-onUnmounted(() => {
-  if (intervalId.value) clearInterval(intervalId.value);
+    return {
+      id: req.request_id,
+      employeeName: emp ? emp.full_name : 'N/A',
+      employeeId: 'EMP-' + req.employee_id,
+      department: dept ? dept.department_name.toUpperCase() : 'N/A',
+      title: reqType,
+      icon: icon,
+      dateRange: req.created_at || 'Hôm nay',
+      duration: 'Tùy chọn',
+      reason: req.reason || 'Không có ghi chú',
+      status: mappedStatus
+    };
+  });
 });
 
 const openDetailModal = (r) => {
@@ -372,12 +361,7 @@ const closeRejectModal = () => { showRejectModal.value = false; rejectReason.val
 
 const handleApprove = async (r) => {
   try {
-    await fetch(`http://localhost:3000/leaveRequests/${r.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'approved' })
-    });
-    await fetchData();
+    requestsAPI.approve(r.id);
     closeDetailModal();
   } catch (error) {
     console.error('Lỗi khi duyệt đơn:', error);
@@ -391,15 +375,7 @@ const confirmReject = async () => {
   }
   if (selectedRequest.value) {
     try {
-      await fetch(`http://localhost:3000/leaveRequests/${selectedRequest.value.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          status: 'rejected',
-          rejectReason: rejectReason.value
-        })
-      });
-      await fetchData();
+      requestsAPI.reject(selectedRequest.value.id, rejectReason.value);
       closeRejectModal();
       closeDetailModal();
     } catch (error) {

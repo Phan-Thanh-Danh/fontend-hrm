@@ -228,24 +228,94 @@
 <script setup>
 import { computed, ref } from 'vue';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
-import { nhanSuKpiCards, topPerformers, deptRankings, nhanSuCapBac, bienDongNhanLucData } from '@/data/sampleData_GiamDoc.js';
+import { employeesAPI, departmentsAPI, positionsAPI } from '@/data/mockDB.js';
 
 const selectedDateRange = ref('30_days');
 
-const maxNhanSu = 500;
-const totalNhanSu = computed(() => nhanSuCapBac.reduce((acc, curr) => acc + curr.count, 0));
+const nhanSuKpiCards = computed(() => {
+  const emps = employeesAPI.getAll();
+  const total = emps.filter(e => e.status === 'ĐANG_LÀM_VIỆC').length;
+  const thoiViec = emps.filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC').length;
+  const tyLeNghi = emps.length > 0 ? ((thoiViec / emps.length) * 100).toFixed(1) : 0;
+  return [
+    { id: 1, label: 'Tổng nhân sự', value: total.toString(), icon: 'groups', iconBg: 'bg-blue-100', iconColor: 'text-blue-600', badgeClass: 'bg-blue-50 text-blue-600', badge: '+12%', note: 'So với tháng trước' },
+    { id: 2, label: 'Tỉ lệ nghỉ việc', value: tyLeNghi + '%', icon: 'person_remove', iconBg: 'bg-red-100', iconColor: 'text-red-600', badgeClass: 'bg-red-50 text-red-600', badge: '+0.5%', note: 'So với tháng trước' },
+    { id: 3, label: 'Hiệu suất TB', value: '92%', icon: 'trending_up', iconBg: 'bg-green-100', iconColor: 'text-green-600', badgeClass: 'bg-green-50 text-green-600', badge: '+2%', note: 'Vượt mục tiêu' },
+    { id: 4, label: 'Chi phí nhân sự', value: '4.2T', icon: 'payments', iconBg: 'bg-orange-100', iconColor: 'text-orange-600', badgeClass: 'bg-orange-50 text-orange-600', badge: '-1.2%', note: 'Kiểm soát tốt' }
+  ];
+});
+
+const topPerformers = computed(() => {
+  const emps = employeesAPI.getAll().filter(e => e.status === 'ĐANG_LÀM_VIỆC');
+  return emps.slice(0, 3).map((e, index) => {
+    return {
+      id: e.employee_id,
+      name: e.full_name,
+      email: e.employee_code + '@hrm.com',
+      avatar: e.avatar_url || `https://i.pravatar.cc/150?u=${index}`,
+      chucVu: positionsAPI.getById(e.position_id)?.position_name || 'Nhân viên',
+      hieuSuat: 100 - (index * 5),
+      trangThai: index === 0 ? 'Xuất sắc' : 'Tốt',
+      trangThaiClass: index === 0 ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
+    };
+  });
+});
+
+const deptRankings = computed(() => {
+  const depts = departmentsAPI.getAll();
+  return depts.slice(0, 3).map((d, index) => {
+    return {
+      name: d.department_name,
+      score: 95 - (index * 10),
+      note: index === 0 ? 'Vượt chỉ tiêu' : (index === 1 ? 'Đạt chỉ tiêu' : 'Cần cải thiện'),
+      trend: index === 0 ? 'up' : 'down'
+    };
+  });
+});
+
+const nhanSuCapBac = computed(() => {
+  const emps = employeesAPI.getAll().filter(e => e.status === 'ĐANG_LÀM_VIỆC');
+  const levelColors = [
+    { color: 'from-blue-600 to-blue-400', shadow: 'shadow-blue-500/30' },
+    { color: 'from-indigo-500 to-indigo-400', shadow: 'shadow-indigo-500/30' },
+    { color: 'from-blue-500 to-blue-400', shadow: 'shadow-blue-500/30' },
+    { color: 'from-cyan-500 to-cyan-400', shadow: 'shadow-cyan-500/30' },
+    { color: 'from-slate-400 to-slate-300', shadow: 'shadow-slate-400/30' }
+  ];
+  const positions = positionsAPI.getAll();
+  return positions.map((p, index) => {
+    const count = emps.filter(e => e.position_id === p.position_id).length;
+    return {
+      level: p.position_name,
+      count: count,
+      ...levelColors[index % levelColors.length]
+    };
+  }).filter(p => p.count > 0);
+});
+
+const maxNhanSu = Math.max(500, employeesAPI.getAll().length);
+const totalNhanSu = computed(() => nhanSuCapBac.value.reduce((acc, curr) => acc + curr.count, 0) || 1);
 
 const nhanSuCapBacChart = computed(() => {
-  return nhanSuCapBac.map(item => ({
+  return nhanSuCapBac.value.map(item => ({
     ...item,
     heightPct: Math.min((item.count / maxNhanSu) * 100, 115),
     totalPct: ((item.count / totalNhanSu.value) * 100).toFixed(0)
   }));
 });
 
+const bienDongNhanLucData = ref([
+  { month: 'Th.1', tuyenVao: 25, nghiViec: 10 },
+  { month: 'Th.2', tuyenVao: 55, nghiViec: 25 },
+  { month: 'Th.3', tuyenVao: 150, nghiViec: 45 },
+  { month: 'Th.4', tuyenVao: 110, nghiViec: 65 },
+  { month: 'Th.5', tuyenVao: 95, nghiViec: 70 },
+  { month: 'Th.6', tuyenVao: 115, nghiViec: 55 }
+]);
+
 const maxBienDongInfo = computed(() => {
   let max = 0;
-  bienDongNhanLucData.forEach(item => {
+  bienDongNhanLucData.value.forEach(item => {
     if (item.tuyenVao > max) max = item.tuyenVao;
     if (item.nghiViec > max) max = item.nghiViec;
   });
@@ -254,7 +324,7 @@ const maxBienDongInfo = computed(() => {
 });
 
 const bienDongChartComputed = computed(() => {
-  return bienDongNhanLucData.map(item => ({
+  return bienDongNhanLucData.value.map(item => ({
     ...item,
     tuyenVaoPct: Math.min((item.tuyenVao / maxBienDongInfo.value) * 100, 115),
     nghiViecPct: Math.min((item.nghiViec / maxBienDongInfo.value) * 100, 115)

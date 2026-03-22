@@ -203,32 +203,56 @@ const stats = ref([]);
 const departmentData = ref([]);
 const taskItems = ref([]);
 
-const fetchData = async () => {
-  try {
-    const [statsRes, deptsRes, requestsRes] = await Promise.all([
-      fetch('http://localhost:3000/dashboardStats').then(res => res.json()),
-      fetch('http://localhost:3000/departments').then(res => res.json()),
-      fetch('http://localhost:3000/leaveRequests').then(res => res.json())
-    ]);
-    
-    stats.value = statsRes.admin;
-    departmentData.value = deptsRes;
-    
-    // Ánh xạ dữ liệu từ leaveRequests sang giao diện taskItems
-    taskItems.value = requestsRes.map(req => ({
-      name: req.name,
-      role: 'Nhân viên / Chuyên viên',
-      action: req.type + ' (' + req.reason + ')',
-      time: req.requestDate,
-      status: req.status === 'pending' ? 'Chờ thẩm định' : 'Đã xử lý',
-      statusClass: req.status === 'pending' 
-        ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]' 
-        : 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]',
-      dotClass: req.status === 'pending' ? 'bg-[var(--sys-warning-solid)]' : 'bg-[var(--sys-success-solid)]'
-    }));
-  } catch (error) {
-    console.error('Lỗi khi tải dữ liệu từ server:', error);
-  }
+import { employeesAPI, departmentsAPI, requestsAPI } from '@/data/mockDB.js';
+
+const fetchData = () => {
+    try {
+        const emps = employeesAPI.getAll();
+        const depts = departmentsAPI.getAll();
+        const reqs = requestsAPI.getAll();
+        
+        // 1. Compute stats
+        const activeEmpsCount = emps.filter(e => e.status !== 'ĐÃ_THÔI_VIỆC').length;
+        const pendingReqsCount = reqs.filter(r => r.status === 'CHỜ_DUYỆT').length;
+        stats.value = [
+            { label: 'TỔNG NHÂN SỰ', value: activeEmpsCount, change: '+12%', color: 'brand', icon: 'groups' },
+            { label: 'YÊU CẦU DUYỆT', value: pendingReqsCount, change: 'MỚI', color: 'warning', icon: 'pending_actions' },
+            { label: 'NHÂN SỰ MỚI', value: 8, change: '+2', color: 'success', icon: 'person_add' }, 
+            { label: 'TỶ LỆ NGHỈ VIỆC', value: '2.4%', change: '-0.5%', color: 'danger', icon: 'trending_down' }
+        ];
+
+        // 2. Compute Department Allocation
+        const totalEmpsForPercent = activeEmpsCount || 1;
+        const colors = ['bg-[var(--sys-brand-solid)]', 'bg-[var(--sys-success-solid)]', 'bg-[var(--sys-warning-solid)]', 'bg-[var(--sys-danger-solid)]', 'bg-purple-500'];
+        departmentData.value = depts.map((d, index) => {
+            const count = emps.filter(e => e.department_id === d.department_id && e.status !== 'ĐÃ_THÔI_VIỆC').length;
+            return {
+                name: d.department_name,
+                count: count,
+                percent: Math.round((count / totalEmpsForPercent) * 100),
+                color: colors[index % colors.length]
+            };
+        });
+
+        // 3. Compute Task Items (from requests)
+        taskItems.value = reqs.map(req => {
+            const emp = emps.find(e => e.employee_id === req.employee_id) || {};
+            return {
+                name: emp.full_name || 'N/A',
+                role: emp.position || 'Nhân viên',
+                action: (req.request_type || 'Đề xuất') + (req.notes ? ` (${req.notes})` : ''),
+                time: req.created_at || new Date().toISOString().split('T')[0],
+                status: req.status === 'CHỜ_DUYỆT' ? 'Chờ thẩm định' : 'Đã xử lý',
+                statusClass: req.status === 'CHỜ_DUYỆT' 
+                    ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]' 
+                    : 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]',
+                dotClass: req.status === 'CHỜ_DUYỆT' ? 'bg-[var(--sys-warning-solid)]' : 'bg-[var(--sys-success-solid)]'
+            };
+        }).sort((a,b) => new Date(b.time) - new Date(a.time)).slice(0, 10);
+        
+    } catch (error) {
+        console.error('Lỗi khi tải dữ liệu từ mock DB:', error);
+    }
 };
 
 const getStatIconClass = (color) => {

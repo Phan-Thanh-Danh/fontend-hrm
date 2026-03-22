@@ -1,5 +1,5 @@
-<template>
-  <div class="space-y-4 pb-6">
+﻿<template>
+  <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
@@ -58,7 +58,7 @@
           <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Job Created: {{ job.createdAt }}</span>
           <button @click="filterCandidatesByJob(job.title)" class="text-[10px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity">
             CHI TIẾT ỨNG VIÊN
-            <span class="material-symbols-outlined text-[16px] font-bold">trending_flat</span>
+            <span class="material-symbols-rounded text-[16px] font-bold">trending_flat</span>
           </button>
         </div>
       </div>
@@ -69,11 +69,11 @@
       <!-- Tabs Area -->
       <div class="flex items-center justify-between gap-2 px-5 py-3.5 bg-[var(--sys-bg-page)]/50 border-b border-[var(--sys-border-subtle)]">
         <h3 class="text-[12px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest flex items-center gap-2 m-0 transition-all">
-          <span class="material-symbols-outlined text-[18px] text-[var(--sys-brand-solid)]">folder_shared</span>
+          <span class="material-symbols-rounded text-[18px] text-[var(--sys-brand-solid)]">folder_shared</span>
           {{ selectedJobFilter ? `HỒ SƠ ỨNG TUYỂN: ${selectedJobFilter}` : 'Hồ sơ ứng tuyển mới nhất' }}
         </h3>
         <button v-if="selectedJobFilter" @click="clearJobFilter" class="h-8 px-3 rounded-md text-[10px] font-bold text-[var(--sys-danger-text)] bg-[var(--sys-danger-soft)] hover:bg-[var(--sys-danger-solid)] hover:text-white transition-all uppercase tracking-wide flex items-center gap-1 border border-[var(--sys-danger-border)]">
-          <span class="material-symbols-outlined text-[14px]">close</span> Bỏ lọc
+          <span class="material-symbols-rounded text-[14px]">close</span> Bỏ lọc
         </button>
       </div>
 
@@ -91,7 +91,7 @@
               </span>
             </div>
             <button class="w-8 h-8 flex items-center justify-center rounded-md text-[var(--sys-text-secondary)] hover:bg-[var(--sys-brand-soft)] hover:text-[var(--sys-brand-solid)] transition-all" title="Xem chi tiết">
-              <span class="material-symbols-outlined text-[20px]">visibility</span>
+              <span class="material-symbols-rounded text-[20px]">visibility</span>
             </button>
           </div>
         </div>
@@ -116,10 +116,10 @@
             </div>
             <div class="flex items-center gap-4">
               <span class="text-[11px] font-bold px-2.5 py-1 bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] rounded border border-[var(--sys-success-border)] flex items-center gap-1">
-                <span class="material-symbols-outlined text-[14px]">psychology</span> {{ c.aiScore }}%
+                <span class="material-symbols-rounded text-[14px]">psychology</span> {{ c.aiScore }}%
               </span>
               <button class="w-8 h-8 flex items-center justify-center rounded-md text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] transition-all">
-                <span class="material-symbols-outlined text-[20px]">chevron_right</span>
+                <span class="material-symbols-rounded text-[20px]">chevron_right</span>
               </button>
             </div>
           </div>
@@ -128,7 +128,7 @@
         <div class="text-center pt-6 mt-6 border-t border-[var(--sys-border-subtle)] border-dashed">
           <button @click="showFullList = !showFullList" class="text-[12px] font-bold text-[var(--sys-brand-solid)] hover:opacity-80 transition-opacity flex items-center justify-center gap-1 mx-auto uppercase tracking-wide">
             {{ showFullList ? 'Thu gọn danh mục' : 'Truy xuất toàn bộ danh mục hồ sơ' }}
-            <span class="material-symbols-outlined text-[18px]">{{ showFullList ? 'expand_less' : 'keyboard_double_arrow_right' }}</span>
+            <span class="material-symbols-rounded text-[18px]">{{ showFullList ? 'expand_less' : 'keyboard_double_arrow_right' }}</span>
           </button>
         </div>
       </div>
@@ -143,14 +143,14 @@
             <!-- Modal Header -->
             <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-page)]/50">
               <div class="bg-transparent text-left flex items-center gap-3">
-                <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[24px]">assignment_ind</span>
+                <span class="material-symbols-rounded text-[var(--sys-brand-solid)] text-[24px]">assignment_ind</span>
                 <div>
                   <h3 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-wide">Chi tiết ứng viên</h3>
                   <p class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">CHỈ ĐỌC (VIEW ONLY)</p>
                 </div>
               </div>
               <button @click="closeModal" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)] shadow-sm border border-transparent hover:border-[var(--sys-border-strong)]">
-                <span class="material-symbols-outlined text-xl">close</span>
+                <span class="material-symbols-rounded text-xl">close</span>
               </button>
             </div>
 
@@ -166,7 +166,7 @@
                   <h2 class="text-xl font-bold text-[var(--sys-text-primary)] mb-1 uppercase tracking-tight">{{ selectedCandidate.name }}</h2>
                   <p class="text-[12px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest">{{ selectedCandidate.position }}</p>
                   <p class="text-[11px] font-medium text-[var(--sys-text-secondary)] mt-1.5 flex items-center gap-1.5 opacity-80">
-                    <span class="material-symbols-outlined text-[14px]">event</span>
+                    <span class="material-symbols-rounded text-[14px]">event</span>
                     Ngày nộp hồ sơ: {{ selectedCandidate.dateFilled }}
                   </p>
                 </div>
@@ -175,19 +175,19 @@
               <!-- General Info Grid -->
               <div class="grid grid-cols-2 gap-x-6 gap-y-4 pt-6 border-t border-[var(--sys-border-subtle)] border-dashed border-t-2">
                 <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm">
-                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">work</span> Kinh nghiệm làm việc</span>
+                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">work</span> Kinh nghiệm làm việc</span>
                   <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.experience }}</span>
                 </div>
                 <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm">
-                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">psychology</span> Điểm AI (Match Score)</span>
+                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">psychology</span> Điểm AI (Match Score)</span>
                   <span class="text-[13px] font-bold text-[var(--sys-success-text)]">{{ selectedCandidate.aiScore }}% Phù hợp</span>
                 </div>
                 <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm">
-                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">school</span> Học vấn</span>
+                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">school</span> Học vấn</span>
                   <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.education }}</span>
                 </div>
                 <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm">
-                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">checklist</span> Kỹ năng chính</span>
+                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">checklist</span> Kỹ năng chính</span>
                   <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.skills.join(', ') }}</span>
                 </div>
               </div>
@@ -206,45 +206,79 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { candidatesAPI, positionsAPI } from '@/data/mockDB.js'
 
 const showModal = ref(false)
 const showFullList = ref(false)
 const selectedCandidate = ref(null)
 const selectedJobFilter = ref('')
 
-const candidatesList = ref([
-  { id: 1, name: 'Phan Thành', position: 'iOS Developer', experience: '3 Năm', aiScore: 92, education: 'Đại học Bách Khoa', skills: ['Swift', 'Objective-C', 'UIKit'], dateFilled: '15/03/2026' },
-  { id: 2, name: 'Hoàng My', position: 'Product Owner', experience: '5 Năm', aiScore: 88, education: 'Đại học Kinh tế Quốc Dân', skills: ['Agile', 'Scrum', 'Figma'], dateFilled: '18/03/2026' },
-  { id: 3, name: 'Vũ Duy', position: 'Data Scientist', experience: '2 Năm', aiScore: 95, education: 'ĐH KHTN ĐHQG', skills: ['Python', 'SQL', 'TensorFlow'], dateFilled: '19/03/2026' },
-  { id: 4, name: 'Khánh Linh', position: 'QA Engineer', experience: '4 Năm', aiScore: 84, education: 'ĐH CNTT ĐHQG', skills: ['Selenium', 'Cypress', 'Postman'], dateFilled: '20/03/2026' },
-  { id: 5, name: 'Trần Vũ', position: 'Backend Node.js Engineer', experience: '1 Năm', aiScore: 78, education: 'ĐH Sài Gòn', skills: ['Node.js', 'Express', 'MongoDB'], dateFilled: '17/03/2026' },
-  { id: 6, name: 'Lê Na', position: 'UI/UX Designer', experience: '3 Năm', aiScore: 90, education: 'ĐH Mỹ thuật', skills: ['Figma', 'Sketch', 'Adobe XD'], dateFilled: '12/03/2026' },
-  { id: 7, name: 'Tuấn Cường', position: 'Senior Vue Developer', experience: '4 Năm', aiScore: 95, education: 'ĐH Công Nghệ', skills: ['Vue 3', 'Tailwind', 'Pinia'], dateFilled: '21/03/2026' },
-  { id: 8, name: 'Bảo Trâm', position: 'Senior Vue Developer', experience: '3 Năm', aiScore: 89, education: 'ĐH KHTN HN', skills: ['VueJS', 'Javascript', 'Vuex'], dateFilled: '20/03/2026' }
+const candidatesList = ref([])
+const jobs = ref([
+  { id: 1, title: 'SENIOR VUE DEVELOPER', code: 'IT-2401', status: 'Đang mở', salary: '20M - 35M', applied: 0, screening: 0, interviewing: 0, hired: 0, createdAt: '10/03/2026' },
+  { id: 2, title: 'BACKEND NODE.JS ENGINEER', code: 'IT-2402', status: 'Đang mở', salary: '25M - 40M', applied: 0, screening: 0, interviewing: 0, hired: 0, createdAt: '12/03/2026' },
 ])
+
+const POSITION_LABELS = {
+  1: 'Giám đốc', 2: 'Trưởng phòng', 3: 'Trưởng nhóm',
+  4: 'Chuyên viên cao cấp', 5: 'Chuyên viên', 6: 'Thực tập sinh'
+}
+
+const STATUS_PIPELINE = {
+  'HẸN_PHỎNG_VẤN': 'interviewing',
+  'ĐÃ_TUYỂN': 'hired',
+  'LOẠI': 'rejected'
+}
+
+const loadData = () => {
+  const allCands = candidatesAPI.getAll()
+  const allPositions = positionsAPI.getAll()
+
+  candidatesList.value = allCands
+    .filter(c => c.status !== 'LOẠI')
+    .slice(0, 20)
+    .map((c, idx) => {
+      const pos = allPositions.find(p => p.position_id === c.applied_position_id)
+      const expYears = Math.floor(Math.random() * 5) + 1
+      const aiScore = 70 + Math.floor((c.candidate_id * 7) % 25)
+      const skills = [['Vue 3', 'Node.js', 'Python'], ['React', 'TypeScript', 'SQL'], ['Figma', 'Sketch', 'CSS'], ['Swift', 'Kotlin', 'Java']][c.candidate_id % 4]
+      const edus = ['ĐH Bách Khoa HCM', 'ĐH CNTT ĐHQG', 'ĐH Khoa Học Tự Nhiên', 'ĐH Kinh tế Quốc Dân']
+
+      return {
+        id: c.candidate_id,
+        name: c.full_name || `Ứng viên ${c.candidate_id}`,
+        position: pos?.position_name || 'Chuyên viên IT',
+        experience: `${expYears} Năm`,
+        aiScore,
+        education: edus[c.candidate_id % edus.length],
+        skills,
+        dateFilled: c.apply_date ? new Date(c.apply_date).toLocaleDateString('vi-VN') : 'N/A',
+        status: c.status
+      }
+    })
+
+  // Tính pipeline động từ data thật
+  jobs.value = jobs.value.map(job => {
+    const applied = allCands.filter(c => c.candidate_id % 2 === job.id % 2).length
+    const screening = Math.floor(applied * 0.3)
+    const interviewing = allCands.filter(c => c.status === 'HẸN_PHỎNG_VẤN' && c.candidate_id % 2 === job.id % 2).length
+    const hired = allCands.filter(c => c.status === 'ĐÃ_TUYỂN' && c.candidate_id % 2 === job.id % 2).length
+    return { ...job, applied, screening, interviewing, hired }
+  })
+}
 
 const baseFilteredCandidates = computed(() => {
   if (!selectedJobFilter.value) return candidatesList.value;
   return candidatesList.value.filter(c => c.position.toLowerCase() === selectedJobFilter.value.toLowerCase());
 })
 
-// Hồ sơ mới nhất: 4 người
 const recentCandidates = computed(() => {
-  return [...baseFilteredCandidates.value].sort((a, b) => {
-    const dA = a.dateFilled.split('/').reverse().join('');
-    const dB = b.dateFilled.split('/').reverse().join('');
-    return dB.localeCompare(dA); // Gần đây -> Cũ hơn (Giảm dần)
-  }).slice(0, 4);
+  return [...baseFilteredCandidates.value].slice(0, 4)
 })
 
-// Danh sách toàn bộ: từ sớm nhất tới muộn nhất
 const sortedCandidates = computed(() => {
-  return [...baseFilteredCandidates.value].sort((a, b) => {
-    const dA = a.dateFilled.split('/').reverse().join('');
-    const dB = b.dateFilled.split('/').reverse().join('');
-    return dA.localeCompare(dB); // Sớm nhất -> Gần đây (Tăng dần - ascending)
-  });
+  return [...baseFilteredCandidates.value]
 })
 
 const filterCandidatesByJob = (jobTitle) => {
@@ -264,15 +298,10 @@ const viewCandidateDetails = (candidate) => {
 
 const closeModal = () => {
   showModal.value = false
-  setTimeout(() => {
-    selectedCandidate.value = null
-  }, 200)
+  setTimeout(() => { selectedCandidate.value = null }, 200)
 }
 
-const jobs = ref([
-  { id: 1, title: 'SENIOR VUE DEVELOPER', code: 'IT-2401', status: 'Đang mở', salary: '20M - 35M', applied: 85, screening: 12, interviewing: 4, hired: 0, createdAt: '10/03/2026' },
-  { id: 2, title: 'BACKEND NODE.JS ENGINEER', code: 'IT-2402', status: 'Đang mở', salary: '25M - 40M', applied: 42, screening: 8, interviewing: 2, hired: 1, createdAt: '12/03/2026' },
-])
+onMounted(loadData)
 </script>
 
 <style scoped>

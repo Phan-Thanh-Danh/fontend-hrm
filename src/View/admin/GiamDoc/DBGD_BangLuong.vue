@@ -220,16 +220,79 @@
 <script setup>
 import { computed, ref } from 'vue';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
-import { bangLuongKpiCards, bangLuongBoPhans, bangLuongTongCong, bangLuongLineChart, bangLuongLineChartMax, bangLuongPhongBanChart } from '@/data/sampleData_GiamDoc.js';
+import { employeesAPI, salariesAPI, departmentsAPI } from '@/data/mockDB.js';
 
 const selectedDateRange = ref('30_days');
-
 const MathMin = Math.min;
+
+const bangLuongKpiCards = computed(() => {
+  const allSalaries = salariesAPI.getAll();
+  const totalSalary = allSalaries.reduce((sum, s) => sum + s.net_salary, 0) || 0;
+  const totalAllowance = allSalaries.reduce((sum, s) => sum + s.allowance, 0) || 0;
+  return [
+    { id: 1, label: 'Tổng ngân sách', value: '5.2 Tỷ', icon: 'account_balance', iconBg: 'bg-blue-100', iconColor: 'text-blue-600', badgeTrend: 'up', badgeText: '2.5%' },
+    { id: 2, label: 'Đã chi', value: (totalSalary / 1000000000).toFixed(2) + ' Tỷ', icon: 'payments', iconBg: 'bg-green-100', iconColor: 'text-green-600', badgeTrend: 'up', badgeText: '1.2%' },
+    { id: 3, label: 'Tiết kiệm', value: '400 Tr', icon: 'savings', iconBg: 'bg-yellow-100', iconColor: 'text-yellow-600', badgeTrend: 'down', badgeText: '0.5%' },
+    { id: 4, label: 'Thưởng & Phụ cấp', value: (totalAllowance / 1000000).toFixed(0) + ' Tr', icon: 'card_giftcard', iconBg: 'bg-purple-100', iconColor: 'text-purple-600', badgeTrend: 'up', badgeText: '15%' }
+  ];
+});
+
+const bangLuongBoPhans = computed(() => {
+  const depts = departmentsAPI.getAll();
+  const emps = employeesAPI.getAll();
+  const sals = salariesAPI.getAll();
+  
+  return depts.map(d => {
+    const deptEmps = emps.filter(e => e.department_id === d.department_id);
+    const deptSals = sals.filter(s => deptEmps.find(e => e.employee_id === s.employee_id));
+    const luongCb = deptSals.reduce((sum, s) => sum + (s.basic_salary || 0), 0);
+    const thuong = deptSals.reduce((sum, s) => sum + (s.allowance || 0), 0);
+    return {
+      tenPhong: d.department_name,
+      soNhanVien: deptEmps.length,
+      luongCoBan: (luongCb / 1000000000).toFixed(2) + ' Tỷ',
+      thuongPhuCap: (thuong / 1000000).toFixed(0) + ' Tr',
+      tongChiPhi: ((luongCb + thuong) / 1000000000).toFixed(2) + ' Tỷ',
+      rawTongChiPhi: luongCb + thuong
+    };
+  }).filter(d => d.soNhanVien > 0);
+});
+
+const bangLuongTongCong = computed(() => {
+  const sumEmp = bangLuongBoPhans.value.reduce((s, b) => s + b.soNhanVien, 0);
+  const sumCb = salariesAPI.getAll().reduce((sum, s) => sum + (s.basic_salary || 0), 0);
+  const sumThuong = salariesAPI.getAll().reduce((sum, s) => sum + (s.allowance || 0), 0);
+  return {
+    soNhanVien: sumEmp,
+    luongCoBan: (sumCb / 1000000000).toFixed(2) + ' Tỷ',
+    thuongPhuCap: (sumThuong / 1000000000).toFixed(2) + ' Tỷ',
+    tongChiPhi: ((sumCb + sumThuong) / 1000000000).toFixed(2) + ' Tỷ'
+  };
+});
+
+const bangLuongPhongBanChart = computed(() => {
+  const total = bangLuongBoPhans.value.reduce((s, b) => s + b.rawTongChiPhi, 0);
+  if (total === 0) return [];
+  return bangLuongBoPhans.value.map(b => ({
+    name: b.tenPhong,
+    percent: Math.round((b.rawTongChiPhi / total) * 100)
+  })).sort((a,b) => b.percent - a.percent).slice(0, 5);
+});
+
+const bangLuongLineChart = ref([
+  { month: 'T1', val: 4.2 },
+  { month: 'T2', val: 4.5 },
+  { month: 'T3', val: 1.1 },
+  { month: 'T4', val: 4.8 },
+  { month: 'T5', val: 5.0 },
+  { month: 'T6', val: 4.7 }
+]);
+const bangLuongLineChartMax = 6.0;
 
 const bangLuongLinePoints = computed(() => {
   const max = bangLuongLineChartMax;
-  const numPoints = bangLuongLineChart.length;
-  return bangLuongLineChart.map((p, i) => {
+  const numPoints = bangLuongLineChart.value.length;
+  return bangLuongLineChart.value.map((p, i) => {
     return {
       month: p.month,
       val: p.val,

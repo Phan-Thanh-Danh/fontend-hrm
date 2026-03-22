@@ -1,4 +1,5 @@
 import { reactive, computed } from 'vue'
+import { requestsAPI, employeesAPI } from '@/data/mockDB.js'
 
 const AVATAR_COLORS = [
   'linear-gradient(135deg,#2563eb,#1d4ed8)',
@@ -13,34 +14,26 @@ const state = reactive({
   tickets: []
 })
 
-const API_URL = 'http://localhost:3000/supportRequests'
-const EMP_API_URL = 'http://localhost:3000/employees'
-
 export function useSupportStore() {
   const fetchTickets = async () => {
     try {
-      const [reqRes, empRes] = await Promise.all([
-        fetch(API_URL),
-        fetch(EMP_API_URL)
-      ])
-      const reqs = await reqRes.json()
-      const emps = await empRes.json()
-
+      const reqs = requestsAPI.getAll()
+      
       state.tickets = reqs.map(req => {
-        const emp = emps.find(e => e.id === req.employeeId)
+        const emp = employeesAPI.getById(req.employee_id)
         return {
-          id: req.id.toString(),
-          employeeName: emp ? emp.name : 'Unknown',
-          department: emp ? emp.position.split(' / ')[0] : 'N/A',
-          category: req.type || 'Khác',
+          id: req.request_id.toString(),
+          employeeName: emp ? emp.full_name : 'Unknown',
+          department: emp ? emp.department_name : 'N/A',
+          category: req.request_type || 'Khác',
           title: req.title,
           priority: req.priority || 'Trung bình',
-          status: req.status === 'resolved' ? 'Hoàn thành' : (req.status === 'pending' ? 'Chờ xử lý' : (req.status === 'rejected' ? 'Từ chối' : 'Đang xử lý')),
-          date: req.date || new Date().toLocaleDateString('vi-VN'),
+          status: req.status === 'ĐÃ_DUYỆT' ? 'Hoàn thành' : (req.status === 'CHỜ_DUYỆT' ? 'Chờ xử lý' : (req.status === 'TỪ_CHỐI' ? 'Từ chối' : 'Đang xử lý')),
+          date: req.created_at || new Date().toLocaleDateString('vi-VN'),
           deadline: req.deadline || '',
           asset: req.asset || '',
-          description: req.desc || '',
-          avatarColor: AVATAR_COLORS[Math.floor(Math.random() * AVATAR_COLORS.length)],
+          description: req.reason || '',
+          avatarColor: AVATAR_COLORS[req.request_id % AVATAR_COLORS.length],
         }
       })
     } catch (error) {
@@ -50,23 +43,20 @@ export function useSupportStore() {
 
   const addTicket = async (ticketData) => {
     try {
-      const currentUserId = localStorage.getItem('userId') || 'NV002'
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          employeeId: currentUserId,
-          type: ticketData.category,
-          title: ticketData.title,
-          desc: ticketData.description,
-          status: 'pending',
-          date: new Date().toLocaleDateString('vi-VN'),
-          priority: ticketData.priority || 'Trung bình'
-        })
-      })
+      const currentUserId = 2 // default mock manager id
+      const reqData = {
+        employee_id: currentUserId,
+        department_id: 1, // Optional
+        request_type: ticketData.category,
+        title: ticketData.title,
+        reason: ticketData.description,
+        status: 'CHỜ_DUYỆT',
+        created_at: new Date().toLocaleDateString('vi-VN'),
+        priority: ticketData.priority || 'Trung bình'
+      }
+      requestsAPI.add(reqData)
       await fetchTickets()
-      const result = await res.json()
-      return result.id
+      return true
     } catch (error) {
       console.error('Lỗi khi gửi yêu cầu hỗ trợ:', error)
     }
@@ -74,16 +64,15 @@ export function useSupportStore() {
 
   const updateStatus = async (ticketId, newStatus, note = '') => {
     try {
-      const backendStatus = newStatus === 'Hoàn thành' ? 'resolved' : (newStatus === 'Chờ xử lý' ? 'pending' : (newStatus === 'Từ chối' ? 'rejected' : 'processing'))
-      await fetch(`${API_URL}/${ticketId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+      const backendStatus = newStatus === 'Hoàn thành' ? 'ĐÃ_DUYỆT' : (newStatus === 'Chờ xử lý' ? 'CHỜ_DUYỆT' : (newStatus === 'Từ chối' ? 'TỪ_CHỐI' : 'ĐANG_XỬ_LÝ'))
+      const req = requestsAPI.getAll().find(r => r.request_id == ticketId)
+      if (req) {
+        requestsAPI.update(ticketId, { 
           status: backendStatus,
           note: note || undefined
         })
-      })
-      await fetchTickets()
+        await fetchTickets()
+      }
     } catch (error) {
       console.error('Lỗi khi cập nhật trạng thái:', error)
     }

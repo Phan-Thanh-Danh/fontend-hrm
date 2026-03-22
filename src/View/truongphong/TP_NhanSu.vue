@@ -1,5 +1,5 @@
-<template>
-  <div class="space-y-4 pb-6">
+﻿<template>
+  <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
@@ -15,7 +15,7 @@
     <div class="bg-[var(--sys-bg-surface)] p-3.5 rounded-lg border border-[var(--sys-border-subtle)] shadow-sm flex flex-col md:flex-row gap-4 items-center">
       <div class="flex-1 relative w-full group">
         <div class="absolute left-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center shrink-0 border border-[var(--sys-brand-border)] transition-all duration-300">
-          <span class="material-symbols-outlined text-[18px] font-bold">search</span>
+          <span class="material-symbols-rounded text-[18px] font-bold">search</span>
         </div>
         <input 
           v-model="searchQuery"
@@ -41,7 +41,7 @@
             <div class="w-16 h-16 rounded-md bg-[var(--sys-bg-page)] border-2 border-[var(--sys-border-subtle)] flex items-center justify-center font-bold text-xl text-[var(--sys-brand-solid)] uppercase group-hover:scale-105 transition-transform shadow-inner">
               {{ staff.name.charAt(0) }}
             </div>
-            <span :class="['absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full shadow-sm', staff.status === 'Active' ? 'bg-[var(--sys-success-solid)]' : 'bg-[var(--sys-warning-solid)]']"></span>
+            <span :class="['absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full shadow-sm', staff.status === 'ĐANG_LÀM_VIỆC' ? 'bg-[var(--sys-success-solid)]' : 'bg-[var(--sys-warning-solid)]']"></span>
           </div>
           
           <div class="space-y-1">
@@ -63,10 +63,10 @@
 
         <!-- Action Footer -->
         <div class="px-4 py-2.5 bg-[var(--sys-bg-page)]/30 border-t border-[var(--sys-border-subtle)] flex justify-between items-center transition-all duration-300">
-          <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Status: {{ staff.status }}</span>
+          <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Status: {{ getStatusLabel(staff.status) }}</span>
           <button @click="viewDetails(staff)" class="text-[10px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest flex items-center gap-1.5 transition-all hover:opacity-80 active:scale-95">
             Chi tiết hồ sơ
-            <span class="material-symbols-outlined text-[14px] font-bold">arrow_forward</span>
+            <span class="material-symbols-rounded text-[14px] font-bold">arrow_forward</span>
           </button>
         </div>
       </div>
@@ -81,14 +81,14 @@
             <!-- Modal Header -->
             <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-page)]/50">
               <div class="bg-transparent text-left flex items-center gap-3">
-                <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[24px]">contact_page</span>
+                <span class="material-symbols-rounded text-[var(--sys-brand-solid)] text-[24px]">contact_page</span>
                 <div>
                   <h3 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-wide">Hồ sơ nhân sự chi tiết</h3>
                   <p class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">CHỈ ĐỌC (VIEW ONLY)</p>
                 </div>
               </div>
               <button @click="closeDetails" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)] shadow-sm border border-transparent hover:border-[var(--sys-border-strong)]">
-                <span class="material-symbols-outlined text-xl">close</span>
+                <span class="material-symbols-rounded text-xl">close</span>
               </button>
             </div>
 
@@ -98,7 +98,7 @@
               <div class="flex flex-col md:flex-row gap-6 items-start">
                 <div class="w-24 h-24 rounded-lg bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] flex items-center justify-center font-bold text-3xl text-[var(--sys-brand-solid)] uppercase shadow-inner shrink-0 relative">
                   {{ selectedStaff.name.charAt(0) }}
-                  <span :class="['absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full shadow-sm', selectedStaff.status === 'Active' ? 'bg-[var(--sys-success-solid)]' : 'bg-[var(--sys-warning-solid)]']"></span>
+                  <span :class="['absolute -bottom-1 -right-1 w-4 h-4 border-2 border-white rounded-full shadow-sm', selectedStaff.status === 'ĐANG_LÀM_VIỆC' ? 'bg-[var(--sys-success-solid)]' : 'bg-[var(--sys-warning-solid)]']"></span>
                 </div>
                 <div class="flex-1 space-y-4 w-full">
                   <div>
@@ -117,8 +117,8 @@
                     </div>
                     <div class="space-y-1">
                       <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-60">Trạng thái</p>
-                      <span :class="['px-2.5 py-0.5 rounded-md text-[10px] font-bold border inline-flex items-center uppercase tracking-wide', selectedStaff.status === 'Active' ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]']">
-                        {{ selectedStaff.status }}
+                      <span :class="['px-2.5 py-0.5 rounded-md text-[10px] font-bold border inline-flex items-center uppercase tracking-wide', selectedStaff.status === 'ĐANG_LÀM_VIỆC' ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]']">
+                        {{ getStatusLabel(selectedStaff.status) }}
                       </span>
                     </div>
                   </div>
@@ -128,7 +128,7 @@
               <!-- General Info -->
               <div>
                 <h4 class="text-[12px] font-bold text-[var(--sys-text-primary)] border-b border-[var(--sys-border-subtle)] pb-2 mb-4 uppercase tracking-widest flex items-center gap-2">
-                  <span class="material-symbols-outlined text-[18px] text-[var(--sys-brand-solid)]">info</span>
+                  <span class="material-symbols-rounded text-[18px] text-[var(--sys-brand-solid)]">info</span>
                   Thông tin phân bổ
                 </h4>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
@@ -165,13 +165,46 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Dropdown from '@/components/Dropdown.vue'
+import { employeesAPI, departmentsAPI, positionsAPI } from '@/data/mockDB.js'
 
 const searchQuery = ref('')
 const filterStatus = ref('')
 const showModal = ref(false)
 const selectedStaff = ref(null)
+
+const staffList = ref([])
+
+const DEPT_ID = 2 // Phòng Công nghệ IT
+
+const statusOptions = [
+  { label: 'Tất cả trạng thái', value: '' },
+  { label: 'Đang làm việc', value: 'ĐANG_LÀM_VIỆC' },
+  { label: 'Đã nghỉ việc', value: 'ĐÃ_NGHỈ_VIỆC' },
+]
+
+const loadData = () => {
+  const allEmps = employeesAPI.getAll()
+  const allPositions = positionsAPI.getAll()
+  const dept = departmentsAPI.getById(DEPT_ID)
+
+  staffList.value = allEmps
+    .filter(e => e.department_id === DEPT_ID)
+    .map(e => {
+      const pos = allPositions.find(p => p.position_id === e.position_id)
+      return {
+        id: e.employee_code,
+        employee_id: e.employee_id,
+        name: e.full_name,
+        position: pos ? pos.position_name.toUpperCase() : 'CHUYÊN VIÊN',
+        status: e.status,
+        joinDate: new Date().toLocaleDateString('vi-VN'),
+        department: dept?.department_name || 'Công nghệ IT',
+        avatarUrl: e.avatar_url || null
+      }
+    })
+}
 
 const viewDetails = (staff) => {
   selectedStaff.value = staff
@@ -180,24 +213,8 @@ const viewDetails = (staff) => {
 
 const closeDetails = () => {
   showModal.value = false
-  setTimeout(() => {
-    selectedStaff.value = null
-  }, 200) // Clear after animation
+  setTimeout(() => { selectedStaff.value = null }, 200)
 }
-
-const statusOptions = [
-  { label: 'Tất cả trạng thái', value: '' },
-  { label: 'Đang làm việc', value: 'Active' },
-  { label: 'Nghi nghỉ phép', value: 'On Leave' },
-]
-
-const staffList = ref([
-  { id: '1023', name: 'Nguyễn Văn Anh', position: 'SENIOR DEVELOPER', status: 'Active', joinDate: '01/01/2021' },
-  { id: '1025', name: 'Lê Diệu Linh', position: 'FRONTEND DEVELOPER', status: 'Active', joinDate: '15/03/2022' },
-  { id: '1030', name: 'Trần Minh Hải', position: 'UI/UX DESIGNER', status: 'On Leave', joinDate: '10/06/2022' },
-  { id: '1042', name: 'Vũ Minh Đăng', position: 'BACKEND LEAD', status: 'Active', joinDate: '01/09/2021' },
-  { id: '1055', name: 'Phạm Hồng Nhung', position: 'BUSINESS ANALYST', status: 'Active', joinDate: '20/12/2022' },
-])
 
 const filteredStaff = computed(() => {
   return staffList.value.filter(s => {
@@ -207,6 +224,14 @@ const filteredStaff = computed(() => {
     return matchesQuery && matchesStatus
   })
 })
+
+const getStatusLabel = (status) => {
+  if (status === 'ĐANG_LÀM_VIỆC') return 'Active'
+  if (status === 'ĐÃ_NGHỈ_VIỆC') return 'Nghỉ việc'
+  return status
+}
+
+onMounted(loadData)
 </script>
 
 <style scoped>

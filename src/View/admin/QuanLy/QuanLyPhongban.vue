@@ -226,6 +226,7 @@
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
+import { departmentsAPI, employeesAPI } from '@/data/mockDB.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -240,12 +241,21 @@ const activeOptions = [
   { label: 'Đã tạm dừng', value: false }
 ];
 
-const departments = ref([
-  { id: 1, name: 'Khối Điều Hành', code: 'HO-ADMIN', manager: 'Nguyễn Văn An', active: true, employee_count: 5, icon: 'corporate_fare', parent_id: null },
-  { id: 2, name: 'Phòng Công Nghệ', code: 'IT-DEPT', manager: 'Trần Kỹ Thuật', active: true, employee_count: 12, icon: 'engineering', parent_id: 1 },
-  { id: 3, name: 'Phòng Nhân Sự', code: 'HR-DEPT', manager: 'Lê Tuyển Dụng', active: true, employee_count: 8, icon: 'groups', parent_id: 1 },
-  { id: 4, name: 'Tổ Frontend', code: 'IT-FE', manager: 'Lưu Trọng Trí', active: true, employee_count: 5, icon: 'web', parent_id: 2 }
-]);
+const departments = computed(() => {
+  return departmentsAPI.getAll().map(d => {
+    const empCount = employeesAPI.getAll().filter(e => e.department_id === d.department_id && e.status !== 'ĐÃ_NGHỈ_VIỆC').length;
+    return {
+      id: d.department_id,
+      name: d.department_name,
+      code: d.department_code,
+      manager: d.manager_id ? employeesAPI.getById(d.manager_id)?.full_name : null,
+      active: d.status,
+      employee_count: empCount,
+      icon: d.icon || 'corporate_fare',
+      parent_id: d.parent_id || null
+    };
+  });
+});
 
 const filteredDepartments = computed(() => {
   let list = departments.value;
@@ -262,10 +272,10 @@ const filteredDepartments = computed(() => {
   return list;
 });
 
-const stats = ref([
-  { label: 'Tổng số đơn vị', value: '12', icon: 'account_tree', semantic: 'brand' },
-  { label: 'Đang vận hành', value: '10', icon: 'check_circle', semantic: 'success' },
-  { label: 'Cấu trúc phân cấp', value: '3 Cấp', icon: 'schema', semantic: 'warning' }
+const stats = computed(() => [
+  { label: 'Tổng số đơn vị', value: departments.value.length.toString(), icon: 'account_tree', semantic: 'brand' },
+  { label: 'Đang vận hành', value: departments.value.filter(d => d.active).length.toString(), icon: 'check_circle', semantic: 'success' },
+  { label: 'Tạm dừng / Hủy bỏ', value: departments.value.filter(d => !d.active).length.toString(), icon: 'schema', semantic: 'warning' }
 ]);
 
 const iconOptions = ['corporate_fare', 'engineering', 'groups', 'web', 'payments', 'hub', 'apartment', 'meeting_room', 'account_balance', 'rocket_launch'];
@@ -286,6 +296,9 @@ const form = ref({ ...emptyForm });
 const openModal = (type, dept = null) => {
   isEdit.value = type === 'edit';
   form.value = isEdit.value && dept ? { ...dept } : { ...emptyForm };
+  if (!isEdit.value) {
+    form.value.code = `DEPT-${(departments.value.length + 1).toString().padStart(3,'0')}`;
+  }
   showModal.value = true;
 };
 
@@ -296,11 +309,20 @@ const handleSave = async () => {
     await showAlert('Thiếu thông tin', 'Vui lòng cung cấp đầy đủ tên và mã định danh phòng ban!');
     return;
   }
+  
+  const dto = {
+    department_code: form.value.code,
+    department_name: form.value.name,
+    status: form.value.active,
+    icon: form.value.icon,
+    parent_id: form.value.parent_id
+    // manager handling can be injected via manager_id
+  };
+
   if (isEdit.value) {
-    const idx = departments.value.findIndex(d => d.id === form.value.id);
-    if (idx !== -1) departments.value[idx] = { ...form.value };
+    departmentsAPI.update(form.value.id, dto);
   } else {
-    departments.value.unshift({ ...form.value, id: Date.now(), employee_count: 0 });
+    departmentsAPI.add(dto);
   }
   closeModal();
 };
@@ -311,7 +333,9 @@ const confirmDissolve = async (dept) => {
     return;
   }
   const ok = await showConfirm('Cấu trúc tổ chức', `Xác nhận thay đổi trạng thái hoạt động của đơn vị ${dept.name}?`);
-  if (ok) { dept.active = !dept.active; }
+  if (ok) {
+    departmentsAPI.update(dept.id, { status: !dept.active });
+  }
 };
 </script>
 

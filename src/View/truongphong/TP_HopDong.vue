@@ -1,5 +1,5 @@
-<template>
-  <div class="space-y-4 pb-6">
+﻿<template>
+  <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
@@ -60,13 +60,49 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { contractsAPI, employeesAPI, positionsAPI } from '@/data/mockDB.js'
 
-const contracts = ref([
-  { id: 1, code: 'HDLD-2023-01', name: 'Nguyễn Văn Anh', position: 'Senior Developer', type: 'HĐ Không xác định thời hạn', range: 'Từ 01/01/2023', status: 'Đang hiệu lực' },
-  { id: 2, code: 'HDLD-2024-05', name: 'Lê Diệu Linh', position: 'Frontend Developer', type: 'HĐ 01 Năm', range: '01/01/2024 - 31/12/2024', status: 'Sắp hết hạn' },
-  { id: 3, code: 'HDLD-2024-12', name: 'Trần Minh Hải', position: 'UI/UX Designer', type: 'HĐ Thử việc', range: '15/02/2024 - 15/04/2024', status: 'Đang hiệu lực' },
-])
+const DEPT_ID = 2
+const contracts = ref([])
+
+const CONTRACT_TYPE_LABELS = {
+  'THỬ_VIỆC': 'HĐ Thử việc',
+  'CHÍNH_THỨC_1_NĂM': 'HĐ Chính thức 1 năm',
+  'CHÍNH_THỨC_3_NĂM': 'HĐ Chính thức 3 năm',
+  'VÔ_THỜI_HẠN': 'HĐ Vô thời hạn',
+  'THỰC_TẬP': 'HĐ Thực tập',
+}
+
+const loadData = () => {
+  const allContracts = contractsAPI.getAll()
+  const allEmps = employeesAPI.getAll().filter(e => e.department_id === DEPT_ID)
+  const allPositions = positionsAPI.getAll()
+  const empIds = allEmps.map(e => e.employee_id)
+
+  contracts.value = allContracts
+    .filter(c => empIds.includes(c.employee_id) && c.status !== 'ĐÃ_CHẤM_DỨT')
+    .slice(0, 10)
+    .map(c => {
+      const emp = allEmps.find(e => e.employee_id === c.employee_id)
+      const pos = allPositions.find(p => p.position_id === emp?.position_id)
+      const startDate = c.start_date ? new Date(c.start_date).toLocaleDateString('vi-VN') : 'N/A'
+      const endDate = c.end_date ? new Date(c.end_date).toLocaleDateString('vi-VN') : null
+      const range = endDate ? `${startDate} - ${endDate}` : `Từ ${startDate}`
+
+      return {
+        id: c.contract_id,
+        code: c.contract_code,
+        name: emp?.full_name || 'N/A',
+        position: pos?.position_name || 'Chuyên viên',
+        type: CONTRACT_TYPE_LABELS[c.contract_type] || c.contract_type,
+        range,
+        status: c.status === 'HIỆU_LỰC' ? 'Đang hiệu lực' : 'Sắp hết hạn'
+      }
+    })
+}
+
+onMounted(loadData)
 </script>
 
 <style scoped>

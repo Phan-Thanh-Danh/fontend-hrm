@@ -262,6 +262,7 @@
  */
 import { ref, computed, onMounted } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
+import { requestsAPI, employeesAPI, departmentsAPI } from '@/data/mockDB.js';
 
 const filterDept = ref('ALL');
 const filterRange = ref('month');
@@ -298,28 +299,26 @@ const requests = ref([]);
 
 const fetchData = async () => {
   try {
-    const [requestsRes, employeesRes] = await Promise.all([
-      fetch('http://localhost:3000/leaveRequests').then(res => res.json()),
-      fetch('http://localhost:3000/employees').then(res => res.json())
-    ]);
+    const requestsRes = requestsAPI.getAll();
 
     // Map dữ liệu từ server sang cấu trúc giao diện
     requests.value = requestsRes.map(req => {
-      const emp = employeesRes.find(e => e.id === req.employeeId) || {};
+      const emp = employeesAPI.getById(req.employee_id) || {};
+      const dept = departmentsAPI.getById(req.department_id || (emp ? emp.department_id : null)) || {};
       return {
-        id: req.id,
-        name: req.name,
-        msnv: req.employeeId,
-        department: emp.deptId === 1 ? 'Kỹ thuật' : (emp.deptId === 2 ? 'Kinh doanh' : 'Khác'),
+        id: req.request_id,
+        name: emp.full_name || 'N/A',
+        msnv: req.employee_id,
+        department: dept.department_name || 'Khác',
         role: emp.position || 'Nhân viên',
-        type: req.type,
-        typeDetail: req.type,
-        dateRange: `${req.startDate} - ${req.endDate}`,
-        fullDateRange: `${req.startDate} - ${req.endDate}`,
+        type: req.request_type || 'Nghỉ phép',
+        typeDetail: req.request_type || 'Nghỉ phép',
+        dateRange: `${req.created_at || ''} - ${req.end_date || ''}`,
+        fullDateRange: `${req.created_at || ''} - ${req.end_date || ''}`,
         days: req.days || 1,
-        status: req.status,
-        statusText: req.status === 'pending' ? 'Chờ duyệt' : (req.status === 'approved' ? 'Đã duyệt' : 'Từ chối'),
-        reason: req.reason,
+        status: req.status === 'ĐÃ_DUYỆT' ? 'approved' : (req.status === 'TỪ_CHỐI' ? 'rejected' : 'pending'),
+        statusText: req.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : (req.status === 'TỪ_CHỐI' ? 'Từ chối' : 'Chờ duyệt'),
+        reason: req.reason || req.notes || '',
         balance: 12, // Giả định
         warnings: req.urgent ? ['Yêu cầu khẩn cấp'] : []
       };
@@ -360,7 +359,7 @@ const filteredRequests = computed(() => {
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    list = list.filter(r => r.name.toLowerCase().includes(q) || r.msnv.toLowerCase().includes(q));
+    list = list.filter(r => r.name.toLowerCase().includes(q) || String(r.msnv).toLowerCase().includes(q));
   }
   return list;
 });
@@ -369,19 +368,10 @@ const rejectComment = ref('');
 
 const handleApprove = async (req) => {
   try {
-    const res = await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        status: 'approved',
-        approverComment: rejectComment.value 
-      })
-    });
-    if (res.ok) {
-      rejectComment.value = '';
-      await fetchData();
-      activeRequestId.value = null;
-    }
+    requestsAPI.approve(req.id);
+    rejectComment.value = '';
+    await fetchData();
+    activeRequestId.value = null;
   } catch (err) {
     console.error('Lỗi khi phê duyệt:', err);
   }
@@ -393,19 +383,10 @@ const confirmRejectAction = async (req) => {
     return;
   }
   try {
-    const res = await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        status: 'rejected',
-        rejectReason: rejectComment.value 
-      })
-    });
-    if (res.ok) {
-      rejectComment.value = '';
-      await fetchData();
-      activeRequestId.value = null;
-    }
+    requestsAPI.reject(req.id, rejectComment.value);
+    rejectComment.value = '';
+    await fetchData();
+    activeRequestId.value = null;
   } catch (err) {
     console.error('Lỗi khi từ chối:', err);
   }
@@ -419,13 +400,9 @@ const handleDeleteRequest = async (req) => {
   
   if (confirm(`Bạn có chắc chắn muốn xóa đơn của ${req.name}?`)) {
     try {
-      const res = await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
-        method: 'DELETE'
-      });
-      if (res.ok) {
-        await fetchData();
-        activeRequestId.value = null;
-      }
+      requestsAPI.delete(req.id);
+      await fetchData();
+      activeRequestId.value = null;
     } catch (err) {
       console.error('Lỗi khi xóa đơn:', err);
     }

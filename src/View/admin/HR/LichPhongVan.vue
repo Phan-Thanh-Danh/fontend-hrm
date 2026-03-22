@@ -360,11 +360,23 @@ const editingId = ref(null);
 
 const form = ref({ candidate: '', date: '', time: '', interviewerId: '', status: 'Sắp diễn ra' });
 
-const interviewList = ref([
- { id: 1, candidate: 'Nguyễn Văn An', date: formatDate(new Date(Date.now() - 3600000)), time: '09:00', interviewerId: '1', status: 'Sắp diễn ra' },
- { id: 2, candidate: 'Trần Thị Thu', date: formatDate(new Date(Date.now() + 86400000)), time: '10:00', interviewerId: '2', status: 'Sắp diễn ra' },
- { id: 3, candidate: 'Lê Hoàng Nam', date: formatDate(new Date(Date.now())), time: formatTime(new Date()), interviewerId: '3', status: 'Sắp diễn ra' }
-]);
+const STORAGE_KEY = 'hrm_interviews_v1';
+const loadInterviews = () => {
+  const s = localStorage.getItem(STORAGE_KEY);
+  if(s) return JSON.parse(s);
+  return [
+   { id: 1, candidate: 'Nguyễn Văn An', date: formatDate(new Date(Date.now() - 3600000)), time: '09:00', interviewerId: '1', status: 'Sắp diễn ra' },
+   { id: 2, candidate: 'Trần Thị Thu', date: formatDate(new Date(Date.now() + 86400000)), time: '10:00', interviewerId: '2', status: 'Sắp diễn ra' },
+   { id: 3, candidate: 'Lê Hoàng Nam', date: formatDate(new Date(Date.now())), time: formatTime(new Date()), interviewerId: '3', status: 'Sắp diễn ra' }
+  ];
+};
+
+const interviewList = ref(loadInterviews());
+
+import { watch } from 'vue';
+watch(interviewList, (val) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(val));
+}, { deep: true });
 
 const danhSachNhanSu = [
  { id: '1', name: 'Trần Hữu Kiên', role: 'Dev Lead' },

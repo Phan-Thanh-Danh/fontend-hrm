@@ -1,59 +1,33 @@
-import { reactive, computed } from 'vue'
-
-const STORAGE_KEY = 'hrm_recruitment_data'
-
-const loadData = () => {
-  const saved = localStorage.getItem(STORAGE_KEY)
-  if (saved) {
-    try {
-      return JSON.parse(saved)
-    } catch (e) {
-      console.error('Lỗi đọc dữ liệu tuyển dụng:', e)
-    }
-  }
-  return [
-    { id: 1, name: 'Nguyễn Văn Anh', position: 'Senior Frontend', department: 'IT', aiScore: 95, date: '12/10/2023', status: 'new', interviewDate: null, managerReview: null },
-    { id: 2, name: 'Trần Thị Bích', position: 'UI/UX Designer', department: 'Marketing', aiScore: 88, date: '11/10/2023', status: 'new', interviewDate: null, managerReview: null },
-    { id: 3, name: 'Lê Văn Chính', position: 'Backend Dev', department: 'IT', aiScore: 72, date: '10/10/2023', status: 'new', interviewDate: null, managerReview: null },
-    { id: 4, name: 'Phạm Thành Đạt', position: 'Business Analyst', department: 'Vận hành', aiScore: 92, date: '09/10/2023', status: 'new', interviewDate: null, managerReview: null }
-  ]
-}
-
-const state = reactive({
-  candidates: loadData()
-})
-
-const save = () => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.candidates))
-}
+import { computed } from 'vue'
+import { candidatesAPI } from '@/data/mockDB.js'
 
 export function useRecruitmentStore() {
-  const candidates = computed(() => state.candidates)
+  const candidates = computed(() => {
+    return candidatesAPI.getAll().map(c => ({
+      id: c.candidate_id,
+      name: c.full_name,
+      position: c.position_applied,
+      department: 'Phòng ban chung', 
+      aiScore: c.ai_score,
+      date: c.applied_date || new Date().toLocaleDateString('vi-VN'),
+      status: (c.status === 'MỚI' ? 'new' : (c.status === 'ĐANG_PHỎNG_VẤN' ? 'interviewing' : (c.status === 'TRÚNG_TUYỂN' || c.status === 'ĐÃ_DUYỆT' ? 'pass' : (c.status === 'LOẠI' || c.status === 'TỪ_CHỐI' ? 'fail' : 'reviewed')))),
+      managerReview: c.notes || null,
+      interviewDate: c.interview_date || null
+    }))
+  })
 
   const scheduleInterview = (candidateId, date, time) => {
-    const candidate = state.candidates.find(c => c.id === candidateId)
-    if (candidate) {
-      candidate.status = 'interviewing'
-      candidate.interviewDate = `${date} ${time}`
-      save()
-    }
+    candidatesAPI.update(candidateId, { status: 'ĐANG_PHỎNG_VẤN', interview_date: `${date} ${time}` })
   }
 
   const submitManagerReview = (candidateId, review) => {
-    const candidate = state.candidates.find(c => c.id === candidateId)
-    if (candidate) {
-      candidate.managerReview = review
-      candidate.status = 'reviewed'
-      save()
-    }
+    candidatesAPI.update(candidateId, { notes: review, status: 'ĐÃ_ĐÁNH_GIÁ' })
   }
 
   const finalizeDecision = (candidateId, finalStatus) => {
-    const candidate = state.candidates.find(c => c.id === candidateId)
-    if (candidate) {
-      candidate.status = finalStatus
-      save()
-    }
+    // finalStatus: 'pass' or 'fail'
+    const newStatus = finalStatus === 'pass' ? 'TRÚNG_TUYỂN' : 'LOẠI'
+    candidatesAPI.update(candidateId, { status: newStatus })
   }
 
   return {
