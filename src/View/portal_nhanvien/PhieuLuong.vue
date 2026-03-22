@@ -97,8 +97,8 @@
                 <button class="w-9 h-9 bg-white text-[var(--sys-text-primary)] border border-[var(--sys-border-strong)] rounded-md hover:bg-[var(--sys-bg-page)] transition-all flex items-center justify-center shadow-sm">
                   <span class="material-symbols-outlined text-[18px]">mail</span>
                 </button>
-                <button class="h-9 px-4 bg-[var(--sys-brand-solid)] text-white rounded-md text-[11px] font-bold uppercase tracking-wide hover:brightness-95 transition-all flex items-center gap-2 shadow-sm">
-                  <span class="material-symbols-outlined text-[18px]">download</span>
+                <button @click="exportPDF" class="h-9 px-4 bg-[var(--sys-brand-solid)] text-white rounded-md text-[11px] font-bold uppercase tracking-wide hover:brightness-95 transition-all flex items-center gap-2 shadow-sm">
+                  <span class="material-symbols-rounded text-[18px]">download</span>
                   Tải PDF
                 </button>
               </div>
@@ -279,6 +279,7 @@
  * - Hệ màu Semantic đồng bộ, loại bỏ font-black/italic
  */
 import { ref, computed } from 'vue';
+import { exportEmployeePayrollPDF } from '@/utils/pdfExport.js';
 
 const activeTab = ref('salary');
 const selectedPeriodId = ref(1);
@@ -325,6 +326,25 @@ const insuranceRows = ref([
 
 const formatCurrency = (val) => {
   return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
+};
+
+const exportPDF = () => {
+  const period = currentPeriod.value
+  const periodLabel = `Tháng ${period.month}/${period.year}`
+  exportEmployeePayrollPDF({
+    periodLabel,
+    employeeName: 'Nguyễn Văn An',
+    employeeCode: 'HR2023-0124',
+    department: 'Phòng Kỹ thuật & CNTT',
+    position: 'Kỹ sư Phần mềm',
+    status: period.status,
+    incomes: incomes.value,
+    deductions: deductions.value,
+    totalIncome: totalIncome.value,
+    totalDeduction: totalDeduction.value,
+    netAmount: period.net,
+    insuranceRows: insuranceRows.value,
+  })
 };
 </script>
 
