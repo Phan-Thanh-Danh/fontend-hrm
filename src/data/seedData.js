@@ -29,6 +29,7 @@ export const requestTypes = [
   { request_type_id: 8, request_type_name: 'Nghỉ không lương', category: 'NGHỈ_PHÉP' },
   { request_type_id: 9, request_type_name: 'Nghỉ việc riêng (Hiếu, hỉ)', category: 'NGHỈ_PHÉP' },
   { request_type_id: 10, request_type_name: 'Nghỉ bù', category: 'NGHỈ_PHÉP' },
+  { request_type_id: 99, request_type_name: 'Khác (Ghi rõ)', category: 'NGHỈ_PHÉP' },
   { request_type_id: 2, request_type_name: 'Tuyển dụng nhân sự mới', category: 'KHÁC' },
   { request_type_id: 3, request_type_name: 'Đề xuất tăng lương', category: 'DIỀU_CHỈNH_CÔNG' },
   { request_type_id: 4, request_type_name: 'Tạm ứng lương', category: 'TẠM_ỨNG_LƯƠNG' },

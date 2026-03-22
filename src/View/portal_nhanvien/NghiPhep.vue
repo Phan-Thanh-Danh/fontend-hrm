@@ -202,6 +202,20 @@
                    <Dropdown v-model="leaveType" :options="leaveTypeOptions" placeholder="-- Chọn loại hình nghỉ --" class="h-11 shadow-sm" />
                 </div>
 
+                <!-- Other Leave Type Specification -->
+                <div v-if="leaveType === 99" class="space-y-2 animate-in slide-in-from-top-2 duration-300">
+                  <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest ml-1">Ghi rõ loại nghỉ khác *</label>
+                  <div class="relative group">
+                    <span class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-[18px] text-[var(--sys-brand-solid)]">edit_note</span>
+                    <input 
+                      v-model="otherReason" 
+                      type="text" 
+                      placeholder="Nhập tên loại nghỉ của bạn..."
+                      class="w-full h-11 pl-10 pr-4 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] focus:border-[var(--sys-brand-solid)] focus:ring-1 focus:ring-[var(--sys-brand-solid)] outline-none transition-all shadow-sm"
+                    >
+                  </div>
+                </div>
+
                 <!-- Row 2: Dates -->
                 <div class="grid grid-cols-2 gap-4 bg-transparent">
                   <div class="space-y-1.5 bg-transparent">
@@ -267,6 +281,7 @@ const isSuccess = ref(false);
 const isValidationError = ref(false);
 const validationMessage = ref('');
 const leaveType = ref(null);
+const otherReason = ref('');
 const startDate = ref('');
 const endDate = ref('');
 const reason = ref('');
@@ -290,6 +305,7 @@ const leaveTypeOptions = computed(() => {
       case 8: icon = 'money_off'; break;      // Không lương
       case 9: icon = 'family_restroom'; break;// Việc riêng
       case 10: icon = 'history'; break;       // Nghỉ bù
+      case 99: icon = 'help'; break;          // Khác
       default: icon = 'article';
     }
     return {
@@ -323,9 +339,10 @@ const fetchData = () => {
 
   leaveHistory.value = myReqs.map(item => {
     const typeObj = requestTypesAPI.getById(item.request_type_id);
+    const typeName = item.request_type_id === 99 ? item.other_reason_name : (typeObj?.request_type_name || 'Nghỉ phép');
     return {
       id: item.request_id,
-      type: typeObj?.request_type_name || 'Nghỉ phép',
+      type: typeName,
       duration: `${item.start_date || 'N/A'} - ${item.end_date || 'N/A'}`,
       total: `${item.days || 0} ngày`,
       statusRaw: item.status,
@@ -341,6 +358,12 @@ const submitRequest = () => {
     return;
   }
 
+  if (leaveType.value === 99 && !otherReason.value) {
+    validationMessage.value = 'Vui lòng ghi rõ loại hình nghỉ khác của bạn';
+    isValidationError.value = true;
+    return;
+  }
+
   const days = calculateDays.value;
   if (days <= 0) {
     validationMessage.value = 'Khoảng thời gian nghỉ phép không hợp lệ (Ngày bắt đầu phải trước ngày kết thúc)';
@@ -349,16 +372,18 @@ const submitRequest = () => {
   }
 
   const typeObj = requestTypesAPI.getById(leaveType.value);
+  const finalTypeName = leaveType.value === 99 ? otherReason.value : (typeObj?.request_type_name || 'Nghỉ phép');
   const employee = employeesAPI.getById(CURRENT_EMP_ID);
 
   const newRequest = {
     requester_id: CURRENT_EMP_ID,
     request_type_id: leaveType.value,
-    title: `${typeObj?.request_type_name} (${String(days).padStart(2, '0')} ngày)`,
+    title: `Nghỉ phép: ${finalTypeName} (${String(days).padStart(2, '0')} ngày)`,
     notes: reason.value,
     start_date: startDate.value,
     end_date: endDate.value,
     days: days,
+    other_reason_name: leaveType.value === 99 ? otherReason.value : null,
     status: 'CHỜ_DUYỆT',
     is_urgent: days >= 3,
     request_date: new Date().toISOString().split('T')[0],
