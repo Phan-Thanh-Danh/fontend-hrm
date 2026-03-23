@@ -125,30 +125,18 @@
             </div>
             <div class="flex gap-1">
               <button class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white hover:shadow-sm transition-all text-[var(--sys-text-secondary)]">
-                <span class="material-symbols-outlined text-[18px]">zoom_in</span>
-              </button>
-              <button class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white hover:shadow-sm transition-all text-[var(--sys-text-secondary)]">
                 <span class="material-symbols-outlined text-[18px]">download</span>
               </button>
             </div>
           </div>
           
-          <!-- Mock PDF Viewer -->
-          <div class="flex-grow p-6 flex flex-col items-center justify-center bg-[var(--sys-bg-hover)]/20 relative">
-            <div class="bg-white rounded-md p-6 shadow-xl border border-[var(--sys-border-subtle)] w-full max-w-[260px] aspect-[1/1.4] flex flex-col gap-5 relative group/pdf">
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-[var(--sys-bg-page)] rounded-md border border-[var(--sys-border-subtle)] flex items-center justify-center">
-                  <span class="material-symbols-outlined text-[var(--sys-text-disabled)] text-[24px]">person</span>
-                </div>
-                <div class="space-y-2 flex-1">
-                  <div class="w-full h-2.5 bg-[var(--sys-bg-hover)] rounded-full"></div>
-                  <div class="w-2/3 h-2 bg-[var(--sys-bg-hover)] rounded-full opacity-60"></div>
-                </div>
-              </div>
-              <div class="space-y-3 pt-4 border-t border-[var(--sys-border-subtle)] border-dashed">
-                <div v-for="w in [100, 100, 80, 90, 70]" :key="w" :class="`h-1.5 bg-[var(--sys-bg-hover)] rounded-full opacity-40 w-[${w}%]`"></div>
-              </div>
-            </div>
+          <!-- Real PDF Viewer -->
+          <div class="flex-grow p-4 bg-[var(--sys-bg-hover)]/20 relative overflow-hidden">
+            <iframe 
+              src="/cv-template.pdf#toolbar=0" 
+              class="w-full h-full border-none rounded-md shadow-lg bg-white"
+              title="CV Viewer"
+            ></iframe>
           </div>
 
           <!-- Decision Panel -->
