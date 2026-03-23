@@ -298,7 +298,7 @@
  * 4. Modal mở rộng max-w-2xl & Grid Form 2 cột.
  * 5. Extreme Density: p-4 card padding, py-2.5 table cells.
  */
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
 
@@ -365,24 +365,79 @@ const loadInterviews = () => {
   const s = localStorage.getItem(STORAGE_KEY);
   if(s) return JSON.parse(s);
   return [
-   { id: 1, candidate: 'Nguyễn Văn An', date: formatDate(new Date(Date.now() - 3600000)), time: '09:00', interviewerId: '1', status: 'Sắp diễn ra' },
-   { id: 2, candidate: 'Trần Thị Thu', date: formatDate(new Date(Date.now() + 86400000)), time: '10:00', interviewerId: '2', status: 'Sắp diễn ra' },
-   { id: 3, candidate: 'Lê Hoàng Nam', date: formatDate(new Date(Date.now())), time: formatTime(new Date()), interviewerId: '3', status: 'Sắp diễn ra' }
+   { id: 1, candidate: 'Nguyễn Văn An', date: formatDate(new Date(Date.now() - 3600000)), time: '09:00', interviewerId: 'NV008', status: 'Sắp diễn ra' },
+   { id: 2, candidate: 'Trần Thị Thu', date: formatDate(new Date(Date.now() + 86400000)), time: '10:00', interviewerId: 'NV003', status: 'Sắp diễn ra' },
+   { id: 3, candidate: 'Lê Hoàng Nam', date: formatDate(new Date(Date.now())), time: formatTime(new Date()), interviewerId: 'NV004', status: 'Sắp diễn ra' }
   ];
 };
 
 const interviewList = ref(loadInterviews());
 
-import { watch } from 'vue';
 watch(interviewList, (val) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(val));
 }, { deep: true });
 
-const danhSachNhanSu = [
- { id: '1', name: 'Trần Hữu Kiên', role: 'Dev Lead' },
- { id: '2', name: 'Hoàng My', role: 'HR Manager' },
- { id: '3', name: 'Vũ Duy', role: 'Technical' }
+const danhSachNhanSu = ref([]);
+const FALLBACK_TRUONG_PHONG = [
+ { id: 'NV008', name: 'Trần Thanh Tâm', role: 'Trưởng phòng Kỹ thuật Cloud' },
+ { id: 'NV003', name: 'Lê Thị Thu', role: 'Trưởng phòng Khối Kinh doanh' },
+ { id: 'NV004', name: 'Trần Lan Anh', role: 'Trưởng phòng Marketing & PR' },
+ { id: 'NV001', name: 'Lê Quản Trị', role: 'Trưởng phòng Quản trị Nhân sự' },
+ { id: 'NV006', name: 'Nguyễn Bích Diệp', role: 'Trưởng phòng Tài chính - Kế toán' }
 ];
+
+const normalizeManagerName = (value = '') => (
+ value
+  .toLowerCase()
+  .replace(/\s*\(.*?\)\s*/g, ' ')
+  .replace(/\s+/g, ' ')
+  .trim()
+);
+
+const loadDepartmentManagers = async () => {
+ try {
+  const [deptRes, empRes] = await Promise.all([
+   fetch('http://localhost:3000/departments'),
+   fetch('http://localhost:3000/employees')
+  ]);
+  if (!deptRes.ok || !empRes.ok) throw new Error('Failed to load managers');
+
+  const [departments, employees] = await Promise.all([deptRes.json(), empRes.json()]);
+  const mappedManagers = departments
+   .map((dept) => {
+    const rawManagerName = dept?.manager || '';
+    if (!rawManagerName) return null;
+
+    const normalizedManager = normalizeManagerName(rawManagerName);
+    const matchedEmployee = employees.find((emp) => {
+      const normalizedEmployee = normalizeManagerName(emp?.name || '');
+      return normalizedEmployee === normalizedManager
+       || normalizedManager.includes(normalizedEmployee)
+       || normalizedEmployee.includes(normalizedManager);
+    });
+
+    return {
+      id: String(matchedEmployee?.id || `DEPT-MANAGER-${dept.id}`),
+      name: matchedEmployee?.name || rawManagerName,
+      role: `Trưởng phòng ${dept?.name || ''}`.trim()
+    };
+   })
+   .filter(Boolean);
+
+  const seen = new Set();
+  const uniqueManagers = mappedManagers.filter((item) => {
+   if (seen.has(item.id)) return false;
+   seen.add(item.id);
+   return true;
+  });
+
+  danhSachNhanSu.value = uniqueManagers.length ? uniqueManagers : FALLBACK_TRUONG_PHONG;
+ } catch (error) {
+  danhSachNhanSu.value = FALLBACK_TRUONG_PHONG;
+ }
+};
+
+onMounted(() => { loadDepartmentManagers(); });
 
 const statusOptions = [
  { label: 'Toàn bộ trạng thái', value: '' },
@@ -393,7 +448,7 @@ const statusOptions = [
 
 const interviewerFormOptions = computed(() => [
  { label: 'Chọn nhân sự phụ trách phỏng vấn...', value: '' },
- ...danhSachNhanSu.map(ns => ({ label: `${ns.name} (${ns.role})`, value: ns.id }))
+ ...danhSachNhanSu.value.map(ns => ({ label: `${ns.name} (${ns.role})`, value: ns.id }))
 ]);
 
 // Computed Logic
@@ -415,7 +470,7 @@ const getInterviewsByDay = (day) => {
  return liveInterviews.value.filter(i => i.date === dStr);
 };
 
-const getInterviewerName = (id) => danhSachNhanSu.find(p => p.id === id)?.name || 'N/A';
+const getInterviewerName = (id) => danhSachNhanSu.value.find(p => p.id === id)?.name || 'N/A';
 const getInterviewerInitials = (id) => getInterviewerName(id).split(' ').map(n => n[0]).join('').toUpperCase();
 
 const getStatusBadgeClass = (s) => {
