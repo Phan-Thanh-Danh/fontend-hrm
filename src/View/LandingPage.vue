@@ -451,12 +451,7 @@
                 placeholder="Giới thiệu ngắn về bản thân và lý do bạn muốn gia nhập AET..."
                 style="resize:vertical;min-height:100px"></textarea>
             </div>
-            <div class="form-group full">
-              <label>Mô tả JD</label>
-              <textarea id="f-jd-desc" class="form-input" rows="4"
-                placeholder="Dán mô tả công việc (JD) tại đây nếu bạn có..."
-                style="resize:vertical;min-height:100px"></textarea>
-            </div>
+
             <div class="form-group full">
               <label>Tải Lên CV <span>*</span></label>
               <div class="file-upload-area" id="cv-upload-area">
@@ -475,23 +470,7 @@
                 <div class="file-name-display" id="cv-name-display"></div>
               </div>
             </div>
-            <div class="form-group full">
-              <label>Tải Lên JD (nếu có)</label>
-              <div class="file-upload-area" id="jd-upload-area-form">
-                <input type="file" id="f-jd" accept=".pdf,.doc,.docx,.txt" />
-                <div class="file-icon">
-                  <svg viewBox="0 0 24 24">
-                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-                    <polyline points="14 2 14 8 20 8" />
-                    <circle cx="12" cy="14" r="2" />
-                    <line x1="12" y1="12" x2="12" y2="8" />
-                  </svg>
-                </div>
-                <div class="file-text">Tải lên mô tả công việc (JD) của bạn</div>
-                <div class="file-hint">Nếu bạn có JD riêng muốn chia sẻ — PDF, DOC, TXT</div>
-                <div class="file-name-display" id="jd-name-display-form"></div>
-              </div>
-            </div>
+
           </div>
           <button class="form-submit" id="submit-btn">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
@@ -713,11 +692,11 @@ onMounted(() => {
 
   /* ── TEAM ── */
   const team = [
-    { n: 'Phan Thành Danh', r: 'Giám Đốc Kỹ Thuật' },
-    { n: 'Mai Tấn Lộc', r: 'Chuyên Gia Chiến Lược AI' },
-    { n: 'Trương Gia Bảo', r: 'Kỹ Sư Tự Động Hóa' },
-    { n: 'Bùi Ngọc Bảo Ngân', r: 'Quản Lý Sản Phẩm' },
-    { n: 'Vũ Ngọc Hoàng', r: 'Chuyên Gia Chiến Lược AI' },
+    { n: 'Phan Thành Danh' },
+    { n: 'Mai Tấn Lộc' },
+    { n: 'Trương Gia Bảo' },
+    { n: 'Bùi Ngọc Bảo Ngân' },
+    { n: 'Vũ Ngọc Hoàng' },
   ];
   const tg = document.getElementById('team-grid');
   if (tg) {
@@ -725,7 +704,7 @@ onMounted(() => {
     team.forEach(m => {
       const el = document.createElement('div');
       el.className = 'tm-card reveal';
-      el.innerHTML = `<div class="tm-av">${m.n[0]}</div><div class="tm-name">${m.n}</div><div class="tm-role">${m.r}</div>`;
+      el.innerHTML = `<div class="tm-av">${m.n[0]}</div><div class="tm-name">${m.n}</div>${m.r ? `<div class="tm-role">${m.r}</div>` : ''}`;
       tg.appendChild(el);
       obs.observe(el);
     });
@@ -874,8 +853,7 @@ onMounted(() => {
 
   const cvInput = document.getElementById('f-cv');
   if (cvInput) cvInput.addEventListener('change', () => handleFileChange(cvInput, 'cv-upload-area', 'cv-name-display'));
-  const jdInput = document.getElementById('f-jd');
-  if (jdInput) jdInput.addEventListener('change', () => handleFileChange(jdInput, 'jd-upload-area-form', 'jd-name-display-form'));
+
 
   /* ── TOAST NOTIFICATION ── */
   const showToast = (msg, type = 'error') => {
