@@ -102,14 +102,12 @@ import { salariesAPI, employeesAPI, positionsAPI, departmentsAPI } from '@/data/
 import { exportManagerPayrollPDF } from '@/utils/pdfExport.js'
 
 const selectedPeriod = ref('03/2026')
-const DEPT_ID = 2
+const userDeptId = localStorage.getItem('userDeptId') || '1';
 
 const periodOptions = [
   { label: 'Tháng 03/2026', value: '03/2026' },
   { label: 'Tháng 02/2026', value: '02/2026' },
   { label: 'Tháng 01/2026', value: '01/2026' },
-  { label: 'Tháng 12/2025', value: '12/2025' },
-  { label: 'Tháng 11/2025', value: '11/2025' },
 ]
 
 const payrollList = ref([])
@@ -121,56 +119,67 @@ const totalNet = ref('0')
 
 const fmt = (num) => new Intl.NumberFormat('vi-VN').format(Math.round(num))
 
-const loadData = () => {
-  const allEmps = employeesAPI.getAll().filter(e => e.department_id === DEPT_ID && e.status !== 'ĐÃ_NGHỈ_VIỆC')
-  const allSals = salariesAPI.getAll()
-  const allPositions = positionsAPI.getAll()
+const loadData = async () => {
+  try {
+    const [empRes, payrollRes] = await Promise.all([
+      fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
+      fetch(`http://localhost:3000/payroll`)
+    ]);
+    
+    const employees = await empRes.json();
+    const allPayroll = await payrollRes.json();
 
-  let sumBase = 0, sumBonus = 0, sumDeduct = 0
+    const [month, year] = selectedPeriod.value.split('/');
+    
+    let sumBase = 0, sumBonus = 0, sumDeduct = 0, sumNet = 0;
 
-  payrollList.value = allEmps.map(emp => {
-    const sal = allSals.find(s => s.employee_id === emp.employee_id)
-    const pos = allPositions.find(p => p.position_id === emp.position_id)
-    const base = sal?.basic_salary || (15 + (emp.employee_id % 10)) * 1_000_000
-    const bonus = sal?.allowance || 1_500_000
-    const deduct = sal?.tax || Math.round(base * 0.105)
-    const total = base + bonus - deduct
+    payrollList.value = employees.map(emp => {
+      const payroll = allPayroll.find(p => p.employeeId === emp.id && p.month === month && p.year === year);
+      
+      const base = payroll?.basicSalary || 0;
+      const bonus = payroll?.bonus || 0;
+      const deduct = payroll?.deductions || 0;
+      const net = payroll?.total || (base + bonus - deduct);
 
-    sumBase += base
-    sumBonus += bonus
-    sumDeduct += deduct
+      sumBase += base;
+      sumBonus += bonus;
+      sumDeduct += deduct;
+      sumNet += net;
 
-    return {
-      id: emp.employee_id,
-      name: emp.full_name,
-      position: pos?.position_name?.toUpperCase() || 'CHUYÊN VIÊN IT',
-      base: fmt(base),
-      bonus: fmt(bonus),
-      deduct: fmt(deduct),
-      total: fmt(total),
-    }
-  })
+      return {
+        id: emp.id,
+        name: emp.name,
+        position: (emp.position || 'Chuyên viên').toUpperCase(),
+        base: fmt(base),
+        bonus: fmt(bonus),
+        deduct: fmt(deduct),
+        total: fmt(net),
+      }
+    });
 
-  totalBase.value = fmt(sumBase)
-  totalBonus.value = fmt(sumBonus)
-  totalDeduct.value = fmt(sumDeduct)
-  totalNet.value = fmt(sumBase + sumBonus - sumDeduct)
+    totalBase.value = fmt(sumBase);
+    totalBonus.value = fmt(sumBonus);
+    totalDeduct.value = fmt(sumDeduct);
+    totalNet.value = fmt(sumNet);
 
-  const netTotal = sumBase + sumBonus - sumDeduct
-  quickStats.value = [
-    { label: 'QUỸ LƯƠNG TỔNG', value: fmt(netTotal) + ' đ', icon: 'account_balance_wallet', bgClass: 'bg-[var(--sys-brand-soft)]', colorClass: 'text-[var(--sys-brand-solid)]', borderClass: 'border-[var(--sys-brand-border)]', textClass: 'text-[var(--sys-text-primary)]' },
-    { label: 'THƯỞNG & PHỤ CẤP', value: fmt(sumBonus) + ' đ', icon: 'stars', bgClass: 'bg-[var(--sys-success-soft)]', colorClass: 'text-[var(--sys-success-text)]', borderClass: 'border-[var(--sys-success-border)]', textClass: 'text-[var(--sys-success-text)]' },
-    { label: 'TỔNG KHẤU TRỪ', value: '- ' + fmt(sumDeduct) + ' đ', icon: 'money_off', bgClass: 'bg-[var(--sys-danger-soft)]', colorClass: 'text-[var(--sys-danger-text)]', borderClass: 'border-[var(--sys-danger-border)]', textClass: 'text-[var(--sys-danger-text)]' },
-  ]
+    quickStats.value = [
+      { label: 'QUỸ LƯƠNG TỔNG', value: fmt(sumNet) + ' đ', icon: 'account_balance_wallet', bgClass: 'bg-[var(--sys-brand-soft)]', colorClass: 'text-[var(--sys-brand-solid)]', borderClass: 'border-[var(--sys-brand-border)]', textClass: 'text-[var(--sys-text-primary)]' },
+      { label: 'THƯỞNG & PHỤ CẤP', value: fmt(sumBonus) + ' đ', icon: 'stars', bgClass: 'bg-[var(--sys-success-soft)]', colorClass: 'text-[var(--sys-success-text)]', borderClass: 'border-[var(--sys-success-border)]', textClass: 'text-[var(--sys-success-text)]' },
+      { label: 'TỔNG KHẤU TRỪ', value: '- ' + fmt(sumDeduct) + ' đ', icon: 'money_off', bgClass: 'bg-[var(--sys-danger-soft)]', colorClass: 'text-[var(--sys-danger-text)]', borderClass: 'border-[var(--sys-danger-border)]', textClass: 'text-[var(--sys-danger-text)]' },
+    ];
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu lương:', error);
+  }
 }
 
 onMounted(loadData)
 watch(selectedPeriod, loadData)
 
 // ─── PDF Export ──────────────────────────────────────────────────────────────
-const exportPDF = () => {
-  const dept = departmentsAPI.getById(DEPT_ID)
-  const deptName = dept?.department_name || 'Phòng Công Nghệ Thông Tin'
+const exportPDF = async () => {
+  const deptRes = await fetch(`http://localhost:3000/departments/${userDeptId}`);
+  const dept = await deptRes.json();
+  const deptName = dept?.name || 'Phòng Ban'
   const periodLabel = periodOptions.find(p => p.value === selectedPeriod.value)?.label || selectedPeriod.value
 
   exportManagerPayrollPDF({

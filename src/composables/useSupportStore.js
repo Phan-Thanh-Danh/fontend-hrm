@@ -17,23 +17,39 @@ const state = reactive({
 export function useSupportStore() {
   const fetchTickets = async () => {
     try {
-      const reqs = requestsAPI.getAll()
+      const [reqRes, empRes, deptRes] = await Promise.all([
+        fetch('http://localhost:3000/supportRequests'),
+        fetch('http://localhost:3000/employees'),
+        fetch('http://localhost:3000/departments')
+      ]);
+
+      const reqs = await reqRes.json();
+      const employees = await empRes.json();
+      const departments = await deptRes.json();
       
       state.tickets = reqs.map(req => {
-        const emp = employeesAPI.getById(req.employee_id)
+        const emp = employees.find(e => e.id === req.employeeId);
+        const dept = departments.find(d => String(d.id) === String(emp?.deptId));
+        
+        // Status mapping: backend -> frontend
+        let uiStatus = 'Chờ xử lý';
+        if (req.status === 'resolved') uiStatus = 'Hoàn thành';
+        else if (req.status === 'processing') uiStatus = 'Đang xử lý';
+        else if (req.status === 'rejected') uiStatus = 'Từ chối';
+
         return {
-          id: req.request_id.toString(),
-          employeeName: emp ? emp.full_name : 'Unknown',
-          department: emp ? emp.department_name : 'N/A',
-          category: req.request_type || 'Khác',
+          id: req.id.toString(),
+          employeeName: emp ? emp.name : 'Unknown',
+          department: dept ? dept.name : 'N/A',
+          category: req.type || 'Hành chính & Văn phòng',
           title: req.title,
           priority: req.priority || 'Trung bình',
-          status: req.status === 'ĐÃ_DUYỆT' ? 'Hoàn thành' : (req.status === 'CHỜ_DUYỆT' ? 'Chờ xử lý' : (req.status === 'TỪ_CHỐI' ? 'Từ chối' : 'Đang xử lý')),
-          date: req.created_at || new Date().toLocaleDateString('vi-VN'),
+          status: uiStatus,
+          date: req.date || new Date().toLocaleDateString('vi-VN'),
           deadline: req.deadline || '',
           asset: req.asset || '',
-          description: req.reason || '',
-          avatarColor: AVATAR_COLORS[req.request_id % AVATAR_COLORS.length],
+          description: req.desc || '',
+          avatarColor: AVATAR_COLORS[String(req.id).length % AVATAR_COLORS.length],
         }
       })
     } catch (error) {
@@ -43,20 +59,27 @@ export function useSupportStore() {
 
   const addTicket = async (ticketData) => {
     try {
-      const currentUserId = 2 // default mock manager id
+      const currentUserId = localStorage.getItem('userId') || 'NV002';
       const reqData = {
-        employee_id: currentUserId,
-        department_id: 1, // Optional
-        request_type: ticketData.category,
+        employeeId: currentUserId,
+        type: ticketData.category,
         title: ticketData.title,
-        reason: ticketData.description,
-        status: 'CHỜ_DUYỆT',
-        created_at: new Date().toLocaleDateString('vi-VN'),
+        desc: ticketData.description,
+        status: 'pending',
+        date: new Date().toLocaleDateString('vi-VN'),
         priority: ticketData.priority || 'Trung bình'
       }
-      requestsAPI.add(reqData)
-      await fetchTickets()
-      return true
+      
+      const res = await fetch('http://localhost:3000/supportRequests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reqData)
+      });
+
+      if (res.ok) {
+        await fetchTickets();
+        return true;
+      }
     } catch (error) {
       console.error('Lỗi khi gửi yêu cầu hỗ trợ:', error)
     }
@@ -64,14 +87,23 @@ export function useSupportStore() {
 
   const updateStatus = async (ticketId, newStatus, note = '') => {
     try {
-      const backendStatus = newStatus === 'Hoàn thành' ? 'ĐÃ_DUYỆT' : (newStatus === 'Chờ xử lý' ? 'CHỜ_DUYỆT' : (newStatus === 'Từ chối' ? 'TỪ_CHỐI' : 'ĐANG_XỬ_LÝ'))
-      const req = requestsAPI.getAll().find(r => r.request_id == ticketId)
-      if (req) {
-        requestsAPI.update(ticketId, { 
+      // Status mapping: frontend -> backend
+      let backendStatus = 'pending';
+      if (newStatus === 'Hoàn thành') backendStatus = 'resolved';
+      else if (newStatus === 'Đang xử lý') backendStatus = 'processing';
+      else if (newStatus === 'Từ chối') backendStatus = 'rejected';
+
+      const res = await fetch(`http://localhost:3000/supportRequests/${ticketId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
           status: backendStatus,
           note: note || undefined
         })
-        await fetchTickets()
+      });
+
+      if (res.ok) {
+        await fetchTickets();
       }
     } catch (error) {
       console.error('Lỗi khi cập nhật trạng thái:', error)

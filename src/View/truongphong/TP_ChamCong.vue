@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
@@ -163,10 +163,19 @@
                       <p class="text-[10px] font-semibold text-[var(--sys-text-secondary)] uppercase tracking-wider m-0 opacity-70">{{ log.role }}</p>
                     </td>
                     <td class="px-6 py-3">
-                      <div class="flex items-center gap-2">
-                        <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)]">{{ log.in }}</span>
-                        <span class="material-symbols-rounded text-[14px] text-[var(--sys-text-disabled)]">arrow_forward</span>
-                        <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)]">{{ log.out || '--:--' }}</span>
+                      <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center gap-2">
+                          <span class="text-[9px] uppercase font-black text-[var(--sys-text-disabled)] w-10">Lần 1:</span>
+                          <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)] bg-[var(--sys-bg-page)]">{{ log.in }}</span>
+                          <span class="material-symbols-rounded text-[14px] text-[var(--sys-text-disabled)]">arrow_forward</span>
+                          <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)] bg-[var(--sys-bg-page)]">{{ log.out || '--:--' }}</span>
+                        </div>
+                        <div v-if="log.in2 || log.out2" class="flex items-center gap-2">
+                          <span class="text-[9px] uppercase font-black text-[var(--sys-text-disabled)] w-10">Lần 2:</span>
+                          <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-brand-solid)] bg-[var(--sys-brand-soft)] shadow-sm">{{ log.in2 || '--:--' }}</span>
+                          <span class="material-symbols-rounded text-[14px] text-[var(--sys-text-disabled)]">arrow_forward</span>
+                          <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-brand-solid)] bg-[var(--sys-brand-soft)] shadow-sm">{{ log.out2 || '--:--' }}</span>
+                        </div>
                       </div>
                     </td>
                     <td class="px-6 py-3 text-[10px] font-bold uppercase tracking-wide">
@@ -194,7 +203,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Dropdown from '@/components/Dropdown.vue'
 import { employeesAPI, mockDB } from '@/data/mockDB.js'
 
@@ -234,66 +243,76 @@ const getAttStatus = (seed) => {
 
 const attendanceList = ref([])
 const historyLogs = ref([])
+const userDeptId = localStorage.getItem('userDeptId') || '1';
 
-const loadData = () => {
-  const allEmps = employeesAPI.getAll().filter(e => e.department_id === DEPT_ID && e.status !== 'ĐÃ_NGHỈ_VIỆC')
-  const allAtts = mockDB.attendances || []
+const loadData = async () => {
+  try {
+    const [empRes, attRes] = await Promise.all([
+      fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
+      fetch(`http://localhost:3000/attendance`)
+    ]);
+    
+    const employees = await empRes.json();
+    const allAtts = await attRes.json();
+    
+    const deptInfoRes = await fetch(`http://localhost:3000/departments/${userDeptId}`);
+    const department = await deptInfoRes.json();
 
-  // Xây dựng bảng công
-  attendanceList.value = allEmps.slice(0, 8).map(emp => {
-    const empAtts = allAtts.filter(a => a.employee_id === emp.employee_id)
-    const data = {}
-    let totalDays = 0
+    // Build the grid
+    attendanceList.value = employees.map(emp => {
+      const empAtts = allAtts.filter(a => a.employeeId === emp.id);
+      const data = {};
+      let totalDays = 0;
 
-    empAtts.forEach(att => {
-      const d = new Date(att.attendance_date)
-      if (!isNaN(d)) {
-        const day = d.getDate()
-        const status = getAttStatus(att.attendance_id + emp.employee_id)
-        data[day] = status
-        if (status !== 'off') totalDays += status === 'late' ? 0.5 : 1
+      empAtts.forEach(att => {
+        const d = new Date(att.date);
+        if (!isNaN(d)) {
+          const day = d.getDate();
+          const status = att.status === 'ontime' ? 'on' : (att.status === 'late' ? 'late' : 'off');
+          data[day] = status;
+          if (status !== 'off') totalDays += status === 'late' ? 0.5 : 1;
+        }
+      });
+
+      // Fill mock data for missing days to make it look realistic for demo
+      for (let d = 1; d <= 22; d++) {
+        if (!data[d] && !isWeekend(d)) {
+          const seed = (parseInt(emp.id.replace(/\D/g, '')) * 31 + d) % 10;
+          data[d] = seed < 8 ? 'on' : (seed === 8 ? 'late' : 'off');
+          totalDays += data[d] === 'on' ? 1 : (data[d] === 'late' ? 0.5 : 0);
+        }
       }
-    })
-
-    // Điền ngẫu nhiên các ngày chưa có data cho đủ thực tế
-    for (let d = 1; d <= 22; d++) {
-      if (!data[d] && !isWeekend(d)) {
-        const seed = (emp.employee_id * 31 + d) % 10
-        data[d] = seed < 8 ? 'on' : (seed === 8 ? 'late' : 'off')
-        totalDays += data[d] === 'on' ? 1 : (data[d] === 'late' ? 0.5 : 0)
-      }
-    }
-
-    return {
-      id: emp.employee_code,
-      name: emp.full_name,
-      dept: `IT DEPT`,
-      total: totalDays.toFixed(1),
-      data
-    }
-  })
-
-  // Xây dựng lịch sử logs từ attendances
-  historyLogs.value = allAtts
-    .filter(a => allEmps.find(e => e.employee_id === a.employee_id))
-    .slice(0, 15)
-    .map(att => {
-      const emp = allEmps.find(e => e.employee_id === att.employee_id)
-      const statusKey = getAttStatus(att.attendance_id + (emp?.employee_id || 0))
-      const inTime = att.check_in_time ? att.check_in_time.split(' ')[1]?.substring(0, 5) : '08:00'
-      const outTime = att.check_out_time ? att.check_out_time.split(' ')[1]?.substring(0, 5) : '17:30'
-      const dateStr = att.attendance_date ? new Date(att.attendance_date).toLocaleDateString('vi-VN') : ''
 
       return {
-        date: dateStr,
-        name: emp?.full_name || 'N/A',
-        role: 'IT DEPT',
-        in: statusKey === 'off' ? '--:--' : inTime,
-        out: statusKey === 'off' ? '--:--' : outTime,
-        status: statusKey === 'on' ? 'ontime' : (statusKey === 'late' ? 'late' : 'off'),
-        statusLabel: statusKey === 'on' ? 'Đúng giờ' : (statusKey === 'late' ? 'Đi muộn' : 'Vắng mặt')
+        id: emp.id,
+        name: emp.name,
+        dept: department.name || 'PHÒNG BAN',
+        total: totalDays.toFixed(1),
+        data
       }
-    })
+    });
+
+    // Build history logs
+    historyLogs.value = allAtts
+      .filter(att => employees.some(e => e.id === att.employeeId))
+      .slice(0, 15)
+      .map(att => {
+        const emp = employees.find(e => e.id === att.employeeId);
+        return {
+          date: att.date,
+          name: emp ? emp.name : (att.name || 'N/A'),
+          role: department.name || 'PHÒNG BAN',
+          in: att.checkIn1 || '--:--',
+          out: att.checkOut1 || '--:--',
+          in2: att.checkIn2 || null,
+          out2: att.checkOut2 || null,
+          status: att.status || 'ontime',
+          statusLabel: att.status === 'ontime' ? 'Đúng giờ' : (att.status === 'late' ? 'Đi muộn' : 'Vắng mặt')
+        }
+      });
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu chuyên cần:', error);
+  }
 }
 
 const getStatusClass = (status) => {
@@ -303,7 +322,16 @@ const getStatusClass = (status) => {
   return 'text-[var(--sys-text-secondary)] bg-[var(--sys-bg-hover)] px-2 py-0.5 rounded border border-[var(--sys-border-strong)]';
 }
 
-onMounted(loadData)
+let pollInterval = null;
+
+onMounted(() => {
+  loadData();
+  pollInterval = setInterval(loadData, 10000); // Poll every 10 seconds
+});
+
+onUnmounted(() => {
+  if (pollInterval) clearInterval(pollInterval);
+});
 </script>
 
 <style scoped>

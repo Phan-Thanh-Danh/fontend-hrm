@@ -138,10 +138,16 @@
                 </div>
               </td>
               <td class="px-4 py-3 text-center whitespace-nowrap bg-transparent">
-                <span class="text-[13px] font-medium text-[var(--sys-text-primary)]">{{ record.checkIn }}</span>
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-[13px] font-medium text-[var(--sys-text-primary)]">{{ record.checkIn }}</span>
+                  <span v-if="record.checkIn2" class="text-[10px] font-bold text-[var(--sys-brand-solid)] bg-[var(--sys-brand-soft)] px-1 rounded shadow-sm">{{ record.checkIn2 }} (L2)</span>
+                </div>
               </td>
               <td class="px-4 py-3 text-center whitespace-nowrap bg-transparent">
-                <span class="text-[13px] font-medium text-[var(--sys-text-primary)]">{{ record.checkOut }}</span>
+                <div class="flex flex-col gap-0.5">
+                  <span class="text-[13px] font-medium text-[var(--sys-text-primary)]">{{ record.checkOut }}</span>
+                  <span v-if="record.checkOut2" class="text-[10px] font-bold text-[var(--sys-brand-solid)] bg-[var(--sys-brand-soft)] px-1 rounded shadow-sm">{{ record.checkOut2 }} (L2)</span>
+                </div>
               </td>
               <td class="px-4 py-3 text-right whitespace-nowrap bg-transparent">
                 <span :class="['text-[13px] font-semibold', record.late > 0 ? 'text-[var(--sys-danger-text)]' : 'text-[var(--sys-text-disabled)] opacity-50']">
@@ -202,23 +208,88 @@ import { ref } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import CalendarCustom from '@/components/CalendarCustom.vue';
 
-const filterDate = ref('2023-10-05');
+const filterDate = ref(new Date().toISOString().split('T')[0]);
 const filterDept = ref('ALL');
 const filterStatus = ref('ALL');
 
-const deptOptions = [
-  { label: 'Tất cả phòng ban', value: 'ALL' },
-  { label: 'Phòng Kỹ thuật', value: 'IT' },
-  { label: 'Phòng Nhân sự', value: 'HR' },
-  { label: 'Phòng Kinh doanh', value: 'Sales' }
-];
+const deptOptions = ref([
+  { label: 'Tất cả phòng ban', value: 'ALL' }
+]);
 
 const statusOptions = [
   { label: 'Mọi trạng thái', value: 'ALL' },
-  { label: 'Đúng giờ', value: 'NORMAL' },
-  { label: 'Đi muộn', value: 'LATE' },
-  { label: 'Vắng mặt', value: 'ABSENT' }
+  { label: 'Đúng giờ', value: 'ontime' },
+  { label: 'Đi muộn', value: 'late' },
 ];
+
+const timeRecords = ref([]);
+const topEarlyUsers = ref([]);
+
+const loadData = async () => {
+  try {
+    const [empRes, attRes, deptRes] = await Promise.all([
+      fetch('http://localhost:3000/employees'),
+      fetch(`http://localhost:3000/attendance?date=${filterDate.value}`),
+      fetch('http://localhost:3000/departments')
+    ]);
+
+    const employees = await empRes.json();
+    const attendance = await attRes.json();
+    const departments = await deptRes.json();
+
+    deptOptions.value = [
+      { label: 'Tất cả phòng ban', value: 'ALL' },
+      ...departments.map(d => ({ label: d.name, value: d.id }))
+    ];
+
+    let filteredEmployees = employees;
+    if (filterDept.value !== 'ALL') {
+      filteredEmployees = employees.filter(e => String(e.deptId) === String(filterDept.value));
+    }
+
+    timeRecords.value = filteredEmployees.map(emp => {
+      const att = attendance.find(a => a.employeeId === emp.id);
+      return {
+        id: emp.id,
+        name: emp.name,
+        shift: (emp.position || 'Nhân viên').toUpperCase(),
+        checkIn: att?.checkIn1 || '--:--',
+        checkOut: att?.checkOut1 || '--:--',
+        checkIn2: att?.checkIn2 || null,
+        checkOut2: att?.checkOut2 || null,
+        late: att?.status === 'late' ? 15 : 0,
+        early: 0,
+        ot: 0,
+        statusText: att ? (att.status === 'ontime' ? 'ĐỦ CÔNG' : 'ĐI MUỘN') : 'VẮNG MẶT'
+      };
+    });
+
+    // Mock top early users for visual
+    topEarlyUsers.value = employees.slice(0, 4).map((e, i) => ({
+      name: e.name,
+      earlyMinutes: 45 - i * 10,
+      percent: 85 - i * 15
+    }));
+
+  } catch (error) {
+    console.error('Lỗi tải dữ liệu Admin:', error);
+  }
+};
+
+import { onMounted, onUnmounted, watch } from 'vue';
+
+let pollInterval = null;
+
+onMounted(() => {
+  loadData();
+  pollInterval = setInterval(loadData, 10000);
+});
+
+onUnmounted(() => {
+  if (pollInterval) clearInterval(pollInterval);
+});
+
+watch([filterDate, filterDept, filterStatus], loadData);
 
 const getStatusBadgeClass = (status) => {
   switch (status) {
@@ -237,49 +308,6 @@ const getStatusDotClass = (status) => {
     default: return 'bg-[var(--sys-icon-default)] opacity-40';
   }
 };
-
-const topEarlyUsers = ref([
-  { name: 'Nguyễn Văn An', earlyMinutes: 45, percent: 85 },
-  { name: 'Trần Thị Bích', earlyMinutes: 30, percent: 65 },
-  { name: 'Lê Văn Cường', earlyMinutes: 20, percent: 45 },
-  { name: 'Phạm Thành Đạt', earlyMinutes: 15, percent: 25 },
-]);
-
-const timeRecords = ref([
-  { 
-    id: 1, 
-    name: 'Nguyễn Văn An', 
-    shift: 'Ca Sáng (08:00-17:00)', 
-    checkIn: '08:15', 
-    checkOut: '17:05', 
-    late: 15, 
-    early: 0, 
-    ot: 0, 
-    statusText: 'ĐI MUỘN'
-  },
-  { 
-    id: 2, 
-    name: 'Trần Thị Bích', 
-    shift: 'Ca Sáng (08:00-17:00)', 
-    checkIn: '07:55', 
-    checkOut: '18:30', 
-    late: 0, 
-    early: 0, 
-    ot: 1.5, 
-    statusText: 'ĐỦ CÔNG'
-  },
-  { 
-    id: 3, 
-    name: 'Lê Văn Cường', 
-    shift: 'Ca Sáng (08:00-17:00)', 
-    checkIn: '--:--', 
-    checkOut: '--:--', 
-    late: 0, 
-    early: 0, 
-    ot: 0, 
-    statusText: 'VẮNG MẶT'
-  }
-]);
 </script>
 
 <style scoped>

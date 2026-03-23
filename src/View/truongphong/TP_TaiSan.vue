@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
@@ -54,7 +54,7 @@
 import { ref, onMounted } from 'vue'
 import { assetsAPI, employeesAPI } from '@/data/mockDB.js'
 
-const DEPT_ID = 2
+const userDeptId = localStorage.getItem('userDeptId') || '1';
 const assets = ref([])
 
 const CATEGORY_ICON_MAP = {
@@ -66,34 +66,35 @@ const CATEGORY_ICON_MAP = {
   'Server': 'dns',
 }
 
-const STATUS_MAP = {
-  'ĐANG_SỬ_DỤNG': 'Tốt',
-  'TRONG_KHO': 'Trong kho',
-  'HỎNG': 'Cần bảo trì',
-}
-
-const loadData = () => {
-  const allAssets = assetsAPI.getAll()
-  const allEmps = employeesAPI.getAll().filter(e => e.department_id === DEPT_ID)
-  const empIds = allEmps.map(e => e.employee_id)
-
-  assets.value = allAssets
-    .filter(a => a.assigned_to && empIds.includes(a.assigned_to))
-    .slice(0, 9)
-    .map(a => {
-      const emp = allEmps.find(e => e.employee_id === a.assigned_to)
-      const purchaseDate = a.purchase_date ? new Date(a.purchase_date).toLocaleDateString('vi-VN') : 'N/A'
+const loadData = async () => {
+  try {
+    const [empRes, assetRes] = await Promise.all([
+      fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
+      fetch(`http://localhost:3000/assets`)
+    ]);
+    
+    const employees = await empRes.json();
+    const allAssets = await assetRes.json();
+    
+    assets.value = allAssets.filter(a => 
+      employees.some(e => e.id === a.employeeId)
+    ).map(a => {
+      const emp = employees.find(e => e.id === a.employeeId);
       return {
-        id: a.asset_id,
-        name: a.asset_name.toUpperCase(),
-        code: a.asset_code,
-        category: a.category,
-        user: emp?.full_name || 'N/A',
-        status: STATUS_MAP[a.status] || a.status,
-        date: purchaseDate,
-        icon: CATEGORY_ICON_MAP[a.category] || 'devices'
+        id: a.id,
+        name: a.name.toUpperCase(),
+        code: a.code,
+        category: a.category || (a.name.includes('Laptop') ? 'Laptop' : 'Màn hình'),
+        user: emp?.name || 'N/A',
+        status: a.condition === 'Like New' || a.condition === 'Good' ? 'Tốt' : 'Cần bảo trì',
+        date: a.issueDate || 'N/A',
+        icon: CATEGORY_ICON_MAP[a.category] || (a.name.includes('Laptop') ? 'laptop_mac' : 'monitor')
       }
-    })
+    });
+
+  } catch (error) {
+    console.error('Lỗi tải dữ liệu tài sản:', error);
+  }
 }
 
 onMounted(loadData)

@@ -1,5 +1,16 @@
 <template>
   <div class="dashboard-wrapper min-h-screen bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] p-4 md:p-6 lg:p-8">
+    <!-- Toast Notification -->
+    <Transition name="toast">
+      <div v-if="showToast" :class="['fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-lg shadow-2xl flex items-center gap-3 border backdrop-blur-md transition-all', 
+        toastType === 'success' ? 'bg-green-50/90 text-green-700 border-green-200' : 
+        toastType === 'danger' ? 'bg-red-50/90 text-red-700 border-red-200' : 
+        'bg-amber-50/90 text-amber-700 border-amber-200']">
+        <span class="material-symbols-outlined text-[20px]">{{ toastType === 'success' ? 'check_circle' : toastType === 'danger' ? 'error' : 'warning' }}</span>
+        <span class="text-sm font-bold tracking-tight">{{ toastMsg }}</span>
+      </div>
+    </Transition>
+
     <div class="max-w-7xl mx-auto space-y-6 bg-transparent">
       
       <!-- Header Area -->
@@ -46,18 +57,18 @@
               <!-- Action Area -->
               <div class="flex flex-col gap-4 bg-transparent">
                 <div class="grid grid-cols-2 gap-4 bg-transparent">
-                  <button class="bg-[var(--sys-brand-solid)] hover:brightness-90 text-white font-bold py-5 px-4 rounded-md flex flex-col items-center justify-center gap-2 shadow-sm transition-all active:scale-95 group">
+                  <button @click="handleCheckIn" class="bg-[var(--sys-brand-solid)] hover:brightness-90 text-white font-bold py-5 px-4 rounded-md flex flex-col items-center justify-center gap-2 shadow-sm transition-all active:scale-95 group">
                     <span class="material-symbols-outlined text-3xl group-hover:scale-105 transition-transform">login</span>
                     <span class="text-[12px] uppercase tracking-wide">Ghi nhận Vào</span>
                   </button>
-                  <button class="bg-white hover:bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] border border-[var(--sys-border-strong)] font-bold py-5 px-4 rounded-md flex flex-col items-center justify-center gap-2 transition-all active:scale-95 group shadow-sm">
+                  <button @click="handleCheckOut" class="bg-white hover:bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] border border-[var(--sys-border-strong)] font-bold py-5 px-4 rounded-md flex flex-col items-center justify-center gap-2 transition-all active:scale-95 group shadow-sm">
                     <span class="material-symbols-outlined text-3xl text-[var(--sys-text-secondary)] group-hover:scale-105 transition-transform">logout</span>
                     <span class="text-[12px] uppercase tracking-wide opacity-80">Ghi nhận Ra</span>
                   </button>
                 </div>
                 <div class="py-3 px-4 bg-[var(--sys-bg-page)] rounded-md border border-[var(--sys-border-subtle)] text-center">
                   <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide opacity-60">
-                    Ghi nhận gần nhất: <span class="text-[var(--sys-text-primary)] font-bold">08:25:12</span>
+                    Ghi nhận gần nhất: <span class="text-[var(--sys-text-primary)] font-bold">{{ lastLogTime }}</span>
                   </p>
                 </div>
               </div>
@@ -213,7 +224,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 
 const currentHours = ref('00');
 const currentMinutes = ref('00');
@@ -223,15 +234,61 @@ let timerInterval = null;
 
 const activities = ref([]);
 const notifications = ref([]);
+const attendanceToday = ref(null);
+const userId = localStorage.getItem('userId') || 'NV002';
+const showToast = ref(false);
+const toastMsg = ref('');
+const toastType = ref('success');
 
-const fetchData = () => {
+const lastLogTime = computed(() => {
+  if (!attendanceToday.value) return '--:--:--';
+  return attendanceToday.value.checkOut2 || attendanceToday.value.checkOut1 || attendanceToday.value.checkIn2 || attendanceToday.value.checkIn1 || '--:--:--';
+});
+
+const triggerToast = (msg, type = 'success') => {
+  toastMsg.value = msg;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => { showToast.value = false; }, 3000);
+};
+
+const notifyManager = async (msg) => {
   try {
-    activities.value = [
-        { date: '12/10/2023', type: 'Chấm công', time: '08:15 Vào - 17:35 Ra', color: 'success', status: 'Hợp lệ' },
-        { date: '11/10/2023', type: 'Nghỉ phép', time: 'Buổi chiều (13:00 - 17:00)', color: 'warning', status: 'Đã duyệt' },
-        { date: '10/10/2023', type: 'Chấm công', time: '08:20 Vào - 17:40 Ra', color: 'success', status: 'Hợp lệ' },
-        { date: '09/10/2023', type: 'Chấm công', time: '08:10 Vào - 17:30 Ra', color: 'success', status: 'Hợp lệ' }
-    ];
+    const userRes = await fetch(`http://localhost:3000/employees/${userId}`);
+    const user = await userRes.json();
+    if (user && user.managerId) {
+      await fetch('http://localhost:3000/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.managerId,
+          type: 'info',
+          title: 'Thông báo Chấm công',
+          desc: `${user.name} ${msg}`,
+          time: 'Vừa xong',
+          isRead: false,
+          icon: 'history'
+        })
+      });
+    }
+  } catch (e) { console.error('Notify Error:', e); }
+};
+
+const fetchData = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/attendance?employeeId=${userId}`);
+    const data = await res.json();
+    const todayStr = new Date().toISOString().split('T')[0];
+    attendanceToday.value = data.find(item => item.date === todayStr);
+
+    activities.value = data.slice(0, 4).map(item => ({
+      date: item.date,
+      type: 'Chấm công',
+      time: `${item.checkIn1}${item.checkIn2 ? ' | ' + item.checkIn2 : ''} Vào - ${item.checkOut1 || '--'}${item.checkOut2 ? ' | ' + item.checkOut2 : ''} Ra`,
+      color: 'success',
+      status: item.status === 'ontime' ? 'Hợp lệ' : 'Hợp lệ'
+    }));
+
     notifications.value = [
         { id: 1, type: 'warning', icon: 'campaign', title: 'Thông báo Nội bộ', desc: 'Cuộc họp toàn công ty vào Thứ 6 lúc 15:00.', time: '10 phút trước' },
         { id: 2, type: 'success', icon: 'done_all', title: 'Nghỉ phép', desc: 'Đơn nghỉ phép ngày 15/10 đã được duyệt.', time: '2 giờ trước' },
@@ -240,6 +297,76 @@ const fetchData = () => {
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu nhân viên:', error);
   }
+};
+
+const handleCheckIn = async () => {
+  const now = new Date();
+  const timeStr = now.toTimeString().split(' ')[0];
+  const dateStr = now.toISOString().split('T')[0];
+
+  if (!attendanceToday.value) {
+    const newEntry = {
+      employeeId: userId,
+      date: dateStr,
+      checkIn1: timeStr,
+      checkIn2: null,
+      checkOut1: null,
+      checkOut2: null,
+      status: 'ontime',
+      location: 'Văn phòng HCM'
+    };
+    await fetch('http://localhost:3000/attendance', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newEntry)
+    });
+    triggerToast('Khởi tạo chấm công thành công!');
+    notifyManager(`đã chấm công vào lúc ${timeStr}`);
+  } else if (!attendanceToday.value.checkIn2) {
+    await fetch(`http://localhost:3000/attendance/${attendanceToday.value.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkIn2: timeStr })
+    });
+    triggerToast('Ghi nhận vào lần 2 thành công!');
+    notifyManager(`đã chấm công vào (lần 2) lúc ${timeStr}`);
+  } else {
+    triggerToast('Bạn đã ghi nhận vào đủ 2 lần cho hôm nay.', 'warning');
+    return;
+  }
+  fetchData();
+};
+
+const handleCheckOut = async () => {
+  const now = new Date();
+  const timeStr = now.toTimeString().split(' ')[0];
+
+  if (!attendanceToday.value || !attendanceToday.value.checkIn1) {
+    triggerToast('Bạn chưa ghi nhận vào hôm nay!', 'danger');
+    return;
+  }
+
+  if (!attendanceToday.value.checkOut1) {
+    await fetch(`http://localhost:3000/attendance/${attendanceToday.value.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkOut1: timeStr })
+    });
+    triggerToast('Ghi nhận ra lần 1 thành công!');
+    notifyManager(`đã chấm công ra lúc ${timeStr}`);
+  } else if (!attendanceToday.value.checkOut2) {
+    await fetch(`http://localhost:3000/attendance/${attendanceToday.value.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkOut2: timeStr })
+    });
+    triggerToast('Ghi nhận ra lần 2 thành công!');
+    notifyManager(`đã chấm công ra (lần 2) lúc ${timeStr}`);
+  } else {
+    triggerToast('Bạn đã ghi nhận ra đủ 2 lần cho hôm nay.', 'warning');
+    return;
+  }
+  fetchData();
 };
 
 const updateTime = () => {
@@ -252,14 +379,18 @@ const updateTime = () => {
   currentDateStr.value = `Hôm nay là ${days[now.getDay()]}, ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}.`;
 };
 
+let pollInterval = null;
+
 onMounted(() => {
   updateTime();
   timerInterval = setInterval(updateTime, 1000);
   fetchData();
+  pollInterval = setInterval(fetchData, 10000); // Live sync data every 10s
 });
 
 onUnmounted(() => {
   if (timerInterval) clearInterval(timerInterval);
+  if (pollInterval) clearInterval(pollInterval);
 });
 </script>
 
@@ -277,5 +408,12 @@ onUnmounted(() => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--sys-brand-solid);
+}
+.toast-enter-active, .toast-leave-active {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.toast-enter-from, .toast-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -20px) scale(0.9);
 }
 </style>

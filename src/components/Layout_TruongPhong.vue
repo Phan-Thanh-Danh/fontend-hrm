@@ -155,9 +155,11 @@
             @click="isProfileOpen = !isProfileOpen"
             class="flex items-center gap-2.5 p-1 pr-3 rounded-md transition-all duration-200 select-none hover:bg-[var(--sys-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]"
           >
-            <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0" style="background:linear-gradient(135deg,oklch(0.55 0.22 185),oklch(0.45 0.20 225))">TP</div>
+            <div class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0 uppercase" style="background:linear-gradient(135deg,oklch(0.55 0.22 185),oklch(0.45 0.20 225))">
+              {{ userName.split(' ').pop().charAt(0) }}
+            </div>
             <div class="hidden lg:flex flex-col justify-center text-left">
-              <span class="text-sm font-bold leading-tight text-[var(--sys-text-primary)]">Trần Thanh Tâm</span>
+              <span class="text-sm font-bold leading-tight text-[var(--sys-text-primary)]">{{ userName }}</span>
               <span class="text-[10px] uppercase tracking-widest font-bold mt-0.5 leading-none text-[var(--sys-text-secondary)]">Manager</span>
             </div>
             <span
@@ -174,7 +176,7 @@
             >
               <div class="px-4 py-3 border-b border-[var(--sys-border-subtle)] mb-1">
                 <p class="text-[10px] font-semibold uppercase tracking-wider mb-1 text-[var(--sys-text-secondary)]">Tài khoản Trưởng phòng</p>
-                <p class="text-xs font-medium truncate mb-0 text-[var(--sys-text-primary)]">manager@hrm.com</p>
+                <p class="text-xs font-medium truncate mb-0 text-[var(--sys-text-primary)]">{{ localStorage.getItem('userEmail') || 'manager@hrm.com' }}</p>
               </div>
               <router-link
                 to="/truong-phong/ho-so"
@@ -316,6 +318,13 @@ const isProfileOpen = ref(false);
 const notificationDropdownRef = ref(null);
 const profileDropdownRef = ref(null);
 
+const userId = localStorage.getItem('userId') || 'NV008';
+const userName = localStorage.getItem('userName') || 'Trưởng phòng';
+const userDeptId = localStorage.getItem('userDeptId') || '1';
+
+const allLeaveRequests = ref([]);
+const deptEmployees = ref([]);
+
 const transitionName = ref('fade');
 watch(() => route.meta.index, (toIndex, fromIndex) => {
   if (toIndex === undefined || fromIndex === undefined) { transitionName.value = 'fade'; return; }
@@ -326,11 +335,21 @@ watch(isDark, (val) => {
   document.documentElement.classList.toggle('dark', val);
 }, { immediate: true });
 
-// Badge: đếm số đơn nghỉ phép CHỜ_DUYỆT của phòng IT
-const DEPT_ID = 2;
+const fetchDeptData = async () => {
+    try {
+        const [empRes, reqRes] = await Promise.all([
+          fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
+          fetch(`http://localhost:3000/leaveRequests?status=pending`)
+        ]);
+        deptEmployees.value = await empRes.json();
+        allLeaveRequests.value = await reqRes.json();
+    } catch (e) { console.error(e); }
+};
+
 const pendingLeaveRequests = computed(() => {
-  const deptEmpIds = employeesAPI.getAll().filter(e => e.department_id === DEPT_ID).map(e => e.employee_id);
-  return requestsAPI.getAll().filter(r => deptEmpIds.includes(r.requester_id) && r.status === 'CHỜ_DUYỆT');
+  return allLeaveRequests.value.filter(r => 
+    deptEmployees.value.some(e => e.id === r.employeeId)
+  );
 });
 
 const pendingLeaveCount = computed(() => {
@@ -339,13 +358,12 @@ const pendingLeaveCount = computed(() => {
 
 const recentPendingRequests = computed(() => {
   return pendingLeaveRequests.value.slice(0, 5).map(r => {
-    const emp = employeesAPI.getById(r.requester_id);
     return {
-      id: r.request_id,
-      requester: emp?.full_name || 'Nhân viên',
-      title: r.title,
-      time: r.request_date || 'Hôm nay',
-      urgent: r.is_urgent
+      id: r.id,
+      requester: r.name || 'Nhân viên',
+      title: r.type,
+      time: r.requestDate || 'Hôm nay',
+      urgent: r.urgent
     };
   });
 });
@@ -379,7 +397,10 @@ const handleClickOutside = (event) => {
   if (notificationDropdownRef.value && !notificationDropdownRef.value.contains(event.target)) isNotificationOpen.value = false;
 };
 
-onMounted(() => document.addEventListener('click', handleClickOutside));
+onMounted(() => {
+    document.addEventListener('click', handleClickOutside);
+    fetchDeptData();
+});
 onUnmounted(() => document.removeEventListener('click', handleClickOutside));
 
 const logout = async () => {

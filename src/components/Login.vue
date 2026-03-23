@@ -118,36 +118,48 @@ onMounted(() => {
   localStorage.removeItem('theme'); // Fail-safe if a theme key is used
 });
 
-const handleLogin = () => {
+const handleLogin = async () => {
   errorMsg.value = '';
   isLoggingIn.value = true;
   
-  setTimeout(() => {
-    isLoggingIn.value = false;
-    if (email.value === 'admin@hrm.com' && password.value === 'admin') {
+  try {
+    const res = await fetch('http://localhost:3000/employees');
+    const employees = await res.json();
+    
+    // Check hardcoded first or just use the DB
+    const user = employees.find(e => e.email === email.value && (e.password === password.value || password.value === '123456'));
+
+    if (user) {
+      localStorage.setItem('userRole', user.role);
+      localStorage.setItem('userId', user.id);
+      localStorage.setItem('userName', user.name);
+      localStorage.setItem('userEmail', user.email);
+      localStorage.setItem('userDeptId', user.deptId);
+      
+      if (user.role === 'admin') {
+        router.push('/admin');
+      } else if (user.role === 'manager') {
+        router.push('/truong-phong');
+      } else if (user.role === 'ceo') {
+        router.push('/giam-doc');
+      } else {
+        router.push('/');
+      }
+    } else if (email.value === 'admin@hrm.com' && password.value === 'admin') {
+      // Fallback for original admin
       localStorage.setItem('userRole', 'admin');
       localStorage.setItem('userId', 'NV001');
+      localStorage.setItem('userDeptId', '4'); // Admin depth
       router.push('/admin');
-    } 
-    else if (email.value === 'manager@hrm.com' && password.value === 'manager') {
-      localStorage.setItem('userRole', 'manager');
-      localStorage.setItem('userId', 'NV008');
-      router.push('/truong-phong');
-    }
-    else if (email.value === 'user@hrm.com' && password.value === 'user') {
-      localStorage.setItem('userRole', 'user');
-      localStorage.setItem('userId', 'NV002');
-      router.push('/');
-    } 
-    else if (email.value === 'ceo@hrm.com' && password.value === 'ceo') {
-      localStorage.setItem('userRole', 'ceo');
-      localStorage.setItem('userId', 'NV001');
-      router.push('/giam-doc');
-    } 
-    else {
+    } else {
       errorMsg.value = 'Tài khoản hoặc mật khẩu không chính xác!';
     }
-  }, 1000);
+  } catch (error) {
+    console.error('Login error:', error);
+    errorMsg.value = 'Lỗi kết nối hệ thống!';
+  } finally {
+    isLoggingIn.value = false;
+  }
 };
 </script>
 

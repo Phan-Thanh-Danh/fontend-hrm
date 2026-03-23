@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
@@ -139,7 +139,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const stats = ref([])
 const pendingItems = ref([])
@@ -147,48 +147,49 @@ const projects = ref([])
 const deptInfo = ref({ name: 'Đang tải...', count: 0, budget: '0' })
 const chartData = ref([65, 80, 45, 90, 85, 40, 75])
 
-import { employeesAPI, departmentsAPI, requestsAPI } from '@/data/mockDB.js';
+const userId = localStorage.getItem('userId') || 'NV008';
+const userDeptId = localStorage.getItem('userDeptId') || '1';
 
-const fetchData = () => {
+const fetchData = async () => {
   try {
-    const allEmps = employeesAPI.getAll();
-    const allReqs = requestsAPI.getAll();
-    // Giả sử trưởng phòng này quản lý phòng 1 
-    const myDept = departmentsAPI.getById(1) || { department_name: 'Phòng Kỹ Thuật (IT)', budget: '1.2 Tỷ' };
-    
+    const [empRes, deptRes, reqRes] = await Promise.all([
+      fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
+      fetch(`http://localhost:3000/departments/${userDeptId}`),
+      fetch(`http://localhost:3000/leaveRequests?status=pending`)
+    ]);
+
+    const employees = await empRes.json();
+    const department = await deptRes.json();
+    const allReqs = await reqRes.json();
+
     deptInfo.value = {
-        name: myDept.department_name,
-        count: allEmps.filter(e => e.department_id === 1 && e.status !== 'ĐÃ_THÔI_VIỆC').length,
-        budget: myDept.budget || '1.2 Tỷ VNĐ'
+        name: department.name || 'Phòng ban',
+        count: employees.length,
+        budget: department.budget || 'N/A'
     };
     
-    // Lọc yêu cầu chờ duyệt thuộc phòng ban 1
-    pendingItems.value = allReqs.filter(req => {
-      const emp = allEmps.find(e => e.employee_id === req.employee_id);
-      return emp && emp.department_id === 1 && req.status === 'CHỜ_DUYỆT';
-    }).map(req => {
-      const emp = allEmps.find(e => e.employee_id === req.employee_id);
-      return {
-          id: req.request_id,
-          name: emp ? emp.full_name : 'N/A',
-          type: req.request_type,
-          date: req.created_at || new Date().toISOString().split('T')[0]
-      };
-    });
+    // Filter leave requests for this department
+    pendingItems.value = allReqs.filter(req => 
+      employees.some(e => e.id === req.employeeId)
+    ).map(req => ({
+        id: req.id,
+        name: req.name || 'Nhân viên',
+        type: req.type || 'Nghi phép',
+        date: req.requestDate || 'Hôm nay'
+    }));
 
-    const deptProjects = [
-        { name: 'Nâng cấp CRM v3.0', progress: 85 },
-        { name: 'Tích hợp AI Tuyển dụng', progress: 40 },
-        { name: 'Bảo mật dữ liệu nhân sự', progress: 92 }
+    projects.value = [
+        { name: 'Kế hoạch Quý 2', progress: 85 },
+        { name: 'Phát triển Nhân sự', progress: 40 },
+        { name: 'Tối ưu Vận hành', progress: 92 }
     ];
-    projects.value = deptProjects;
     
-    const lateCount = 2; // Mock
+    const lateCount = 1; // Mock or calculate if attendance is fetched
 
     stats.value = [
         { label: 'TỔNG NHÂN SỰ', value: String(deptInfo.value.count).padStart(2, '0'), icon: 'groups', bg: 'bg-[var(--sys-brand-soft)]', color: 'text-[var(--sys-brand-solid)]', border: 'border-[var(--sys-brand-border)]' },
         { label: 'ĐI MUỘN HÔM NAY', value: String(lateCount).padStart(2, '0'), icon: 'alarm_off', bg: 'bg-[var(--sys-danger-soft)]', color: 'text-[var(--sys-danger-text)]', border: 'border-[var(--sys-danger-border)]' },
-        { label: 'CHỜ THẨM ĐỊNH', value: String(pendingItems.value.length).padStart(2, '0'), icon: 'pending_actions', bg: 'bg-[var(--sys-warning-soft)]', color: 'text-[var(--sys-warning-text)]', border: 'border-[var(--sys-warning-border)]' },
+        { label: 'CHỜ THẨM ĐỊNH', value: String(pendingItems.value.length).padStart(2, '0'), icon: 'pending_actions', bg: 'bg-[var(--sys-warning-soft)]', color: 'text-[var(--sys-warning-text)]', border: 'border-[var(--sys-danger-border)]' },
         { label: 'TIẾN ĐỘ DỰ ÁN', value: `72%`, icon: 'trending_up', bg: 'bg-[var(--sys-success-soft)]', color: 'text-[var(--sys-success-text)]', border: 'border-[var(--sys-success-border)]' }
     ];
     
@@ -199,21 +200,36 @@ const fetchData = () => {
   }
 };
 
-const handleApprove = (req) => {
-  requestsAPI.approve(req.id);
+const handleApprove = async (req) => {
+  await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ status: 'approved', approverId: userId })
+  });
   fetchData();
 };
 
-const handleReject = (req) => {
+const handleReject = async (req) => {
   const reason = prompt('Lý do từ chối:');
   if (reason) {
-    requestsAPI.reject(req.id, reason);
+    await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'rejected', rejectReason: reason, approverId: userId })
+    });
     fetchData();
   }
 };
 
+let pollInterval = null;
+
 onMounted(() => {
   fetchData();
+  pollInterval = setInterval(fetchData, 10000); // Live sync every 10s
+});
+
+onUnmounted(() => {
+  if (pollInterval) clearInterval(pollInterval);
 });
 </script>
 

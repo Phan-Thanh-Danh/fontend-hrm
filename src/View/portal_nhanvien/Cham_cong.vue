@@ -1,5 +1,16 @@
 <template>
   <div class="attendance-wrapper min-h-screen bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] p-4 md:p-6 lg:p-8">
+    <!-- Toast Notification -->
+    <Transition name="toast">
+      <div v-if="showToast" :class="['fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-lg shadow-2xl flex items-center gap-3 border backdrop-blur-md transition-all', 
+        toastType === 'success' ? 'bg-green-50/90 text-green-700 border-green-200' : 
+        toastType === 'danger' ? 'bg-red-50/90 text-red-700 border-red-200' : 
+        'bg-amber-50/90 text-amber-700 border-amber-200']">
+        <span class="material-symbols-outlined text-[20px]">{{ toastType === 'success' ? 'check_circle' : toastType === 'danger' ? 'error' : 'warning' }}</span>
+        <span class="text-sm font-bold tracking-tight">{{ toastMsg }}</span>
+      </div>
+    </Transition>
+
     <div class="max-w-7xl mx-auto space-y-6 bg-transparent">
       
       <!-- Header Area -->
@@ -45,18 +56,18 @@
 
             <!-- Action Buttons -->
             <div class="flex gap-4 w-full max-w-lg">
-              <button class="flex-1 h-12 bg-[var(--sys-brand-solid)] hover:brightness-95 text-white rounded-md font-bold text-[14px] uppercase tracking-wide shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
+              <button @click="handleCheckIn" class="flex-1 h-12 bg-[var(--sys-brand-solid)] hover:brightness-95 text-white rounded-md font-bold text-[14px] uppercase tracking-wide shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
                 <span class="material-symbols-outlined text-[24px]">login</span>
                 Ghi nhận Vào
               </button>
-              <button class="flex-1 h-12 bg-white hover:bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[14px] uppercase tracking-wide transition-all active:scale-95 flex items-center justify-center gap-2 shadow-sm">
+              <button @click="handleCheckOut" class="flex-1 h-12 bg-white hover:bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[14px] uppercase tracking-wide transition-all active:scale-95 flex items-center justify-center gap-2 shadow-sm">
                 <span class="material-symbols-outlined text-[24px]">logout</span>
                 Ghi nhận Ra
               </button>
             </div>
             <p class="text-xs text-[var(--sys-text-secondary)] mt-6 flex items-center gap-2 opacity-80">
               <span class="material-symbols-outlined text-[16px]">history</span>
-              Lịch sử gần nhất: <span class="font-bold text-[var(--sys-text-primary)]">08:25:12</span> (Check-in thành công)
+              Ghi nhận gần nhất: <span class="font-bold text-[var(--sys-text-primary)]">{{ lastLogTime }}</span>
             </p>
           </div>
         </div>
@@ -70,16 +81,24 @@
             </h3>
             <div class="space-y-3 flex-grow">
               <div class="flex justify-between items-center p-3 rounded-md bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)]">
-                <span class="text-[12px] font-medium text-[var(--sys-text-secondary)]">Thời điểm Vào:</span>
-                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] text-right">08:25 AM</span>
+                <span class="text-[12px] font-medium text-[var(--sys-text-secondary)]">Thời điểm Vào 1:</span>
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] text-right">{{ attendanceToday?.checkIn1 || '--:--' }}</span>
               </div>
               <div class="flex justify-between items-center p-3 rounded-md bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)]">
-                <span class="text-[12px] font-medium text-[var(--sys-text-secondary)]">Thời điểm Ra dự kiến:</span>
-                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] text-right">17:30 PM</span>
+                <span class="text-[12px] font-medium text-[var(--sys-text-secondary)]">Thời điểm Vào 2:</span>
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] text-right">{{ attendanceToday?.checkIn2 || '--:--' }}</span>
+              </div>
+              <div class="flex justify-between items-center p-3 rounded-md bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)]">
+                <span class="text-[12px] font-medium text-[var(--sys-text-secondary)]">Thời điểm Ra 1:</span>
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] text-right">{{ attendanceToday?.checkOut1 || '--:--' }}</span>
+              </div>
+              <div class="flex justify-between items-center p-3 rounded-md bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)]">
+                <span class="text-[12px] font-medium text(--sys-text-secondary)]">Thời điểm Ra 2:</span>
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] text-right">{{ attendanceToday?.checkOut2 || '--:--' }}</span>
               </div>
               <div class="flex justify-between items-center p-3 rounded-md bg-[var(--sys-brand-soft)] border border-[var(--sys-brand-border)]">
                 <span class="text-[12px] font-bold text-[var(--sys-brand-solid)]">Tổng tích lũy hiện tại:</span>
-                <span class="text-[13px] font-bold text-[var(--sys-brand-solid)]">4.5h</span>
+                <span class="text-[13px] font-bold text-[var(--sys-brand-solid)]">{{ calculateTotal(attendanceToday || {}) }}</span>
               </div>
             </div>
             <div class="mt-8 pt-6 border-t border-[var(--sys-border-subtle)] text-center">
@@ -180,7 +199,7 @@
  * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button, 8px (LG) cho Card/Thẻ
  * - Hệ màu Semantic đồng bộ, loại bỏ font-black/italic
  */
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 
 const currentHours = ref('00');
@@ -189,27 +208,174 @@ const currentSeconds = ref('00');
 const currentDateStr = ref('');
 let timerInterval = null;
 
-const selectedMonth = ref(10);
-const selectedYear = ref(2023);
+const selectedMonth = ref(new Date().getMonth() + 1);
+const selectedYear = ref(new Date().getFullYear());
 
-const monthOptions = [
-  { label: 'Tháng 10', value: 10 },
-  { label: 'Tháng 09', value: 9 },
-  { label: 'Tháng 08', value: 8 },
-];
-
+const monthOptions = Array.from({ length: 12 }, (_, i) => ({ label: `Tháng ${i + 1}`, value: i + 1 }));
 const yearOptions = [
-  { label: 'Năm 2023', value: 2023 },
-  { label: 'Năm 2022', value: 2022 },
+  { label: 'Năm 2026', value: 2026 },
+  { label: 'Năm 2025', value: 2025 },
 ];
 
-const historyItems = ref([
-  { day: 'Thứ Sáu, 20/10', checkIn: '08:10:45', checkOut: '17:35:12', total: '8.5h', status: 'Hợp lệ' },
-  { day: 'Thứ Năm, 19/10', checkIn: '08:45:10', checkOut: '17:30:00', total: '7.75h', status: 'Đi muộn' },
-  { day: 'Thứ Tư, 18/10', checkIn: '08:05:30', checkOut: '16:15:00', total: '7.0h', status: 'Về sớm' },
-  { day: 'Thứ Ba, 17/10', checkIn: '08:00:15', checkOut: '17:45:30', total: '8.75h', status: 'Hợp lệ' },
-  { day: 'Thứ Hai, 16/10', checkIn: '07:55:12', checkOut: '17:32:05', total: '8.5h', status: 'Hợp lệ' }
-]);
+const userId = localStorage.getItem('userId') || 'NV002';
+const attendanceToday = ref(null);
+const historyItems = ref([]);
+const showToast = ref(false);
+const toastMsg = ref('');
+const toastType = ref('success');
+
+const lastLogTime = computed(() => {
+  if (!attendanceToday.value) return '--:--:--';
+  return attendanceToday.value.checkOut2 || attendanceToday.value.checkOut1 || attendanceToday.value.checkIn2 || attendanceToday.value.checkIn1 || '--:--:--';
+});
+
+const triggerToast = (msg, type = 'success') => {
+  toastMsg.value = msg;
+  toastType.value = type;
+  showToast.value = true;
+  setTimeout(() => { showToast.value = false; }, 3000);
+};
+
+const notifyManager = async (msg) => {
+  try {
+    const userRes = await fetch(`http://localhost:3000/employees/${userId}`);
+    const user = await userRes.json();
+    if (user && user.managerId) {
+      await fetch('http://localhost:3000/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.managerId,
+          type: 'info',
+          title: 'Thông báo Chấm công',
+          desc: `${user.name} ${msg}`,
+          time: 'Vừa xong',
+          isRead: false,
+          icon: 'history'
+        })
+      });
+    }
+    // Also notify HR (NV001)
+    await fetch('http://localhost:3000/notifications', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: 'NV001',
+          type: 'info',
+          title: 'Hệ thống Chấm công',
+          desc: `${user.name} ${msg}`,
+          time: 'Vừa xong',
+          isRead: false,
+          icon: 'history'
+        })
+      });
+  } catch (e) { console.error('Notify Error:', e); }
+};
+
+const fetchAttendance = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/attendance?employeeId=${userId}`);
+    const data = await res.json();
+    
+    // Sort by date descending
+    const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    historyItems.value = sortedData.map(item => {
+      const d = new Date(item.date);
+      const dayStr = [`Chủ Nhật`, `Thứ Hai`, `Thứ Ba`, `Thứ Tư`, `Thứ Năm`, `Thứ Sáu`, `Thứ Bảy`][d.getDay()];
+      return {
+        day: `${dayStr}, ${d.getDate()}/${d.getMonth() + 1}`,
+        checkIn: item.checkIn1 && item.checkIn2 ? `${item.checkIn1} | ${item.checkIn2}` : (item.checkIn1 || '--:--:--'),
+        checkOut: item.checkOut1 && item.checkOut2 ? `${item.checkOut1} | ${item.checkOut2}` : (item.checkOut1 || '--:--:--'),
+        total: calculateTotal(item),
+        status: item.status === 'ontime' ? 'Hợp lệ' : item.status === 'late' ? 'Đi muộn' : 'Vắng mặt'
+      };
+    });
+
+    const todayStr = new Date().toISOString().split('T')[0];
+    attendanceToday.value = data.find(item => item.date === todayStr);
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu chấm công:', error);
+  }
+};
+
+const calculateTotal = (item) => {
+  if (!item.checkIn1 || !item.checkOut1) return '0h';
+  const start = new Date(`2000-01-01T${item.checkIn1}`);
+  const end = new Date(`2000-01-01T${item.checkOut2 || item.checkOut1}`);
+  const diff = (end - start) / (1000 * 60 * 60);
+  return diff > 0 ? `${diff.toFixed(1)}h` : '0h';
+};
+
+const handleCheckIn = async () => {
+  const now = new Date();
+  const timeStr = now.toTimeString().split(' ')[0];
+  const dateStr = now.toISOString().split('T')[0];
+
+  if (!attendanceToday.value) {
+    const newEntry = {
+      employeeId: userId,
+      date: dateStr,
+      checkIn1: timeStr,
+      checkIn2: null,
+      checkOut1: null,
+      checkOut2: null,
+      status: 'ontime',
+      location: 'Văn phòng HCM'
+    };
+    await fetch('http://localhost:3000/attendance', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newEntry)
+    });
+    triggerToast('Ghi nhận vào lần 1 thành công!');
+    notifyManager(`đã chấm công vào lúc ${timeStr}`);
+  } else if (!attendanceToday.value.checkIn2) {
+    await fetch(`http://localhost:3000/attendance/${attendanceToday.value.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkIn2: timeStr })
+    });
+    triggerToast('Ghi nhận vào lần 2 thành công!');
+    notifyManager(`đã chấm công vào (lần 2) lúc ${timeStr}`);
+  } else {
+    triggerToast('Bạn đã ghi nhận vào đủ 2 lần cho hôm nay.', 'warning');
+    return;
+  }
+  fetchAttendance();
+};
+
+const handleCheckOut = async () => {
+  const now = new Date();
+  const timeStr = now.toTimeString().split(' ')[0];
+
+  if (!attendanceToday.value || !attendanceToday.value.checkIn1) {
+    triggerToast('Bạn chưa ghi nhận vào hôm nay!', 'danger');
+    return;
+  }
+
+  if (!attendanceToday.value.checkOut1) {
+    await fetch(`http://localhost:3000/attendance/${attendanceToday.value.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkOut1: timeStr })
+    });
+    triggerToast('Ghi nhận ra lần 1 thành công!');
+    notifyManager(`đã chấm công ra lúc ${timeStr}`);
+  } else if (!attendanceToday.value.checkOut2) {
+    await fetch(`http://localhost:3000/attendance/${attendanceToday.value.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkOut2: timeStr })
+    });
+    triggerToast('Ghi nhận ra lần 2 thành công!');
+    notifyManager(`đã chấm công ra (lần 2) lúc ${timeStr}`);
+  } else {
+    triggerToast('Bạn đã ghi nhận ra đủ 2 lần cho hôm nay.', 'warning');
+    return;
+  }
+  fetchAttendance();
+};
 
 const updateTime = () => {
   const now = new Date();
@@ -224,6 +390,7 @@ const updateTime = () => {
 onMounted(() => {
   updateTime();
   timerInterval = setInterval(updateTime, 1000);
+  fetchAttendance();
 });
 
 onUnmounted(() => {
@@ -234,7 +401,7 @@ const getStatusClass = (status) => {
   switch (status) {
     case 'Hợp lệ': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
     case 'Đi muộn': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
-    case 'Về sớm': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
+    case 'Vắng mặt': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
     default: return 'bg-[var(--sys-bg-page)] text-[var(--sys-text-secondary)] border-[var(--sys-border-subtle)]';
   }
 };
@@ -254,5 +421,12 @@ const getStatusClass = (status) => {
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--sys-brand-solid);
+}
+.toast-enter-active, .toast-leave-active {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.toast-enter-from, .toast-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -20px) scale(0.9);
 }
 </style>

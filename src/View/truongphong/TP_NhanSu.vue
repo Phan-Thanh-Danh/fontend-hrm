@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
@@ -175,35 +175,38 @@ const showModal = ref(false)
 const selectedStaff = ref(null)
 
 const staffList = ref([])
-
-const DEPT_ID = 2 // Phòng Công nghệ IT
+const deptName = ref('Đang tải...')
+const userDeptId = localStorage.getItem('userDeptId') || '1';
 
 const statusOptions = [
   { label: 'Tất cả trạng thái', value: '' },
-  { label: 'Đang làm việc', value: 'ĐANG_LÀM_VIỆC' },
-  { label: 'Đã nghỉ việc', value: 'ĐÃ_NGHỈ_VIỆC' },
+  { label: 'Đang làm việc', value: 'active' },
+  { label: 'Đã nghỉ việc', value: 'inactive' },
 ]
 
-const loadData = () => {
-  const allEmps = employeesAPI.getAll()
-  const allPositions = positionsAPI.getAll()
-  const dept = departmentsAPI.getById(DEPT_ID)
-
-  staffList.value = allEmps
-    .filter(e => e.department_id === DEPT_ID)
-    .map(e => {
-      const pos = allPositions.find(p => p.position_id === e.position_id)
-      return {
-        id: e.employee_code,
-        employee_id: e.employee_id,
-        name: e.full_name,
-        position: pos ? pos.position_name.toUpperCase() : 'CHUYÊN VIÊN',
-        status: e.status,
-        joinDate: new Date().toLocaleDateString('vi-VN'),
-        department: dept?.department_name || 'Công nghệ IT',
-        avatarUrl: e.avatar_url || null
-      }
-    })
+const loadData = async () => {
+  try {
+    const [empRes, deptRes] = await Promise.all([
+      fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
+      fetch(`http://localhost:3000/departments/${userDeptId}`)
+    ]);
+    
+    const employees = await empRes.json();
+    const department = await deptRes.json();
+    
+    deptName.value = department.name || 'Phòng ban';
+    staffList.value = employees.map(e => ({
+        id: e.id,
+        name: e.name,
+        position: (e.position || 'Chuyên viên').toUpperCase(),
+        status: e.status || 'active',
+        joinDate: e.joinDate || '2024-01-01',
+        department: deptName.value,
+        avatarUrl: e.avatar || null
+    }));
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu nhân sự:', error);
+  }
 }
 
 const viewDetails = (staff) => {
