@@ -262,7 +262,7 @@
  */
 import { ref, computed, onMounted } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
-import { requestsAPI, employeesAPI, departmentsAPI } from '@/data/mockDB.js';
+import { requestsAPI, employeesAPI, departmentsAPI, requestTypesAPI } from '@/data/mockDB.js';
 
 const filterDept = ref('ALL');
 const filterRange = ref('month');
@@ -283,12 +283,16 @@ const tabOptions = [
   { label: 'Từ chối', value: 'rejected', count: 0 },
 ];
 
-const deptOptions = [
-  { label: 'Phòng ban: Tất cả', value: 'ALL' },
-  { label: 'Phòng ban: Kỹ thuật', value: 'Kỹ thuật' },
-  { label: 'Phòng ban: Nhân sự', value: 'Nhân sự' },
-  { label: 'Phòng ban: Marketing', value: 'Marketing' }
-];
+const deptOptions = computed(() => {
+  const depts = departmentsAPI.getAll();
+  return [
+    { label: 'Phòng ban: Tất cả', value: 'ALL' },
+    ...depts.map(d => ({
+      label: `Phòng ban: ${d.department_name}`,
+      value: d.department_name
+    }))
+  ];
+});
 
 const rangeOptions = [
   { label: 'Chu kỳ: Trong tháng', value: 'month' },
@@ -303,24 +307,32 @@ const fetchData = async () => {
 
     // Map dữ liệu từ server sang cấu trúc giao diện
     requests.value = requestsRes.map(req => {
-      const emp = employeesAPI.getById(req.employee_id) || {};
+      const empId = req.requester_id || req.employee_id;
+      const emp = employeesAPI.getById(empId) || {};
       const dept = departmentsAPI.getById(req.department_id || (emp ? emp.department_id : null)) || {};
+      
+      const typeObj = requestTypesAPI.getById(req.request_type_id);
+      const typeName = req.request_type_id === 99 ? (req.other_reason_name || 'Khác') : (typeObj?.request_type_name || req.request_type || 'Nghỉ phép');
+      
+      const startDate = req.start_date || req.request_date?.split(' ')[0] || '';
+      const endDate = req.end_date || startDate;
+
       return {
         id: req.request_id,
         name: emp.full_name || 'N/A',
-        msnv: req.employee_id,
+        msnv: empId,
         department: dept.department_name || 'Khác',
         role: emp.position || 'Nhân viên',
-        type: req.request_type || 'Nghỉ phép',
-        typeDetail: req.request_type || 'Nghỉ phép',
-        dateRange: `${req.created_at || ''} - ${req.end_date || ''}`,
-        fullDateRange: `${req.created_at || ''} - ${req.end_date || ''}`,
+        type: typeName,
+        typeDetail: typeName,
+        dateRange: `${startDate} - ${endDate}`,
+        fullDateRange: `${startDate} - ${endDate}`,
         days: req.days || 1,
         status: req.status === 'ĐÃ_DUYỆT' ? 'approved' : (req.status === 'TỪ_CHỐI' ? 'rejected' : 'pending'),
         statusText: req.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : (req.status === 'TỪ_CHỐI' ? 'Từ chối' : 'Chờ duyệt'),
         reason: req.reason || req.notes || '',
         balance: 12, // Giả định
-        warnings: req.urgent ? ['Yêu cầu khẩn cấp'] : []
+        warnings: req.urgent || req.is_urgent ? ['Yêu cầu khẩn cấp'] : []
       };
     });
     

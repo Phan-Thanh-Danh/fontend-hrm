@@ -82,23 +82,32 @@ const generateRequests = () => {
   ];
   
   // 5 records khẩn cấp như bản thiết kế
-  reqs.push({ request_id: 1, requester_id: 4, request_type_id: 1, title: 'Nghỉ phép năm (03 ngày)', request_date: '2023-10-24 08:30:00', is_urgent: true, status: 'CHỜ_DUYỆT' });
-  reqs.push({ request_id: 2, requester_id: 2, request_type_id: 2, title: '02 Kỹ sư Hệ thống Cloud', request_date: '2023-10-23 15:20:00', is_urgent: false, status: 'CHỜ_DUYỆT' });
-  reqs.push({ request_id: 3, requester_id: 5, request_type_id: 3, title: 'Tăng bậc lương định kỳ', request_date: '2023-10-23 10:15:00', is_urgent: false, status: 'CHỜ_DUYỆT' });
-  reqs.push({ request_id: 4, requester_id: 6, request_type_id: 2, title: 'Phê duyệt HĐLĐ thử việc', request_date: '2023-10-23 09:00:00', is_urgent: false, status: 'CHỜ_DUYỆT' });
-  reqs.push({ request_id: 5, requester_id: 7, request_type_id: 1, title: 'Nghỉ công tác nước ngoài (05 ngày)', request_date: '2023-10-22 08:00:00', is_urgent: true, status: 'CHỜ_DUYỆT' });
+  reqs.push({ request_id: 1, requester_id: 4, employee_id: 4, request_type_id: 1, title: 'Nghỉ phép năm (03 ngày)', request_date: '2024-03-24 08:30:00', start_date: '2024-03-24', end_date: '2024-03-26', days: 3, is_urgent: true, status: 'CHỜ_DUYỆT' });
+  reqs.push({ request_id: 2, requester_id: 2, employee_id: 2, request_type_id: 2, title: '02 Kỹ sư Hệ thống Cloud', request_date: '2024-03-23 15:20:00', start_date: '2024-03-23', end_date: '2024-03-23', days: 1, is_urgent: false, status: 'CHỜ_DUYỆT' });
+  reqs.push({ request_id: 3, requester_id: 5, employee_id: 5, request_type_id: 3, title: 'Tăng bậc lương định kỳ', request_date: '2024-03-23 10:15:00', start_date: '2024-03-23', end_date: '2024-03-23', days: 1, is_urgent: false, status: 'CHỜ_DUYỆT' });
+  reqs.push({ request_id: 4, requester_id: 6, employee_id: 6, request_type_id: 2, title: 'Phê duyệt HĐLĐ thử việc', request_date: '2024-03-23 09:00:00', start_date: '2024-03-23', end_date: '2024-03-23', days: 1, is_urgent: false, status: 'CHỜ_DUYỆT' });
+  reqs.push({ request_id: 5, requester_id: 7, employee_id: 7, request_type_id: 1, title: 'Nghỉ công tác nước ngoài (05 ngày)', request_date: '2024-03-22 08:00:00', start_date: '2024-03-22', end_date: '2024-03-26', days: 5, is_urgent: true, status: 'CHỜ_DUYỆT' });
 
-  // 45 records ngẫu nhiên
-  for (let i = 6; i <= 50; i++) {
-    const isPending = i < 20; // Khoảng 15 cái đầu trong vòng lặp đang Pending
+  // 195 records ngẫu nhiên
+  for (let i = 6; i <= 200; i++) {
+    const isPending = i < 40; // Khoảng 35 cái đầu trong vòng lặp đang Pending
+    const days = (i % 5) + 1;
+    const dayOffset = (i % 28) + 1;
+    const startDate = `2024-03-${String(dayOffset).padStart(2, '0')}`;
+    const endDate = `2024-03-${String(Math.min(28, dayOffset + days - 1)).padStart(2, '0')}`;
+
     reqs.push({
       request_id: i,
-      requester_id: (i % 40) + 1,
-      request_type_id: (i % 5) + 1,
+      requester_id: (i % 50) + 1,
+      employee_id: (i % 50) + 1, // Alias for Admin view
+      request_type_id: (i % 10) + 1,
       title: reqTitles[i % reqTitles.length],
-      request_date: `2023-10-${String((i % 28) + 1).padStart(2, '0')} 09:00:00`,
-      is_urgent: i % 7 === 0,
-      status: isPending ? 'CHỜ_DUYỆT' : (i % 3 === 0 ? 'TỪ_CHỐI' : 'ĐÃ_DUYỆT')
+      request_date: `${startDate} 09:00:00`,
+      start_date: startDate,
+      end_date: endDate,
+      days: days,
+      is_urgent: days >= 3 || i % 15 === 0,
+      status: isPending ? 'CHỜ_DUYỆT' : (i % 4 === 0 ? 'TỪ_CHỐI' : 'ĐÃ_DUYỆT')
     });
   }
   return reqs;
