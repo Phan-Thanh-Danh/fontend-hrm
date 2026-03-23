@@ -48,6 +48,7 @@ const generateEmployees = () => {
   emps.push({ employee_id: 2, employee_code: 'EMP002', full_name: 'Quang Huy', department_id: 2, position_id: 4, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=2', email: 'dat.nv@hrm.com', password: '123456', role: 'staff' });
   emps.push({ employee_id: 3, employee_code: 'EMP003', full_name: 'Nguyễn Bích Diệp', department_id: 1, position_id: 1, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=3', email: 'ceo@hrm.com', password: 'ceo', role: 'director' });
   emps.push({ employee_id: 4, employee_code: 'EMP004', full_name: 'Lê Thị Minh Anh', department_id: 3, position_id: 2, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=4', email: 'manager@hrm.com', password: 'manager', role: 'manager' });
+  emps.push({ employee_id: 13, employee_code: 'EMP013', full_name: 'Phạm Đức An', department_id: 2, position_id: 2, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=13', email: 'pham.duc.an@hrm.com', password: 'anh123', role: 'manager', hired_date: '2023-01-01' });
 
   // Sinh thêm 46 người ngẫu nhiên
   for (let i = 5; i <= 50; i++) {

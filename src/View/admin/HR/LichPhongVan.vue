@@ -183,7 +183,7 @@
       <Transition name="modal-fade">
         <div v-if="showModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
           <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="closeModal"></div>
-          <div class="relative bg-white w-full max-w-2xl rounded-lg shadow-2xl border border-[var(--sys-border-subtle)] overflow-hidden text-left flex flex-col motion-safe:animate-zoomIn">
+          <div class="relative bg-white w-full max-w-2xl rounded-lg shadow-2xl border border-[var(--sys-border-subtle)] overflow-visible text-left flex flex-col motion-safe:animate-zoomIn">
             <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-surface)]">
               <div class="flex items-center gap-4">
                 <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center border border-[var(--sys-brand-border)]">

@@ -34,9 +34,9 @@
       "id": "NV003",
       "name": "Lê Thị Thu",
       "email": "thu.lt@hrm.com",
-      "role": "staff",
+      "role": "manager",
       "deptId": 2,
-      "position": "Chuyên viên Kinh doanh",
+      "position": "Trưởng phòng Kinh doanh",
       "avatar": "https://i.pravatar.cc/150?u=thu",
       "status": "active",
       "joinDate": "2022-05-10",
@@ -6114,6 +6114,28 @@
       "status": "ontime",
       "location": "Văn phòng HCM",
       "id": "PR7vrVw5PEU"
+    },
+    {
+      "employeeId": "1",
+      "date": "2026-03-23",
+      "checkIn1": "00:22:50",
+      "checkIn2": null,
+      "checkOut1": null,
+      "checkOut2": null,
+      "status": "ontime",
+      "location": "Văn phòng HCM",
+      "id": "4pxnKY5pnI8"
+    },
+    {
+      "employeeId": "1",
+      "date": "2026-03-23",
+      "checkIn1": "00:23:15",
+      "checkIn2": null,
+      "checkOut1": null,
+      "checkOut2": null,
+      "status": "ontime",
+      "location": "Văn phòng HCM",
+      "id": "Tizimrml68Q"
     }
   ],
   "contracts": [
