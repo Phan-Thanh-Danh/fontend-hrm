@@ -1,9 +1,9 @@
 
 export const kpiCards = [
-  { id: 1, label: 'Tổng nhân sự', value: '1,250', icon: 'groups', iconClass: 'kpi-icon--blue', badge: '+12%', badgeIcon: 'trending_up', badgeClass: 'kpi-badge--up', footerType: 'sparkline', sparkline: [30, 45, 35, 50, 40, 60, 55], meta: 'So với tháng trước', route: '/giam-doc/nhan-su' },
-  { id: 2, label: 'Chi phí lương', value: '4.8B', icon: 'payments', iconClass: 'kpi-icon--amber', badge: '+5.2%', badgeIcon: 'trending_up', badgeClass: 'kpi-badge--up', footerType: 'progress', progress: 75, progressClass: 'kpi-progress-fill--amber', meta: '75% ngân sách năm', route: '/giam-doc/bang-luong' },
-  { id: 3, label: 'Tỉ lệ nghỉ việc', value: '1.2%', icon: 'person_remove', iconClass: 'kpi-icon--rose', badge: '-0.5%', badgeIcon: 'trending_down', badgeClass: 'kpi-badge--up', footerType: 'sparkline', sparkline: [20, 15, 25, 10, 18, 12, 8], sparklineDanger: true, meta: 'Mục tiêu: < 2%', route: '/giam-doc/bien-dong' },
-  { id: 4, label: 'Chuyên cần', value: '98.5%', icon: 'timelapse', iconClass: 'kpi-icon--green', badge: 'Tốt', badgeIcon: 'check_circle', badgeClass: 'kpi-badge--up', footerType: 'progress', progress: 98, meta: 'Vs trung bình tháng trước', route: '/giam-doc/chuyen-can' }
+  { id: 1, label: 'Tổng nhân sự', value: '1,250', icon: 'groups', iconClass: 'kpi-icon--blue', badge: '+12%', badgeIcon: 'trending_up', badgeClass: 'kpi-badge--up', footerType: 'sparkline', sparkline: [30, 45, 35, 50, 40, 60, 55], meta: 'So với tháng trước', route: '/giamdoc/nhansu' },
+  { id: 2, label: 'Chi phí lương', value: '4.8B', icon: 'payments', iconClass: 'kpi-icon--amber', badge: '+5.2%', badgeIcon: 'trending_up', badgeClass: 'kpi-badge--up', footerType: 'progress', progress: 75, progressClass: 'kpi-progress-fill--amber', meta: '75% ngân sách năm', route: '/giamdoc/bangluong' },
+  { id: 3, label: 'Tỉ lệ nghỉ việc', value: '1.2%', icon: 'person_remove', iconClass: 'kpi-icon--rose', badge: '-0.5%', badgeIcon: 'trending_down', badgeClass: 'kpi-badge--up', footerType: 'sparkline', sparkline: [20, 15, 25, 10, 18, 12, 8], sparklineDanger: true, meta: 'Mục tiêu: < 2%', route: '/giamdoc/biendong' },
+  { id: 4, label: 'Chuyên cần', value: '98.5%', icon: 'timelapse', iconClass: 'kpi-icon--green', badge: 'Tốt', badgeIcon: 'check_circle', badgeClass: 'kpi-badge--up', footerType: 'progress', progress: 98, meta: 'Vs trung bình tháng trước', route: '/giamdoc/chuyencan' }
 ];
 
 export const barChartData = [
@@ -335,7 +335,7 @@ export const importantNotifications = [
     title: 'Đã có báo cáo tình hình biến động nhân sự Tháng 10/2023',
     desc: 'Dữ liệu cho thấy tỷ lệ thêm việc giảm 2.4% so với quý trước.',
     action: 'Xem báo cáo →',
-    actionRoute: '/giam-doc/bien-dong',
+    actionRoute: '/giamdoc/biendong',
     time: '08:30, 24/10'
   },
   {
@@ -350,7 +350,7 @@ export const importantNotifications = [
     title: 'Cảnh báo biến động nhân sự tại Khối Vận hành',
     desc: 'Phòng Giao vận đang thiếu 15% nhân sự so với định biên an toàn.',
     action: 'Phân tích chi tiết →',
-    actionRoute: '/giam-doc/nhan-su',
+    actionRoute: '/giamdoc/nhansu',
     time: '10:15, 23/10'
   },
   {

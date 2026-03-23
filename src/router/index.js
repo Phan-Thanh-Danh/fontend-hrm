@@ -7,6 +7,10 @@ import Layout_GiamDoc from '../components/Layout_GiamDoc.vue'
 
 const routes = [
       {
+            path: '/',
+            redirect: '/login'
+      },
+      {
             path: '/landing',
             name: 'landing',
             component: () => import('../View/LandingPage.vue')
@@ -17,7 +21,7 @@ const routes = [
             component: () => import('../components/Login.vue')
       },
       {
-            path: '/',
+            path: '/nhanvien',
             component: Layout_NhanVien,
             children: [
                   {
@@ -27,7 +31,7 @@ const routes = [
                         meta: { index: 1 }
                   },
                   {
-                        path: 'cham-cong',
+                        path: 'chamcong',
                         name: 'cham-cong',
                         component: Cham_cong,
                         meta: { index: 2 }
@@ -39,37 +43,37 @@ const routes = [
                         meta: { index: 3 }
                   },
                   {
-                        path: 'ho-so',
+                        path: 'hoso',
                         name: 'ho-so',
                         component: () => import('../View/portal_nhanvien/HoSoCaNhan.vue'),
                         meta: { index: 4 }
                   },
                   {
-                        path: 'nghi-phep',
+                        path: 'nghiphep',
                         name: 'nghi-phep',
                         component: () => import('../View/portal_nhanvien/NghiPhep.vue'),
                         meta: { index: 5 }
                   },
                   {
-                        path: 'don-nghi-viec',
+                        path: 'donnghiviec',
                         name: 'don-nghi-viec',
                         component: () => import('../View/portal_nhanvien/GiayPhep/DonNghiViec.vue'),
                         meta: { index: 6 }
                   },
                   {
-                        path: 'dich-vu',
+                        path: 'dichvu',
                         name: 'dich-vu',
                         component: () => import('../View/portal_nhanvien/DichVuNoiBo.vue'),
                         meta: { index: 7 }
                   },
                   {
-                        path: 'giai-trinh-cham-cong',
+                        path: 'giaitrinhchamcong',
                         name: 'giai-trinh-cham-cong',
                         component: () => import('../View/portal_nhanvien/GiayPhep/GiaiTrinhChamCong.vue'),
                         meta: { index: 8 }
                   },
                   {
-                        path: 'thong-bao',
+                        path: 'thongbao',
                         name: 'thong-bao',
                         component: () => import('../View/portal_nhanvien/ThongBao.vue'),
                         meta: { index: 9 }
@@ -87,79 +91,79 @@ const routes = [
                         meta: { index: 1 }
                   },
                   {
-                        path: 'tuyen-dung',
+                        path: 'tuyendung',
                         name: 'admin-tuyen-dung',
                         component: () => import('../View/admin/HR/TuyenDung.vue'),
                         meta: { index: 2 }
                   },
                   {
-                        path: 'nhan-su',
+                        path: 'nhansu',
                         name: 'admin-nhan-su',
                         component: () => import('../View/admin/QuanLy/QuanLyNhanSu.vue'),
                         meta: { index: 3 }
                   },
                   {
-                        path: 'chuc-danh',
+                        path: 'chucdanh',
                         name: 'admin-chuc-danh',
                         component: () => import('../View/admin/QuanLy/QuanLyChucDanh.vue'),
                         meta: { index: 4 }
                   },
                   {
-                        path: 'phong-ban',
+                        path: 'phongban',
                         name: 'admin-phong-ban',
                         component: () => import('../View/admin/QuanLy/QuanLyPhongban.vue'),
                         meta: { index: 5 }
                   },
                   {
-                        path: 'hop-dong',
+                        path: 'hopdong',
                         name: 'admin-hop-dong',
                         component: () => import('../View/admin/QuanLy/QuanLyHopDong.vue'),
                         meta: { index: 6 }
                   },
                   {
-                        path: 'cham-cong',
+                        path: 'chamcong',
                         name: 'admin-cham-cong',
                         component: () => import('../View/admin/ChamCongAdmin.vue'),
                         meta: { index: 7 }
                   },
                   {
-                        path: 'nghi-phep',
+                        path: 'nghiphep',
                         name: 'admin-nghi-phep',
                         component: () => import('../View/admin/HR/NghiPhep.vue'),
                         meta: { index: 8 }
                   },
                   {
-                        path: 'lich-phong-van',
+                        path: 'lichphongvan',
                         name: 'admin-lich-phong-van',
                         component: () => import('../View/admin/HR/LichPhongVan.vue'),
                         meta: { index: 9 }
                   },
                   {
-                        path: 'bang-luong',
+                        path: 'bangluong',
                         name: 'admin-bang-luong',
                         component: () => import('../View/admin/QuanLy/QuanLyBangLuong.vue'),
                         meta: { index: 10 }
                   },
                   {
-                        path: 'tai-san',
+                        path: 'taisan',
                         name: 'admin-tai-san',
                         component: () => import('../View/admin/QuanLy/QuanLyTaiSan.vue'),
                         meta: { index: 11 }
                   },
                   {
-                        path: 'phe-duyet',
+                        path: 'pheduyet',
                         name: 'admin-phe-duyet',
                         component: () => import('../View/admin/QuanLy/PheDuyetDon.vue'),
                         meta: { index: 12 }
                   },
                   {
-                        path: 'ho-tro',
+                        path: 'hotro',
                         name: 'admin-ho-tro',
                         component: () => import('../View/admin/QuanLy/QuanLyHoTro.vue'),
                         meta: { index: 13 }
                   },
                   {
-                        path: 'cai-dat',
+                        path: 'caidat',
                         name: 'admin-cai-dat',
                         component: () => import('../View/admin/Setting_admin.vue'),
                         meta: { index: 14 }
@@ -167,7 +171,7 @@ const routes = [
             ]
       },
       {
-            path: '/giam-doc',
+            path: '/giamdoc',
             component: Layout_GiamDoc,
             children: [
                   {
@@ -177,37 +181,37 @@ const routes = [
                         meta: { index: 1 }
                   },
                   {
-                        path: 'nhan-su',
+                        path: 'nhansu',
                         name: 'giam-doc-nhan-su',
                         component: () => import('../View/admin/GiamDoc/DBGD_NhanSu.vue'),
                         meta: { index: 2 }
                   },
                   {
-                        path: 'bang-luong',
+                        path: 'bangluong',
                         name: 'giam-doc-bang-luong',
                         component: () => import('../View/admin/GiamDoc/DBGD_BangLuong.vue'),
                         meta: { index: 3 }
                   },
                   {
-                        path: 'chuyen-can',
+                        path: 'chuyencan',
                         name: 'giam-doc-chuyen-can',
                         component: () => import('../View/admin/GiamDoc/DBGD_ChuyenCan.vue'),
                         meta: { index: 4 }
                   },
                   {
-                        path: 'bien-dong',
+                        path: 'biendong',
                         name: 'giam-doc-bien-dong',
                         component: () => import('../View/admin/GiamDoc/DBGD_BienDong.vue'),
                         meta: { index: 5 }
                   },
                   {
-                        path: 'ho-so',
+                        path: 'hoso',
                         name: 'giam-doc-ho-so',
                         component: () => import('../View/admin/GiamDoc/GD_HoSoCaNhan.vue'),
                         meta: { index: 6 }
                   },
                   {
-                        path: 'thong-bao',
+                        path: 'thongbao',
                         name: 'giam-doc-thong-bao',
                         component: () => import('../View/admin/GiamDoc/GD_TTThongBao.vue'),
                         meta: { index: 7 }
@@ -215,12 +219,12 @@ const routes = [
             ]
       },
       {
-            path: '/truong-phong',
+            path: '/truongphong',
             component: () => import('../components/Layout_TruongPhong.vue'),
             children: [
                   {
                         path: '',
-                        redirect: '/truong-phong/dashboard'
+                        redirect: '/truongphong/dashboard'
                   },
                   {
                         path: 'dashboard',
@@ -229,55 +233,55 @@ const routes = [
                         meta: { index: 1 }
                   },
                   {
-                        path: 'nhan-su',
+                        path: 'nhansu',
                         name: 'tp-nhan-su',
                         component: () => import('../View/truongphong/TP_NhanSu.vue'),
                         meta: { index: 2 }
                   },
                   {
-                        path: 'cham-cong',
+                        path: 'chamcong',
                         name: 'tp-cham-cong',
                         component: () => import('../View/truongphong/TP_ChamCong.vue'),
                         meta: { index: 3 }
                   },
                   {
-                        path: 'nghi-phep',
+                        path: 'nghiphep',
                         name: 'tp-nghi-phep',
                         component: () => import('../View/truongphong/TP_NghiPhep.vue'),
                         meta: { index: 4 }
                   },
                   {
-                        path: 'bang-luong',
+                        path: 'bangluong',
                         name: 'tp-bang-luong',
                         component: () => import('../View/truongphong/TP_BangLuong.vue'),
                         meta: { index: 5 }
                   },
                   {
-                        path: 'tuyen-dung',
+                        path: 'tuyendung',
                         name: 'tp-tuyen-dung',
                         component: () => import('../View/truongphong/TP_TuyenDung.vue'),
                         meta: { index: 6 }
                   },
                   {
-                        path: 'danh-gia-ung-vien',
+                        path: 'danhgiaungvien',
                         name: 'tp-danh-gia',
                         component: () => import('../View/truongphong/DanhGiaUngVien.vue'),
                         meta: { index: 10 }
                   },
                   {
-                        path: 'tai-san',
+                        path: 'taisan',
                         name: 'tp-tai-san',
                         component: () => import('../View/truongphong/TP_TaiSan.vue'),
                         meta: { index: 7 }
                   },
                   {
-                        path: 'hop-dong',
+                        path: 'hopdong',
                         name: 'tp-hop-dong',
                         component: () => import('../View/truongphong/TP_HopDong.vue'),
                         meta: { index: 8 }
                   },
                   {
-                        path: 'ho-so',
+                        path: 'hoso',
                         name: 'tp-ho-so',
                         component: () => import('../View/truongphong/TP_Profile.vue'),
                         meta: { index: 9 }

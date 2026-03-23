@@ -44,16 +44,17 @@ const generateEmployees = () => {
   const lastNames = ['An', 'Bình', 'Châu', 'Dương', 'Hà', 'Lan', 'Long', 'Phúc', 'Quân', 'Tâm', 'Huy', 'Thảo', 'Trang'];
 
   // Hardcode 1 số người cụ thể
-  emps.push({ employee_id: 1, employee_code: 'EMP001', full_name: 'Trần Lan Anh', department_id: 2, position_id: 3, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=1' });
-  emps.push({ employee_id: 2, employee_code: 'EMP002', full_name: 'Quang Huy', department_id: 2, position_id: 4, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=2' });
-  emps.push({ employee_id: 3, employee_code: 'EMP003', full_name: 'Nguyễn Bích Diệp', department_id: 1, position_id: 1, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=3' });
-  emps.push({ employee_id: 4, employee_code: 'EMP004', full_name: 'Lê Thị Minh Anh', department_id: 3, position_id: 2, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=4' });
+  emps.push({ employee_id: 1, employee_code: 'EMP001', full_name: 'Trần Lan Anh', department_id: 2, position_id: 3, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=1', email: 'user@hrm.com', password: 'user', role: 'staff' });
+  emps.push({ employee_id: 2, employee_code: 'EMP002', full_name: 'Quang Huy', department_id: 2, position_id: 4, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=2', email: 'dat.nv@hrm.com', password: '123456', role: 'staff' });
+  emps.push({ employee_id: 3, employee_code: 'EMP003', full_name: 'Nguyễn Bích Diệp', department_id: 1, position_id: 1, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=3', email: 'ceo@hrm.com', password: 'ceo', role: 'director' });
+  emps.push({ employee_id: 4, employee_code: 'EMP004', full_name: 'Lê Thị Minh Anh', department_id: 3, position_id: 2, status: 'ĐANG_LÀM_VIỆC', avatar_url: 'https://i.pravatar.cc/150?u=4', email: 'manager@hrm.com', password: 'manager', role: 'manager' });
 
   // Sinh thêm 46 người ngẫu nhiên
   for (let i = 5; i <= 50; i++) {
     const f = firstNames[i % firstNames.length];
     const m = middleNames[i % middleNames.length];
     const l = lastNames[i % lastNames.length];
+    const role = i % 10 === 0 ? 'admin' : (i % 5 === 0 ? 'manager' : 'staff');
     emps.push({
       employee_id: i,
       employee_code: `EMP${i.toString().padStart(3, '0')}`,
@@ -61,7 +62,10 @@ const generateEmployees = () => {
       department_id: (i % 6) + 1,
       position_id: (i % 6) + 1,
       status: i % 10 === 0 ? 'ĐÃ_NGHỈ_VIỆC' : 'ĐANG_LÀM_VIỆC',
-      avatar_url: `https://i.pravatar.cc/150?u=${i}`
+      avatar_url: `https://i.pravatar.cc/150?u=${i}`,
+      email: `emp${i}@hrm.com`,
+      password: '123456',
+      role: role
     });
   }
   return emps;

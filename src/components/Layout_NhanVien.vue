@@ -141,7 +141,7 @@
                 :class="isDark ? 'border-[var(--sys-border-subtle)]' : 'border-[var(--sys-border-subtle)]'"
               >
                 <router-link
-                  to="/thong-bao"
+                  to="/nhanvien/thongbao"
                   @click="isNotificationOpen = false"
                   class="text-xs font-semibold transition-colors duration-200 text-[var(--sys-accent)] hover:text-[oklch(0.4_0.15_265)] inline-block py-1 px-4 rounded-full hover:bg-[var(--sys-accent)]/10"
                 >
@@ -247,7 +247,7 @@
                 >Creative Studio</p>
               </div>
               <router-link
-                to="/ho-so"
+                to="/nhanvien/hoso"
                 class="flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)]"
                 @click="isProfileOpen = false"
               >
@@ -328,42 +328,42 @@
         <div :class="sidebarExpanded ? 'px-3 space-y-0.5' : 'px-2 flex flex-col items-center gap-0.5'">
           <SidebarItem
             :expanded="sidebarExpanded"
-            :is-active="isExactActive('/')"
+            :is-active="isExactActive('/nhanvien')"
             icon="home"
             label="Trang chủ"
             :is-dark="isDark"
-            to="/"
+            to="/nhanvien"
             @click="handleNavClick"
           />
           
           <SidebarItem 
             :expanded="sidebarExpanded" 
-            :is-active="isActive('/cham-cong')" 
+            :is-active="isActive('/nhanvien/chamcong')" 
             icon="schedule" 
             label="Chấm công" 
             :is-dark="isDark" 
-            to="/cham-cong" 
+            to="/nhanvien/chamcong" 
             @click="handleNavClick" 
           />
 
           <SidebarItem 
             :expanded="sidebarExpanded" 
-            :is-active="isActive('/nghi-phep')" 
+            :is-active="isActive('/nhanvien/nghiphep')" 
             icon="event_busy" 
             label="Nghỉ phép" 
             :is-dark="isDark" 
-            to="/nghi-phep" 
+            to="/nhanvien/nghiphep" 
             @click="handleNavClick" 
             :badge="0" 
           />
 
           <SidebarItem 
             :expanded="sidebarExpanded" 
-            :is-active="isActive('/luong')" 
+            :is-active="isActive('/nhanvien/luong')" 
             icon="payments" 
             label="Tiền lương" 
             :is-dark="isDark" 
-            to="/luong" 
+            to="/nhanvien/luong" 
             @click="handleNavClick" 
           />
 
@@ -371,11 +371,11 @@
 
           <SidebarItem 
             :expanded="sidebarExpanded" 
-            :is-active="isActive('/dich-vu')" 
+            :is-active="isActive('/nhanvien/dichvu')" 
             icon="support_agent" 
             label="Dịch vụ nội bộ" 
             :is-dark="isDark" 
-            to="/dich-vu" 
+            to="/nhanvien/dichvu" 
             @click="handleNavClick" 
           />
         </div>
@@ -442,12 +442,12 @@ const isExactActive = (path) => route.path === path;
 
 const currentPageLabel = computed(() => {
   const path = route.path;
-  if (path === '/') return 'Trang chủ';
-  if (path.startsWith('/cham-cong')) return 'Chấm công';
-  if (path.startsWith('/nghi-phep')) return 'Nghỉ phép';
-  if (path.startsWith('/luong')) return 'Tiền lương';
-  if (path.startsWith('/dich-vu')) return 'Dịch vụ nội bộ';
-  if (path.startsWith('/ho-so')) return 'Hồ sơ cá nhân';
+  if (path === '/nhanvien' || path === '/nhanvien/') return 'Trang chủ';
+  if (path.startsWith('/nhanvien/chamcong')) return 'Chấm công';
+  if (path.startsWith('/nhanvien/nghiphep')) return 'Nghỉ phép';
+  if (path.startsWith('/nhanvien/luong')) return 'Tiền lương';
+  if (path.startsWith('/nhanvien/dichvu')) return 'Dịch vụ nội bộ';
+  if (path.startsWith('/nhanvien/hoso')) return 'Hồ sơ cá nhân';
   return 'Trang chủ';
 });
 
@@ -474,7 +474,15 @@ const handleClickOutside = (event) => {
   }
 };
 
-onMounted(() => document.addEventListener('click', handleClickOutside));
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+  
+  // Check authentication
+  const userRole = localStorage.getItem('userRole');
+  if (!userRole || userRole !== 'staff') {
+    router.push('/login');
+  }
+});
 onUnmounted(() => document.removeEventListener('click', handleClickOutside));
 
 // ── Logout ─────────────────────────────────────────────────────────────────

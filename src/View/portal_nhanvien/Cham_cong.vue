@@ -181,7 +181,7 @@
 
       <!-- Action Footer -->
       <div class="flex justify-end pt-4">
-        <router-link to="/giai-trinh-cham-cong" class="h-10 px-6 bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border border-[var(--sys-warning-border)] rounded-md font-bold text-[11px] uppercase tracking-wide hover:brightness-95 transition-all flex items-center gap-2 shadow-sm">
+        <router-link to="/nhanvien/giaitrinhchamcong" class="h-10 px-6 bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border border-[var(--sys-warning-border)] rounded-md font-bold text-[11px] uppercase tracking-wide hover:brightness-95 transition-all flex items-center gap-2 shadow-sm">
           <span class="material-symbols-outlined text-[20px]">report_problem</span>
           Giải trình sai lệch
         </router-link>

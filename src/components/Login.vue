@@ -103,6 +103,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
+import { employeesAPI } from '../data/mockDB.js';
 
 const router = useRouter();
 
@@ -116,6 +117,9 @@ const isLoggingIn = ref(false);
 onMounted(() => {
   document.documentElement.classList.remove('dark');
   localStorage.removeItem('theme'); // Fail-safe if a theme key is used
+  
+  // Clear old mockDB data to reload fresh data
+  localStorage.removeItem('HRM_MOCK_DB_V2');
 });
 
 const handleLogin = async () => {
@@ -123,27 +127,30 @@ const handleLogin = async () => {
   isLoggingIn.value = true;
   
   try {
-    const res = await fetch('http://localhost:3000/employees');
-    const employees = await res.json();
+    // Sử dụng data ảo từ mockDB
+    const employees = employeesAPI.getAll();
+    console.log('Employees:', employees); // Debug
     
     // Check hardcoded first or just use the DB
     const user = employees.find(e => e.email === email.value && (e.password === password.value || password.value === '123456'));
+    console.log('User found:', user); // Debug
+    console.log('Email:', email.value, 'Password:', password.value); // Debug
 
     if (user) {
       localStorage.setItem('userRole', user.role);
-      localStorage.setItem('userId', user.id);
-      localStorage.setItem('userName', user.name);
+      localStorage.setItem('userId', user.employee_id);
+      localStorage.setItem('userName', user.full_name);
       localStorage.setItem('userEmail', user.email);
-      localStorage.setItem('userDeptId', user.deptId);
+      localStorage.setItem('userDeptId', user.department_id);
       
       if (user.role === 'admin') {
         router.push('/admin');
       } else if (user.role === 'manager') {
-        router.push('/truong-phong');
-      } else if (user.role === 'ceo') {
-        router.push('/giam-doc');
+        router.push('/truongphong');
+      } else if (user.role === 'director') {
+        router.push('/giamdoc');
       } else {
-        router.push('/');
+        router.push('/nhanvien');
       }
     } else if (email.value === 'admin@hrm.com' && password.value === 'admin') {
       // Fallback for original admin

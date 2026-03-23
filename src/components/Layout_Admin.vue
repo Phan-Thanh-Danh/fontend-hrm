@@ -138,7 +138,7 @@
                 class="border-t p-2 text-center border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]"
               >
                 <router-link
-                  to="/thong-bao"
+                  to="/admin/thongbao"
                   @click="isNotificationOpen = false"
                   class="text-xs font-semibold transition-colors duration-200 text-[var(--sys-accent)] hover:text-[oklch(0.4_0.15_265)] inline-block py-1 px-4 rounded-md hover:bg-[var(--sys-accent)]/10"
                 >
@@ -242,7 +242,7 @@
                 >admin@hrm.com</p>
               </div>
               <router-link
-                to="/admin/ho-so"
+                to="/admin/hoso"
                 class="flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)]"
                 @click="isProfileOpen = false"
               >
@@ -337,28 +337,28 @@
         <!-- ── Quản lý Nhân sự ── -->
         <NavSection label="Quản lý Nhân sự" :expanded="sidebarExpanded" :is-dark="isDark" />
         <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/nhan-su')" icon="groups" label="Nhân viên" :is-dark="isDark" to="/admin/nhan-su" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/phong-ban')" icon="corporate_fare" label="Phòng ban" :is-dark="isDark" to="/admin/phong-ban" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/hop-dong')" icon="description" label="Hợp đồng" :is-dark="isDark" to="/admin/hop-dong" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/chuc-danh')" icon="badge" label="Chức danh" :is-dark="isDark" to="/admin/chuc-danh" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/nhansu')" icon="groups" label="Nhân viên" :is-dark="isDark" to="/admin/nhansu" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/phongban')" icon="corporate_fare" label="Phòng ban" :is-dark="isDark" to="/admin/phongban" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/hopdong')" icon="description" label="Hợp đồng" :is-dark="isDark" to="/admin/hopdong" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/chucdanh')" icon="badge" label="Chức danh" :is-dark="isDark" to="/admin/chucdanh" @click="handleNavClick" />
         </div>
 
         <!-- ── Nghiệp vụ hằng ngày ── -->
         <NavSection label="Nghiệp vụ hằng ngày" :expanded="sidebarExpanded" :is-dark="isDark" />
         <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/cham-cong')" icon="schedule" label="Chấm công" :is-dark="isDark" to="/admin/cham-cong" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/nghi-phep')" icon="event_busy" label="Nghỉ phép" :is-dark="isDark" to="/admin/nghi-phep" @click="handleNavClick" :badge="3" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/tuyen-dung')" icon="person_search" label="Tuyển dụng" :is-dark="isDark" to="/admin/tuyen-dung" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/lich-phong-van')" icon="calendar_today" label="Lịch phỏng vấn" :is-dark="isDark" to="/admin/lich-phong-van" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/phe-duyet')" icon="task_alt" label="Phê duyệt đơn" :is-dark="isDark" to="/admin/phe-duyet" @click="handleNavClick" :badge="7" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/ho-tro')" icon="support_agent" label="Hỗ trợ nội bộ" :is-dark="isDark" to="/admin/ho-tro" @click="handleNavClick" :badge="2" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/chamcong')" icon="schedule" label="Chấm công" :is-dark="isDark" to="/admin/chamcong" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/nghiphep')" icon="event_busy" label="Nghỉ phép" :is-dark="isDark" to="/admin/nghiphep" @click="handleNavClick" :badge="3" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/tuyendung')" icon="person_search" label="Tuyển dụng" :is-dark="isDark" to="/admin/tuyendung" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/lichphongvan')" icon="calendar_today" label="Lịch phỏng vấn" :is-dark="isDark" to="/admin/lichphongvan" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/pheduyet')" icon="task_alt" label="Phê duyệt đơn" :is-dark="isDark" to="/admin/pheduyet" @click="handleNavClick" :badge="7" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/hotro')" icon="support_agent" label="Hỗ trợ nội bộ" :is-dark="isDark" to="/admin/hotro" @click="handleNavClick" :badge="2" />
         </div>
 
         <!-- ── Tài chính & Tài sản ── -->
         <NavSection label="Tài chính & Tài sản" :expanded="sidebarExpanded" :is-dark="isDark" />
         <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/bang-luong')" icon="payments" label="Bảng lương" :is-dark="isDark" to="/admin/bang-luong" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/tai-san')" icon="category" label="Quản lý Tài sản" :is-dark="isDark" to="/admin/tai-san" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/bangluong')" icon="payments" label="Bảng lương" :is-dark="isDark" to="/admin/bangluong" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/taisan')" icon="category" label="Quản lý Tài sản" :is-dark="isDark" to="/admin/taisan" @click="handleNavClick" />
         </div>
 
 
@@ -371,7 +371,7 @@
           sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'
         ]"
       >
-        <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/cai-dat')" icon="settings" label="Cài đặt" :is-dark="isDark" to="/admin/cai-dat" @click="handleNavClick" />
+        <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/caidat')" icon="settings" label="Cài đặt" :is-dark="isDark" to="/admin/caidat" @click="handleNavClick" />
       </div>
     </aside>
 
@@ -475,7 +475,15 @@ const handleClickOutside = (event) => {
   }
 };
 
-onMounted(() => document.addEventListener('click', handleClickOutside));
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+  
+  // Check authentication
+  const userRole = localStorage.getItem('userRole');
+  if (!userRole || userRole !== 'admin') {
+    router.push('/login');
+  }
+});
 onUnmounted(() => document.removeEventListener('click', handleClickOutside));
 
 // ── Logout ─────────────────────────────────────────────────────────────────

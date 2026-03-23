@@ -6,7 +6,7 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left">
         <div class="bg-transparent text-left">
           <div class="flex items-center gap-3 mb-1">
-            <button @click="$router.push('/cham-cong')" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all">
+            <button @click="$router.push('/nhanvien/chamcong')" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all">
               <span class="material-symbols-outlined text-[20px]">arrow_back</span>
             </button>
             <h1 class="text-xl font-semibold text-[var(--sys-text-primary)] tracking-tight m-0">Đơn giải trình sai lệch chấm công</h1>
@@ -94,7 +94,7 @@
               </div>
 
               <div class="flex justify-end gap-3 pt-6 border-t border-[var(--sys-border-subtle)]">
-                <button type="button" @click="$router.push('/cham-cong')" class="h-11 px-6 bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[12px] uppercase tracking-wide hover:bg-[var(--sys-bg-page)] shadow-sm transition-all focus:outline-none">
+                <button type="button" @click="$router.push('/nhanvien/chamcong')" class="h-11 px-6 bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[12px] uppercase tracking-wide hover:bg-[var(--sys-bg-page)] shadow-sm transition-all focus:outline-none">
                   Hủy bỏ
                 </button>
                 <button type="submit" class="h-11 px-8 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[12px] uppercase tracking-wide hover:brightness-95 shadow-md flex items-center justify-center gap-2 transition-all focus:outline-none">

@@ -220,7 +220,7 @@
           </div>
         </div>
 
-        <button class="list-card-footer" @click="router.push('/giam-doc/thong-bao')">
+        <button class="list-card-footer" @click="router.push('/giamdoc/thongbao')">
           <span class="material-symbols-rounded" style="font-size:15px">expand_more</span>
           Xem toàn bộ {{ pendingApprovals.length }} yêu cầu
         </button>
@@ -497,27 +497,27 @@ const fetchData = () => {
         id: 1, label: 'Tổng số nhân sự', value: totalHeadcount,
         icon: 'groups', iconClass: 'kpi-icon--blue',
         badge: '+12% so với tháng trước', badgeIcon: 'trending_up', badgeClass: 'kpi-badge--success',
-        route: '/giam-doc/nhan-su', footerType: 'sparkline',
+        route: '/giamdoc/nhansu', footerType: 'sparkline',
         sparkline: [30, 45, 60, 50, 75, 40, 85, 100], sparklineDanger: false, meta: 'Dữ liệu tăng đều'
       },
       {
         id: 2, label: 'Quỹ lương tháng này', value: '2.5 Tỷ',
         icon: 'payments', iconClass: 'kpi-icon--green',
         badge: '-1.5% so với Dữ Toán', badgeIcon: 'trending_down', badgeClass: 'kpi-badge--danger',
-        route: '/giam-doc/luong', footerType: 'progress',
+        route: '/giamdoc/bangluong', footerType: 'progress',
         progress: 75, progressClass: 'kpi-progress-fill--green', meta: 'Ngân sách thực chi'
       },
       {
         id: 3, label: 'Hồ sơ cần duyệt', value: pendingReqs,
         icon: 'task', iconClass: 'kpi-icon--amber',
         badge: 'Ưu tiên xử lý', badgeIcon: 'priority_high', badgeClass: 'kpi-badge--warning',
-        route: '/giam-doc/phe-duyet', footerType: 'none', meta: `${pendingReqs} yêu cầu mới`
+        route: '/giamdoc/thongbao', footerType: 'none', meta: `${pendingReqs} yêu cầu mới`
       },
       {
         id: 4, label: 'Tỉ lệ nghỉ việc / tháng', value: '2.1%',
         icon: 'person_remove', iconClass: 'kpi-icon--purple',
         badge: 'Bình thường', badgeIcon: 'done_all', badgeClass: 'kpi-badge--success',
-        route: '/giam-doc/nhan-su', footerType: 'sparkline',
+        route: '/giamdoc/nhansu', footerType: 'sparkline',
         sparkline: [15, 20, 25, 10, 5, 20, 30, 15], sparklineDanger: true, meta: 'Thấp hơn trung bình'
       }
     ];

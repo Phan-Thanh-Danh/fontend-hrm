@@ -6,7 +6,7 @@
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left">
         <div class="bg-transparent text-left">
           <div class="flex items-center gap-3 mb-1">
-            <button @click="$router.push('/ho-so')" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all">
+            <button @click="$router.push('/nhanvien/hoso')" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all">
               <span class="material-symbols-outlined text-[20px]">arrow_back</span>
             </button>
             <h1 class="text-xl font-semibold text-[var(--sys-text-primary)] tracking-tight m-0">Đơn xin thôi việc & Bàn giao</h1>
@@ -144,7 +144,7 @@
         </button>
         
         <div class="flex gap-3 w-full sm:w-auto">
-          <button @click="$router.push('/ho-so')" class="h-11 px-6 bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[12px] uppercase tracking-wide hover:bg-[var(--sys-bg-page)] shadow-sm transition-all flex-grow sm:flex-grow-0">
+          <button @click="$router.push('/nhanvien/hoso')" class="h-11 px-6 bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[12px] uppercase tracking-wide hover:bg-[var(--sys-bg-page)] shadow-sm transition-all flex-grow sm:flex-grow-0">
             Hủy bỏ
           </button>
           <button class="h-11 px-8 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[12px] uppercase tracking-wide hover:brightness-95 shadow-md flex items-center justify-center gap-2 transition-all flex-grow sm:flex-grow-0">

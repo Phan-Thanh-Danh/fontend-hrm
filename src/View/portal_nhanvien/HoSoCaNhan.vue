@@ -231,7 +231,7 @@
 
       <!-- Footer Danger Zone -->
       <div class="flex justify-end pt-8 opacity-60 hover:opacity-100 transition-opacity">
-        <router-link to="/don-nghi-viec" class="h-10 px-6 bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] rounded-md border border-[var(--sys-danger-border)] font-bold text-[11px] uppercase tracking-wide flex items-center gap-2 hover:bg-[var(--sys-danger-solid)] hover:text-white transition-all">
+        <router-link to="/nhanvien/donnghiviec" class="h-10 px-6 bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] rounded-md border border-[var(--sys-danger-border)] font-bold text-[11px] uppercase tracking-wide flex items-center gap-2 hover:bg-[var(--sys-danger-solid)] hover:text-white transition-all">
           <span class="material-symbols-outlined text-[20px]">logout</span>
           Nộp đơn nghỉ việc
         </router-link>

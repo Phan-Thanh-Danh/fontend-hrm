@@ -4,7 +4,7 @@
     <header class="h-16 bg-[#161c2d] flex items-center justify-between px-6 shadow-md fixed top-0 left-0 right-0 z-50">
       
       <!-- Logo Left -->
-      <router-link to="/giam-doc" class="flex items-center gap-2.5 ml-1 cursor-pointer hover:opacity-90 transition-opacity">
+      <router-link to="/giamdoc" class="flex items-center gap-2.5 ml-1 cursor-pointer hover:opacity-90 transition-opacity">
         <div
           class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-md"
           style="background:linear-gradient(135deg,oklch(0.52 0.22 265),oklch(0.45 0.19 295));box-shadow:0 2px 8px oklch(0.48 0.195 265 / 0.35)"
@@ -167,7 +167,7 @@
         <div class="w-px h-8 bg-white/10 hidden md:block"></div>
 
         <!-- User Profile -->
-        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-1.5 -mr-1.5 rounded-xl transition-colors" @click="$router.push('/giam-doc/ho-so')">
+        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-1.5 -mr-1.5 rounded-xl transition-colors" @click="$router.push('/giamdoc/hoso')">
           <div class="flex flex-col text-right hidden sm:flex">
             <span class="text-white font-semibold text-sm leading-tight">Nguyễn Minh Triết</span>
             <span class="text-white/60 text-xs font-medium mt-0.5">Tổng Giám Đốc</span>
@@ -192,7 +192,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   importantNotifications as staticNotifs,
@@ -220,7 +220,7 @@ const cancelHideTimer = () => {
 
 const goToNotifications = () => {
   showPopup.value = false;
-  router.push('/giam-doc/thong-bao');
+  router.push('/giamdoc/thongbao');
 };
 
 const handleNotifClick = (item) => {
@@ -228,7 +228,7 @@ const handleNotifClick = (item) => {
   if (item.actionRoute) {
     router.push(item.actionRoute);
   } else {
-    router.push('/giam-doc/thong-bao');
+    router.push('/giamdoc/thongbao');
   }
 };
 
@@ -274,6 +274,14 @@ watch(() => route.meta.index, (toIndex, fromIndex) => {
 watch(isDark, (val) => {
   document.documentElement.classList.toggle('dark', val);
 }, { immediate: true });
+
+// ── Authentication Check ───────────────────────────────────────────────────
+onMounted(() => {
+  const userRole = localStorage.getItem('userRole');
+  if (!userRole || userRole !== 'director') {
+    router.push('/login');
+  }
+});
 </script>
 
 <style scoped>

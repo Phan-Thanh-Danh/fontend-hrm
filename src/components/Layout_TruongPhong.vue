@@ -82,7 +82,7 @@
                   v-for="req in recentPendingRequests" 
                   :key="req.id"
                   class="p-3 flex gap-3 transition-colors cursor-pointer border-b border-[var(--sys-border-subtle)] hover:bg-[var(--sys-bg-hover)]"
-                  @click="router.push('/truong-phong/nghi-phep'); isNotificationOpen = false"
+                  @click="router.push('/truongphong/nghiphep'); isNotificationOpen = false"
                 >
                   <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)]">
                     <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1">{{ req.urgent ? 'priority_high' : 'event_busy' }}</span>
@@ -103,7 +103,7 @@
               </div>
               <div class="border-t p-2 text-center border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]">
                 <router-link
-                  to="/truong-phong/dashboard"
+                  to="/truongphong/dashboard"
                   @click="isNotificationOpen = false"
                   class="text-xs font-semibold transition-colors duration-200 text-[var(--sys-accent)] hover:text-[oklch(0.4_0.15_265)] inline-block py-1 px-4 rounded-md hover:bg-[var(--sys-accent)]/10"
                 >Xem tất cả thông báo</router-link>
@@ -179,7 +179,7 @@
                 <p class="text-xs font-medium truncate mb-0 text-[var(--sys-text-primary)]">{{ localStorage.getItem('userEmail') || 'manager@hrm.com' }}</p>
               </div>
               <router-link
-                to="/truong-phong/ho-so"
+                to="/truongphong/hoso"
                 class="flex items-center gap-3 px-4 py-2 text-sm font-medium transition-colors text-[var(--sys-text-primary)] hover:bg-[var(--sys-bg-hover)]"
                 @click="isProfileOpen = false"
               >
@@ -248,27 +248,27 @@
       <nav class="flex-1 overflow-y-auto overflow-x-hidden py-2 custom-scrollbar">
 
         <div :class="sidebarExpanded ? 'w-full' : 'px-2 flex flex-col items-center'">
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/dashboard')" icon="dashboard" label="Dashboard" :is-dark="isDark" to="/truong-phong/dashboard" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/dashboard')" icon="dashboard" label="Dashboard" :is-dark="isDark" to="/truongphong/dashboard" @click="handleNavClick" />
         </div>
 
         <NavSection label="Điều hành phòng ban" :expanded="sidebarExpanded" :is-dark="isDark" />
         <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/nhan-su')" icon="groups" label="Nhân viên phòng" :is-dark="isDark" to="/truong-phong/nhan-su" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/hop-dong')" icon="description" label="Hợp đồng" :is-dark="isDark" to="/truong-phong/hop-dong" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/nhansu')" icon="groups" label="Nhân viên phòng" :is-dark="isDark" to="/truongphong/nhansu" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/hopdong')" icon="description" label="Hợp đồng" :is-dark="isDark" to="/truongphong/hopdong" @click="handleNavClick" />
         </div>
 
         <NavSection label="Nghiệp vụ hằng ngày" :expanded="sidebarExpanded" :is-dark="isDark" />
         <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/cham-cong')" icon="schedule" label="Chấm công" :is-dark="isDark" to="/truong-phong/cham-cong" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/nghi-phep')" icon="event_busy" label="Nghỉ phép" :is-dark="isDark" to="/truong-phong/nghi-phep" @click="handleNavClick" :badge="pendingLeaveCount" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/tuyen-dung')" icon="person_search" label="Tuyển dụng" :is-dark="isDark" to="/truong-phong/tuyen-dung" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/danh-gia-ung-vien')" icon="rate_review" label="Đánh giá ứng viên" :is-dark="isDark" to="/truong-phong/danh-gia-ung-vien" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/chamcong')" icon="schedule" label="Chấm công" :is-dark="isDark" to="/truongphong/chamcong" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/nghiphep')" icon="event_busy" label="Nghỉ phép" :is-dark="isDark" to="/truongphong/nghiphep" @click="handleNavClick" :badge="pendingLeaveCount" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/tuyendung')" icon="person_search" label="Tuyển dụng" :is-dark="isDark" to="/truongphong/tuyendung" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/danhgiaungvien')" icon="rate_review" label="Đánh giá ứng viên" :is-dark="isDark" to="/truongphong/danhgiaungvien" @click="handleNavClick" />
         </div>
 
         <NavSection label="Tài chính & Tài sản" :expanded="sidebarExpanded" :is-dark="isDark" />
         <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/bang-luong')" icon="payments" label="Bảng lương" :is-dark="isDark" to="/truong-phong/bang-luong" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/tai-san')" icon="category" label="Quản lý Tài sản" :is-dark="isDark" to="/truong-phong/tai-san" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/bangluong')" icon="payments" label="Bảng lương" :is-dark="isDark" to="/truongphong/bangluong" @click="handleNavClick" />
+          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/taisan')" icon="category" label="Quản lý Tài sản" :is-dark="isDark" to="/truongphong/taisan" @click="handleNavClick" />
         </div>
       </nav>
 
@@ -277,7 +277,7 @@
         class="shrink-0 border-t border-[var(--sys-border-subtle)] py-2"
         :class="[sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1']"
       >
-        <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truong-phong/ho-so')" icon="settings" label="Cài đặt" :is-dark="isDark" to="/truong-phong/ho-so" @click="handleNavClick" />
+        <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/truongphong/hoso')" icon="settings" label="Cài đặt" :is-dark="isDark" to="/truongphong/hoso" @click="handleNavClick" />
       </div>
     </aside>
 
@@ -398,8 +398,15 @@ const handleClickOutside = (event) => {
 };
 
 onMounted(() => {
-    document.addEventListener('click', handleClickOutside);
-    fetchDeptData();
+  document.addEventListener('click', handleClickOutside);
+  
+  // Check authentication
+  const userRole = localStorage.getItem('userRole');
+  if (!userRole || userRole !== 'manager') {
+    router.push('/login');
+  }
+  
+  fetchDeptData();
 });
 onUnmounted(() => document.removeEventListener('click', handleClickOutside));
 
