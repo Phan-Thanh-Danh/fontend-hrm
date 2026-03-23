@@ -124,8 +124,12 @@
             <!-- Modal Header -->
             <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-surface)]">
               <div class="bg-transparent text-left flex flex-col">
-                <h3 class="text-lg font-semibold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight">{{ editMode ? 'Cấu hình thông tin tài sản' : 'Khai báo tài sản mới' }}</h3>
-                <p class="text-sm text-[var(--sys-text-secondary)] mt-1">Đảm bảo tính chính xác của dữ liệu bàn giao và vòng đời thiết bị.</p>
+                <h3 class="text-lg font-semibold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight">
+                  {{ !editMode ? 'Khai báo tài sản mới' : (form.assigned_to ? 'Cấu hình thông tin tài sản' : 'Bàn giao tài sản cho nhân viên') }}
+                </h3>
+                <p class="text-sm text-[var(--sys-text-secondary)] mt-1">
+                  {{ !editMode ? 'Khởi tạo bản ghi tài sản mới vào hệ thống kho.' : (form.assigned_to ? 'Cập nhật thông số kỹ thuật hoặc thông tin bảo trì.' : 'Thực hiện quy trình bàn giao thiết bị cho nhân sự thụ hưởng.') }}
+                </p>
               </div>
               <button @click="closeModal" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)]">
                 <span class="material-symbols-outlined text-xl">close</span>
@@ -167,7 +171,7 @@
             <div class="px-6 py-4 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] flex justify-end gap-3">
               <button @click="closeModal" class="px-4 py-2 text-sm font-medium text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)] rounded-md transition-all uppercase tracking-wide">Hủy bỏ</button>
               <button @click="handleSave" class="px-6 py-2 bg-[var(--sys-brand-solid)] text-white rounded-md font-semibold text-sm hover:brightness-90 transition-all uppercase tracking-wide">
-                {{ editMode ? 'Cập nhật tài sản' : 'Xác nhận khởi tạo' }}
+                {{ !editMode ? 'Xác nhận khởi tạo' : (form.assigned_to ? 'Cập nhật tài sản' : 'Xác nhận bàn giao') }}
               </button>
             </div>
           </div>
@@ -317,10 +321,28 @@ const handleSave = async () => {
     return;
   }
   
-  let assigned_id = null;
-  if (form.value.status === 'ĐANG_SỬ_DỤNG' && form.value.user) {
-    const emp = employeesAPI.getAll().find(e => e.full_name.includes(form.value.user) || e.employee_code.includes(form.value.user));
-    assigned_id = emp ? emp.employee_id : form.value.assigned_to;
+  let assigned_id = form.value.assigned_to;
+  if (form.value.status === 'ĐANG_SỬ_DỤNG') {
+    if (!form.value.user || !form.value.user.trim()) {
+      await showAlert('Thiếu nhân sự', 'Vui lòng nhập tên hoặc mã nhân sự để bàn giao!');
+      return;
+    }
+
+    const q = form.value.user.trim().toLowerCase();
+    const emps = employeesAPI.getAll();
+    const emp = emps.find(e => 
+      e.full_name.toLowerCase().includes(q) || 
+      e.employee_code.toLowerCase().includes(q)
+    );
+
+    if (!emp) {
+      await showAlert('Không tìm thấy', `Không tìm thấy nhân sự khớp với "${form.value.user}". Vui lòng kiểm tra lại!`);
+      return;
+    }
+    assigned_id = emp.employee_id;
+  } else {
+    // Nếu trạng thái khác ĐANG_SỬ_DỤNG, xóa người dùng được gán
+    assigned_id = null;
   }
 
   const dto = {
@@ -341,6 +363,8 @@ const handleSave = async () => {
 
 const assignAsset = (asset) => {
   editAsset(asset);
+  form.value.status = 'ĐANG_SỬ_DỤNG';
+  form.value.user = ''; // Reset user input for new handover
 };
 
 const recoverAsset = async (asset) => {
