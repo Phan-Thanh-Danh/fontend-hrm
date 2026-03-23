@@ -53,7 +53,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-[var(--sys-border-subtle)]">
-                <tr v-for="candidate in filteredCandidates" :key="candidate.id" 
+                <tr v-for="candidate in paginatedCandidates" :key="candidate.id" 
                   @click="activeCandidateId = candidate.id"
                   class="group cursor-pointer transition-colors"
                   :class="activeCandidateId === candidate.id ? 'bg-[var(--sys-brand-soft)]/50' : 'hover:bg-[var(--sys-bg-hover)]'">
@@ -78,8 +78,36 @@
               </tbody>
             </table>
           </div>
+
+          <!-- Pagination Footer -->
+          <div class="px-4 py-3 bg-[var(--sys-bg-page)]/50 border-t border-[var(--sys-border-subtle)] flex justify-between items-center text-[11px] font-bold text-[var(--sys-text-secondary)]">
+            <span class="uppercase tracking-widest opacity-60">Hiển thị {{ paginatedCandidates.length }} / {{ filteredCandidates.length }} hồ sơ</span>
+            <div class="flex items-center gap-1.5">
+              <button 
+                @click="currentPage > 1 ? currentPage-- : null"
+                :disabled="currentPage === 1"
+                :class="['w-7 h-7 flex items-center justify-center rounded-md border border-[var(--sys-border-subtle)] transition-all', currentPage === 1 ? 'opacity-30 cursor-not-allowed' : 'bg-white hover:text-[var(--sys-brand-solid)]']"
+              >
+                <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+              </button>
+              
+              <div class="flex items-center gap-1 px-1">
+                <span class="text-[var(--sys-text-primary)]">{{ currentPage }}</span>
+                <span class="opacity-30">/</span>
+                <span class="opacity-60">{{ totalPages }}</span>
+              </div>
+
+              <button 
+                @click="currentPage < totalPages ? currentPage++ : null"
+                :disabled="currentPage === totalPages"
+                :class="['w-7 h-7 flex items-center justify-center rounded-md border border-[var(--sys-border-subtle)] transition-all', currentPage === totalPages ? 'opacity-30 cursor-not-allowed' : 'bg-white hover:text-[var(--sys-brand-solid)]']"
+              >
+                <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+              </button>
+            </div>
+          </div>
           
-          <div v-if="filteredCandidates.length === 0" class="flex flex-col items-center justify-center py-12 bg-[var(--sys-bg-page)]/20 border-t border-[var(--sys-border-subtle)]">
+          <div v-if="filteredCandidates.length === 0" class="flex flex-col items-center justify-center py-12 bg-[var(--sys-bg-page)]/20 border-t border-[var(--sys-border-subtle)] flex-grow">
             <span class="material-symbols-outlined text-4xl text-[var(--sys-text-disabled)] opacity-20 mb-2">find_in_page</span>
             <p class="text-[12px] font-semibold text-[var(--sys-text-disabled)] opacity-40 uppercase">Không tìm thấy kết quả</p>
           </div>
@@ -224,7 +252,7 @@
  * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button, 8px (LG) cho Card/Thẻ/Table
  * - Hệ màu Blue/White đồng bộ cho Action Icons
  */
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Dropdown from '@/components/Dropdown.vue';
 import { useRecruitmentStore } from '@/composables/useRecruitmentStore';
@@ -238,6 +266,8 @@ const activeCandidateId = ref(1);
 const searchQuery = ref('');
 const filterPosition = ref('');
 const filterAiScore = ref('');
+const currentPage = ref(1);
+const pageSize = 10;
 
 // Form state for interview scheduling
 const interviewDate = ref('');
@@ -291,6 +321,20 @@ const filteredCandidates = computed(() => {
   }
 
   return list;
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredCandidates.value.length / pageSize) || 1;
+});
+
+const paginatedCandidates = computed(() => {
+  const start = (currentPage.value - 1) * pageSize;
+  const end = start + pageSize;
+  return filteredCandidates.value.slice(start, end);
+});
+
+watch([searchQuery, filterPosition, filterAiScore], () => {
+  currentPage.value = 1;
 });
 
 const getAiScoreClass = (score) => {
