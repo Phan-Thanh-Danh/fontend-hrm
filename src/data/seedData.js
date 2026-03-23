@@ -107,7 +107,9 @@ const generateRequests = () => {
       end_date: endDate,
       days: days,
       is_urgent: days >= 3 || i % 15 === 0,
-      status: isPending ? 'CHỜ_DUYỆT' : (i % 4 === 0 ? 'TỪ_CHỐI' : 'ĐÃ_DUYỆT')
+      status: isPending ? 'CHỜ_DUYỆT' : (i % 4 === 0 ? 'TỪ_CHỐI' : 'ĐÃ_DUYỆT'),
+      approver_manager: (!isPending && i % 4 !== 0) ? 'Phạm Đức An' : null,
+      approver_director: (!isPending && i % 4 !== 0 && days > 3) ? 'Nguyễn Bích Diệp' : null
     });
   }
   return reqs;

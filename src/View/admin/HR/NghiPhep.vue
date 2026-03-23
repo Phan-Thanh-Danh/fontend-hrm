@@ -87,7 +87,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-[var(--sys-border-subtle)]">
-                <tr v-for="req in filteredRequests" :key="req.id" 
+                <tr v-for="req in paginatedRequests" :key="req.id" 
                   @click="activeRequestId = req.id" 
                   @dblclick="handleDeleteRequest(req)"
                   class="group cursor-pointer hover:bg-[var(--sys-bg-hover)] transition-all" 
@@ -128,13 +128,27 @@
 
           <!-- Footer -->
           <div class="px-4 py-3 bg-[var(--sys-bg-page)] border-t border-[var(--sys-border-subtle)] flex justify-between items-center text-[12px] font-medium text-[var(--sys-text-secondary)]">
-            <span>Hiển thị {{ filteredRequests.length }} hồ sơ biến động</span>
+            <span>Hiển thị {{ paginatedRequests.length }} / {{ filteredRequests.length }} hồ sơ biến động</span>
             <div class="flex items-center gap-1.5">
-              <button class="w-8 h-8 flex items-center justify-center rounded-md bg-white border border-[var(--sys-border-subtle)] hover:text-[var(--sys-brand-solid)] transition-all">
+              <button 
+                @click="currentPage > 1 ? currentPage-- : null"
+                :disabled="currentPage === 1"
+                :class="['w-8 h-8 flex items-center justify-center rounded-md border border-[var(--sys-border-subtle)] transition-all', currentPage === 1 ? 'opacity-30 cursor-not-allowed' : 'bg-white hover:text-[var(--sys-brand-solid)]']"
+              >
                 <span class="material-symbols-outlined text-[18px]">chevron_left</span>
               </button>
-              <button class="w-8 h-8 flex items-center justify-center rounded-md bg-[var(--sys-brand-solid)] text-white font-bold">1</button>
-              <button class="w-8 h-8 flex items-center justify-center rounded-md bg-white border border-[var(--sys-border-subtle)] hover:text-[var(--sys-brand-solid)] transition-all">
+              
+              <div class="flex items-center gap-1 px-2">
+                <span class="text-[var(--sys-text-primary)] font-bold">{{ currentPage }}</span>
+                <span class="opacity-40">/</span>
+                <span class="opacity-60">{{ totalPages }}</span>
+              </div>
+
+              <button 
+                @click="currentPage < totalPages ? currentPage++ : null"
+                :disabled="currentPage === totalPages"
+                :class="['w-8 h-8 flex items-center justify-center rounded-md border border-[var(--sys-border-subtle)] transition-all', currentPage === totalPages ? 'opacity-30 cursor-not-allowed' : 'bg-white hover:text-[var(--sys-brand-solid)]']"
+              >
                 <span class="material-symbols-outlined text-[18px]">chevron_right</span>
               </button>
             </div>
@@ -148,7 +162,7 @@
           <!-- Panel Header -->
           <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex justify-between items-center bg-[var(--sys-bg-surface)]">
             <div class="bg-transparent text-left flex flex-col">
-              <h3 class="text-sm font-semibold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight">Thẩm định hồ sơ</h3>
+              <h3 class="text-sm font-semibold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight">Hồ sơ</h3>
               <p class="text-[12px] text-[var(--sys-text-secondary)] mt-0.5">Mã nghiệp vụ: #LV-{{ activeRequest.id }}</p>
             </div>
             <button @click="activeRequestId = null" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)]">
@@ -202,6 +216,24 @@
                 <span class="text-[12px] font-bold uppercase tracking-wide">Quỹ phép tồn</span>
               </div>
               <span class="text-sm font-bold text-[var(--sys-brand-solid)] bg-white/50 px-2 py-0.5 rounded border border-[var(--sys-brand-border)]">{{ activeRequest.balance }} NGÀY</span>
+            </div>
+
+            <!-- Approver Info -->
+            <div v-if="activeRequest.status === 'approved'" class="space-y-3 p-4 bg-[var(--sys-success-soft)]/50 border border-[var(--sys-success-border)] rounded-lg">
+              <div class="flex items-center gap-2 text-[var(--sys-success-text)] font-bold uppercase text-[11px]">
+                <span class="material-symbols-outlined text-[18px]">verified_user</span>
+                Lịch sử phê chuẩn
+              </div>
+              <div class="space-y-2">
+                <div v-if="activeRequest.approver_manager" class="flex flex-col gap-1 p-2 bg-white/60 rounded border border-[var(--sys-success-border)]/20 shadow-sm">
+                  <span class="text-[10px] uppercase font-bold text-[var(--sys-text-secondary)] opacity-60">Trưởng phòng xét duyệt:</span>
+                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)] transition-colors">{{ activeRequest.approver_manager }}</span>
+                </div>
+                <div v-if="activeRequest.approver_director" class="flex flex-col gap-1 p-2 bg-white/60 rounded border border-[var(--sys-success-border)]/20 shadow-sm">
+                  <span class="text-[10px] uppercase font-bold text-[var(--sys-text-secondary)] opacity-60">Giám đốc phê chuẩn:</span>
+                  <span class="text-[14px] font-bold text-[var(--sys-brand-solid)] transition-colors">{{ activeRequest.approver_director }}</span>
+                </div>
+              </div>
             </div>
 
             <!-- Warnings -->
@@ -260,7 +292,7 @@
  * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button/Dropdown, 8px (LG) cho Card/Thẻ/Modal
  * - Hệ màu Blue/White đồng nhất cho Action Icons (Approve)
  */
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { requestsAPI, employeesAPI, departmentsAPI, requestTypesAPI } from '@/data/mockDB.js';
 
@@ -268,6 +300,8 @@ const filterDept = ref('ALL');
 const filterRange = ref('month');
 const activeTab = ref('all');
 const searchQuery = ref('');
+const currentPage = ref(1);
+const pageSize = 10;
 
 const leaveStats = ref([
   { label: 'Yêu cầu chờ duyệt', value: '12', unit: 'HỒ SƠ', icon: 'pending_actions', bgClass: 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)]' },
@@ -332,7 +366,9 @@ const fetchData = async () => {
         statusText: req.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : (req.status === 'TỪ_CHỐI' ? 'Từ chối' : 'Chờ duyệt'),
         reason: req.reason || req.notes || '',
         balance: 12, // Giả định
-        warnings: req.urgent || req.is_urgent ? ['Yêu cầu khẩn cấp'] : []
+        warnings: req.urgent || req.is_urgent ? ['Yêu cầu khẩn cấp'] : [],
+        approver_manager: req.approver_manager,
+        approver_director: req.approver_director
       };
     });
     
@@ -374,6 +410,20 @@ const filteredRequests = computed(() => {
     list = list.filter(r => r.name.toLowerCase().includes(q) || String(r.msnv).toLowerCase().includes(q));
   }
   return list;
+});
+
+const totalPages = computed(() => {
+  return Math.ceil(filteredRequests.value.length / pageSize) || 1;
+});
+
+const paginatedRequests = computed(() => {
+  const start = (currentPage.value - 1) * pageSize;
+  const end = start + pageSize;
+  return filteredRequests.value.slice(start, end);
+});
+
+watch([activeTab, filterDept, searchQuery], () => {
+  currentPage.value = 1;
 });
 
 const rejectComment = ref('');
