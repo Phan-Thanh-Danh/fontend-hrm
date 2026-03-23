@@ -94,9 +94,6 @@
               </div>
 
               <div class="flex items-center gap-2 bg-transparent w-full md:w-auto justify-end" v-if="activeTab === 'salary'">
-                <button class="w-9 h-9 bg-white text-[var(--sys-text-primary)] border border-[var(--sys-border-strong)] rounded-md hover:bg-[var(--sys-bg-page)] transition-all flex items-center justify-center shadow-sm">
-                  <span class="material-symbols-outlined text-[18px]">mail</span>
-                </button>
                 <button @click="exportPDF" class="h-9 px-4 bg-[var(--sys-brand-solid)] text-white rounded-md text-[11px] font-bold uppercase tracking-wide hover:brightness-95 transition-all flex items-center gap-2 shadow-sm">
                   <span class="material-symbols-rounded text-[18px]">download</span>
                   Tải PDF
