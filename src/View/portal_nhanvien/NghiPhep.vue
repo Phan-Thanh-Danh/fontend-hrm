@@ -224,7 +224,7 @@
                   </div>
                   <div class="space-y-1.5 bg-transparent">
                     <label class="block text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest ml-1">Đến ngày *</label>
-                    <CalendarCustom v-model="endDate" placeholder="Kết thúc vào..." disable-past />
+                    <CalendarCustom v-model="endDate" placeholder="Kết thúc vào..." disable-past :min-date="startDate" />
                   </div>
                 </div>
 
@@ -289,6 +289,13 @@ const reason = ref('');
 
 const requestTypes = ref([]);
 const leaveHistory = ref([]);
+
+// Ràng buộc: Ngày kết thúc phải sau hoặc bằng ngày bắt đầu
+watch(startDate, (newStart) => {
+  if (newStart && endDate.value && new Date(newStart) > new Date(endDate.value)) {
+    endDate.value = '';
+  }
+});
 
 const closeSuccessModal = () => {
   isSuccess.value = false;

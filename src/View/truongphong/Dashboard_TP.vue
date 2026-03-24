@@ -98,17 +98,17 @@
         <div class="bg-gradient-to-br from-[var(--sys-brand-solid)] via-indigo-700 to-violet-800 text-white p-6 rounded-lg shadow-xl relative overflow-hidden group">
           <span class="material-symbols-rounded absolute -right-4 -bottom-4 text-[140px] opacity-10 rotate-12 transition-transform duration-700 group-hover:rotate-0 group-hover:scale-110">schema</span>
           <div class="relative z-10 space-y-4 text-left">
-            <h4 class="text-[11px] font-bold uppercase tracking-widest opacity-80 m-0">ĐƠN VỊ VẬN HÀNH</h4>
-            <h2 class="text-2xl font-bold uppercase m-0 tracking-tighter leading-tight">{{ deptInfo.name || 'KỸ THUẬT VÀ CLOUD' }}</h2>
+            <h4 class="text-[10px] font-bold uppercase tracking-[0.2em] opacity-80 m-0">ĐƠN VỊ VẬN HÀNH</h4>
+            <h2 class="text-lg font-extrabold uppercase m-0 tracking-tight leading-none text-white/95">{{ deptInfo.name || 'HÀNH CHÍNH NHÂN SỰ' }}</h2>
             
             <div class="pt-6 border-t border-white/20 grid grid-cols-2 gap-4">
               <div class="bg-white/10 p-3 rounded-md border border-white/10 backdrop-blur-sm">
                 <p class="text-[9px] font-bold uppercase mb-1 opacity-70 tracking-widest leading-none">Thành viên</p>
-                <p class="text-xl font-bold m-0 italic">{{ deptInfo.count }}</p>
+                <p class="text-xl font-bold m-0">{{ deptInfo.count }}</p>
               </div>
               <div class="bg-white/10 p-3 rounded-md border border-white/10 backdrop-blur-sm">
                 <p class="text-[9px] font-bold uppercase mb-1 opacity-70 tracking-widest leading-none">Ngân sách dự kiến</p>
-                <p class="text-xl font-bold m-0 italic">{{ deptInfo.budget }}</p>
+                <p class="text-xl font-bold m-0 tracking-tighter whitespace-nowrap">{{ deptInfo.budget }}</p>
               </div>
             </div>
           </div>

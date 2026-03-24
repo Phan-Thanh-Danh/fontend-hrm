@@ -80,7 +80,8 @@ import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 const props = defineProps({
   modelValue: { type: String, default: '' },
   placeholder: { type: String, default: 'Chọn ngày...' },
-  disablePast: { type: Boolean, default: false }
+  disablePast: { type: Boolean, default: false },
+  minDate: { type: String, default: '' }
 });
 
 const emit = defineEmits(['update:modelValue', 'change']);
@@ -100,11 +101,23 @@ const formattedValue = computed(() => {
 });
 
 const isPast = (day) => {
-  if (!day || !props.disablePast) return false;
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  if (!day) return false;
   const checkDate = new Date(viewYear.value, viewMonth.value, day);
-  return checkDate < today;
+  checkDate.setHours(0, 0, 0, 0);
+
+  if (props.disablePast) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (checkDate < today) return true;
+  }
+  
+  if (props.minDate) {
+    const min = new Date(props.minDate);
+    min.setHours(0, 0, 0, 0);
+    if (checkDate < min) return true;
+  }
+  
+  return false;
 };
 
 const daysInMonth = computed(() => {
