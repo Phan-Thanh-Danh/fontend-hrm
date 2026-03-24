@@ -7,6 +7,7 @@ export function useRecruitmentStore() {
       id: c.candidate_id,
       name: c.full_name,
       position: c.position_applied,
+      departmentId: (c.candidate_id % 5) + 1, // Deterministic mock mapping to departments 1-5
       department: 'Phòng ban chung', 
       aiScore: c.ai_score,
       date: c.applied_date || new Date().toLocaleDateString('vi-VN'),

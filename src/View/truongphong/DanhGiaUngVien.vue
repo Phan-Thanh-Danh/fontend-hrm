@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
@@ -14,7 +14,7 @@
           <div class="w-10 h-10 rounded-md bg-[var(--sys-brand-solid)] text-white flex items-center justify-center font-bold text-sm shadow-md">IT</div>
           <div>
             <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase m-0 tracking-widest opacity-60 shadow-none">PHÒNG QUẢN LÝ</p>
-            <p class="text-[13px] font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight">KỸ THUẬT VÀ CÔNG NGHỆ</p>
+            <p class="text-[13px] font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight">{{ deptName }}</p>
           </div>
         </div>
       </div>
@@ -100,13 +100,17 @@
 import { ref, computed } from 'vue'
 import { useRecruitmentStore } from '@/composables/useRecruitmentStore'
 import { useConfirm } from '@/composables/useConfirm'
+import { departmentsAPI } from '@/data/mockDB.js'
 
 const store = useRecruitmentStore()
 const { showAlert } = useConfirm()
 
-const myDepartment = 'IT'
+const userDeptId = localStorage.getItem('userDeptId') || '1';
+const departmentResult = departmentsAPI.getAll().find(d => Number(d.department_id) === Number(userDeptId) || d.id === userDeptId);
+const deptName = ref(departmentResult?.department_name || departmentResult?.name || 'Phòng ban');
+
 const interviewingCandidates = computed(() => {
-  return store.candidates.value.filter(c => c.status === 'interviewing' && c.department === myDepartment)
+  return store.candidates.value.filter(c => c.status === 'interviewing' && Number(c.departmentId) === Number(userDeptId))
 })
 
 const reviews = ref({})
