@@ -193,28 +193,52 @@
           </span>
         </div>
 
-        <div class="approval-list">
+        <div class="tt-approval-list px-5 mb-4">
           <div
-            v-for="item in pendingApprovals"
+            v-for="(item, index) in pendingApprovals"
             :key="item.id"
-            class="approval-item cursor-pointer"
+            class="tt-approval-item cursor-pointer"
+            :class="{ 'tt-approval-item--urgent': item.urgent }"
+            :style="{ animationDelay: (index * 60) + 'ms' }"
             @click="openDetailModal(item)"
           >
-            <div class="approval-icon" :class="item.iconClass">
-              <span class="material-symbols-rounded">{{ item.icon }}</span>
+            <!-- Avatar -->
+            <div class="tt-avatar" :class="[item.avatarBg, item.avatarColor]">
+              {{ item.initials }}
+              <span v-if="item.urgent" class="tt-urgent-dot"></span>
             </div>
-            <div class="approval-content">
-              <h5 class="approval-title">{{ item.title }}</h5>
-              <p class="approval-meta" :class="item.urgent ? 'urgent-meta' : ''">{{ item.meta }}</p>
+
+            <!-- Info -->
+            <div class="tt-approval-info">
+              <div class="tt-approval-name-row">
+                <span class="tt-approval-name">{{ item.name }}</span>
+                <span v-if="item.urgent" class="tt-urgent-badge">
+                  <span class="material-symbols-rounded" style="font-size:10px;font-variation-settings:'FILL' 1">priority_high</span>
+                  Khẩn
+                </span>
+              </div>
+              <span class="tt-approval-dept">{{ item.dept }}</span>
+              <div class="tt-approval-title-row">
+                <span class="tt-approval-type" :class="[item.typeBg, item.typeColor]">
+                  <span class="material-symbols-rounded" style="font-size:12px;font-variation-settings:'FILL' 1">{{ item.typeIcon }}</span>
+                  {{ item.type }}
+                </span>
+                <span class="tt-approval-title">{{ item.title }}</span>
+              </div>
+              <span class="tt-approval-time">
+                <span class="material-symbols-rounded" style="font-size:12px">schedule</span>
+                {{ item.time }}
+              </span>
             </div>
-            <div class="approval-actions">
-              <button
-                v-for="(action, ai) in item.actions"
-                :key="ai"
-                :class="ai === item.actions.length - 1 ? 'btn-approve' : 'btn-reject'"
-                @click.stop="ai === item.actions.length - 1 ? openApproveModal(item) : openRejectModal(item)"
-              >
-                {{ action }}
+
+            <!-- Actions -->
+            <div class="tt-approval-actions">
+              <button class="tt-btn-reject" @click.stop="openRejectModal(item)">
+                TỪ CHỐI
+              </button>
+              <button class="tt-btn-approve" @click.stop="openApproveModal(item)">
+                <span class="material-symbols-rounded" style="font-size:14px;font-variation-settings:'FILL' 1">check_circle</span>
+                PHÊ DUYỆT NHANH
               </button>
             </div>
           </div>
@@ -358,30 +382,51 @@
                 <span class="material-symbols-outlined text-[26px] font-bold text-[var(--sys-brand-solid)]">task_alt</span>
               </div>
               <div class="flex-1">
-                <h3 class="text-sm font-extrabold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight leading-none">
-                  Xác nhận phê duyệt
+                <h3 class="text-[17px] font-extrabold text-[var(--sys-text-primary)] m-0 tracking-tight leading-none">
+                  Xác nhận Phê duyệt
                 </h3>
-                <p class="text-[10px] text-[var(--sys-text-secondary)] font-bold mt-1 uppercase tracking-widest opacity-70">
-                  {{ selectedApproval.title }}
+                <p class="text-[12px] text-[var(--sys-text-secondary)] font-bold mt-1 tracking-wide opacity-80">
+                  <span v-if="selectedApproval.name">{{ selectedApproval.name }} — </span>{{ selectedApproval.title }}
                 </p>
               </div>
               <button
                 @click="closeApproveModal"
-                class="w-8 h-8 flex items-center justify-center rounded hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all"
+                class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)]"
               >
-                <span class="material-symbols-outlined text-xl">close</span>
+                <span class="material-symbols-outlined text-[18px]">close</span>
               </button>
             </div>
 
-            <div class="bg-[var(--sys-bg-hover)] p-4 rounded-lg border border-[var(--sys-border-subtle)] mb-6">
-              <p class="text-sm text-[var(--sys-text-secondary)] leading-relaxed">
-                Bạn có chắc chắn muốn <span class="font-extrabold text-[var(--sys-brand-solid)]">phê duyệt</span> yêu cầu này không?
+            <div class="grid grid-cols-1 gap-4 bg-[var(--sys-bg-surface)] p-5 rounded-xl border border-[var(--sys-border-strong)] mb-4 shadow-sm">
+              <div class="grid grid-cols-[130px_1fr] items-center gap-2">
+                <span class="text-[11px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">LOẠI YÊU CẦU</span>
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-tight">{{ selectedApproval.type || 'Khác' }}</span>
+              </div>
+              <div class="grid grid-cols-[130px_1fr] items-center gap-2">
+                <span class="text-[11px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">NỘI DUNG</span>
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-tight">{{ selectedApproval.title }}</span>
+              </div>
+              <div class="grid grid-cols-[130px_1fr] items-center gap-2 border-b-0">
+                <span class="text-[11px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">NGƯỜI YÊU CẦU</span>
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-tight">{{ selectedApproval.dept }} ({{ selectedApproval.name }})</span>
+              </div>
+            </div>
+
+            <div class="bg-[var(--sys-bg-page)] p-5 rounded-xl border border-[var(--sys-border-subtle)] mb-5 shadow-inner text-left">
+              <p class="text-[11px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none mb-2">LÝ DO CHI TIẾT</p>
+              <p class="text-[13px] text-[var(--sys-text-primary)] leading-relaxed font-bold italic opacity-90">
+                "{{ selectedApproval.reasonText || selectedApproval.fullReason || 'Không có ghi chú thêm.' }}"
               </p>
             </div>
 
+            <p class="text-[13px] text-[var(--sys-text-secondary)] leading-relaxed mb-6 font-medium text-left">
+              Bạn có chắc chắn muốn <span class="font-extrabold text-[var(--sys-brand-solid)]">phê duyệt</span> yêu cầu này không?
+            </p>
+
             <div class="flex justify-end gap-3 mt-auto pt-4 border-t border-[var(--sys-border-subtle)]">
-              <button class="btn-reject h-10 px-6" @click="closeApproveModal">Hủy bỏ</button>
-              <button class="btn-approve h-10 px-8" @click="confirmApprove">
+              <button class="btn-reject h-10 px-6 font-bold bg-white text-gray-700 border border-gray-300 shadow-sm hover:bg-gray-50 dark:bg-[#1e2536] dark:text-gray-300 dark:border-gray-600 dark:hover:bg-[#28324f] focus:ring-2 focus:ring-gray-200 transition-all rounded-lg" @click="closeApproveModal">Hủy bỏ</button>
+              <button class="btn-approve h-10 px-6 bg-[var(--sys-brand-solid)] hover:bg-[#1d4ed8] text-white shadow-md hover:shadow-lg focus:ring-2 focus:ring-[var(--sys-brand-soft)] transition-all font-bold rounded-lg flex items-center justify-center gap-2 border-0" @click="confirmApprove">
+                <span class="material-symbols-rounded text-[18px]">check_circle</span>
                 Phê duyệt
               </button>
             </div>
@@ -461,7 +506,8 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
-import { employeesAPI, departmentsAPI, requestsAPI } from '@/data/mockDB.js';
+import { employeesAPI, departmentsAPI, requestsAPI, requestTypesAPI } from '@/data/mockDB.js';
+import { getInitials, getAvatarColors, getRequestTypeUI } from '@/utils/uiMapper.js';
 import {
   timelineEvents,
   reminderText,
@@ -556,6 +602,12 @@ const fetchData = () => {
         return isDirectorQueue && isVisible;
     }).map(r => {
         const emp = allEmps.find(e => e.employee_id === r.requester_id) || {};
+        const dept = allDepts.find(d => d.department_id === emp.department_id) || {};
+        const reqTypeObj = requestTypesAPI.getById(r.request_type_id) || {};
+        const ui = getRequestTypeUI(reqTypeObj.category || 'KHÁC') || {
+          icon: 'help', color: 'text-gray-600', bg: 'bg-gray-50', catKey: 'khac'
+        };
+        const avatarUI = getAvatarColors(emp.employee_id || 1);
         const dateStr = r.start_date && r.end_date ? `[${r.start_date} -> ${r.end_date}]` : '';
         return {
             id: r.request_id,
@@ -569,7 +621,22 @@ const fetchData = () => {
             fullReason: r.notes || r.reason || r.title,
             actions: ['Từ chối', 'Phê duyệt'],
             status: 'pending',
-            rejectReason: ''
+            rejectReason: '',
+            
+            // New fields for unified Approval Modal (from Notification Center)
+            name: emp.full_name || 'Khuyết danh',
+            dept: dept.department_name ? `Phòng ${dept.department_name}` : '',
+            type: reqTypeObj.request_type_name || 'Khác',
+            reasonText: r.notes || r.reason || r.title,
+            
+            // New UI fields from TTThongBao
+            initials: getInitials(emp.full_name || '?'),
+            avatarBg: avatarUI.bg,
+            avatarColor: avatarUI.text,
+            typeIcon: ui.icon,
+            typeColor: ui.color,
+            typeBg: ui.bg,
+            time: r.request_date || new Date().toISOString()
         };
     }).slice(0, 5);
 
@@ -1237,103 +1304,202 @@ const dynamicBarChart = computed(() => {
   border-radius: 999px;
 }
 
-.approval-list { flex: 1; }
+/* ── TT Approval Items (Synced from TTThongBao) ── */
+.tt-approval-list { display: flex; flex-direction: column; gap: 10px; }
 
-.approval-item {
-  display: flex;
-  align-items: center;
+.tt-approval-item {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
   gap: 14px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-light, #F3F4F6);
-  transition: background-color 0.15s;
+  align-items: center;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--bg-card, #fff);
+  transition: all 0.18s;
+  animation: fadeInUp 0.35s ease both;
 }
 
-.approval-item:last-child { border-bottom: none; }
+.tt-approval-item:hover {
+  border-color: #93c5fd;
+  box-shadow: 0 4px 16px -4px rgba(37,99,235,0.12);
+  transform: translateY(-1px);
+}
 
-.approval-item:hover { background-color: var(--bg-hover, #F1F5F9); }
+.tt-approval-item--urgent {
+  border-color: rgba(252, 165, 165, 0.45) !important;
+  background: linear-gradient(135deg,#fff8f8 0%,#ffffff 100%) !important;
+}
 
-.approval-icon {
-  width: 42px;
-  height: 42px;
+:global(.dark) .tt-approval-item {
+  background: var(--bg-card, #1a2235) !important;
+  border-color: var(--border, rgba(255,255,255,0.07)) !important;
+}
+:global(.dark) .tt-approval-item:hover {
+  border-color: rgba(96,165,250,0.35) !important;
+  box-shadow: 0 4px 16px -4px rgba(96,165,250,0.15);
+}
+:global(.dark) .tt-approval-item--urgent {
+  border-color: rgba(239,68,68,0.45) !important;
+  background: linear-gradient(135deg, #2a0d0d 0%, #1e2535 100%) !important;
+}
+
+/* ── Avatar ── */
+.tt-avatar {
+  width: 44px;
+  height: 44px;
   border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
   flex-shrink: 0;
+  position: relative;
+  letter-spacing: -0.02em;
 }
 
-.approval-icon .material-symbols-rounded {
-  font-size: 20px;
-  font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+.tt-urgent-dot {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  width: 10px;
+  height: 10px;
+  background: #ef4444;
+  border-radius: 50%;
+  border: 2px solid white;
+  animation: pulse-red 1.5s ease infinite;
 }
+:global(.dark) .tt-urgent-dot { border-color: #121827; }
 
-.approval-icon--amber { background: var(--warning-light, #FEF3C7); }
-.approval-icon--amber .material-symbols-rounded { color: var(--warning, #F59E0B); }
+/* ── Info block ── */
+.tt-approval-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 
-.approval-icon--blue { background: var(--brand-light, #DBEAFE); }
-.approval-icon--blue .material-symbols-rounded { color: var(--brand, #3B82F6); }
-
-.approval-icon--red { background: var(--danger-light, #FEE2E2); }
-.approval-icon--red .material-symbols-rounded { color: var(--danger, #EF4444); }
-
-.approval-content { flex: 1; }
-
-.approval-title {
-  font-size: 13.5px;
-  font-weight: 600;
-  color: var(--text-title, #111827);
-  margin: 0 0 3px;
-}
-
-.approval-meta {
-  font-size: 12px;
-  color: var(--text-muted, #6B7280);
-  margin: 0;
-}
-
-.urgent-meta { color: var(--danger, #EF4444) !important; font-weight: 600; }
-
-.approval-actions {
+.tt-approval-name-row {
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tt-approval-name {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--text-title, #111827);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tt-urgent-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: #fee2e2;
+  color: #dc2626;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.tt-approval-dept {
+  font-size: 11.5px;
+  color: var(--text-muted, #9ca3af);
+  font-weight: 500;
+}
+
+.tt-approval-title-row {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.tt-approval-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tt-approval-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-title, #374151);
+}
+
+.tt-approval-time {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--text-muted, #9ca3af);
+  margin-top: 2px;
+}
+
+/* ── Action Buttons ── */
+.tt-approval-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
   flex-shrink: 0;
 }
 
-.btn-reject {
+.tt-btn-reject {
   padding: 6px 14px;
-  border-radius: 7px;
-  border: 1px solid var(--border, #E5E7EB);
+  border-radius: 8px;
+  border: 1.5px solid var(--border, #e5e7eb);
   background: transparent;
-  color: var(--text-body, #374151);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-body, #6b7280);
   cursor: pointer;
+  transition: all 0.15s;
   font-family: inherit;
-  transition: background-color 0.15s, border-color 0.15s;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
+.tt-btn-reject:hover { border-color: #ef4444; color: #ef4444; background: #fff1f2; }
 
-.btn-reject:hover {
-  background: var(--bg-hover, #F1F5F9);
-  border-color: var(--text-muted);
-}
-
-.btn-approve {
-  padding: 6px 14px;
-  border-radius: 7px;
+.tt-btn-approve {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 8px;
   border: none;
-  background: var(--brand, #3B82F6);
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
   color: #fff;
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 11px;
+  font-weight: 800;
   cursor: pointer;
+  transition: all 0.15s;
   font-family: inherit;
-  box-shadow: 0 1px 4px rgba(59,130,246,0.3);
-  transition: background 0.15s, box-shadow 0.15s;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  box-shadow: 0 3px 10px rgba(37,99,235,0.3);
+}
+.tt-btn-approve:hover {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(37,99,235,0.4);
 }
 
-.btn-approve:hover {
-  background: var(--brand-hover, #2563EB);
-  box-shadow: 0 3px 8px rgba(59,130,246,0.4);
+@keyframes pulse-red {
+  0%,100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.4); opacity: 0.7; }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .btn-schedule {
@@ -1543,7 +1709,49 @@ const dynamicBarChart = computed(() => {
   transition: opacity 0.2s ease;
 }
 .modal-fade-enter-from,
+.modal-fade-enter-from,
 .modal-fade-leave-to {
   opacity: 0;
 }
+</style>
+
+<style>
+/* ─── Avatar & Type badge dynamic bg colors (Unscoped for Tailwind overrides) ─── */
+.dark .tt-avatar.bg-pink-100    { background-color: rgba(236,72,153,0.18) !important; }
+.dark .tt-avatar.text-pink-600  { color: #f9a8d4 !important; }
+.dark .tt-avatar.bg-indigo-100  { background-color: rgba(99,102,241,0.18) !important; }
+.dark .tt-avatar.text-indigo-600{ color: #a5b4fc !important; }
+.dark .tt-avatar.bg-green-100   { background-color: rgba(34,197,94,0.18) !important; }
+.dark .tt-avatar.text-green-600 { color: #86efac !important; }
+.dark .tt-avatar.bg-amber-100   { background-color: rgba(245,158,11,0.18) !important; }
+.dark .tt-avatar.text-amber-600 { color: #fcd34d !important; }
+.dark .tt-avatar.bg-teal-100    { background-color: rgba(20,184,166,0.18) !important; }
+.dark .tt-avatar.text-teal-600  { color: #5eead4 !important; }
+.dark .tt-avatar.bg-purple-100  { background-color: rgba(168,85,247,0.18) !important; }
+.dark .tt-avatar.text-purple-600{ color: #d8b4fe !important; }
+.dark .tt-avatar.bg-rose-100    { background-color: rgba(244,63,94,0.18) !important; }
+.dark .tt-avatar.text-rose-600  { color: #fda4af !important; }
+.dark .tt-avatar.bg-sky-100     { background-color: rgba(14,165,233,0.18) !important; }
+.dark .tt-avatar.text-sky-600   { color: #7dd3fc !important; }
+
+.dark .tt-approval-type.bg-blue-50     { background-color: rgba(37,99,235,0.18) !important; }
+.dark .tt-approval-type.text-blue-600  { color: #93c5fd !important; }
+.dark .tt-approval-type.bg-indigo-50   { background-color: rgba(99,102,241,0.18) !important; }
+.dark .tt-approval-type.text-indigo-600{ color: #a5b4fc !important; }
+.dark .tt-approval-type.bg-green-50    { background-color: rgba(34,197,94,0.18) !important; }
+.dark .tt-approval-type.text-green-600 { color: #86efac !important; }
+.dark .tt-approval-type.bg-amber-50    { background-color: rgba(245,158,11,0.18) !important; }
+.dark .tt-approval-type.text-amber-600 { color: #fcd34d !important; }
+.dark .tt-approval-type.bg-teal-50     { background-color: rgba(20,184,166,0.18) !important; }
+.dark .tt-approval-type.text-teal-600  { color: #5eead4 !important; }
+.dark .tt-approval-type.bg-purple-50   { background-color: rgba(168,85,247,0.18) !important; }
+.dark .tt-approval-type.text-purple-600{ color: #d8b4fe !important; }
+.dark .tt-approval-type.bg-red-50      { background-color: rgba(239,68,68,0.18) !important; }
+.dark .tt-approval-type.text-red-600   { color: #fca5a5 !important; }
+
+.dark .tt-approval-name { color: #f1f5f9 !important; }
+.dark .tt-approval-dept { color: rgba(255,255,255,0.7) !important; }
+.dark .tt-approval-title { color: #e2e8f0 !important; }
+.dark .tt-approval-time { color: rgba(255,255,255,0.5) !important; }
+.dark .tt-urgent-badge { background-color: rgba(239,68,68,0.2) !important; color: #fca5a5 !important; }
 </style>
