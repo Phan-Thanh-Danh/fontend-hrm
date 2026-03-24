@@ -48,9 +48,9 @@
               </thead>
               <tbody class="divide-y divide-[var(--sys-border-subtle)]">
                 <tr v-for="candidate in paginatedCandidates" :key="candidate.id" 
-                  @click="activeCandidateId = candidate.id"
+                  @click="selectCandidate(candidate.id)"
                   class="group cursor-pointer transition-colors"
-                  :class="activeCandidateId === candidate.id ? 'bg-[var(--sys-brand-soft)]/50' : 'hover:bg-[var(--sys-bg-hover)]'">
+                  :class="String(activeCandidateId) === String(candidate.id) ? 'bg-[var(--sys-brand-soft)]/50' : 'hover:bg-[var(--sys-bg-hover)]'">
                   <td class="px-4 py-3 whitespace-nowrap bg-transparent">
                     <div class="flex flex-col bg-transparent">
                       <span class="text-[13px] font-semibold text-[var(--sys-text-primary)] mb-0.5 truncate max-w-[180px]">{{ candidate.name }}</span>
@@ -132,7 +132,8 @@
           <!-- Real PDF Viewer -->
           <div class="flex-grow p-4 bg-[var(--sys-bg-hover)]/20 relative overflow-hidden hidden md:block">
             <iframe 
-              :src="activeCandidate.cvUrl ? activeCandidate.cvUrl : '/cv-template.pdf#toolbar=0'" 
+              :key="iframeKey"
+              :src="activeCandidate && activeCandidate.cvUrl ? activeCandidate.cvUrl : '/cv-template.pdf#toolbar=0'" 
               class="w-full h-full border-none rounded-md shadow-lg bg-white opacity-40 hover:opacity-100 transition-opacity"
               title="CV Viewer"
             ></iframe>
@@ -304,7 +305,14 @@ const route = useRoute();
 const { all: candidates, hrPipeline } = useHRApplications();
 const { showAlert } = useConfirm();
 
+const iframeKey = ref(0);
+
 const activeCandidateId = ref(null);
+
+function selectCandidate(id) {
+  activeCandidateId.value = id;
+  iframeKey.value++; // force iframe to reload with new src
+}
 const searchQuery = ref('');
 const filterPosition = ref('');
 const filterAiScore = ref('');
@@ -336,7 +344,11 @@ const aiScoreOptions = [
 ];
 
 const activeCandidate = computed(() => {
-  return candidates.value.find(c => c.id === activeCandidateId.value) || candidates.value[0] || null;
+  if (activeCandidateId.value === null || activeCandidateId.value === undefined) {
+    return candidates.value[0] || null;
+  }
+  // Dùng == để tránh lỗi type mismatch giữa string và number
+  return candidates.value.find(c => String(c.id) === String(activeCandidateId.value)) || null;
 });
 
 const filteredCandidates = computed(() => {

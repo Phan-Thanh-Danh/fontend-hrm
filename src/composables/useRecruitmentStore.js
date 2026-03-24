@@ -30,7 +30,26 @@ const STATUS_MAP = {
 let initialApps = applicationsJson;
 try {
   const saved = localStorage.getItem('aet_hrm_applications');
-  if (saved) initialApps = JSON.parse(saved);
+  if (saved) {
+    const parsed = JSON.parse(saved);
+    // ── Dedup: sửa ID bị trùng do bug _nextId reset sau mỗi lần refresh ──
+    // Lấy max ID từ file JSON gốc để biết vùng ID "hợp lệ"
+    const baseMaxId = Math.max(...applicationsJson.map(a => a.applicationId), 0);
+    let repairCounter = baseMaxId + 1;
+    const seenIds = new Set();
+    const fixed = parsed.map(a => {
+      if (seenIds.has(a.applicationId)) {
+        // ID này đã xuất hiện rồi → gán ID mới
+        while (seenIds.has(repairCounter)) repairCounter++;
+        const newId = repairCounter++;
+        console.warn(`[HRM Store] Duplicate applicationId ${a.applicationId} → reassigned to ${newId} for "${a.fullName}"`);
+        return { ...a, applicationId: newId };
+      }
+      seenIds.add(a.applicationId);
+      return a;
+    });
+    initialApps = fixed;
+  }
 } catch (e) { console.error('Error loading applications from local storage', e); }
 
 const _store = reactive({
@@ -43,7 +62,8 @@ watch(() => _store.applications, (newVal) => {
 }, { deep: true });
 
 // ─── PRIVATE HELPER: ID Counter ──────────────────────────────
-let _nextId = Math.max(...applicationsJson.map(a => a.applicationId), 0) + 1;
+// QUAN TRỌNG: tính từ initialApps (đã bao gồm localStorage) để tránh trùng ID sau khi refresh trang
+let _nextId = Math.max(...initialApps.map(a => a.applicationId), 0) + 1;
 const _newId = () => _nextId++;
 
 // ─── PRIVATE HELPER: Shape raw record for UI ─────────────────
