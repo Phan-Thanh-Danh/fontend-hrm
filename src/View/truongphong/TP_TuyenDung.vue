@@ -169,7 +169,11 @@
                   <p class="text-[12px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest">{{ selectedCandidate.position }}</p>
                   <p class="text-[11px] font-medium text-[var(--sys-text-secondary)] mt-1.5 flex items-center gap-1.5 opacity-80">
                     <span class="material-symbols-rounded text-[14px]">event</span>
-                    Ngày nộp hồ sơ: {{ selectedCandidate.dateFilled }}
+                    Ngày nộp hồ sơ: {{ selectedCandidate.date || 'Chưa có' }}
+                  </p>
+                  <p v-if="selectedCandidate.interviewDate" class="text-[11px] font-bold text-[var(--sys-brand-solid)] mt-1 flex items-center gap-1.5">
+                    <span class="material-symbols-rounded text-[14px]">schedule</span>
+                    Lịch phỏng vấn: {{ new Date(selectedCandidate.interviewDate).toLocaleString('vi-VN') }}
                   </p>
                 </div>
               </div>

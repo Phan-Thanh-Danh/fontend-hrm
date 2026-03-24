@@ -165,28 +165,60 @@
 
               </div>
 
-            <!-- STATE: CHỜ_HR_DUYỆT → nút Forward to Manager -->
+            <!-- STATE: CHỜ_HR_DUYỆT → Phê duyệt + Tạo lịch PV -->
             <div v-if="activeCandidate.status === 'pending_hr'" class="animate-fadeIn">
               <h4 class="text-[12px] font-bold text-[var(--sys-warning-text)] flex items-center gap-2 mb-4 uppercase tracking-wide">
                 <span class="material-symbols-outlined text-[18px]">pending_actions</span> Chờ HR xét duyệt
               </h4>
-              <div class="flex gap-3">
-                <button @click="handleApproveToManager"
+
+              <!-- Bước 1: Chưa phê duyệt → hiện 2 nút -->
+              <div v-if="!showScheduleForm" class="flex gap-3">
+                <button @click="showScheduleForm = true"
                   class="flex-1 h-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
-                  <span class="material-symbols-outlined text-[18px]">forward_to_inbox</span>
-                  Chuyển Trưởng phòng
+                  <span class="material-symbols-outlined text-[18px]">task_alt</span>
+                  Phê duyệt
                 </button>
                 <button @click="handleFinalDecision('fail')"
                   class="flex-1 h-10 border border-[var(--sys-danger-border)] text-[var(--sys-danger-text)] rounded-md text-[13px] font-bold hover:bg-[var(--sys-danger-soft)] transition-all uppercase tracking-wide">
                   Từ chối
                 </button>
               </div>
+
+              <!-- Bước 2: Sau khi phê duyệt → hiện form lịch PV -->
+              <div v-else class="animate-fadeIn space-y-3">
+                <div class="p-3 rounded-md bg-[var(--sys-success-soft)] border border-[var(--sys-success-border)] flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[var(--sys-success-text)] text-[18px]">check_circle</span>
+                  <p class="text-[12px] font-bold text-[var(--sys-success-text)] uppercase tracking-wide">Đã phê duyệt — Tạo lịch phỏng vấn</p>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="space-y-1.5">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Ngày phỏng vấn</label>
+                    <input type="date" v-model="interviewDate" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Giờ hẹn</label>
+                    <input type="time" v-model="interviewTime" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                  </div>
+                </div>
+                <div class="flex gap-2">
+                  <button @click="handleApproveAndSchedule"
+                    class="flex-1 h-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
+                    <span class="material-symbols-outlined text-[18px]">send</span>
+                    Gửi CV &amp; Lịch PV cho Trưởng phòng
+                  </button>
+                  <button @click="showScheduleForm = false"
+                    class="h-10 px-3 border border-[var(--sys-border-subtle)] text-[var(--sys-text-secondary)] rounded-md text-[12px] font-bold hover:bg-[var(--sys-bg-hover)] transition-all">
+                    Hủy
+                  </button>
+                </div>
+              </div>
             </div>
 
-            <!-- STATE: CHỜ_TP_DUYỆT → lên lịch phỏng vấn -->
+            <!-- STATE: CHỜ_TP_DUYỆT → Hiển thị thông tin hoặc Lên lịch nếu chưa có -->
             <div v-else-if="['pending_mgr', 'mgr_approved'].includes(activeCandidate.status)" class="animate-fadeIn">
               <h4 class="text-[12px] font-bold text-[var(--sys-brand-solid)] flex items-center gap-2 mb-4 uppercase tracking-wide">
-                <span class="material-symbols-outlined text-[18px]">event</span> Chờ Trưởng phòng thẩm định → Lên lịch
+                <span class="material-symbols-outlined text-[18px]">event</span> 
+                {{ activeCandidate.interviewDate ? 'Hồ sơ đang chờ Trưởng phòng đánh giá' : 'Chờ Trưởng phòng thẩm định → Lên lịch' }}
               </h4>
 
               <!-- Display Manager's Review if available -->
@@ -196,25 +228,41 @@
                 </p>
                 <p class="text-[13px] text-[var(--sys-text-primary)] italic font-semibold">"{{ activeCandidate.managerReview }}"</p>
               </div>
-              <div v-else class="mb-5 p-3 rounded-md bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] border-dashed text-center">
-                <p class="text-[11px] font-medium text-[var(--sys-text-disabled)] tracking-wide">Trạng thái: Đang chờ Trưởng phòng phản hồi thẩm định CV.</p>
-              </div>
 
-              <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="space-y-1.5">
-                  <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Ngày chọn</label>
-                  <input type="date" v-model="interviewDate" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+              <!-- Nếu ĐÃ CÓ lịch phỏng vấn từ bước HR phê duyệt -->
+              <div v-if="activeCandidate.interviewDate" class="mb-5 p-4 rounded-md bg-[var(--sys-brand-soft)]/30 border border-[var(--sys-brand-border)]">
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[20px]">calendar_month</span>
+                  <p class="text-[12px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-wide">Lịch phỏng vấn đã thiết lập</p>
                 </div>
-                <div class="space-y-1.5">
-                  <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Giờ hẹn</label>
-                  <input type="time" v-model="interviewTime" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
-                </div>
+                <p class="text-[13px] font-semibold text-[var(--sys-text-primary)]">
+                  Thời gian: {{ new Date(activeCandidate.interviewDate).toLocaleString('vi-VN') }}
+                </p>
+                <p class="text-[11px] text-[var(--sys-text-secondary)] mt-1 italic">Ứng viên đã nhận được thông báo. Chờ Trưởng phòng phản hồi sau phỏng vấn.</p>
               </div>
-              <button @click="handleScheduleInterview"
-                class="w-full h-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
-                <span class="material-symbols-outlined text-[20px]">send</span>
-                Gửi triệu tập phỏng vấn
-              </button>
+              
+              <!-- Nếu CHƯA CÓ lịch (luồng cũ hoặc TP yêu cầu phỏng vấn) -->
+              <div v-else>
+                <div class="mb-5 p-3 rounded-md bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] border-dashed text-center">
+                  <p class="text-[11px] font-medium text-[var(--sys-text-disabled)] tracking-wide">Trạng thái: Đang chờ Trưởng phòng phản hồi thẩm định CV.</p>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 mb-4">
+                  <div class="space-y-1.5">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Ngày chọn</label>
+                    <input type="date" v-model="interviewDate" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                  </div>
+                  <div class="space-y-1.5">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Giờ hẹn</label>
+                    <input type="time" v-model="interviewTime" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
+                  </div>
+                </div>
+                <button @click="handleScheduleInterview"
+                  class="w-full h-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
+                  <span class="material-symbols-outlined text-[20px]">send</span>
+                  Gửi triệu tập phỏng vấn
+                </button>
+              </div>
             </div>
 
             <!-- STATE: ĐANG_PHỎNG_VẤN → Quyết định cuối -->
@@ -306,12 +354,16 @@ const { all: candidates, hrPipeline } = useHRApplications();
 const { showAlert } = useConfirm();
 
 const iframeKey = ref(0);
+const showScheduleForm = ref(false);
 
 const activeCandidateId = ref(null);
 
 function selectCandidate(id) {
   activeCandidateId.value = id;
   iframeKey.value++; // force iframe to reload with new src
+  showScheduleForm.value = false; // reset form khi đổi ứng viên
+  interviewDate.value = '';
+  interviewTime.value = '';
 }
 const searchQuery = ref('');
 const filterPosition = ref('');
@@ -392,14 +444,32 @@ const getStatusClass = (status) => {
   return map[status] || map['pending_hr'];
 };
 
-// ACTION: HR phê duyệt → chuyển sang CHỜ_TP_DUYỆT
-async function handleApproveToManager() {
+// ACTION: HR phê duyệt + tạo lịch PV → forward cho TP (từ trạng thái CHỜ_HR_DUYỆT)
+async function handleApproveAndSchedule() {
   if (!activeCandidate.value) return;
-  forwardToManager(activeCandidate.value.id, 'HR Admin');
-  await showAlert('ĐÃ CHUYỂN', `Hồ sơ của ${activeCandidate.value.name} đã được chuyển tới Trưởng phòng ${activeCandidate.value.department}.`);
+  if (!interviewDate.value || !interviewTime.value) {
+    await showAlert('THIẾU THÔNG TIN', 'Vui lòng chọn ngày và giờ phỏng vấn trước khi gửi cho Trưởng phòng!');
+    return;
+  }
+  
+  // 1. Forward hồ sơ kèm lịch phỏng vấn (Vẫn giữ trạng thái CHỜ_TP_DUYỆT)
+  forwardToManager(activeCandidate.value.id, 'HR Admin', { 
+    date: interviewDate.value, 
+    time: interviewTime.value 
+  });
+  
+  await showAlert(
+    'ĐÃ GỬI CHO TRƯỞNG PHÒNG',
+    `Hồ sơ và lịch phỏng vấn của ${activeCandidate.value.name} đã được gửi tới Trưởng phòng ${activeCandidate.value.department}.\nLịch hẹn: ${interviewDate.value} lúc ${interviewTime.value}.`
+  );
+  
+  // Reset
+  showScheduleForm.value = false;
+  interviewDate.value = '';
+  interviewTime.value = '';
 }
 
-// ACTION: Lên lịch phỏng vấn
+// ACTION: Lên lịch phỏng vấn (từ trạng thái CHỜ_TP_DUYỆT / TP đã duyệt)
 async function handleScheduleInterview() {
   if (!interviewDate.value || !interviewTime.value) {
     await showAlert('THIẾU THÔNG TIN', 'Vui lòng chọn ngày và giờ phỏng vấn!');

@@ -63,9 +63,12 @@
           >
             <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">notifications</span>
             <span
-              class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5 rounded-full bg-[oklch(0.55_0.22_25)] items-center justify-center ring-2"
+              v-if="totalNotificationsCount > 0"
+              class="absolute top-1 right-1 flex h-4 w-4 rounded-full bg-[oklch(0.55_0.22_25)] items-center justify-center ring-2 text-[8px] font-bold text-white transition-all shadow-sm"
               :class="isDark ? 'ring-[oklch(0.165_0.015_265)]' : 'ring-white'"
-            ></span>
+            >
+              {{ totalNotificationsCount }}
+            </span>
           </button>
 
           <transition name="m3-dropdown">
@@ -75,20 +78,20 @@
             >
               <div class="flex justify-between items-center px-4 py-3 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]">
                 <h6 class="text-sm font-semibold mb-0 text-[var(--sys-text-primary)]">Thông báo</h6>
-                <span v-if="pendingLeaveRequests.length > 0" class="text-[10px] font-semibold text-[var(--sys-brand-solid)] uppercase tracking-wider">{{ pendingLeaveRequests.length }} Mới</span>
+                <span v-if="totalNotificationsCount > 0" class="px-2 py-0.5 rounded-full bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] text-[10px] font-bold uppercase tracking-wider">{{ totalNotificationsCount }} Mới</span>
               </div>
               <div class="max-h-[300px] overflow-y-auto custom-scrollbar">
                 <div 
                   v-for="req in recentPendingRequests" 
                   :key="req.id"
                   class="p-3 flex gap-3 transition-colors cursor-pointer border-b border-[var(--sys-border-subtle)] hover:bg-[var(--sys-bg-hover)]"
-                  @click="router.push('/truongphong/nghiphep'); isNotificationOpen = false"
+                  @click="router.push(req.link); isNotificationOpen = false"
                 >
                   <div class="w-10 h-10 rounded-lg flex items-center justify-center shrink-0 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)]">
-                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1">{{ req.urgent ? 'priority_high' : 'event_busy' }}</span>
+                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1">{{ req.icon }}</span>
                   </div>
                   <div class="bg-transparent flex-1">
-                    <p class="text-xs font-bold mb-0.5 text-[var(--sys-text-primary)] uppercase tracking-tight">{{ req.requester }} xin nghỉ phép</p>
+                    <p class="text-xs font-bold mb-0.5 text-[var(--sys-text-primary)] uppercase tracking-tight">{{ req.requester }}</p>
                     <p class="text-[11px] text-[var(--sys-text-secondary)] font-medium line-clamp-1 opacity-70">{{ req.title }}</p>
                     <div class="flex items-center justify-between mt-1">
                        <span class="text-[9px] text-[var(--sys-text-disabled)] font-bold uppercase tracking-wider">{{ req.time }}</span>
@@ -303,7 +306,9 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useConfirm } from '@/composables/useConfirm';
-import { NavSection, SidebarItem } from './Layout_Admin.vue';
+import {
+  useManagerApplications,
+} from '@/composables/useRecruitmentStore';
 import { mockLeaveRequests, mockEmployees } from '@/mock-data/index.js';
 
 const { showConfirm } = useConfirm();
@@ -321,6 +326,8 @@ const profileDropdownRef = ref(null);
 const userId = localStorage.getItem('userId') || 'NV008';
 const userName = localStorage.getItem('userName') || 'Trưởng phòng';
 const userDeptId = localStorage.getItem('userDeptId') || '1';
+
+const { pendingEval: pendingRecruitments } = useManagerApplications(userDeptId);
 
 const allLeaveRequests = ref([]);
 const deptEmployees = ref([]);
@@ -357,15 +364,33 @@ const pendingLeaveCount = computed(() => {
 });
 
 const recentPendingRequests = computed(() => {
-  return pendingLeaveRequests.value.slice(0, 5).map(r => {
-    return {
-      id: r.id,
-      requester: r.name || 'Nhân viên',
-      title: r.type,
-      time: r.requestDate || 'Hôm nay',
-      urgent: r.urgent
-    };
-  });
+  const leaves = pendingLeaveRequests.value.map(r => ({
+    id: `leave-${r.id}`,
+    requester: r.name || 'Nhân viên',
+    title: `Xin nghỉ phép: ${r.type}`,
+    time: r.requestDate || 'Hôm nay',
+    urgent: r.urgent,
+    type: 'leave',
+    icon: r.urgent ? 'priority_high' : 'event_busy',
+    link: '/truongphong/nghiphep'
+  }));
+
+  const recruitments = pendingRecruitments.value.map(c => ({
+    id: `recruit-${c.id}`,
+    requester: c.name,
+    title: `Thẩm định hồ sơ: ${c.position}`,
+    time: c.date,
+    urgent: false,
+    type: 'recruitment',
+    icon: 'person_search',
+    link: '/truongphong/tuyendung'
+  }));
+
+  return [...leaves, ...recruitments].slice(0, 5);
+});
+
+const totalNotificationsCount = computed(() => {
+  return (pendingLeaveRequests.value.length + pendingRecruitments.value.length) || 0;
 });
 
 const isActive = (path) => route.path.startsWith(path);
@@ -419,6 +444,181 @@ const logout = async () => {
     router.push('/login');
   }
 };
+</script>
+
+<!-- ─── Sub-components (defineComponent inline) ─────────────────────────── -->
+<script>
+import { defineComponent, h, resolveComponent } from 'vue';
+
+// ── NavSection: section label / divider ──────────────────────────────────
+export const NavSection = defineComponent({
+  name: 'NavSection',
+  props: {
+    label: String,
+    expanded: Boolean,
+    isDark: Boolean,
+  },
+  setup(props) {
+    return () => {
+      if (props.expanded) {
+        return h('p', {
+          class: [
+            'px-5 pt-4 pb-1 text-[10px] font-bold uppercase tracking-[0.1em] whitespace-nowrap text-[var(--sys-text-secondary)]',
+          ].join(' '),
+        }, props.label);
+      } else {
+        return h('div', {
+          class: [
+            'mx-auto w-8 h-px my-3 bg-[var(--sys-border)]',
+          ].join(' '),
+        });
+      }
+    };
+  },
+});
+
+// ── SidebarItem ───────────────────────────────────────────────────────────
+export const SidebarItem = defineComponent({
+  name: 'SidebarItem',
+  props: {
+    expanded: Boolean,
+    isActive: Boolean,
+    icon: String,
+    label: String,
+    isDark: Boolean,
+    to: String,
+    badge: { type: Number, default: undefined },
+  },
+  emits: ['click'],
+  setup(props, { emit }) {
+    return () => {
+      const RouterLink = resolveComponent('RouterLink');
+
+      // Active pill bg
+      const activeBg = 'bg-[var(--sys-brand-soft)]';
+      const hoverBg  = 'hover:bg-[var(--sys-bg-hover)]';
+      const activeText = 'text-[var(--sys-brand-soft-text)]';
+      const activeIcon = 'text-[var(--sys-brand-solid)]';
+      const inactiveText = 'text-[var(--sys-text-secondary)]';
+      const inactiveIcon = 'text-[var(--sys-icon-default)]';
+      const labelText = 'text-[var(--sys-text-primary)]';
+
+      // ── DRAWER (expanded) ──
+      if (props.expanded) {
+        return h(RouterLink, {
+          to: props.to,
+          class: [
+            'group relative flex items-center justify-between w-full h-10 px-4',
+            'transition-all duration-150 outline-none text-left no-underline border-l-2',
+            'focus-visible:bg-[var(--sys-bg-hover)]',
+            props.isActive ? 'bg-[var(--sys-brand-soft)] border-[var(--sys-brand-solid)]' : 'bg-transparent border-transparent hover:bg-[var(--sys-bg-hover)]',
+          ].join(' '),
+          onClick: () => emit('click'),
+        }, () => [
+          h('div', { class: 'flex items-center gap-3 bg-transparent' }, [
+            // Icon (morphing)
+            h('span', { class: 'relative shrink-0 w-5 h-5 flex items-center justify-center bg-transparent' }, [
+              // Outline icon (inactive)
+              h('span', {
+                class: [
+                  'material-symbols-rounded absolute transition-all duration-300',
+                  props.isActive ? `opacity-0 scale-50 ${activeIcon}` : `opacity-100 scale-100 ${inactiveIcon}`,
+                ].join(' '),
+                style: "font-size:20px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
+              }, props.icon),
+              // Filled icon (active)
+              h('span', {
+                class: [
+                  'material-symbols-rounded absolute transition-all duration-300',
+                  props.isActive ? `opacity-100 scale-100 ${activeIcon}` : `opacity-0 scale-150 ${inactiveIcon}`,
+                ].join(' '),
+                style: "font-size:22px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
+              }, props.icon),
+            ]),
+
+            // Label
+            h('span', {
+              class: ['text-sm whitespace-nowrap bg-transparent', props.isActive ? `${activeText} font-bold` : labelText].join(' '),
+            }, props.label),
+          ]),
+
+          // Badge chip
+          props.badge !== undefined ? h('span', {
+            class: [
+              'shrink-0 min-w-[22px] h-[22px] px-1.5 rounded-full flex items-center justify-center',
+              props.isActive
+                ? 'bg-[var(--sys-bg-surface)] text-[var(--sys-accent)]'
+                : 'bg-[var(--sys-accent-container)] text-[var(--sys-on-accent-container)]',
+            ].join(' '),
+            style: 'font-size:11px;font-weight:600',
+          }, props.badge > 99 ? '99+' : String(props.badge)) : null,
+        ]);
+      }
+
+      // ── RAIL (collapsed) ──
+      return h(RouterLink, {
+        to: props.to,
+        title: props.label,
+        class: [
+          'group relative flex flex-col items-center gap-1 w-full py-1 cursor-pointer outline-none',
+          'focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)] rounded-xl no-underline',
+        ].join(' '),
+        onClick: () => emit('click'),
+      }, () => [
+        // Pill
+        h('div', {
+          class: [
+            'relative flex items-center justify-center w-16 h-8 rounded-lg transition-colors duration-150',
+            props.isActive ? activeBg : hoverBg,
+          ].join(' '),
+        }, [
+          // Badge for Rail
+        props.badge !== undefined ? h('span', {
+          class: [
+            'absolute -top-1 right-2 min-w-[14px] h-[14px] px-1 rounded-full flex items-center justify-center bg-[var(--sys-accent-container)] text-[var(--sys-on-accent-container)] shadow-sm',
+          ].join(' '),
+          style: 'font-size:8px;font-weight:700',
+        }, props.badge > 9 ? '9+' : String(props.badge)) : null,
+
+          // Active dot for Rail
+          h('div', {
+            class: [
+              'absolute -right-1 top-1/2 -translate-y-1/2 w-1 h-3 rounded-l-full bg-[var(--sys-brand-solid)] transition-all duration-300',
+              props.isActive ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0',
+            ].join(' '),
+          }),
+
+          // Icon (morphing)
+          h('span', { class: 'relative w-5 h-5 flex items-center justify-center' }, [
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-0 scale-50 ${activeIcon}` : `opacity-100 scale-100 ${inactiveIcon}`,
+              ].join(' '),
+              style: "font-size:21px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+            h('span', {
+              class: [
+                'material-symbols-rounded absolute transition-all duration-300',
+                props.isActive ? `opacity-100 scale-100 ${activeIcon}` : `opacity-0 scale-150 ${inactiveIcon}`,
+              ].join(' '),
+              style: "font-size:21px;font-variation-settings:'FILL' 1,'wght' 500,'GRAD' 0,'opsz' 24",
+            }, props.icon),
+          ]),
+        ]),
+
+        // Label below pill
+        h('span', {
+          class: [
+            'text-[10px] leading-tight px-1 text-center transition-colors',
+            props.isActive ? activeText : inactiveText,
+          ].join(' '),
+          style: `font-weight:${props.isActive ? 600 : 400}`,
+        }, props.label.length > 10 ? props.label.slice(0, 9) + '…' : props.label),
+      ]);
+    };
+  },
+});
 </script>
 
 <style scoped>

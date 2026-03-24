@@ -167,12 +167,54 @@ export function submitApplication(formData) {
  * Task 2 / Action B: HR forwards application to the Department Manager.
  * Status: CHỜ_HR_DUYỆT → CHỜ_TP_DUYỆT
  */
-export function forwardToManager(applicationId, hrReviewerName = 'HR Admin') {
+export function forwardToManager(applicationId, hrReviewerName = 'HR Admin', interviewData = null) {
   const i = _idx(applicationId);
   if (i === -1) return false;
   _store.applications[i].status = 'CHỜ_TP_DUYỆT';
   _store.applications[i].reviewedByHR = hrReviewerName;
+
+  if (interviewData && interviewData.date && interviewData.time) {
+    const isoDateTime = `${interviewData.date}T${interviewData.time}:00`;
+    _store.applications[i].interviewDate = isoDateTime;
+    
+    // Đồng bộ vào localStorage LichPhongVan
+    syncInterviewToStorage(applicationId, isoDateTime);
+  }
+  
   return true;
+}
+
+// Helper function để đồng bộ lịch phỏng vấn (tách ra từ scheduleInterview)
+function syncInterviewToStorage(applicationId, isoDateTime) {
+  const LICH_KEY = 'hrm_interviews_v1';
+  const i = _idx(applicationId);
+  if (i === -1) return;
+  const app = _store.applications[i];
+
+  const dtObj = new Date(isoDateTime);
+  const dd = dtObj.getDate().toString().padStart(2, '0');
+  const mm = (dtObj.getMonth() + 1).toString().padStart(2, '0');
+  const yyyy = dtObj.getFullYear();
+  const formattedDate = `${dd}/${mm}/${yyyy}`;
+  const formattedTime = `${dtObj.getHours().toString().padStart(2, '0')}:${dtObj.getMinutes().toString().padStart(2, '0')}`;
+
+  try {
+    const existing = JSON.parse(localStorage.getItem(LICH_KEY) || '[]');
+    const filtered = existing.filter(e => e.applicationId !== applicationId);
+    filtered.push({
+      id: applicationId,
+      applicationId,
+      candidate: app.fullName,
+      date: formattedDate,
+      time: formattedTime,
+      interviewerId: app.reviewedByManager ? 'NV008' : 'NV001',
+      status: 'Sắp diễn ra',
+      position: app.jobTitle || app.positionName || '',
+    });
+    localStorage.setItem(LICH_KEY, JSON.stringify(filtered));
+  } catch (e) {
+    console.error('Failed to sync interview to LichPhongVan localStorage', e);
+  }
 }
 
 /**
@@ -212,43 +254,18 @@ export function submitManagerEvaluation(applicationId, evaluationData, decision)
  * Task 5 / Action E: HR schedules interview after seeing TP's approval.
  * Status: TP_ĐÃ_DUYỆT → ĐANG_PHỎNG_VẤN
  */
-export function scheduleInterview(applicationId, date, time) {
+export function scheduleInterview(applicationId, date, time, skipStatusChange = false) {
   const i = _idx(applicationId);
   if (i === -1) return false;
-  _store.applications[i].status        = 'ĐANG_PHỎNG_VẤN';
+  
+  if (!skipStatusChange) {
+    _store.applications[i].status = 'ĐANG_PHỎNG_VẤN';
+  }
+  
   const isoDateTime = `${date}T${time}:00`;
   _store.applications[i].interviewDate = isoDateTime;
 
-  // ── Sync into LichPhongVan's localStorage ──────────────────
-  const LICH_KEY = 'hrm_interviews_v1';
-  const app = _store.applications[i];
-
-  // Parse date from ISO → DD/MM/YYYY for LichPhongVan
-  const dtObj = new Date(isoDateTime);
-  const dd = dtObj.getDate().toString().padStart(2, '0');
-  const mm = (dtObj.getMonth() + 1).toString().padStart(2, '0');
-  const yyyy = dtObj.getFullYear();
-  const formattedDate = `${dd}/${mm}/${yyyy}`;
-  const formattedTime = `${dtObj.getHours().toString().padStart(2, '0')}:${dtObj.getMinutes().toString().padStart(2, '0')}`;
-
-  try {
-    const existing = JSON.parse(localStorage.getItem(LICH_KEY) || '[]');
-    // Remove duplicates for same applicationId if re-scheduled
-    const filtered = existing.filter(e => e.applicationId !== applicationId);
-    filtered.push({
-      id: applicationId,
-      applicationId,
-      candidate: app.fullName,
-      date: formattedDate,
-      time: formattedTime,
-      interviewerId: app.reviewedByManager ? 'NV008' : 'NV001',
-      status: 'Sắp diễn ra',
-      position: app.jobTitle || app.positionName || '',
-    });
-    localStorage.setItem(LICH_KEY, JSON.stringify(filtered));
-  } catch (e) {
-    console.error('Failed to sync interview to LichPhongVan localStorage', e);
-  }
+  syncInterviewToStorage(applicationId, isoDateTime);
   return true;
 }
 
