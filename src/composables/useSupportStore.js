@@ -1,5 +1,5 @@
 import { reactive, computed } from 'vue'
-import { requestsAPI, employeesAPI } from '@/data/mockDB.js'
+import { supportRequestsAPI, employeesAPI, departmentsAPI } from '@/data/mockDB.js'
 
 const AVATAR_COLORS = [
   'linear-gradient(135deg,#2563eb,#1d4ed8)',
@@ -17,19 +17,23 @@ const state = reactive({
 export function useSupportStore() {
   const fetchTickets = async () => {
     try {
-      const [reqRes, empRes, deptRes] = await Promise.all([
-        fetch('http://localhost:3000/supportRequests'),
-        fetch('http://localhost:3000/employees'),
-        fetch('http://localhost:3000/departments')
-      ]);
+      // Simulate API delay
+      await new Promise(r => setTimeout(r, 200));
 
-      const reqs = await reqRes.json();
-      const employees = await empRes.json();
-      const departments = await deptRes.json();
+      const reqs = supportRequestsAPI.getAll();
+      const employees = employeesAPI.getAll();
+      const departments = departmentsAPI.getAll();
       
       state.tickets = reqs.map(req => {
-        const emp = employees.find(e => e.id === req.employeeId);
-        const dept = departments.find(d => String(d.id) === String(emp?.deptId));
+        const emp = employees.find(e => {
+            // Dữ liệu NV001 dạng chuỗi hoặc dạng số
+            return e.id === req.employeeId || e.employee_id === req.employeeId || `NV${String(e.employee_id).padStart(3, '0')}` === req.employeeId;
+        });
+        
+        let dept = null;
+        if (emp) {
+            dept = departments.find(d => String(d.id) === String(emp.deptId) || String(d.department_id) === String(emp.department_id));
+        }
         
         // Status mapping: backend -> frontend
         let uiStatus = 'Chờ xử lý';
@@ -39,8 +43,8 @@ export function useSupportStore() {
 
         return {
           id: req.id.toString(),
-          employeeName: emp ? emp.name : 'Unknown',
-          department: dept ? dept.name : 'N/A',
+          employeeName: emp ? (emp.name || emp.full_name) : 'Unknown',
+          department: dept ? (dept.name || dept.department_name) : 'N/A',
           category: req.type || 'Hành chính & Văn phòng',
           title: req.title,
           priority: req.priority || 'Trung bình',
@@ -50,6 +54,7 @@ export function useSupportStore() {
           asset: req.asset || '',
           description: req.desc || '',
           avatarColor: AVATAR_COLORS[String(req.id).length % AVATAR_COLORS.length],
+          note: req.note || ''
         }
       })
     } catch (error) {
@@ -67,19 +72,17 @@ export function useSupportStore() {
         desc: ticketData.description,
         status: 'pending',
         date: new Date().toLocaleDateString('vi-VN'),
-        priority: ticketData.priority || 'Trung bình'
-      }
+        priority: ticketData.priority || 'Trung bình',
+        deadline: ticketData.deadline,
+        asset: ticketData.asset
+      };
       
-      const res = await fetch('http://localhost:3000/supportRequests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(reqData)
-      });
-
-      if (res.ok) {
-        await fetchTickets();
-        return true;
-      }
+      // Simulate API delay
+      await new Promise(r => setTimeout(r, 300));
+      
+      const newData = supportRequestsAPI.add(reqData);
+      await fetchTickets();
+      return newData.id;
     } catch (error) {
       console.error('Lỗi khi gửi yêu cầu hỗ trợ:', error)
     }
@@ -93,18 +96,15 @@ export function useSupportStore() {
       else if (newStatus === 'Đang xử lý') backendStatus = 'processing';
       else if (newStatus === 'Từ chối') backendStatus = 'rejected';
 
-      const res = await fetch(`http://localhost:3000/supportRequests/${ticketId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          status: backendStatus,
-          note: note || undefined
-        })
+      // Simulate API delay
+      await new Promise(r => setTimeout(r, 200));
+
+      supportRequestsAPI.update(ticketId, { 
+        status: backendStatus,
+        note: note || undefined
       });
 
-      if (res.ok) {
-        await fetchTickets();
-      }
+      await fetchTickets();
     } catch (error) {
       console.error('Lỗi khi cập nhật trạng thái:', error)
     }

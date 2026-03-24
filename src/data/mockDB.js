@@ -9,12 +9,16 @@ const getInitialDB = () => {
   try {
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (saved) {
-      return JSON.parse(saved);
+      const parsed = JSON.parse(saved);
+      if (!parsed.supportRequests) parsed.supportRequests = [];
+      return parsed;
     }
   } catch (e) {
     console.warn("Could not load Mock DB from localStorage", e);
   }
-  return generateSeedData();
+  const seed = generateSeedData();
+  if (!seed.supportRequests) seed.supportRequests = [];
+  return seed;
 };
 
 // Global Store lưu trữ nội dung Mock DB, có tính Reactivity
@@ -24,7 +28,7 @@ export const mockDB = reactive(getInitialDB());
 watch(mockDB, (newVal) => {
   try {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newVal));
-  } catch(e) { /* ignore */ }
+  } catch (e) { /* ignore */ }
 }, { deep: true });
 
 // === HELPER FUNCTIONS API (CRUD) ===
@@ -214,3 +218,23 @@ export const salariesAPI = {
   }
 };
 
+export const supportRequestsAPI = {
+  getAll() { return mockDB.supportRequests || []; },
+  getById(id) { return (mockDB.supportRequests || []).find(r => r.id == id); },
+  add(data) {
+    if (!mockDB.supportRequests) mockDB.supportRequests = [];
+    data.id = Date.now().toString();
+    mockDB.supportRequests.unshift(data);
+    return data;
+  },
+  update(id, data) {
+    if (!mockDB.supportRequests) return;
+    const idx = mockDB.supportRequests.findIndex(r => r.id == id);
+    if (idx !== -1) Object.assign(mockDB.supportRequests[idx], data);
+  },
+  delete(id) {
+    if (!mockDB.supportRequests) return;
+    const idx = mockDB.supportRequests.findIndex(r => r.id == id);
+    if (idx !== -1) mockDB.supportRequests.splice(idx, 1);
+  }
+};
