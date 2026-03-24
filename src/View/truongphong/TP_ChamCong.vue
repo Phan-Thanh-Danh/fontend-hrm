@@ -4,7 +4,7 @@
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
         <h1 class="text-xl font-bold text-[var(--sys-text-primary)] mb-0.5 tracking-tight uppercase">Quản lý Chấm công & Chuyên cần</h1>
-        <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium">Kiểm soát và phê duyệt dữ liệu chuyên cần nhân sự phòng IT.</p>
+        <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium">Kiểm soát và phê duyệt dữ liệu chuyên cần nhân sự {{ deptName }}.</p>
       </div>
       <div class="flex items-center gap-3 shrink-0">
         <button class="h-11 px-6 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md font-bold text-[13px] uppercase tracking-widest border border-[var(--sys-brand-border)] hover:bg-[var(--sys-brand-solid)] hover:text-white transition-all flex items-center gap-2.5 shadow-sm active:scale-95">
@@ -205,13 +205,12 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Dropdown from '@/components/Dropdown.vue'
-import { employeesAPI, mockDB } from '@/data/mockDB.js'
+import { employeesAPI, mockDB, departmentsAPI } from '@/data/mockDB.js'
 
 const showHistoryModal = ref(false)
 const selectedMonth = ref('03')
 const selectedYear = ref('2026')
-
-const DEPT_ID = 2 // Phòng Công nghệ IT
+const deptName = ref('Phòng ban')
 
 const monthOptions = [
   { label: 'Tháng 01', value: '01' },
@@ -247,28 +246,26 @@ const userDeptId = localStorage.getItem('userDeptId') || '1';
 
 const loadData = async () => {
   try {
-    const [empRes, attRes] = await Promise.all([
-      fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
-      fetch(`http://localhost:3000/attendance`)
-    ]);
-    
-    const employees = await empRes.json();
-    const allAtts = await attRes.json();
-    
-    const deptInfoRes = await fetch(`http://localhost:3000/departments/${userDeptId}`);
-    const department = await deptInfoRes.json();
+    const departmentResult = departmentsAPI.getAll().find(d => Number(d.department_id) === Number(userDeptId) || d.id === userDeptId);
+    if (departmentResult) {
+      deptName.value = departmentResult.department_name || departmentResult.name || 'Phòng ban';
+    }
+
+    const employeesResult = employeesAPI.getAll().filter(e => Number(e.department_id) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
+    const allAtts = mockDB.attendances || []; // fallback to empty array if undefined
 
     // Build the grid
-    attendanceList.value = employees.map(emp => {
-      const empAtts = allAtts.filter(a => a.employeeId === emp.id);
+    attendanceList.value = employeesResult.map(emp => {
+      const empId = emp.employee_id || emp.id;
+      const empAtts = allAtts.filter(a => a.employee_id === empId || a.employeeId === empId);
       const data = {};
       let totalDays = 0;
 
       empAtts.forEach(att => {
-        const d = new Date(att.date);
+        const d = new Date(att.attendance_date || att.date);
         if (!isNaN(d)) {
           const day = d.getDate();
-          const status = att.status === 'ontime' ? 'on' : (att.status === 'late' ? 'late' : 'off');
+          const status = att.status === 'ĐÃ_DUYỆT' ? 'on' : (att.status === 'ontime' ? 'on' : (att.status === 'late' ? 'late' : 'off'));
           data[day] = status;
           if (status !== 'off') totalDays += status === 'late' ? 0.5 : 1;
         }
@@ -277,16 +274,16 @@ const loadData = async () => {
       // Fill mock data for missing days to make it look realistic for demo
       for (let d = 1; d <= 22; d++) {
         if (!data[d] && !isWeekend(d)) {
-          const seed = (parseInt(emp.id.replace(/\D/g, '')) * 31 + d) % 10;
+          const seed = (parseInt(String(empId).replace(/\D/g, '')) * 31 + d) % 10;
           data[d] = seed < 8 ? 'on' : (seed === 8 ? 'late' : 'off');
           totalDays += data[d] === 'on' ? 1 : (data[d] === 'late' ? 0.5 : 0);
         }
       }
 
       return {
-        id: emp.id,
-        name: emp.name,
-        dept: department.name || 'PHÒNG BAN',
+        id: empId,
+        name: emp.full_name || emp.name,
+        dept: deptName.value,
         total: totalDays.toFixed(1),
         data
       }
@@ -294,20 +291,21 @@ const loadData = async () => {
 
     // Build history logs
     historyLogs.value = allAtts
-      .filter(att => employees.some(e => e.id === att.employeeId))
+      .filter(att => employeesResult.some(e => (e.employee_id || e.id) === (att.employee_id || att.employeeId)))
       .slice(0, 15)
       .map(att => {
-        const emp = employees.find(e => e.id === att.employeeId);
+        const emp = employeesResult.find(e => (e.employee_id || e.id) === (att.employee_id || att.employeeId));
+        const statusConverted = att.status === 'ĐÃ_DUYỆT' ? 'ontime' : (att.status || 'ontime');
         return {
-          date: att.date,
-          name: emp ? emp.name : (att.name || 'N/A'),
-          role: department.name || 'PHÒNG BAN',
-          in: att.checkIn1 || '--:--',
-          out: att.checkOut1 || '--:--',
+          date: att.attendance_date || att.date,
+          name: emp ? (emp.full_name || emp.name) : (att.name || 'N/A'),
+          role: deptName.value,
+          in: (att.check_in_time || att.checkIn1)?.split(' ')[1] || (att.checkIn1 || '--:--'),
+          out: (att.check_out_time || att.checkOut1)?.split(' ')[1] || (att.checkOut1 || '--:--'),
           in2: att.checkIn2 || null,
           out2: att.checkOut2 || null,
-          status: att.status || 'ontime',
-          statusLabel: att.status === 'ontime' ? 'Đúng giờ' : (att.status === 'late' ? 'Đi muộn' : 'Vắng mặt')
+          status: statusConverted,
+          statusLabel: statusConverted === 'ontime' ? 'Đúng giờ' : (statusConverted === 'late' ? 'Đi muộn' : 'Vắng mặt')
         }
       });
   } catch (error) {

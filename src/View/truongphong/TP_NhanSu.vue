@@ -5,7 +5,7 @@
       <div class="bg-transparent text-left">
         <h1 class="text-xl font-bold text-[var(--sys-text-primary)] mb-0.5 tracking-tight uppercase">Quản lý Nhân sự Phòng ban</h1>
         <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium flex items-center gap-3">
-          Danh sách thành viên chính thức thuộc khối Kỹ thuật & Công nghệ IT. 
+          Danh sách thành viên chính thức thuộc {{ deptName }}. 
           <span class="px-2 py-0.5 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md border border-[var(--sys-brand-border)] text-[10px] font-bold uppercase tracking-widest shadow-sm">VIEW ONLY MODE</span>
         </p>
       </div>
@@ -134,7 +134,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                   <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm border-l-2 border-l-[var(--sys-brand-solid)]">
                     <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1">Cơ cấu tổ chức</span>
-                    <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">Phòng Kỹ thuật & Công nghệ IT</span>
+                    <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ deptName }}</span>
                   </div>
                   <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm border-l-2 border-l-[var(--sys-brand-solid)]">
                     <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1">Loại hợp đồng</span>
@@ -146,7 +146,7 @@
                   </div>
                   <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm border-l-2 border-l-[var(--sys-brand-solid)]">
                     <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1">Báo cáo cho (Line Manager)</span>
-                    <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">Trưởng phòng Kỹ thuật</span>
+                    <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedStaff.department || 'Trưởng phòng' }}</span>
                   </div>
                 </div>
               </div>
@@ -186,23 +186,21 @@ const statusOptions = [
 
 const loadData = async () => {
   try {
-    const [empRes, deptRes] = await Promise.all([
-      fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
-      fetch(`http://localhost:3000/departments/${userDeptId}`)
-    ]);
+    const departmentResult = departmentsAPI.getAll().find(d => Number(d.department_id) === Number(userDeptId) || d.id === userDeptId);
+    if (departmentResult) {
+      deptName.value = departmentResult.department_name || departmentResult.name || 'Phòng ban';
+    }
+
+    const employeesResult = employeesAPI.getAll().filter(e => Number(e.department_id) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
     
-    const employees = await empRes.json();
-    const department = await deptRes.json();
-    
-    deptName.value = department.name || 'Phòng ban';
-    staffList.value = employees.map(e => ({
-        id: e.id,
-        name: e.name,
-        position: (e.position || 'Chuyên viên').toUpperCase(),
+    staffList.value = employeesResult.map(e => ({
+        id: e.employee_id || e.id,
+        name: e.full_name || e.name,
+        position: (e.position || e.role === 'manager' ? 'Trưởng phòng' : 'Chuyên viên').toUpperCase(),
         status: e.status || 'active',
-        joinDate: e.joinDate || '2024-01-01',
+        joinDate: e.hired_date || e.joinDate || '2024-01-01',
         department: deptName.value,
-        avatarUrl: e.avatar || null
+        avatarUrl: e.avatar_url || e.avatar || null
     }));
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu nhân sự:', error);
