@@ -153,6 +153,9 @@ const handleLogin = async () => {
       } else if (user.role === 'MANAGER') {
          uiRole = 'manager';
          targetRoute = '/truongphong';
+      } else if (user.role === 'DIRECTOR') {
+         uiRole = 'director';
+         targetRoute = '/giamdoc';
       }
 
       localStorage.setItem('userRole', uiRole);

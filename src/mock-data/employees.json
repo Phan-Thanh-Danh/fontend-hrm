@@ -42,7 +42,7 @@
       "positionId": 1,
       "positionName": "Giám đốc Điều hành (CEO)"
     },
-    "role": "ADMIN"
+    "role": "DIRECTOR"
   },
   {
     "employeeId": 2,
@@ -110,7 +110,7 @@
       "positionId": 204,
       "positionName": "Phó Giám đốc"
     },
-    "role": "ADMIN"
+    "role": "DIRECTOR"
   },
   {
     "employeeId": 5,
