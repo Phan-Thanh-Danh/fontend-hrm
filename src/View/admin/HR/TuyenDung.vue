@@ -245,6 +245,7 @@ import { useRoute } from 'vue-router';
 import Dropdown from '@/components/Dropdown.vue';
 import { useRecruitmentStore } from '@/composables/useRecruitmentStore';
 import { useConfirm } from '@/composables/useConfirm';
+import { positionsAPI } from '@/data/mockDB.js';
 
 const route = useRoute();
 const store = useRecruitmentStore();
@@ -263,12 +264,13 @@ const interviewTime = ref('');
 
 const candidates = store.candidates;
 
-const positionOptions = [
-  { label: 'Vị trí: Tất cả', value: '' },
-  { label: 'Senior Frontend', value: 'Senior Frontend' },
-  { label: 'UI/UX Visual', value: 'UI/UX Designer' },
-  { label: 'Backend Dev', value: 'Backend Dev' }
-];
+const positionOptions = computed(() => {
+  const options = [{ label: 'Vị trí: Tất cả', value: '' }];
+  positionsAPI.getAll().forEach(p => {
+    options.push({ label: p.position_name, value: p.position_name });
+  });
+  return options;
+});
 
 const aiScoreOptions = [
   { label: 'AI: Mặc định', value: '' },
