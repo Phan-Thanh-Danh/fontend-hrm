@@ -208,10 +208,10 @@
               <div class="px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-md flex items-center justify-between" v-if="selectedCandidate.cvUrl">
                 <div class="flex items-center gap-3">
                   <span class="material-symbols-outlined text-[var(--sys-text-secondary)] text-[18px]">link</span>
-                  <a :href="selectedCandidate.cvUrl" target="_blank" class="text-[13px] font-medium text-[var(--sys-brand-solid)] hover:underline flex items-center gap-1">
+                  <button @click="openCv(selectedCandidate.cvUrl)" class="text-[13px] font-medium text-[var(--sys-brand-solid)] hover:underline flex items-center gap-1">
                     Xem chi tiết CV / Portfolio (LinkedIn)
                     <span class="material-symbols-outlined text-[14px]">open_in_new</span>
-                  </a>
+                  </button>
                 </div>
               </div>
 
@@ -250,6 +250,20 @@ const showFullList = ref(false);
 const selectedCandidate = ref(null);
 const selectedJobFilter = ref('');
 
+const openCv = (cvUrl) => {
+  if (!cvUrl) return;
+  if (cvUrl.startsWith('data:')) {
+    fetch(cvUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const objectUrl = URL.createObjectURL(blob);
+        window.open(objectUrl, '_blank');
+      });
+  } else {
+    window.open(cvUrl, '_blank');
+  }
+};
+
 // Get department of the logged-in user (default to 4 - Kinh doanh for demo if none)
 const userDeptId = parseInt(localStorage.getItem('userDeptId')) || 4;
 const store = useRecruitmentStore(userDeptId);
@@ -273,7 +287,7 @@ const jobs = computed(() => {
 const baseFilteredCandidates = computed(() => {
   let list = store.candidates.value.filter(c => c.status !== 'pass' && c.status !== 'fail');
   if (selectedJobFilter.value) {
-    list = list.filter(c => c.positionName === selectedJobFilter.value);
+    list = list.filter(c => c.position === selectedJobFilter.value);
   }
   return list;
 });

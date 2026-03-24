@@ -512,6 +512,7 @@
 <script setup>
 import { onMounted, onUnmounted } from 'vue';
 import { mockJobPostings, mockApplications } from '@/mock-data/index.js';
+import { submitApplication } from '@/composables/useRecruitmentStore';
 
 onMounted(() => {
   // Add class to body to scope the landing page styles
@@ -928,41 +929,50 @@ onMounted(() => {
         const salary = document.getElementById('f-salary')?.value.trim() || '';
         const cover = document.getElementById('f-cover')?.value.trim() || '';
 
-        if (mockApplications && typeof mockApplications.add === 'function') {
-          const newId = Math.max(...mockApplications.map(a => a.applicationId || 0)) + 1;
-          mockApplications.add({
-            applicationId: newId,
-            jobId: jobId,
-            jobTitle: jobTitle,
-            departmentId: deptId,
-            departmentName: deptName,
-            positionId: 5,
-            positionName: 'Chuyên viên',
-            fullName: name,
-            email: email,
-            phone: phone,
-            address: '',
-            avatarInitials: name.split(' ').map(w => w[0]).slice(-2).join('').toUpperCase(),
-            cvUrl: linkedin || `https://drive.google.com/file/d/mock_cv_landing_${newId}/view`,
-            skills: [],
-            education: { school: '', major: '', degree: '', graduationYear: null },
-            workExperience: [],
-            coverLetter: cover,
-            aiMatchScore: Math.floor(Math.random() * 20) + 60,
-            aiMatchRemarks: 'Hồ sơ nộp từ Landing Page. Chờ HR xét duyệt.',
-            status: 'CHỜ_HR_DUYỆT',
-            appliedDate: new Date().toISOString(),
-            reviewedByHR: null,
-            reviewedByManager: null,
-            interviewDate: null,
-            notes: salary ? `Mức lương kỳ vọng: ${salary}` : '',
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const cvDataUrl = e.target.result;
+          
+          submitApplication({
+             jobId: jobId,
+             jobTitle: jobTitle,
+             departmentId: deptId,
+             departmentName: deptName,
+             fullName: name,
+             email: email,
+             phone: phone,
+             cvUrl: cvDataUrl,
+             coverLetter: cover,
+             notes: salary ? `Mức lương kỳ vọng: ${salary}` : '',
           });
-        }
 
-        const body = document.getElementById('form-body');
-        const success = document.getElementById('form-success');
-        if (body) body.style.display = 'none';
-        if (success) success.style.display = 'block';
+          const body = document.getElementById('form-body');
+          const success = document.getElementById('form-success');
+          if (body) body.style.display = 'none';
+          if (success) success.style.display = 'block';
+        };
+        
+        if (cv) {
+          reader.readAsDataURL(cv);
+        } else {
+          // Fallback if no CV somehow (though validation up top prevents this)
+          submitApplication({
+             jobId: jobId,
+             jobTitle: jobTitle,
+             departmentId: deptId,
+             departmentName: deptName,
+             fullName: name,
+             email: email,
+             phone: phone,
+             cvUrl: linkedin || '',
+             coverLetter: cover,
+             notes: salary ? `Mức lương kỳ vọng: ${salary}` : '',
+          });
+          const body = document.getElementById('form-body');
+          const success = document.getElementById('form-success');
+          if (body) body.style.display = 'none';
+          if (success) success.style.display = 'block';
+        }
       }, 1800);
     });
   }

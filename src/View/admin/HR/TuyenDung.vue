@@ -7,10 +7,6 @@
         <p class="text-sm text-[var(--sys-text-secondary)]">Sàng lọc hồ sơ, điều phối phỏng vấn và đánh giá năng lực ứng viên toàn diện.</p>
       </div>
       <div class="bg-transparent hidden xl:block shrink-0">
-        <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-[var(--sys-brand-soft)] rounded-md border border-[var(--sys-brand-border)] font-bold text-[11px] text-[var(--sys-brand-solid)] uppercase tracking-wide">
-          <span class="w-1.5 h-1.5 rounded-full bg-[var(--sys-brand-solid)] animate-pulse"></span>
-          AI Tuyển dụng Trực tuyến
-        </div>
       </div>
     </div>
 
@@ -35,7 +31,6 @@
             <!-- Compact Dropdowns (Ultra Compact) -->
             <div class="flex items-center gap-2 shrink-0 bg-transparent">
               <Dropdown v-model="filterPosition" :options="positionOptions" class="min-w-[125px] max-w-[180px] h-10" />
-              <Dropdown v-model="filterAiScore" :options="aiScoreOptions" class="min-w-[110px] max-w-[160px] h-10" />
             </div>
           </div>
         </div>
@@ -48,7 +43,6 @@
                 <tr>
                   <th class="px-4 py-3 text-[12px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-wider">Hồ sơ ứng viên</th>
                   <th class="px-4 py-3 text-[12px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-wider">Vị trí</th>
-                  <th class="px-4 py-3 text-[12px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-wider text-center">Chỉ số AI</th>
                   <th class="px-4 py-3 text-[12px] font-semibold text-[var(--sys-text-secondary)] border-b border-[var(--sys-border-subtle)] uppercase tracking-wider text-right">Ngày nộp</th>
                 </tr>
               </thead>
@@ -65,11 +59,6 @@
                   </td>
                   <td class="px-4 py-3 whitespace-nowrap bg-transparent">
                     <span class="text-[12px] font-semibold text-[var(--sys-text-secondary)] uppercase tracking-wide opacity-80">{{ candidate.position }}</span>
-                  </td>
-                  <td class="px-4 py-3 text-center whitespace-nowrap bg-transparent">
-                    <span :class="['px-2 py-0.5 rounded-md text-[11px] font-bold border shadow-sm uppercase tracking-wide', getAiScoreClass(candidate.aiScore)]">
-                      Hợp lệ: {{ candidate.aiScore }}%
-                    </span>
                   </td>
                   <td class="px-4 py-3 text-right whitespace-nowrap bg-transparent">
                     <span class="text-[12px] font-medium text-[var(--sys-text-disabled)] opacity-60">{{ candidate.date }}</span>
@@ -140,10 +129,10 @@
             <!-- If cover letter, we'll display below -->
           </div>
 
-          <!-- Real PDF Viewer (Fallback context) -->
+          <!-- Real PDF Viewer -->
           <div class="flex-grow p-4 bg-[var(--sys-bg-hover)]/20 relative overflow-hidden hidden md:block">
             <iframe 
-              src="/cv-template.pdf#toolbar=0" 
+              :src="activeCandidate.cvUrl ? activeCandidate.cvUrl : '/cv-template.pdf#toolbar=0'" 
               class="w-full h-full border-none rounded-md shadow-lg bg-white opacity-40 hover:opacity-100 transition-opacity"
               title="CV Viewer"
             ></iframe>
@@ -173,12 +162,7 @@
                 <p class="text-[12px] text-[var(--sys-text-primary)] italic line-clamp-3">"{{ activeCandidate.coverLetter }}"</p>
               </div>
 
-              <div class="flex items-center gap-2 pt-2 border-t border-[var(--sys-border-subtle)] mt-2">
-                <span class="text-[10px] font-bold uppercase text-[var(--sys-text-disabled)] tracking-wider">AI MATCH SCORE:</span>
-                <span :class="['px-1.5 py-0.5 rounded text-[10px] font-bold border', getAiScoreClass(activeCandidate.aiScore)]">{{ activeCandidate.aiScore }}%</span>
-                <span class="text-[10px] text-[var(--sys-text-secondary)] italic truncate ml-1">{{ activeCandidate.aiRemarks?.substring(0, 50) }}...</span>
               </div>
-            </div>
 
             <!-- STATE: CHỜ_HR_DUYỆT → nút Forward to Manager -->
             <div v-if="activeCandidate.status === 'pending_hr'" class="animate-fadeIn">
@@ -199,7 +183,7 @@
             </div>
 
             <!-- STATE: CHỜ_TP_DUYỆT → lên lịch phỏng vấn -->
-            <div v-else-if="activeCandidate.status === 'pending_mgr'" class="animate-fadeIn">
+            <div v-else-if="['pending_mgr', 'mgr_approved'].includes(activeCandidate.status)" class="animate-fadeIn">
               <h4 class="text-[12px] font-bold text-[var(--sys-brand-solid)] flex items-center gap-2 mb-4 uppercase tracking-wide">
                 <span class="material-symbols-outlined text-[18px]">event</span> Chờ Trưởng phòng thẩm định → Lên lịch
               </h4>

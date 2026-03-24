@@ -66,10 +66,10 @@
                 </div>
               </div>
 
-              <a :href="candidate.cvUrl || '#'" target="_blank" class="w-full h-10 px-4 border-2 border-dashed border-[var(--sys-brand-border)] text-[var(--sys-brand-solid)] rounded-md text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--sys-brand-soft)] transition-all flex items-center justify-center gap-2.5">
+              <button @click="openCv(candidate.cvUrl)" class="w-full h-10 px-4 border-2 border-dashed border-[var(--sys-brand-border)] text-[var(--sys-brand-solid)] rounded-md text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--sys-brand-soft)] transition-all flex items-center justify-center gap-2.5">
                 <span class="material-symbols-rounded text-[18px] font-bold">attachment</span>
                 TRUY XUẤT HỒ SƠ CV / LINKEDIN
-              </a>
+              </button>
             </div>
 
             <!-- Review Column -->
@@ -137,6 +137,20 @@ const { pendingEval, deptName } = useManagerApplications(userDeptId);
 
 const reviews = ref({});
 const scores  = ref({});
+
+const openCv = (cvUrl) => {
+  if (!cvUrl) return;
+  if (cvUrl.startsWith('data:')) {
+    fetch(cvUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const objectUrl = URL.createObjectURL(blob);
+        window.open(objectUrl, '_blank');
+      });
+  } else {
+    window.open(cvUrl, '_blank');
+  }
+};
 
 async function submitEval(candidateId, decision) {
   const notes = reviews.value[candidateId];

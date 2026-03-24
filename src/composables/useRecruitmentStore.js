@@ -11,7 +11,7 @@
  * ============================================================
  */
 
-import { reactive, computed } from 'vue';
+import { reactive, computed, watch } from 'vue';
 import applicationsJson from '@/mock-data/applications.json';
 import { mockJobPostings, mockDepartments } from '@/mock-data/index.js';
 
@@ -26,12 +26,21 @@ const STATUS_MAP = {
 };
 
 // ─── SINGLETON STORE ─────────────────────────────────────────
-// `reactive` makes the entire object deeply reactive.
-// Because it's defined at module level, it's shared across ALL
-// component instances — like a lightweight Pinia store.
+// Parse from localStorage or fallback to JSON
+let initialApps = applicationsJson;
+try {
+  const saved = localStorage.getItem('aet_hrm_applications');
+  if (saved) initialApps = JSON.parse(saved);
+} catch (e) { console.error('Error loading applications from local storage', e); }
+
 const _store = reactive({
-  applications: applicationsJson.map(a => ({ ...a })), // deep-clone from JSON
+  applications: initialApps.map(a => ({ ...a })), // deep-clone
 });
+
+// Keep localStorage updated
+watch(() => _store.applications, (newVal) => {
+  localStorage.setItem('aet_hrm_applications', JSON.stringify(newVal));
+}, { deep: true });
 
 // ─── PRIVATE HELPER: ID Counter ──────────────────────────────
 let _nextId = Math.max(...applicationsJson.map(a => a.applicationId), 0) + 1;
@@ -187,7 +196,39 @@ export function scheduleInterview(applicationId, date, time) {
   const i = _idx(applicationId);
   if (i === -1) return false;
   _store.applications[i].status        = 'ĐANG_PHỎNG_VẤN';
-  _store.applications[i].interviewDate = `${date}T${time}:00`;
+  const isoDateTime = `${date}T${time}:00`;
+  _store.applications[i].interviewDate = isoDateTime;
+
+  // ── Sync into LichPhongVan's localStorage ──────────────────
+  const LICH_KEY = 'hrm_interviews_v1';
+  const app = _store.applications[i];
+
+  // Parse date from ISO → DD/MM/YYYY for LichPhongVan
+  const dtObj = new Date(isoDateTime);
+  const dd = dtObj.getDate().toString().padStart(2, '0');
+  const mm = (dtObj.getMonth() + 1).toString().padStart(2, '0');
+  const yyyy = dtObj.getFullYear();
+  const formattedDate = `${dd}/${mm}/${yyyy}`;
+  const formattedTime = `${dtObj.getHours().toString().padStart(2, '0')}:${dtObj.getMinutes().toString().padStart(2, '0')}`;
+
+  try {
+    const existing = JSON.parse(localStorage.getItem(LICH_KEY) || '[]');
+    // Remove duplicates for same applicationId if re-scheduled
+    const filtered = existing.filter(e => e.applicationId !== applicationId);
+    filtered.push({
+      id: applicationId,
+      applicationId,
+      candidate: app.fullName,
+      date: formattedDate,
+      time: formattedTime,
+      interviewerId: app.reviewedByManager ? 'NV008' : 'NV001',
+      status: 'Sắp diễn ra',
+      position: app.jobTitle || app.positionName || '',
+    });
+    localStorage.setItem(LICH_KEY, JSON.stringify(filtered));
+  } catch (e) {
+    console.error('Failed to sync interview to LichPhongVan localStorage', e);
+  }
   return true;
 }
 
