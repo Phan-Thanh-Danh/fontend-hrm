@@ -231,11 +231,6 @@ const handleNotifClick = (item) => {
   }
 };
 
-// Lấy 3 thông báo mới nhất (vẫn dùng staticNotifs vì đây là thông báo hệ thống/sự kiện)
-const recentNotifications = computed(() =>
-  staticNotifs.slice(0, 3)
-);
-
 // Lấy yêu cầu phê duyệt REAL từ mockDB (CHỜ_GIÁM_ĐỐC_DUYỆT)
 const realApprovals = computed(() => {
   const allReqs = mockLeaveRequests;
@@ -243,15 +238,41 @@ const realApprovals = computed(() => {
     const emp = mockEmployees.getById(r.requesterId);
     const type = mockRequestTypes.getById(r.requestTypeId);
     return {
+<<<<<<< HEAD
       id: r.requestId,
       name: emp?.fullName || 'Nhân viên',
       title: type?.requestTypeName || 'Nghi phép',
       initials: emp?.fullName?.charAt(0) || 'N',
       urgent: r.is_urgent || false,
+=======
+      id: r.request_id,
+      name: emp?.full_name || 'Nhân viên',
+      title: type?.request_type_name || 'Khác',
+      initials: emp?.full_name?.charAt(0) || 'N',
+      urgent: !!r.is_urgent || r.days >= 3,
+>>>>>>> e898cb5ebcd1acba19cc92c0fc8285af6ad708c7
       avatarBg: 'bg-indigo-100',
       avatarColor: 'text-indigo-600'
     };
   });
+});
+
+const recentNotifications = computed(() => {
+  const dynamicNotifs = realApprovals.value.filter(r => r.urgent).slice(0, 2).map(r => ({
+    id: `urgent-${r.id}`,
+    level: 'canh_bao',
+    levelLabel: 'KHẨN CẤP',
+    levelColor: 'text-orange-700',
+    levelBg: 'bg-orange-50',
+    dotColor: 'bg-orange-500',
+    icon: 'warning',
+    iconColor: 'text-orange-500',
+    title: `Yêu cầu phê duyệt khẩn: ${r.name}`,
+    desc: `${r.title} cần được xử lý ngay trong ngày.`,
+    actionRoute: '/giamdoc/thongbao',
+    time: 'Vừa xong'
+  }));
+  return [...dynamicNotifs, ...staticNotifs.slice(0, 2)];
 });
 
 const recentApprovals = computed(() => {
