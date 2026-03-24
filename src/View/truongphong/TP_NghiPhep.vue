@@ -77,60 +77,50 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { requestsAPI, employeesAPI, positionsAPI, requestTypesAPI } from '@/data/mockDB.js'
+import { ref, computed } from 'vue'
+import { mockLeaveRequests, mockEmployees } from '@/mock-data/index.js'
 
 const activeTab = ref('Chờ duyệt')
-
 const DEPT_ID = 2 // Phòng Công nghệ IT
 
-// Lấy tất cả loại hình có category là NGHỈ_PHÉP
-const leaveRequestTypeIds = computed(() => {
-  return requestTypesAPI.getAll()
-    .filter(t => t.category === 'NGHỈ_PHÉP')
-    .map(t => t.request_type_id);
-});
-
 const allBaseData = computed(() => {
-  const allReqs = requestsAPI.getAll()
-  const allEmps = employeesAPI.getAll()
-  const allPositions = positionsAPI.getAll()
-  const allTypes = requestTypesAPI.getAll()
-  
-  const deptEmpIds = allEmps
-    .filter(e => e.department_id === DEPT_ID)
-    .map(e => e.employee_id)
+  // Lấy danh sách ID nhân viên thuộc phòng ban
+  const deptEmpIds = mockEmployees
+    .filter(e => e.department.departmentId === DEPT_ID)
+    .map(e => e.employeeId)
 
-  const deptLeaveReqs = allReqs.filter(r => {
-    const isDeptEmp = deptEmpIds.includes(r.requester_id)
-    const isLeaveType = leaveRequestTypeIds.value.includes(r.request_type_id)
-    const isVisible = r.visible_to ? r.visible_to.includes('Manager') : true
-    return isDeptEmp && isLeaveType && isVisible
-  })
+  // Lọc lấy các đơn xin nghỉ của nhân viên trong phòng
+  const deptLeaveReqs = mockLeaveRequests.filter(r => deptEmpIds.includes(r.requesterId))
 
   const mapReq = (r) => {
-    const emp = allEmps.find(e => e.employee_id === r.requester_id)
-    const pos = allPositions.find(p => p.position_id === emp?.position_id)
-    const typeObj = allTypes.find(t => t.request_type_id === r.request_type_id)
+    const emp = mockEmployees.find(e => e.employeeId === r.requesterId)
     
-    // Xử lý loại nghỉ khác
-    const typeName = r.request_type_id === 99 ? r.other_reason_name : (typeObj?.request_type_name || 'Nghỉ phép')
+    // Map mã loại nghỉ phép
+    const typeMap = {
+      'AL': 'Nghỉ phép năm',
+      'SL': 'Nghỉ ốm',
+      'UP': 'Nghỉ không lương',
+      'ML': 'Nghỉ thai sản'
+    };
+    const typeName = typeMap[r.leaveDetails.leaveTypeCode] || 'Nghỉ phép';
 
     return {
-      id: r.request_id,
-      name: emp?.full_name || 'N/A',
-      position: pos?.position_name?.toUpperCase() || 'NHÂN VIÊN IT',
-      range: r.start_date && r.end_date ? `${r.start_date} - ${r.end_date}` : (r.request_date || 'N/A'),
+      id: r.requestId,
+      name: r.requesterName,
+      position: emp?.position.positionName?.toUpperCase() || 'NHÂN VIÊN IT',
+      range: r.leaveDetails.fromDate === r.leaveDetails.toDate 
+             ? r.leaveDetails.fromDate 
+             : `${r.leaveDetails.fromDate} - ${r.leaveDetails.toDate}`,
       typeName: typeName,
-      days: r.days || 0,
-      reason: r.notes || r.reason || 'Nghỉ phép theo kế hoạch',
+      days: r.leaveDetails.numberOfDays || 0,
+      reason: r.reason,
       statusRaw: r.status
     }
   }
 
   return {
     pending: deptLeaveReqs.filter(r => r.status === 'CHỜ_DUYỆT').map(mapReq),
-    approved: deptLeaveReqs.filter(r => ['ĐÃ_DUYỆT', 'CHỜ_GIÁM_ĐỐC_DUYỆT'].includes(r.status)).map(mapReq),
+    approved: deptLeaveReqs.filter(r => r.status === 'ĐÃ_DUYỆT').map(mapReq),
     rejected: deptLeaveReqs.filter(r => r.status === 'TỪ_CHỐI').map(mapReq)
   }
 })
@@ -140,11 +130,16 @@ const approvedLeaves = computed(() => allBaseData.value.approved)
 const rejectedLeaves = computed(() => allBaseData.value.rejected)
 
 const approve = (id) => {
-  requestsAPI.approve(id)
+  const req = mockLeaveRequests.find(r => r.requestId === id);
+  if (req) req.status = 'ĐÃ_DUYỆT';
 }
 
 const reject = (id) => {
-  requestsAPI.reject(id, 'Không phù hợp thời điểm')
+  const req = mockLeaveRequests.find(r => r.requestId === id);
+  if (req) {
+    req.status = 'TỪ_CHỐI';
+    req.rejectionReason = 'Không phù hợp thời điểm';
+  }
 }
 
 const currentList = computed(() => {

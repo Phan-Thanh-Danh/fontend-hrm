@@ -120,11 +120,11 @@
                   <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-left bg-transparent w-full md:w-auto">
                     <div>
                       <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase opacity-60 mb-0.5">Nhân viên</p>
-                      <p class="text-[13px] font-bold text-[var(--sys-text-primary)]">Nguyễn Văn An</p>
+                      <p class="text-[13px] font-bold text-[var(--sys-text-primary)]">Lê Minh Tuấn</p>
                     </div>
                     <div>
                       <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase opacity-60 mb-0.5">Mã số</p>
-                      <p class="text-[13px] font-bold text-[var(--sys-text-primary)]">HR2023-0124</p>
+                      <p class="text-[13px] font-bold text-[var(--sys-text-primary)]">NV00004</p>
                     </div>
                   </div>
                 </div>
@@ -270,49 +270,66 @@
 <script setup>
 /**
  * TRANG PHIẾU LƯƠNG (PORTAL) - PHIÊN BẢN ENTERPRISE SaaS
- * Tuân thủ 7 Golden Rules:
- * - Font Inter 14px (text-sm), Tỉ lệ table cao (text-13px)
- * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button, 8px (LG) cho Card/Thẻ
- * - Hệ màu Semantic đồng bộ, loại bỏ font-black/italic
+ * Dùng data thực tế từ mock-data
  */
 import { ref, computed } from 'vue';
 import { exportEmployeePayrollPDF } from '@/utils/pdfExport.js';
+import { mockSalaryDetails } from '@/mock-data/index.js';
+
+const EMP_ID = 4; // Lê Minh Tuấn
+const mySalaries = mockSalaryDetails.filter(s => s.employeeId === EMP_ID);
+
+const salaryPeriods = ref(mySalaries.map(s => ({
+  id: s.salaryDetailId,
+  month: s.periodCode.split('-')[2],
+  year: s.periodCode.split('-')[1],
+  payDate: `05/${s.periodCode.split('-')[2]}/${s.periodCode.split('-')[1]}`,
+  status: s.transferStatus === 'TRANSFERRED' ? 'Đã thanh toán' : 'Chờ thanh toán',
+  net: s.netSalary,
+  feedbackDeadline: `10/${s.periodCode.split('-')[2]}/${s.periodCode.split('-')[1]}`
+})));
 
 const activeTab = ref('salary');
-const selectedPeriodId = ref(1);
-
-const salaryPeriods = ref([
-  { id: 1, month: '10', year: '2023', payDate: '05/11/2023', status: 'Đã thanh toán', net: 25000000, feedbackDeadline: '08/11/2023' },
-  { id: 2, month: '09', year: '2023', payDate: '05/10/2023', status: 'Đã thanh toán', net: 24500000, feedbackDeadline: '08/10/2023' },
-  { id: 3, month: '08', year: '2023', payDate: '05/09/2023', status: 'Đã thanh toán', net: 26200000, feedbackDeadline: '08/09/2023' },
-]);
+const selectedPeriodId = ref(salaryPeriods.value[0]?.id || null);
 
 const currentPeriod = computed(() => {
   return salaryPeriods.value.find(p => p.id === selectedPeriodId.value) || salaryPeriods.value[0];
 });
 
-const incomes = ref([
-  { label: 'Lương cơ bản (Gross)', value: 28000000 },
-  { label: 'Lương làm thêm giờ (OT)', value: 1500000 },
-  { label: 'Phụ cấp ăn trưa', value: 730000 },
-  { label: 'Thưởng hiệu suất', value: 1000000 },
-]);
+const currentSalaryData = computed(() => {
+  return mySalaries.find(s => s.salaryDetailId === selectedPeriodId.value) || mySalaries[0];
+});
+
+const incomes = computed(() => {
+  const data = currentSalaryData.value;
+  return [
+    { label: 'Lương cơ bản (Gross)', value: data.basicSalary },
+    { label: 'Lương theo ca/ngày công', value: data.shiftPay },
+    { label: 'Lương làm thêm giờ (OT)', value: data.overtimePay },
+    { label: 'Phụ cấp / Trợ cấp', value: data.totalAllowances },
+    { label: 'Thưởng hiệu suất / Lễ Tết', value: data.bonus }
+  ];
+});
 
 const totalIncome = computed(() => incomes.value.reduce((sum, item) => sum + item.value, 0));
 
-const deductions = ref([
-  { label: 'BHXH (8%)', value: 2240000 },
-  { label: 'BHYT (1.5%)', value: 420000 },
-  { label: 'BHTN (1%)', value: 280000 },
-  { label: 'Thuế TNCN tạm tính', value: 3290000 },
-]);
+const deductions = computed(() => {
+  const data = currentSalaryData.value;
+  return [
+    { label: 'BHXH', value: data.socialInsuranceEmployee },
+    { label: 'BHYT', value: data.healthInsuranceEmployee },
+    { label: 'BHTN', value: data.unemploymentInsuranceEmployee },
+    { label: 'Thuế TNCN tạm tính', value: data.personalIncomeTax },
+    { label: 'Phạt / Khấu trừ đi muộn', value: data.penalty }
+  ];
+});
 
 const totalDeduction = computed(() => deductions.value.reduce((sum, item) => sum + item.value, 0));
 
 const insuranceStats = ref([
-  { label: 'Số sổ BHXH', value: 'BH2023-0987654' },
+  { label: 'Số sổ BHXH', value: 'BH2026-0987654' },
   { label: 'Nơi KCB Ban đầu', value: 'BV Đa khoa Xanh Pôn' },
-  { label: 'Tổng quá trình', value: '08 Năm 04 Tháng' },
+  { label: 'Tổng quá trình', value: '03 Năm 04 Tháng' },
 ]);
 
 const insuranceRows = ref([
@@ -330,10 +347,10 @@ const exportPDF = () => {
   const periodLabel = `Tháng ${period.month}/${period.year}`
   exportEmployeePayrollPDF({
     periodLabel,
-    employeeName: 'Nguyễn Văn An',
-    employeeCode: 'HR2023-0124',
-    department: 'Phòng Kỹ thuật & CNTT',
-    position: 'Kỹ sư Phần mềm',
+    employeeName: 'Lê Minh Tuấn',
+    employeeCode: 'NV00004',
+    department: 'Phòng Hành Chính Nhân Sự',
+    position: 'Chuyên viên C&B',
     status: period.status,
     incomes: incomes.value,
     deductions: deductions.value,

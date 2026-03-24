@@ -220,14 +220,14 @@
 <script setup>
 import { computed, ref } from 'vue';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
-import { employeesAPI, salariesAPI, departmentsAPI } from '@/data/mockDB.js';
+import { mockEmployees, mockSalaryDetails, mockDepartments } from '@/mock-data/index.js';
 
 const selectedDateRange = ref('30_days');
 const MathMin = Math.min;
 
 const bangLuongKpiCards = computed(() => {
-  const allSalaries = salariesAPI.getAll();
-  const totalSalary = allSalaries.reduce((sum, s) => sum + s.net_salary, 0) || 0;
+  const allSalaries = mockSalaryDetails;
+  const totalSalary = allSalaries.reduce((sum, s) => sum + s.netSalary, 0) || 0;
   const totalAllowance = allSalaries.reduce((sum, s) => sum + s.allowance, 0) || 0;
   return [
     { id: 1, label: 'Tổng ngân sách', value: '5.2 Tỷ', icon: 'account_balance', iconBg: 'bg-blue-100', iconColor: 'text-blue-600', badgeTrend: 'up', badgeText: '2.5%' },
@@ -238,17 +238,17 @@ const bangLuongKpiCards = computed(() => {
 });
 
 const bangLuongBoPhans = computed(() => {
-  const depts = departmentsAPI.getAll();
-  const emps = employeesAPI.getAll();
-  const sals = salariesAPI.getAll();
+  const depts = mockDepartments;
+  const emps = mockEmployees;
+  const sals = mockSalaryDetails;
   
   return depts.map(d => {
-    const deptEmps = emps.filter(e => e.department_id === d.department_id);
-    const deptSals = sals.filter(s => deptEmps.find(e => e.employee_id === s.employee_id));
-    const luongCb = deptSals.reduce((sum, s) => sum + (s.basic_salary || 0), 0);
+    const deptEmps = emps.filter(e => e.departmentId === d.departmentId);
+    const deptSals = sals.filter(s => deptEmps.find(e => e.employeeId === s.employeeId));
+    const luongCb = deptSals.reduce((sum, s) => sum + (s.basicSalary || 0), 0);
     const thuong = deptSals.reduce((sum, s) => sum + (s.allowance || 0), 0);
     return {
-      tenPhong: d.department_name,
+      tenPhong: d.departmentName,
       soNhanVien: deptEmps.length,
       luongCoBan: (luongCb / 1000000000).toFixed(2) + ' Tỷ',
       thuongPhuCap: (thuong / 1000000).toFixed(0) + ' Tr',
@@ -260,8 +260,8 @@ const bangLuongBoPhans = computed(() => {
 
 const bangLuongTongCong = computed(() => {
   const sumEmp = bangLuongBoPhans.value.reduce((s, b) => s + b.soNhanVien, 0);
-  const sumCb = salariesAPI.getAll().reduce((sum, s) => sum + (s.basic_salary || 0), 0);
-  const sumThuong = salariesAPI.getAll().reduce((sum, s) => sum + (s.allowance || 0), 0);
+  const sumCb = mockSalaryDetails.reduce((sum, s) => sum + (s.basicSalary || 0), 0);
+  const sumThuong = mockSalaryDetails.reduce((sum, s) => sum + (s.allowance || 0), 0);
   return {
     soNhanVien: sumEmp,
     luongCoBan: (sumCb / 1000000000).toFixed(2) + ' Tỷ',

@@ -1,0 +1,32 @@
+[
+  {
+    "candidateId": 1,
+    "fullName": "Ứng viên số 1",
+    "email": "candidate1@gmail.com",
+    "phone": "0901000001",
+    "appliedPositionId": 2,
+    "status": "HẸN_PHỎNG_VẤN",
+    "applyDate": "2023-11-02",
+    "cvUrl": "https://example.com/cv/candidate1.pdf"
+  },
+  {
+    "candidateId": 2,
+    "fullName": "Ứng viên số 2",
+    "email": "candidate2@gmail.com",
+    "phone": "0901000002",
+    "appliedPositionId": 3,
+    "status": "ĐÃ_TUYỂN",
+    "applyDate": "2023-11-03",
+    "cvUrl": "https://example.com/cv/candidate2.pdf"
+  },
+  {
+    "candidateId": 3,
+    "fullName": "Ứng viên số 3",
+    "email": "candidate3@gmail.com",
+    "phone": "0901000003",
+    "appliedPositionId": 4,
+    "status": "LOẠI",
+    "applyDate": "2023-11-04",
+    "cvUrl": "https://example.com/cv/candidate3.pdf"
+  }
+]

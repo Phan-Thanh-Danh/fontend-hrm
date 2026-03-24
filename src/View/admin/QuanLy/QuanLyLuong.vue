@@ -223,7 +223,7 @@
  */
 import { ref, computed } from 'vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { salariesAPI, employeesAPI } from '@/data/mockDB.js';
+import { mockSalaryDetails, mockEmployees } from '@/mock-data/index.js';
 
 const { showConfirm } = useConfirm();
 
@@ -241,18 +241,18 @@ const periods = ref([
 
 const salaryItems = computed(() => {
   if (!selectedPeriod.value) return [];
-  return salariesAPI.getAll()
+  return mockSalaryDetails
     .filter(s => s.month == selectedPeriod.value.month && s.year == selectedPeriod.value.year)
     .map(s => {
-      const emp = employeesAPI.getById(s.employee_id);
+      const emp = mockEmployees.getById(s.employeeId);
       return {
-        id: s.salary_id,
-        name: emp ? emp.full_name : `NV #${s.employee_id}`,
-        code: emp ? emp.employee_code : `EMP-${s.employee_id}`,
-        base: s.basic_salary,
+        id: s.salaryId,
+        name: emp ? emp.fullName : `NV #${s.employeeId}`,
+        code: emp ? emp.employeeCode : `EMP-${s.employeeId}`,
+        base: s.basicSalary,
         bonus: s.allowance,
         deduction: s.tax,
-        net: s.net_salary
+        net: s.netSalary
       };
     });
 });
@@ -282,7 +282,7 @@ const editSalary = (item) => {
 };
 
 const saveSalaryAdjustment = () => {
-  salariesAPI.update(editForm.value.id, {
+  mockSalaryDetails.update(editForm.value.id, {
     allowance: editForm.value.bonus,
     tax: editForm.value.deduction,
     net_salary: editForm.value.base + editForm.value.bonus - editForm.value.deduction

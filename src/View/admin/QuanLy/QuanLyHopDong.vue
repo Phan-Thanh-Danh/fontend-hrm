@@ -226,7 +226,7 @@ import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import CalendarCustom from '@/components/CalendarCustom.vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { contractsAPI, employeesAPI } from '@/data/mockDB.js';
+import { mockContracts, mockEmployees } from '@/mock-data/index.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -251,12 +251,12 @@ const contractTypeOptions = [
 ];
 
 const contracts = computed(() => {
-  return contractsAPI.getAll().map(c => {
-    const emp = employeesAPI.getById(c.employee_id);
+  return mockContracts.map(c => {
+    const emp = mockEmployees.find(e => e.employeeId === c.employeeId);
     // Tính toán nếu sắp hết hạn (trong vòng 30 ngày)
     let dynamicStatus = c.status;
-    if (dynamicStatus === 'HIỆU_LỰC' && c.end_date) {
-      const end = new Date(c.end_date);
+    if (dynamicStatus === 'HIỆU_LỰC' && c.endDate) {
+      const end = new Date(c.endDate);
       const now = new Date();
       const diffTime = Math.abs(end - now);
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
@@ -266,15 +266,15 @@ const contracts = computed(() => {
     }
 
     return {
-      id: c.contract_id,
-      contract_no: c.contract_code,
-      employee_id: c.employee_id,
-      employee_name: emp ? emp.full_name : `NV #${c.employee_id}`,
-      contract_type: c.contract_type,
-      start_date: c.start_date,
-      end_date: c.end_date,
+      id: c.contractId,
+      contract_no: c.contractCode,
+      employee_id: c.employeeId,
+      employee_name: emp ? emp.fullName : `NV #${c.employeeId}`,
+      contract_type: c.contractType,
+      start_date: c.startDate,
+      end_date: c.endDate,
       status: dynamicStatus,
-      salary: c.basic_salary
+      salary: c.basicSalary
     }
   });
 });
@@ -374,24 +374,26 @@ const handleSave = async () => {
   
   let emp_id = form.value.employee_id;
   if (!emp_id) {
-    const emp = employeesAPI.getAll().find(e => e.full_name.includes(form.value.employee_name) || e.employee_code.includes(form.value.employee_name));
-    emp_id = emp ? emp.employee_id : 1;
+    const emp = mockEmployees.find(e => e.fullName.includes(form.value.employee_name) || e.employeeCode.includes(form.value.employee_name));
+    emp_id = emp ? emp.employeeId : 1;
   }
 
   const dto = {
-    contract_code: form.value.contract_no,
-    employee_id: emp_id,
-    contract_type: form.value.contract_type,
-    start_date: form.value.start_date,
-    end_date: calculateEndDate() || null,
-    basic_salary: form.value.salary,
+    contractId: form.value.id || Date.now(),
+    contractCode: form.value.contract_no,
+    employeeId: emp_id,
+    contractType: form.value.contract_type,
+    startDate: form.value.start_date,
+    endDate: calculateEndDate() || null,
+    basicSalary: form.value.salary,
     status: form.value.status === 'SẮP_HẾT_HẠN' ? 'HIỆU_LỰC' : form.value.status
   };
 
   if (editMode.value) {
-    contractsAPI.update(form.value.id, dto);
+    const idx = mockContracts.findIndex(c => c.contractId === form.value.id);
+    if (idx !== -1) Object.assign(mockContracts[idx], dto);
   } else {
-    contractsAPI.add(dto);
+    mockContracts.unshift(dto);
   }
   closeModal();
 };

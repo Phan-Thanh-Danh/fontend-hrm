@@ -216,7 +216,7 @@
  */
 import { ref, computed } from 'vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { salariesAPI, employeesAPI } from '@/data/mockDB.js';
+import { mockSalaryDetails, mockEmployees } from '@/mock-data/index.js';
 
 const { showConfirm } = useConfirm();
 
@@ -225,21 +225,21 @@ const currentMonth = new Date().getMonth() + 1;
 const currentYear = new Date().getFullYear();
 
 const employees = computed(() => {
-  return salariesAPI.getAll().map(s => {
-    const emp = employeesAPI.getById(s.employee_id);
+  return mockSalaryDetails.map(s => {
+    const emp = mockEmployees.getById(s.employeeId);
     return {
-      id: s.salary_id,
-      empId: emp ? emp.employee_code : `EMP-${s.employee_id}`,
-      name: emp ? emp.full_name : `NV #${s.employee_id}`,
-      role: emp ? emp.department_name : 'Nhân viên',
-      baseSalary: s.basic_salary,
-      totalIncome: s.basic_salary + s.allowance,
+      id: s.salaryId,
+      empId: emp ? emp.employeeCode : `EMP-${s.employeeId}`,
+      name: emp ? emp.fullName : `NV #${s.employeeId}`,
+      role: emp ? emp.departmentName : 'Nhân viên',
+      baseSalary: s.basicSalary,
+      totalIncome: s.basicSalary + s.allowance,
       deduction: s.tax,
-      netSalary: s.net_salary,
+      netSalary: s.netSalary,
       status: s.status === 'ĐÃ_THANH_TOÁN' ? 'Đã thanh toán' : 'Chờ thanh toán',
       period: `Tháng ${s.month} / ${s.year}`,
       extraAllowance: s.allowance,
-      employee_id: s.employee_id
+      employee_id: s.employeeId
     };
   });
 });
@@ -320,12 +320,12 @@ const saveData = () => {
   };
 
   if (modalMode.value === 'add') {
-    dataToSave.employee_id = 999; // Mock new emp id
+    dataToSave.employeeId = 999; // Mock new emp id
     dataToSave.month = currentMonth;
     dataToSave.year = currentYear;
-    salariesAPI.add(dataToSave);
+    mockSalaryDetails.add(dataToSave);
   } else {
-    salariesAPI.update(targetId, dataToSave);
+    mockSalaryDetails.update(targetId, dataToSave);
   }
   closeModal();
 };
@@ -333,7 +333,7 @@ const saveData = () => {
 const openDeleteModal = async (item, index) => {
   const ok = await showConfirm('Xác nhận xóa', `Bạn có chắc muốn loại bỏ hồ sơ quyết toán của ${item.name}?`);
   if (ok) {
-    salariesAPI.delete(item.id);
+    mockSalaryDetails.delete(item.id);
   }
 };
 </script>

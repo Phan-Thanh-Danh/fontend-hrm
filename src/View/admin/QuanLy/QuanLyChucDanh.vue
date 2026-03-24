@@ -171,7 +171,7 @@
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { positionsAPI } from '@/data/mockDB.js';
+import { mockPositions } from '@/mock-data/index.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -210,10 +210,10 @@ const statusOptions = [
 ];
 
 const jobTitles = computed(() => {
-  return positionsAPI.getAll().map(p => ({
-    id: p.position_id,
-    code: p.position_code || `POS-${p.position_id}`,
-    title: p.position_name || '',
+  return mockPositions.map(p => ({
+    id: p.positionId,
+    code: p.positionCode || `POS-${p.positionId}`,
+    title: p.positionName || '',
     group: p.group || 'Kỹ thuật',
     level: p.level || 'Middle',
     status: p.status !== false ? 'active' : 'inactive' 
@@ -282,13 +282,13 @@ const saveJobTitle = async () => {
   };
 
   if (isEdit.value) {
-    positionsAPI.update(form.value.id, jobData);
+    mockPositions.update(form.value.id, jobData);
   } else {
     if (jobTitles.value.some(j => j.code === form.value.code)) {
       await showAlert('Dữ liệu trùng lặp', 'Mã chức danh này đã tồn tại trên hệ thống!');
       return;
     }
-    positionsAPI.add(jobData);
+    mockPositions.add(jobData);
   }
   showModal.value = false;
 };
@@ -296,7 +296,7 @@ const saveJobTitle = async () => {
 const deleteJobTitle = async (job) => {
   const ok = await showConfirm('Xác nhận xóa', `Bạn có chắc muốn loại bỏ chức danh "${job.title}" khỏi hệ thống?`);
   if (ok) {
-    positionsAPI.delete(job.id);
+    mockPositions.delete(job.id);
   }
 };
 </script>

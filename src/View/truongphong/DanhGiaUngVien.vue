@@ -31,13 +31,13 @@
         </h3>
       </div>
 
-      <div v-if="interviewingCandidates.length === 0" class="p-20 text-center bg-[var(--sys-bg-page)]/10">
+      <div v-if="pendingEval.length === 0" class="p-20 text-center bg-[var(--sys-bg-page)]/10">
         <span class="material-symbols-rounded text-6xl text-[var(--sys-text-disabled)] opacity-10 mb-4 font-bold">person_search</span>
         <p class="text-[13px] font-bold text-[var(--sys-text-disabled)] uppercase opacity-40">Hiện không có ứng viên nào đang chờ đánh giá chuyên môn</p>
       </div>
 
       <div v-else class="divide-y divide-[var(--sys-border-subtle)]">
-        <div v-for="candidate in interviewingCandidates" :key="candidate.id" class="p-6 hover:bg-[var(--sys-bg-hover)] transition-all duration-300 group">
+        <div v-for="candidate in pendingEval" :key="candidate.id" class="p-6 hover:bg-[var(--sys-bg-hover)] transition-all duration-300 group">
           <div class="flex flex-col lg:flex-row gap-8">
             <!-- Information Column -->
             <div class="lg:w-1/3 space-y-4">
@@ -53,8 +53,12 @@
               
               <div class="space-y-2 py-4 border-t border-b border-[var(--sys-border-subtle)] border-dashed border-t-2 border-b-2">
                 <div class="flex items-center justify-between text-[12.5px] font-bold text-[var(--sys-text-primary)]">
+                  <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-text-secondary)] opacity-60">TRẠNG THÁI:</span>
+                  <span :class="['', candidate.status === 'pending_mgr' ? 'text-[var(--sys-warning-text)]' : 'text-purple-600']">{{ candidate.status === 'pending_mgr' ? 'CHỜ THẨM ĐỊNH CV' : 'ĐÃ PHỎNG VẤN' }}</span>
+                </div>
+                <div class="flex items-center justify-between text-[12.5px] font-bold text-[var(--sys-text-primary)]">
                   <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-text-secondary)] opacity-60">LỊCH HẸN PHỎNG VẤN:</span>
-                  <span class="text-[var(--sys-brand-solid)]">{{ candidate.interviewDate }}</span>
+                  <span class="text-[var(--sys-brand-solid)]">{{ candidate.interviewDate || 'Chưa lên lịch' }}</span>
                 </div>
                 <div class="flex items-center justify-between text-[12.5px] font-bold text-[var(--sys-text-primary)]">
                   <span class="text-[10px] font-bold uppercase tracking-widest text-[var(--sys-text-secondary)] opacity-60">RANKING AI SCORE:</span>
@@ -62,30 +66,52 @@
                 </div>
               </div>
 
-              <button class="w-full h-10 px-4 border-2 border-dashed border-[var(--sys-brand-border)] text-[var(--sys-brand-solid)] rounded-md text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--sys-brand-soft)] transition-all flex items-center justify-center gap-2.5">
+              <a :href="candidate.cvUrl || '#'" target="_blank" class="w-full h-10 px-4 border-2 border-dashed border-[var(--sys-brand-border)] text-[var(--sys-brand-solid)] rounded-md text-[10px] font-bold uppercase tracking-widest hover:bg-[var(--sys-brand-soft)] transition-all flex items-center justify-center gap-2.5">
                 <span class="material-symbols-rounded text-[18px] font-bold">attachment</span>
-                TRUY XUẤT HỒ SƠ CV
-              </button>
+                TRUY XUẤT HỒ SƠ CV / LINKEDIN
+              </a>
             </div>
 
             <!-- Review Column -->
             <div class="flex-1 space-y-4 lg:pl-8 lg:border-l-2 lg:border-dashed lg:border-[var(--sys-border-subtle)] flex flex-col">
+              <!-- Score Slider -->
+              <div class="space-y-1.5">
+                <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest block">SỐ ĐIỂM ĐÁNH GIÁ CHUYÊN MÔN (1–10)</label>
+                <div class="flex items-center gap-3">
+                  <input 
+                    v-model.number="scores[candidate.id]"
+                    type="range" min="1" max="10" step="1"
+                    class="flex-1 accent-[var(--sys-brand-solid)] h-2"
+                  />
+                  <span class="w-10 h-10 rounded-md bg-[var(--sys-brand-soft)] border border-[var(--sys-brand-border)] text-[var(--sys-brand-solid)] flex items-center justify-center font-bold text-sm shrink-0">
+                    {{ scores[candidate.id] || '—' }}
+                  </span>
+                </div>
+              </div>
+              <!-- Notes -->
               <div class="flex-grow space-y-2">
                 <label class="text-[11px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest block mb-2 shadow-none">QUYẾT ĐỊNH & ĐÁNH GIÁ CHUYÊN MÔN TỔNG QUAN *</label>
                 <textarea 
                   v-model="reviews[candidate.id]"
                   class="w-full h-32 p-4 bg-[var(--sys-bg-page)]/50 border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] focus:bg-white shadow-sm transition-all placeholder:opacity-30"
-                  placeholder="Nhập nhận định kỹ thuật, thái độ chuyên nghiệp và mức độ hài lòng thực tế..."
+                  placeholder="Nhập nhận định kỹ thuẫt, thái độ chuyên nghiệp và mức độ hài lòng thực tế..."
                 ></textarea>
               </div>
               <div class="flex justify-end gap-3 pt-2">
                 <button 
-                  @click="submitReview(candidate.id)"
+                  @click="submitEval(candidate.id, 'reject')"
+                  :disabled="!reviews[candidate.id]"
+                  class="h-11 px-6 border border-[var(--sys-danger-border)] text-[var(--sys-danger-text)] rounded-md text-[11px] font-bold uppercase tracking-widest hover:bg-[var(--sys-danger-soft)] transition-all active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
+                >
+                  Từ chối
+                </button>
+                <button 
+                  @click="submitEval(candidate.id, 'approve')"
                   :disabled="!reviews[candidate.id]"
                   class="h-11 px-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[11px] font-bold uppercase tracking-widest shadow-md hover:brightness-110 transition-all flex items-center gap-3 active:scale-95 disabled:opacity-30 disabled:pointer-events-none"
                 >
                   <span class="material-symbols-rounded text-[20px] font-bold">send</span>
-                  XÁC NHẬN & GỬI CHO HR
+                  DUYỆT & GỬi HR
                 </button>
               </div>
             </div>
@@ -97,30 +123,38 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRecruitmentStore } from '@/composables/useRecruitmentStore'
-import { useConfirm } from '@/composables/useConfirm'
-import { departmentsAPI } from '@/data/mockDB.js'
+import { ref, computed } from 'vue';
+import {
+  useManagerApplications,
+  submitManagerEvaluation,
+} from '@/composables/useRecruitmentStore';
+import { useConfirm } from '@/composables/useConfirm';
 
-const store = useRecruitmentStore()
-const { showAlert } = useConfirm()
+const { showAlert } = useConfirm();
 
-const userDeptId = localStorage.getItem('userDeptId') || '1';
-const departmentResult = departmentsAPI.getAll().find(d => Number(d.department_id) === Number(userDeptId) || d.id === userDeptId);
-const deptName = ref(departmentResult?.department_name || departmentResult?.name || 'Phòng ban');
+const userDeptId = parseInt(localStorage.getItem('userDeptId')) || 4;
+const { pendingEval, deptName } = useManagerApplications(userDeptId);
 
-const interviewingCandidates = computed(() => {
-  return store.candidates.value.filter(c => c.status === 'interviewing' && Number(c.departmentId) === Number(userDeptId))
-})
+const reviews = ref({});
+const scores  = ref({});
 
-const reviews = ref({})
+async function submitEval(candidateId, decision) {
+  const notes = reviews.value[candidateId];
+  const score = scores.value[candidateId] || null;
+  if (!notes) return;
 
-async function submitReview(candidateId) {
-  const reviewContent = reviews.value[candidateId]
-  if (!reviewContent) return
-  store.submitManagerReview(candidateId, reviewContent)
-  await showAlert('TIẾP NHẬN ĐÁNH GIÁ', 'Thông tin đã được chuyển tiếp sang bộ phận HR để thực hiện các bước tiếp theo.')
-  delete reviews.value[candidateId]
+  submitManagerEvaluation(candidateId, { notes, score }, decision);
+
+  const msg = decision === 'approve'
+    ? 'Hồ sơ đã được duyệt và chuyển lại HR. HR sẽ lên lịch phỏng vấn!'
+    : 'Hồ sơ đã bị từ chối. HR sẽ được thông báo.';
+
+  await showAlert(
+    decision === 'approve' ? 'TIẾP NHẬN ĐÁNH GIÁ' : 'TỪ CHỐI',
+    msg
+  );
+  delete reviews.value[candidateId];
+  delete scores.value[candidateId];
 }
 </script>
 

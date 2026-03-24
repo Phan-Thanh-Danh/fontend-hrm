@@ -35,9 +35,11 @@
                 Tài khoản trải nghiệm:
               </p>
               <ul class="list-disc pl-8 space-y-1 text-blue-700">
-                <li>Trưởng phòng: <b>manager@hrm.com</b> / <b>manager</b></li>
-                <li>Admin: <b>admin@hrm.com</b> / <b>admin</b></li>
-                <li>Nhân viên: <b>user@hrm.com</b> / <b>user</b></li>
+                <li>BOD / Giám Đốc: <b>danh.phan@aethrm.com</b></li>
+                <li>Admin (Quản trị): <b>admin@aethrm.com</b> <i>(tài khoản ẩn)</i></li>
+                <li>Trưởng phòng: <b>loc.mai@aethrm.com</b></li>
+                <li>Nhân viên: <b>ngan.bui@aethrm.com</b></li>
+                <li class="mt-1 border-t border-blue-200/50 pt-1"><i>Mật khẩu chung cho tất cả: <b>123456</b></i></li>
               </ul>
             </div>
           </div>
@@ -103,7 +105,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-import { employeesAPI } from '../data/mockDB.js';
+import { mockEmployees } from '@/mock-data/index.js';
 
 const router = useRouter();
 
@@ -128,35 +130,36 @@ const handleLogin = async () => {
   
   try {
     // Sử dụng data ảo từ mockDB
-    const employees = employeesAPI.getAll();
-    console.log('Employees:', employees); // Debug
+    const employees = mockEmployees;
     
-    // Check hardcoded first or just use the DB
-    const user = employees.find(e => e.email === email.value && (e.password === password.value || password.value === '123456'));
-    console.log('User found:', user); // Debug
-    console.log('Email:', email.value, 'Password:', password.value); // Debug
+    // Check credentials against companyEmail
+    const user = employees.find(e => e.companyEmail === email.value && (e.password === password.value || password.value === '123456'));
 
     if (user) {
-      localStorage.setItem('userRole', user.role);
-      localStorage.setItem('userId', user.employee_id);
-      localStorage.setItem('userName', user.full_name);
-      localStorage.setItem('userEmail', user.email);
-      localStorage.setItem('userDeptId', user.department_id);
-      
-      if (user.role === 'admin') {
-        router.push('/admin');
-      } else if (user.role === 'manager') {
-        router.push('/truongphong');
-      } else if (user.role === 'director') {
-        router.push('/giamdoc');
-      } else {
-        router.push('/nhanvien');
+      let uiRole = 'employee';
+      let targetRoute = '/nhanvien';
+
+      if (user.role === 'ADMIN') {
+         // BOD / Giám đốc
+         uiRole = 'director';
+         targetRoute = '/giamdoc';
+      } else if (user.role === 'MANAGER') {
+         uiRole = 'manager';
+         targetRoute = '/truongphong';
       }
-    } else if (email.value === 'admin@hrm.com' && password.value === 'admin') {
-      // Fallback for original admin
+
+      localStorage.setItem('userRole', uiRole);
+      localStorage.setItem('userId', user.employeeId);
+      localStorage.setItem('userName', user.fullName);
+      localStorage.setItem('userEmail', user.companyEmail);
+      localStorage.setItem('userDeptId', user.department?.departmentId || user.departmentId || null);
+
+      router.push(targetRoute);
+    } else if (email.value === 'admin@aethrm.com' && password.value === '123456') {
+      // Fallback for HR Admin specifically going to /admin
       localStorage.setItem('userRole', 'admin');
-      localStorage.setItem('userId', 'NV001');
-      localStorage.setItem('userDeptId', '4'); // Admin depth
+      localStorage.setItem('userId', 'NV00000');
+      localStorage.setItem('userDeptId', '4');
       router.push('/admin');
     } else {
       errorMsg.value = 'Tài khoản hoặc mật khẩu không chính xác!';

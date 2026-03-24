@@ -140,6 +140,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { mockEmployees, mockLeaveRequests, mockDepartments } from '@/mock-data/index.js';
 
 const stats = ref([])
 const pendingItems = ref([])
@@ -147,85 +148,78 @@ const projects = ref([])
 const deptInfo = ref({ name: 'Đang tải...', count: 0, budget: '0' })
 const chartData = ref([65, 80, 45, 90, 85, 40, 75])
 
-const userId = localStorage.getItem('userId') || 'NV008';
-const userDeptId = localStorage.getItem('userDeptId') || '1';
+const userId = Number(localStorage.getItem('userId')) || 2;
+const userDeptId = Number(localStorage.getItem('userDeptId')) || 2;
+let pollInterval = null;
 
-const fetchData = async () => {
+const leaveTypeLabel = (typeId) => {
+  const map = { 1: 'Nghỉ phép năm', 2: 'Nghỉ ốm', 3: 'Nghỉ thai sản', 4: 'Nghỉ không lương' };
+  return map[typeId] || 'Nghỉ phép';
+};
+
+const fetchData = () => {
   try {
-    const [empRes, deptRes, reqRes] = await Promise.all([
-      fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
-      fetch(`http://localhost:3000/departments/${userDeptId}`),
-      fetch(`http://localhost:3000/leaveRequests?status=pending`)
-    ]);
+    const allEmps = mockEmployees;
+    const allDepts = mockDepartments;
+    const allReqs = mockLeaveRequests;
 
-    const employees = await empRes.json();
-    const department = await deptRes.json();
-    const allReqs = await reqRes.json();
+    const deptEmps = allEmps.filter(e => (e.department?.departmentId || e.departmentId) == userDeptId);
+    const dept = allDepts.find(d => d.departmentId == userDeptId) || {};
 
     deptInfo.value = {
-        name: department.name || 'Phòng ban',
-        count: employees.length,
-        budget: department.budget || 'N/A'
+      name: dept.departmentName || 'Phòng ban',
+      count: deptEmps.length,
+      budget: '850M VNĐ'
     };
-    
-    // Filter leave requests for this department
-    pendingItems.value = allReqs.filter(req => 
-      employees.some(e => e.id === req.employeeId)
-    ).map(req => ({
-        id: req.id,
-        name: req.name || 'Nhân viên',
-        type: req.type || 'Nghi phép',
-        date: req.requestDate || 'Hôm nay'
-    }));
 
-    projects.value = [
-        { name: 'Kế hoạch Quý 2', progress: 85 },
-        { name: 'Phát triển Nhân sự', progress: 40 },
-        { name: 'Tối ưu Vận hành', progress: 92 }
-    ];
-    
-    const lateCount = 1; // Mock or calculate if attendance is fetched
+    const deptEmpIds = new Set(deptEmps.map(e => e.employeeId));
+    const pending = allReqs.filter(r => r.status === 'CHỜ_DUYỆT' && deptEmpIds.has(r.requesterId));
+    pendingItems.value = pending.slice(0, 8).map(req => {
+      const emp = allEmps.find(e => e.employeeId === req.requesterId) || {};
+      return {
+        id: req.requestId,
+        name: emp.fullName || req.requesterName || 'Nhân viên',
+        type: leaveTypeLabel(req.requestTypeId),
+        date: req.startDate || req.requestDate
+      };
+    });
+
+    const lateCount = 0;
 
     stats.value = [
-        { label: 'TỔNG NHÂN SỰ', value: String(deptInfo.value.count).padStart(2, '0'), icon: 'groups', bg: 'bg-[var(--sys-brand-soft)]', color: 'text-[var(--sys-brand-solid)]', border: 'border-[var(--sys-brand-border)]' },
-        { label: 'ĐI MUỘN HÔM NAY', value: String(lateCount).padStart(2, '0'), icon: 'alarm_off', bg: 'bg-[var(--sys-danger-soft)]', color: 'text-[var(--sys-danger-text)]', border: 'border-[var(--sys-danger-border)]' },
-        { label: 'CHỜ THẨM ĐỊNH', value: String(pendingItems.value.length).padStart(2, '0'), icon: 'pending_actions', bg: 'bg-[var(--sys-warning-soft)]', color: 'text-[var(--sys-warning-text)]', border: 'border-[var(--sys-danger-border)]' },
-        { label: 'TIẾN ĐỘ DỰ ÁN', value: `72%`, icon: 'trending_up', bg: 'bg-[var(--sys-success-soft)]', color: 'text-[var(--sys-success-text)]', border: 'border-[var(--sys-success-border)]' }
+      { label: 'TỔNG NHÂN SỰ', value: String(deptEmps.length).padStart(2, '0'), icon: 'groups', bg: 'bg-[var(--sys-brand-soft)]', color: 'text-[var(--sys-brand-solid)]', border: 'border-[var(--sys-brand-border)]' },
+      { label: 'ĐI MUỘN HÔM NAY', value: String(lateCount).padStart(2, '0'), icon: 'alarm_off', bg: 'bg-[var(--sys-danger-soft)]', color: 'text-[var(--sys-danger-text)]', border: 'border-[var(--sys-danger-border)]' },
+      { label: 'CHỜ THẨM ĐỊNH', value: String(pendingItems.value.length).padStart(2, '0'), icon: 'pending_actions', bg: 'bg-[var(--sys-warning-soft)]', color: 'text-[var(--sys-warning-text)]', border: 'border-[var(--sys-danger-border)]' },
+      { label: 'TIẾN ĐỘ KPI', value: `72%`, icon: 'trending_up', bg: 'bg-[var(--sys-success-soft)]', color: 'text-[var(--sys-success-text)]', border: 'border-[var(--sys-success-border)]' }
     ];
-    
-    chartData.value = [65 + Math.random()*20, 80 + Math.random()*10, 45 + Math.random()*30, 90, 85, 40, 75];
-    
+
+    projects.value = [
+      { name: 'Kế hoạch Quý 2/2026', progress: 85 },
+      { name: 'Phát triển Nhân sự Q1', progress: 62 },
+      { name: 'Tối ưu Vận hành', progress: 92 }
+    ];
+
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu Trưởng phòng:', error);
   }
 };
 
-const handleApprove = async (req) => {
-  await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ status: 'approved', approverId: userId })
-  });
+const handleApprove = (req) => {
+  mockLeaveRequests.approve(req.id);
   fetchData();
 };
 
-const handleReject = async (req) => {
+const handleReject = (req) => {
   const reason = prompt('Lý do từ chối:');
   if (reason) {
-    await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'rejected', rejectReason: reason, approverId: userId })
-    });
+    mockLeaveRequests.reject(req.id, reason);
     fetchData();
   }
 };
 
-let pollInterval = null;
-
 onMounted(() => {
   fetchData();
-  pollInterval = setInterval(fetchData, 10000); // Live sync every 10s
+  pollInterval = setInterval(fetchData, 10000);
 });
 
 onUnmounted(() => {

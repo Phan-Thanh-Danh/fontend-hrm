@@ -226,7 +226,7 @@
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { departmentsAPI, employeesAPI } from '@/data/mockDB.js';
+import { mockDepartments, mockEmployees } from '@/mock-data/index.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -242,13 +242,16 @@ const activeOptions = [
 ];
 
 const departments = computed(() => {
-  return departmentsAPI.getAll().map(d => {
-    const empCount = employeesAPI.getAll().filter(e => e.department_id === d.department_id && e.status !== 'ĐÃ_NGHỈ_VIỆC').length;
+  return mockDepartments.map(d => {
+    const empCount = mockEmployees.filter(e => e.department.departmentId === d.departmentId && e.status !== 'ĐÃ_NGHỈ_VIỆC').length;
+    let managerName = null;
+    const managerEmp = mockEmployees.find(e => e.department.departmentId === d.departmentId && ['Trưởng phòng', 'Giám đốc'].includes(e.position.positionName));
+    managerName = managerEmp?.fullName || null;
     return {
-      id: d.department_id,
-      name: d.department_name,
-      code: d.department_code,
-      manager: d.manager_id ? employeesAPI.getById(d.manager_id)?.full_name : null,
+      id: d.departmentId,
+      name: d.departmentName,
+      code: d.departmentCode,
+      manager: managerName,
       active: d.status,
       employee_count: empCount,
       icon: d.icon || 'corporate_fare',
@@ -311,18 +314,19 @@ const handleSave = async () => {
   }
   
   const dto = {
-    department_code: form.value.code,
-    department_name: form.value.name,
+    departmentId: form.value.id || Date.now(),
+    departmentCode: form.value.code,
+    departmentName: form.value.name,
     status: form.value.active,
     icon: form.value.icon,
     parent_id: form.value.parent_id
-    // manager handling can be injected via manager_id
   };
 
   if (isEdit.value) {
-    departmentsAPI.update(form.value.id, dto);
+    const idx = mockDepartments.findIndex(d => d.departmentId === form.value.id);
+    if (idx !== -1) Object.assign(mockDepartments[idx], dto);
   } else {
-    departmentsAPI.add(dto);
+    mockDepartments.unshift(dto);
   }
   closeModal();
 };
@@ -334,7 +338,8 @@ const confirmDissolve = async (dept) => {
   }
   const ok = await showConfirm('Cấu trúc tổ chức', `Xác nhận thay đổi trạng thái hoạt động của đơn vị ${dept.name}?`);
   if (ok) {
-    departmentsAPI.update(dept.id, { status: !dept.active });
+    const idx = mockDepartments.findIndex(d => d.departmentId === dept.id);
+    if (idx !== -1) mockDepartments[idx].status = !dept.active;
   }
 };
 </script>

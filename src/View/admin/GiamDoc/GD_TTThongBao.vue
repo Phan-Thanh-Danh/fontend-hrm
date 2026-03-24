@@ -337,9 +337,9 @@
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 // Import Functional MockDB
-import { requestsAPI, employeesAPI, departmentsAPI, requestTypesAPI } from '@/data/mockDB.js';
+import { mockLeaveRequests, mockEmployees, mockDepartments, mockRequestTypes } from '@/mock-data/index.js';
 import { getInitials, getAvatarColors, getRequestTypeUI } from '@/utils/uiMapper.js';
-import { importantNotifications as staticNotifications } from '@/data/sampleData_GiamDoc.js';
+import { importantNotifications as staticNotifications } from '@/mock-data/sampleData_GiamDoc.js';
 
 const router = useRouter();
 
@@ -389,21 +389,21 @@ const approvalStats = computed(() => {
 // ── Mapped Reactive Requests ────────────────────────────
 const mappedRequests = computed(() => {
   // Lấy toàn bộ yêu cầu và sắp xếp mới nhất lên đầu
-  const allRequests = [...requestsAPI.getAll()].sort((a, b) => {
-    const dateA = new Date(a.request_date || 0);
-    const dateB = new Date(b.request_date || 0);
+  const allRequests = [...mockLeaveRequests].sort((a, b) => {
+    const dateA = new Date(a.requestDate || 0);
+    const dateB = new Date(b.requestDate || 0);
     return dateB - dateA;
   });
 
   return allRequests.map(req => {
-    const emp = employeesAPI.getById(req.requester_id) || {};
-    const dept = departmentsAPI.getById(emp.department_id) || {};
-    const reqTypeObj = requestTypesAPI.getById(req.request_type_id) || {};
+    const emp = mockEmployees.getById(req.requesterId) || {};
+    const dept = mockDepartments.getById(emp.departmentId) || {};
+    const reqTypeObj = mockRequestTypes.getById(req.requestTypeId) || {};
     // Dùng category string để lấy cấu hình UI, fallback 'KHÁC' tránh crash
     const ui = getRequestTypeUI(reqTypeObj.category || 'KHÁC') || {
       icon: 'help', color: 'text-gray-600', bg: 'bg-gray-50', catKey: 'khac'
     };
-    const avatarUI = getAvatarColors(emp.employee_id || 1);
+    const avatarUI = getAvatarColors(emp.employeeId || 1);
 
     // Trạng thái 'pending' cụ thể cho Giám đốc giải quyết là CHỜ_GIÁM_ĐỐC_DUYỆT
     // Nếu muốn hiển thị cả CHỜ_DUYỆT của TP thì thêm vào, nhưng user nói Icon Nav (chỉ lọc CHỜ_GD) là đúng
@@ -411,18 +411,18 @@ const mappedRequests = computed(() => {
     const isPendingForDirector = req.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT';
 
     return {
-      id: req.request_id,
-      name: emp.full_name || 'Khuyết danh',
-      dept: dept.department_name ? `Phòng ${dept.department_name}` : '',
-      initials: getInitials(emp.full_name || '?'),
+      id: req.requestId,
+      name: emp.fullName || 'Khuyết danh',
+      dept: dept.departmentName ? `Phòng ${dept.departmentName}` : '',
+      initials: getInitials(emp.fullName || '?'),
       avatarBg: avatarUI.bg,
       avatarColor: avatarUI.text,
-      type: reqTypeObj.request_type_name || 'Khác',
+      type: reqTypeObj.requestTypeName || 'Khác',
       typeIcon: ui.icon,
       typeColor: ui.color,
       typeBg: ui.bg,
       title: req.title || 'Không có nội dung',
-      time: req.request_date || new Date().toISOString(),
+      time: req.requestDate || new Date().toISOString(),
       urgent: !!req.is_urgent || req.days >= 3,
       category: ui.catKey,
       reasonText: req.notes || req.reason || req.title,
@@ -462,7 +462,7 @@ const closeApprove = () => {
 const confirmApprove = () => {
   if (!selectedItem.value) return;
   // GỌI API THỰC TẾ
-  requestsAPI.approve(selectedItem.value.id);
+  mockLeaveRequests.approve(selectedItem.value.id);
   showToast('approve', `Đã phê duyệt yêu cầu của ${selectedItem.value.name}`);
   closeApprove();
 };
@@ -485,7 +485,7 @@ const confirmReject = () => {
     return;
   }
   // GỌI API THỰC TẾ
-  requestsAPI.reject(selectedItem.value.id, rejectReason.value);
+  mockLeaveRequests.reject(selectedItem.value.id, rejectReason.value);
   showToast('reject', `Đã từ chối yêu cầu của ${selectedItem.value.name}`);
   closeReject();
 };

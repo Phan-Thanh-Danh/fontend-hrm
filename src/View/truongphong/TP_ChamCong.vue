@@ -205,7 +205,7 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import Dropdown from '@/components/Dropdown.vue'
-import { employeesAPI, mockDB, departmentsAPI } from '@/data/mockDB.js'
+import { mockEmployees, mockDB, mockDepartments } from '@/mock-data/index.js'
 
 const showHistoryModal = ref(false)
 const selectedMonth = ref('03')
@@ -246,23 +246,23 @@ const userDeptId = localStorage.getItem('userDeptId') || '1';
 
 const loadData = async () => {
   try {
-    const departmentResult = departmentsAPI.getAll().find(d => Number(d.department_id) === Number(userDeptId) || d.id === userDeptId);
+    const departmentResult = mockDepartments.find(d => Number(d.departmentId) === Number(userDeptId) || d.id === userDeptId);
     if (departmentResult) {
-      deptName.value = departmentResult.department_name || departmentResult.name || 'Phòng ban';
+      deptName.value = departmentResult.departmentName || departmentResult.name || 'Phòng ban';
     }
 
-    const employeesResult = employeesAPI.getAll().filter(e => Number(e.department_id) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
+    const employeesResult = mockEmployees.filter(e => Number(e.departmentId) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
     const allAtts = mockDB.attendances || []; // fallback to empty array if undefined
 
     // Build the grid
     attendanceList.value = employeesResult.map(emp => {
-      const empId = emp.employee_id || emp.id;
-      const empAtts = allAtts.filter(a => a.employee_id === empId || a.employeeId === empId);
+      const empId = emp.employeeId || emp.id;
+      const empAtts = allAtts.filter(a => a.employeeId === empId || a.employeeId === empId);
       const data = {};
       let totalDays = 0;
 
       empAtts.forEach(att => {
-        const d = new Date(att.attendance_date || att.date);
+        const d = new Date(att.attendanceDate || att.date);
         if (!isNaN(d)) {
           const day = d.getDate();
           const status = att.status === 'ĐÃ_DUYỆT' ? 'on' : (att.status === 'ontime' ? 'on' : (att.status === 'late' ? 'late' : 'off'));
@@ -282,7 +282,7 @@ const loadData = async () => {
 
       return {
         id: empId,
-        name: emp.full_name || emp.name,
+        name: emp.fullName || emp.name,
         dept: deptName.value,
         total: totalDays.toFixed(1),
         data
@@ -291,17 +291,17 @@ const loadData = async () => {
 
     // Build history logs
     historyLogs.value = allAtts
-      .filter(att => employeesResult.some(e => (e.employee_id || e.id) === (att.employee_id || att.employeeId)))
+      .filter(att => employeesResult.some(e => (e.employeeId || e.id) === (att.employeeId || att.employeeId)))
       .slice(0, 15)
       .map(att => {
-        const emp = employeesResult.find(e => (e.employee_id || e.id) === (att.employee_id || att.employeeId));
+        const emp = employeesResult.find(e => (e.employeeId || e.id) === (att.employeeId || att.employeeId));
         const statusConverted = att.status === 'ĐÃ_DUYỆT' ? 'ontime' : (att.status || 'ontime');
         return {
-          date: att.attendance_date || att.date,
-          name: emp ? (emp.full_name || emp.name) : (att.name || 'N/A'),
+          date: att.attendanceDate || att.date,
+          name: emp ? (emp.fullName || emp.name) : (att.name || 'N/A'),
           role: deptName.value,
-          in: (att.check_in_time || att.checkIn1)?.split(' ')[1] || (att.checkIn1 || '--:--'),
-          out: (att.check_out_time || att.checkOut1)?.split(' ')[1] || (att.checkOut1 || '--:--'),
+          in: (att.checkInTime || att.checkIn1)?.split(' ')[1] || (att.checkIn1 || '--:--'),
+          out: (att.checkOutTime || att.checkOut1)?.split(' ')[1] || (att.checkOut1 || '--:--'),
           in2: att.checkIn2 || null,
           out2: att.checkOut2 || null,
           status: statusConverted,

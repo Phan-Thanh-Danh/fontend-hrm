@@ -506,12 +506,12 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
-import { employeesAPI, departmentsAPI, requestsAPI, requestTypesAPI } from '@/data/mockDB.js';
+import { mockEmployees, mockDepartments, mockLeaveRequests, mockRequestTypes } from '@/mock-data/index.js';
 import { getInitials, getAvatarColors, getRequestTypeUI } from '@/utils/uiMapper.js';
 import {
   timelineEvents,
   reminderText,
-} from '@/data/sampleData_GiamDoc.js';
+} from '@/mock-data/sampleData_GiamDoc.js';
 import { useConfirm } from '@/composables/useConfirm';
 
 const { showAlert } = useConfirm();
@@ -528,9 +528,9 @@ const donutTotal = ref(0);
 
 const fetchData = () => {
   try {
-    const allEmps = employeesAPI.getAll();
-    const allDepts = departmentsAPI.getAll();
-    const allReqs = requestsAPI.getAll();
+    const allEmps = mockEmployees;
+    const allDepts = mockDepartments;
+    const allReqs = mockLeaveRequests;
 
     const activeEmps = allEmps.filter(e => e.status !== 'ĐÃ_NGHỈ_VIỆC');
     
@@ -573,10 +573,10 @@ const fetchData = () => {
     donutTotal.value = activeEmps.length;
     
     let chartItems = allDepts.map((d, i) => {
-        const count = activeEmps.filter(e => e.department_id === d.department_id).length;
+        const count = activeEmps.filter(e => e.departmentId === d.departmentId).length;
         const pct = Math.round((count / (donutTotal.value || 1)) * 100);
         return {
-            label: d.department_name,
+            label: d.departmentName,
             pct: pct,
             color: colors[i % colors.length]
         };
@@ -601,20 +601,20 @@ const fetchData = () => {
         const isVisible = r.visible_to ? r.visible_to.includes('Director') : true;
         return isDirectorQueue && isVisible;
     }).map(r => {
-        const emp = allEmps.find(e => e.employee_id === r.requester_id) || {};
-        const dept = allDepts.find(d => d.department_id === emp.department_id) || {};
-        const reqTypeObj = requestTypesAPI.getById(r.request_type_id) || {};
+        const emp = allEmps.find(e => e.employeeId === r.requesterId) || {};
+        const dept = allDepts.find(d => d.departmentId === emp.departmentId) || {};
+        const reqTypeObj = mockRequestTypes.getById(r.requestTypeId) || {};
         const ui = getRequestTypeUI(reqTypeObj.category || 'KHÁC') || {
           icon: 'help', color: 'text-gray-600', bg: 'bg-gray-50', catKey: 'khac'
         };
-        const avatarUI = getAvatarColors(emp.employee_id || 1);
-        const dateStr = r.start_date && r.end_date ? `[${r.start_date} -> ${r.end_date}]` : '';
+        const avatarUI = getAvatarColors(emp.employeeId || 1);
+        const dateStr = r.startDate && r.endDate ? `[${r.startDate} -> ${r.endDate}]` : '';
         return {
-            id: r.request_id,
+            id: r.requestId,
             isReal: true,
             statusRaw: r.status,
             title: r.title,
-            meta: `${emp.full_name || 'Khuyết danh'} ${dateStr} • Lý do: ${r.notes || 'Không có'}`,
+            meta: `${emp.fullName || 'Khuyết danh'} ${dateStr} • Lý do: ${r.notes || 'Không có'}`,
             icon: r.is_urgent ? 'warning' : 'event_note',
             iconClass: r.is_urgent ? 'kpi-icon--amber' : 'kpi-icon--blue',
             urgent: r.is_urgent,
@@ -624,19 +624,19 @@ const fetchData = () => {
             rejectReason: '',
             
             // New fields for unified Approval Modal (from Notification Center)
-            name: emp.full_name || 'Khuyết danh',
-            dept: dept.department_name ? `Phòng ${dept.department_name}` : '',
-            type: reqTypeObj.request_type_name || 'Khác',
+            name: emp.fullName || 'Khuyết danh',
+            dept: dept.departmentName ? `Phòng ${dept.departmentName}` : '',
+            type: reqTypeObj.requestTypeName || 'Khác',
             reasonText: r.notes || r.reason || r.title,
             
             // New UI fields from TTThongBao
-            initials: getInitials(emp.full_name || '?'),
+            initials: getInitials(emp.fullName || '?'),
             avatarBg: avatarUI.bg,
             avatarColor: avatarUI.text,
             typeIcon: ui.icon,
             typeColor: ui.color,
             typeBg: ui.bg,
-            time: r.request_date || new Date().toISOString()
+            time: r.requestDate || new Date().toISOString()
         };
     }).slice(0, 5);
 
@@ -713,9 +713,9 @@ const confirmApprove = () => {
 
   if (isReal) {
     if (selectedApproval.value.status === 'pending' || selectedApproval.value.statusRaw === 'CHỜ_GIÁM_ĐỐC_DUYỆT') {
-      requestsAPI.directorApprove(requestId);
+      mockLeaveRequests.directorApprove(requestId);
     } else {
-      requestsAPI.approve(requestId);
+      mockLeaveRequests.approve(requestId);
     }
     fetchData();
   }
@@ -736,7 +736,7 @@ const confirmReject = async () => {
 
   const isReal = selectedApproval.value.isReal;
   if (isReal) {
-    requestsAPI.reject(selectedApproval.value.id, reason);
+    mockLeaveRequests.reject(selectedApproval.value.id, reason);
     fetchData();
   }
 

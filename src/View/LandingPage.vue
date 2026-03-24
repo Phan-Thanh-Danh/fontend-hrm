@@ -511,6 +511,7 @@
 
 <script setup>
 import { onMounted, onUnmounted } from 'vue';
+import { mockJobPostings, mockApplications } from '@/mock-data/index.js';
 
 onMounted(() => {
   // Add class to body to scope the landing page styles
@@ -750,26 +751,32 @@ onMounted(() => {
     const grid = document.getElementById('jobs-grid');
     if (!grid) return;
     grid.innerHTML = '';
-    jobs.forEach(j => {
+    
+    // Only show open jobs
+    const activeJobs = mockJobPostings.filter(j => j.status === 'ĐANG_MỞ');
+    
+    activeJobs.forEach(j => {
+      const typeLabel = j.workType === 'FULL_TIME' ? 'Toàn Thời Gian' : (j.workType === 'HYBRID' ? 'Hybrid' : 'Thực tập');
+      const salaryLabel = j.salaryMin ? `${(j.salaryMin/1000000).toFixed(0)}tr – ${(j.salaryMax/1000000).toFixed(0)}tr` : 'Thỏa thuận';
       const card = document.createElement('div');
       card.className = 'job-card reveal';
       card.innerHTML = `
         <div class="job-top">
           <div>
             <div class="job-title">${j.title}</div>
-            <div class="job-dept">${j.dept}</div>
+            <div class="job-dept">${j.departmentName}</div>
           </div>
-          <span class="job-badge ${j.type === 'Toàn Thời Gian' ? 'full' : ''}">${j.type}</span>
+          <span class="job-badge ${j.workType === 'FULL_TIME' ? 'full' : ''}">${typeLabel}</span>
         </div>
         <div class="job-meta">
-          <span><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${j.loc}</span>
-          <span><svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 00-2 2v6a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2z"/><circle cx="12" cy="12" r="2"/></svg>${j.level}</span>
-          <span><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>${j.salary}</span>
+          <span><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${j.location}</span>
+          <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2"/><path d="M7 20v-2a4 4 0 014-4h2a4 4 0 014 4v2"/></svg>Chuyên viên</span>
+          <span><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>${salaryLabel}</span>
         </div>
-        <div class="job-desc">${j.desc}</div>
-        <div class="job-skills">${j.skills.map(s => `<span class="jskill">${s}</span>`).join('')}</div>
+        <div class="job-desc">${j.description}</div>
+        <div class="job-skills">${j.requirements.slice(0, 3).map(s => `<span class="jskill">${s}</span>`).join('')}</div>
         <div class="job-actions">
-          <button class="btn-jd" data-job-id="${j.id}">Xem JD Chi Tiết</button>
+          <button class="btn-jd" data-job-id="${j.jobId}">Xem JD Chi Tiết</button>
           <button class="btn-apply" data-job-title="${j.title}">Ứng Tuyển Ngay →</button>
         </div>`;
       grid.appendChild(card);
@@ -785,26 +792,28 @@ onMounted(() => {
   };
 
   const openJD = (id) => {
-    const j = jobs[id];
+    const j = mockJobPostings.find(x => x.jobId === id);
+    if (!j) return;
     const content = document.getElementById('jd-content');
     if (content) {
+      const typeLabel = j.workType === 'FULL_TIME' ? 'Toàn Thời Gian' : (j.workType === 'HYBRID' ? 'Hybrid' : 'Thực tập');
+      const salaryLabel = j.salaryMin ? `${(j.salaryMin/1000000).toFixed(0)}tr – ${(j.salaryMax/1000000).toFixed(0)}tr` : 'Thỏa thuận';
+      
       content.innerHTML = `
-        <div class="jd-dept">${j.dept} · ${j.type}</div>
+        <div class="jd-dept">${j.departmentName} · ${typeLabel}</div>
         <div class="jd-title">${j.title}</div>
         <div class="jd-meta">
-          <span><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${j.loc}</span>
-          <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${j.level}</span>
-          <span><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>${j.salary}</span>
+          <span><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>${j.location}</span>
+          <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Chuyên viên</span>
+          <span><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>${salaryLabel}</span>
         </div>
         <div class="jd-section-title">Mô Tả Công Việc</div>
-        <p style="font-size:14px;color:#a0a0a0;line-height:1.72;margin-bottom:4px">${j.desc}</p>
-        <div class="jd-section-title">Trách Nhiệm Chính</div>
-        <ul class="jd-list">${j.responsibilities.map(r => `<li>${r}</li>`).join('')}</ul>
+        <p style="font-size:14px;color:#a0a0a0;line-height:1.72;margin-bottom:4px">${j.description}</p>
         <div class="jd-section-title">Yêu Cầu</div>
         <ul class="jd-list">${j.requirements.map(r => `<li>${r}</li>`).join('')}</ul>
         <div class="jd-section-title">Quyền Lợi</div>
         <ul class="jd-list">${j.benefits.map(b => `<li>${b}</li>`).join('')}</ul>
-        <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap">${j.skills.map(s => `<span class="chip">${s}</span>`).join('')}</div>`;
+        <div style="margin-top:18px;display:flex;gap:8px;flex-wrap:wrap">${j.requirements.slice(0, 5).map(s => `<span class="chip">${s}</span>`).join('')}</div>`;
     }
     document.getElementById('jd-modal')?.classList.add('open');
     document.body.style.overflow = 'hidden';
@@ -830,13 +839,32 @@ onMounted(() => {
       const sel = document.getElementById('f-position');
       if (sel) {
         for (let i = 0; i < sel.options.length; i++) {
-          if (sel.options[i].text === title) { sel.selectedIndex = i; break; }
+          // Compare with title from dataset
+          if (sel.options[i].getAttribute('data-title') === title) { 
+            sel.selectedIndex = i; 
+            break; 
+          }
         }
       }
     }, 600);
   };
 
   renderJobs();
+
+  /* ── POPULATE POSITION DROPDOWN FROM jobPostings.json ── */
+  const posSelect = document.getElementById('f-position');
+  if (posSelect) {
+    posSelect.innerHTML = '<option value="">-- Chọn vị trí --</option>';
+    mockJobPostings.filter(j => j.status === 'ĐANG_MỞ').forEach(j => {
+      const opt = document.createElement('option');
+      opt.value = j.jobId;
+      opt.textContent = `${j.title} (${j.departmentName})`;
+      opt.setAttribute('data-dept-id', j.departmentId);
+      opt.setAttribute('data-dept-name', j.departmentName);
+      opt.setAttribute('data-title', j.title);
+      posSelect.appendChild(opt);
+    });
+  }
 
   /* ── FILE UPLOAD ── */
   const handleFileChange = (input, areaId, displayId) => {
@@ -889,6 +917,48 @@ onMounted(() => {
       submitBtn.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 1s linear infinite"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg> Đang Gửi...`;
       
       setTimeout(() => {
+        // Write to mockApplications
+        const selectedOption = posSelect?.options[posSelect.selectedIndex];
+        const deptId = selectedOption ? parseInt(selectedOption.getAttribute('data-dept-id')) : null;
+        const deptName = selectedOption ? selectedOption.getAttribute('data-dept-name') : '';
+        const jobTitle = selectedOption ? selectedOption.getAttribute('data-title') : pos;
+        const jobId = selectedOption ? parseInt(selectedOption.value) : null;
+        const phone = document.getElementById('f-phone')?.value.trim() || '';
+        const linkedin = document.getElementById('f-linkedin')?.value.trim() || '';
+        const salary = document.getElementById('f-salary')?.value.trim() || '';
+        const cover = document.getElementById('f-cover')?.value.trim() || '';
+
+        if (mockApplications && typeof mockApplications.add === 'function') {
+          const newId = Math.max(...mockApplications.map(a => a.applicationId || 0)) + 1;
+          mockApplications.add({
+            applicationId: newId,
+            jobId: jobId,
+            jobTitle: jobTitle,
+            departmentId: deptId,
+            departmentName: deptName,
+            positionId: 5,
+            positionName: 'Chuyên viên',
+            fullName: name,
+            email: email,
+            phone: phone,
+            address: '',
+            avatarInitials: name.split(' ').map(w => w[0]).slice(-2).join('').toUpperCase(),
+            cvUrl: linkedin || `https://drive.google.com/file/d/mock_cv_landing_${newId}/view`,
+            skills: [],
+            education: { school: '', major: '', degree: '', graduationYear: null },
+            workExperience: [],
+            coverLetter: cover,
+            aiMatchScore: Math.floor(Math.random() * 20) + 60,
+            aiMatchRemarks: 'Hồ sơ nộp từ Landing Page. Chờ HR xét duyệt.',
+            status: 'CHỜ_HR_DUYỆT',
+            appliedDate: new Date().toISOString(),
+            reviewedByHR: null,
+            reviewedByManager: null,
+            interviewDate: null,
+            notes: salary ? `Mức lương kỳ vọng: ${salary}` : '',
+          });
+        }
+
         const body = document.getElementById('form-body');
         const success = document.getElementById('form-success');
         if (body) body.style.display = 'none';

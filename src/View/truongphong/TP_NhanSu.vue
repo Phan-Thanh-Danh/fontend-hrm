@@ -167,7 +167,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import Dropdown from '@/components/Dropdown.vue'
-import { employeesAPI, departmentsAPI, positionsAPI } from '@/data/mockDB.js'
+import { mockEmployees, mockDepartments, mockPositions } from '@/mock-data/index.js'
 
 const searchQuery = ref('')
 const filterStatus = ref('')
@@ -186,21 +186,21 @@ const statusOptions = [
 
 const loadData = async () => {
   try {
-    const departmentResult = departmentsAPI.getAll().find(d => Number(d.department_id) === Number(userDeptId) || d.id === userDeptId);
+    const departmentResult = mockDepartments.find(d => Number(d.departmentId) === Number(userDeptId) || d.id === userDeptId);
     if (departmentResult) {
-      deptName.value = departmentResult.department_name || departmentResult.name || 'Phòng ban';
+      deptName.value = departmentResult.departmentName || departmentResult.name || 'Phòng ban';
     }
 
-    const employeesResult = employeesAPI.getAll().filter(e => Number(e.department_id) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
+    const employeesResult = mockEmployees.filter(e => Number(e.departmentId) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
     
     staffList.value = employeesResult.map(e => ({
-        id: e.employee_id || e.id,
-        name: e.full_name || e.name,
+        id: e.employeeId || e.id,
+        name: e.fullName || e.name,
         position: (e.position || e.role === 'manager' ? 'Trưởng phòng' : 'Chuyên viên').toUpperCase(),
         status: e.status || 'active',
         joinDate: e.hired_date || e.joinDate || '2024-01-01',
         department: deptName.value,
-        avatarUrl: e.avatar_url || e.avatar || null
+        avatarUrl: e.avatarUrl || e.avatar || null
     }));
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu nhân sự:', error);

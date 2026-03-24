@@ -1,0 +1,1157 @@
+[
+  {
+    "employeeId": 1,
+    "employeeCode": "NV00001",
+    "fullName": "Phan Thành Danh",
+    "dateOfBirth": "1985-10-22",
+    "gender": "NAM",
+    "companyEmail": "danh.phan@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0901234567",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-01-01",
+    "baseLeaveDays": 14,
+    "department": {
+      "departmentId": 1,
+      "departmentCode": "BOD",
+      "departmentName": "Ban Giám Đốc"
+    },
+    "position": {
+      "positionId": 1,
+      "positionName": "Giám đốc Điều hành (CEO)"
+    },
+    "role": "ADMIN"
+  },
+  {
+    "employeeId": 2,
+    "employeeCode": "NV00002",
+    "fullName": "Mai Tấn Lộc",
+    "dateOfBirth": "1992-05-15",
+    "gender": "NAM",
+    "companyEmail": "loc.mai@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0987654321",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-02-15",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 2,
+      "positionName": "Trưởng phòng IT"
+    },
+    "role": "MANAGER"
+  },
+  {
+    "employeeId": 3,
+    "employeeCode": "NV00003",
+    "fullName": "Bùi Ngọc Bảo Ngân",
+    "dateOfBirth": "1998-11-08",
+    "gender": "NỮ",
+    "companyEmail": "ngan.bui@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0933333333",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-06-10",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 3,
+      "positionName": "Nhân viên IT"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 4,
+    "employeeCode": "NV00004",
+    "fullName": "Lê Minh Tuấn",
+    "dateOfBirth": "1986-03-18",
+    "gender": "NAM",
+    "companyEmail": "tuan.le@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0956859224",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2025-04-29",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 1,
+      "departmentName": "Ban Giám Đốc"
+    },
+    "position": {
+      "positionId": 204,
+      "positionName": "Phó Giám đốc"
+    },
+    "role": "ADMIN"
+  },
+  {
+    "employeeId": 5,
+    "employeeCode": "NV00005",
+    "fullName": "Nguyễn Thị Lan",
+    "dateOfBirth": "1995-05-30",
+    "gender": "NỮ",
+    "companyEmail": "lan.nguyen@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0912762252",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-04-25",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 205,
+      "positionName": "Nhân viên IT"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 6,
+    "employeeCode": "NV00006",
+    "fullName": "Đỗ Thanh Thảo",
+    "dateOfBirth": "1998-05-02",
+    "gender": "NỮ",
+    "companyEmail": "thao.do@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0947629120",
+    "status": "THỬ_VIỆC",
+    "hireDate": "2025-01-31",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 206,
+      "positionName": "Nhân viên IT"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 7,
+    "employeeCode": "NV00007",
+    "fullName": "Võ Thị Trâm",
+    "dateOfBirth": "1998-11-06",
+    "gender": "NỮ",
+    "companyEmail": "tram.vo@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0931652575",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-12-10",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 207,
+      "positionName": "Nhân viên IT"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 8,
+    "employeeCode": "NV00008",
+    "fullName": "Ngô Thanh Hương",
+    "dateOfBirth": "1982-10-21",
+    "gender": "NỮ",
+    "companyEmail": "huong.ngo@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0953172346",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-05-07",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 208,
+      "positionName": "Nhân viên IT"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 9,
+    "employeeCode": "NV00009",
+    "fullName": "Võ Thu Thủy",
+    "dateOfBirth": "2002-02-14",
+    "gender": "NỮ",
+    "companyEmail": "thuy.vo@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0920091081",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2024-04-18",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 209,
+      "positionName": "Nhân viên IT"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 10,
+    "employeeCode": "NV00010",
+    "fullName": "Ngô Hồng Nhung",
+    "dateOfBirth": "1981-08-05",
+    "gender": "NỮ",
+    "companyEmail": "nhung.ngo@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0955824675",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2025-10-05",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 210,
+      "positionName": "Nhân viên IT"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 11,
+    "employeeCode": "NV00011",
+    "fullName": "Bùi Thanh Hương",
+    "dateOfBirth": "1987-09-30",
+    "gender": "NỮ",
+    "companyEmail": "huong.bui@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0963809722",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2024-09-16",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 211,
+      "positionName": "Nhân viên IT"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 12,
+    "employeeCode": "NV00012",
+    "fullName": "Dương Thanh Tiên",
+    "dateOfBirth": "1988-11-20",
+    "gender": "NỮ",
+    "companyEmail": "tien.duong@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0957154191",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-08-07",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 2,
+      "departmentCode": "IT",
+      "departmentName": "Phòng Công Nghệ Thông Tin"
+    },
+    "position": {
+      "positionId": 212,
+      "positionName": "Nhân viên IT"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 13,
+    "employeeCode": "NV00013",
+    "fullName": "Bùi Đức Sơn",
+    "dateOfBirth": "1982-04-14",
+    "gender": "NAM",
+    "companyEmail": "son.bui@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0964552012",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2024-05-02",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 3,
+      "departmentName": "Phòng Hành Chính Nhân Sự"
+    },
+    "position": {
+      "positionId": 113,
+      "positionName": "Trưởng phòng HCNS"
+    },
+    "role": "MANAGER"
+  },
+  {
+    "employeeId": 14,
+    "employeeCode": "NV00014",
+    "fullName": "Đoàn Công Tuấn",
+    "dateOfBirth": "1988-01-16",
+    "gender": "NAM",
+    "companyEmail": "tuan.doan@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0979117580",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-12-10",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 3,
+      "departmentName": "Phòng Hành Chính Nhân Sự"
+    },
+    "position": {
+      "positionId": 214,
+      "positionName": "Chuyên viên HCNS"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 15,
+    "employeeCode": "NV00015",
+    "fullName": "Ngô Kim Tâm",
+    "dateOfBirth": "1995-04-02",
+    "gender": "NỮ",
+    "companyEmail": "tam.ngo@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0956489258",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-06-19",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 3,
+      "departmentName": "Phòng Hành Chính Nhân Sự"
+    },
+    "position": {
+      "positionId": 215,
+      "positionName": "Chuyên viên HCNS"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 16,
+    "employeeCode": "NV00016",
+    "fullName": "Đoàn Thị Hà",
+    "dateOfBirth": "1991-02-09",
+    "gender": "NỮ",
+    "companyEmail": "ha.doan@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0988402059",
+    "status": "ĐÃ_NGHỈ_VIỆC",
+    "hireDate": "2023-05-11",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 3,
+      "departmentName": "Phòng Hành Chính Nhân Sự"
+    },
+    "position": {
+      "positionId": 216,
+      "positionName": "Chuyên viên HCNS"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 17,
+    "employeeCode": "NV00017",
+    "fullName": "Dương Công Nam",
+    "dateOfBirth": "1999-05-03",
+    "gender": "NAM",
+    "companyEmail": "nam.duong@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0947532703",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2025-08-02",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 3,
+      "departmentName": "Phòng Hành Chính Nhân Sự"
+    },
+    "position": {
+      "positionId": 217,
+      "positionName": "Chuyên viên HCNS"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 18,
+    "employeeCode": "NV00018",
+    "fullName": "Dương Hữu Sơn",
+    "dateOfBirth": "1997-04-30",
+    "gender": "NAM",
+    "companyEmail": "son.duong@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0921689097",
+    "status": "ĐÃ_NGHỈ_VIỆC",
+    "hireDate": "2025-06-02",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 3,
+      "departmentName": "Phòng Hành Chính Nhân Sự"
+    },
+    "position": {
+      "positionId": 218,
+      "positionName": "Chuyên viên HCNS"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 19,
+    "employeeCode": "NV00019",
+    "fullName": "Đỗ Minh Long",
+    "dateOfBirth": "1999-01-21",
+    "gender": "NAM",
+    "companyEmail": "long.do@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0993623889",
+    "status": "THỬ_VIỆC",
+    "hireDate": "2023-01-11",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 3,
+      "departmentName": "Phòng Hành Chính Nhân Sự"
+    },
+    "position": {
+      "positionId": 219,
+      "positionName": "Chuyên viên HCNS"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 20,
+    "employeeCode": "NV00020",
+    "fullName": "Nguyễn Hải Hoàng",
+    "dateOfBirth": "2001-04-11",
+    "gender": "NAM",
+    "companyEmail": "hoang.nguyen@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0980978087",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2025-04-19",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 3,
+      "departmentName": "Phòng Hành Chính Nhân Sự"
+    },
+    "position": {
+      "positionId": 220,
+      "positionName": "Chuyên viên HCNS"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 21,
+    "employeeCode": "NV00021",
+    "fullName": "Đỗ Hải Phát",
+    "dateOfBirth": "1991-01-24",
+    "gender": "NAM",
+    "companyEmail": "phat.do@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0918016813",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-12-03",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 121,
+      "positionName": "Trưởng phòng Sales"
+    },
+    "role": "MANAGER"
+  },
+  {
+    "employeeId": 22,
+    "employeeCode": "NV00022",
+    "fullName": "Bùi Văn Đạt",
+    "dateOfBirth": "1994-04-26",
+    "gender": "NAM",
+    "companyEmail": "dat.bui@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0954146481",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-03-12",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 222,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 23,
+    "employeeCode": "NV00023",
+    "fullName": "Đoàn Văn Dũng",
+    "dateOfBirth": "1995-10-14",
+    "gender": "NAM",
+    "companyEmail": "dung.doan@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0940437477",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2026-02-01",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 223,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 24,
+    "employeeCode": "NV00024",
+    "fullName": "Lý Kim Trâm",
+    "dateOfBirth": "2000-04-23",
+    "gender": "NỮ",
+    "companyEmail": "tram.ly@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0914182773",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-11-29",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 224,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 25,
+    "employeeCode": "NV00025",
+    "fullName": "Bùi Đức Khang",
+    "dateOfBirth": "1984-04-08",
+    "gender": "NAM",
+    "companyEmail": "khang.bui@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0924536534",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2025-01-21",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 225,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 26,
+    "employeeCode": "NV00026",
+    "fullName": "Bùi Thị Trâm",
+    "dateOfBirth": "1998-10-15",
+    "gender": "NỮ",
+    "companyEmail": "tram.bui@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0970297849",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2024-02-01",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 226,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 27,
+    "employeeCode": "NV00027",
+    "fullName": "Trần Hữu Long",
+    "dateOfBirth": "1985-02-16",
+    "gender": "NAM",
+    "companyEmail": "long.tran@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0953159349",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2026-03-02",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 227,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 28,
+    "employeeCode": "NV00028",
+    "fullName": "Đỗ Thanh Cường",
+    "dateOfBirth": "1981-05-10",
+    "gender": "NAM",
+    "companyEmail": "cuong.do@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0960901563",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-11-08",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 228,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 29,
+    "employeeCode": "NV00029",
+    "fullName": "Hồ Lan Oanh",
+    "dateOfBirth": "1990-11-16",
+    "gender": "NỮ",
+    "companyEmail": "oanh.ho@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0929947091",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2025-02-25",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 229,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 30,
+    "employeeCode": "NV00030",
+    "fullName": "Nguyễn Tuấn Phong",
+    "dateOfBirth": "1993-05-13",
+    "gender": "NAM",
+    "companyEmail": "phong.nguyen@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0948510517",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-03-11",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 230,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 31,
+    "employeeCode": "NV00031",
+    "fullName": "Phạm Thị Linh",
+    "dateOfBirth": "2002-11-27",
+    "gender": "NỮ",
+    "companyEmail": "linh.pham@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0934293832",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-11-18",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 231,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 32,
+    "employeeCode": "NV00032",
+    "fullName": "Ngô Hồng Quyên",
+    "dateOfBirth": "1995-05-19",
+    "gender": "NỮ",
+    "companyEmail": "quyen.ngo@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0995770777",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-10-23",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 232,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 33,
+    "employeeCode": "NV00033",
+    "fullName": "Võ Thanh Khang",
+    "dateOfBirth": "1984-10-30",
+    "gender": "NAM",
+    "companyEmail": "khang.vo@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0991096730",
+    "status": "NGHỈ_THAI_SẢN",
+    "hireDate": "2023-01-06",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 233,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 34,
+    "employeeCode": "NV00034",
+    "fullName": "Đặng Đức Khoa",
+    "dateOfBirth": "1980-04-08",
+    "gender": "NAM",
+    "companyEmail": "khoa.dang@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0973095958",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-12-06",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 234,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 35,
+    "employeeCode": "NV00035",
+    "fullName": "Phạm Văn Phát",
+    "dateOfBirth": "1980-01-17",
+    "gender": "NAM",
+    "companyEmail": "phat.pham@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0970614726",
+    "status": "ĐÃ_NGHỈ_VIỆC",
+    "hireDate": "2023-11-09",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 235,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 36,
+    "employeeCode": "NV00036",
+    "fullName": "Hoàng Hữu Phát",
+    "dateOfBirth": "1992-01-21",
+    "gender": "NAM",
+    "companyEmail": "phat.hoang@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0916427259",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-09-27",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 236,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 37,
+    "employeeCode": "NV00037",
+    "fullName": "Hồ Đức Khang",
+    "dateOfBirth": "1999-02-21",
+    "gender": "NAM",
+    "companyEmail": "khang.ho@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0958592621",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-01-17",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Kinh Doanh"
+    },
+    "position": {
+      "positionId": 237,
+      "positionName": "Chuyên viên Sales"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 38,
+    "employeeCode": "NV00038",
+    "fullName": "Trần Ngọc Linh",
+    "dateOfBirth": "1993-08-09",
+    "gender": "NỮ",
+    "companyEmail": "linh.tran@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0988456050",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2025-01-07",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 5,
+      "departmentName": "Phòng Kế Toán"
+    },
+    "position": {
+      "positionId": 138,
+      "positionName": "Kế toán trưởng"
+    },
+    "role": "MANAGER"
+  },
+  {
+    "employeeId": 39,
+    "employeeCode": "NV00039",
+    "fullName": "Đặng Tuấn Phát",
+    "dateOfBirth": "1992-12-01",
+    "gender": "NAM",
+    "companyEmail": "phat.dang@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0970677994",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-10-29",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 5,
+      "departmentName": "Phòng Kế Toán"
+    },
+    "position": {
+      "positionId": 239,
+      "positionName": "Chuyên viên Kế toán"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 40,
+    "employeeCode": "NV00040",
+    "fullName": "Dương Tuấn Thành",
+    "dateOfBirth": "1997-10-10",
+    "gender": "NAM",
+    "companyEmail": "thanh.duong@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0962665759",
+    "status": "ĐÃ_NGHỈ_VIỆC",
+    "hireDate": "2023-02-19",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 5,
+      "departmentName": "Phòng Kế Toán"
+    },
+    "position": {
+      "positionId": 240,
+      "positionName": "Chuyên viên Kế toán"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 41,
+    "employeeCode": "NV00041",
+    "fullName": "Dương Minh Anh",
+    "dateOfBirth": "1998-01-13",
+    "gender": "NAM",
+    "companyEmail": "anh.duong@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0958699438",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-09-30",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 5,
+      "departmentName": "Phòng Kế Toán"
+    },
+    "position": {
+      "positionId": 241,
+      "positionName": "Chuyên viên Kế toán"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 42,
+    "employeeCode": "NV00042",
+    "fullName": "Hoàng Ngọc Tâm",
+    "dateOfBirth": "1997-01-31",
+    "gender": "NỮ",
+    "companyEmail": "tam.hoang@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0928242612",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2026-03-19",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 5,
+      "departmentName": "Phòng Kế Toán"
+    },
+    "position": {
+      "positionId": 242,
+      "positionName": "Chuyên viên Kế toán"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 43,
+    "employeeCode": "NV00043",
+    "fullName": "Nguyễn Ngọc Trâm",
+    "dateOfBirth": "1985-02-03",
+    "gender": "NỮ",
+    "companyEmail": "tram.nguyen@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0934287854",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2025-01-09",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 5,
+      "departmentName": "Phòng Kế Toán"
+    },
+    "position": {
+      "positionId": 243,
+      "positionName": "Chuyên viên Kế toán"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 44,
+    "employeeCode": "NV00044",
+    "fullName": "Trần Minh Hoàng",
+    "dateOfBirth": "1981-10-13",
+    "gender": "NAM",
+    "companyEmail": "hoang.tran@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0940016331",
+    "status": "ĐÃ_NGHỈ_VIỆC",
+    "hireDate": "2024-06-04",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentName": "Phòng Marketing"
+    },
+    "position": {
+      "positionId": 144,
+      "positionName": "Trưởng phòng Marketing"
+    },
+    "role": "MANAGER"
+  },
+  {
+    "employeeId": 45,
+    "employeeCode": "NV00045",
+    "fullName": "Vũ Đức Sơn",
+    "dateOfBirth": "1997-03-06",
+    "gender": "NAM",
+    "companyEmail": "son.vu@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0976134564",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-05-06",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentName": "Phòng Marketing"
+    },
+    "position": {
+      "positionId": 245,
+      "positionName": "Chuyên viên Marketing"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 46,
+    "employeeCode": "NV00046",
+    "fullName": "Ngô Hữu Tuấn",
+    "dateOfBirth": "1999-08-15",
+    "gender": "NAM",
+    "companyEmail": "tuan.ngo@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0920909597",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-04-25",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentName": "Phòng Marketing"
+    },
+    "position": {
+      "positionId": 246,
+      "positionName": "Chuyên viên Marketing"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 47,
+    "employeeCode": "NV00047",
+    "fullName": "Lý Ngọc Ngân",
+    "dateOfBirth": "1996-02-11",
+    "gender": "NỮ",
+    "companyEmail": "ngan.ly@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0929037537",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2024-04-19",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentName": "Phòng Marketing"
+    },
+    "position": {
+      "positionId": 247,
+      "positionName": "Chuyên viên Marketing"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 48,
+    "employeeCode": "NV00048",
+    "fullName": "Hồ Công Tuấn",
+    "dateOfBirth": "1985-07-15",
+    "gender": "NAM",
+    "companyEmail": "tuan.ho@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0990536419",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2026-03-13",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentName": "Phòng Marketing"
+    },
+    "position": {
+      "positionId": 248,
+      "positionName": "Chuyên viên Marketing"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 49,
+    "employeeCode": "NV00049",
+    "fullName": "Trần Mai Trang",
+    "dateOfBirth": "1981-03-29",
+    "gender": "NỮ",
+    "companyEmail": "trang.tran@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0971196230",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2024-03-26",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentName": "Phòng Marketing"
+    },
+    "position": {
+      "positionId": 249,
+      "positionName": "Chuyên viên Marketing"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 50,
+    "employeeCode": "NV00050",
+    "fullName": "Đoàn Lan Ngân",
+    "dateOfBirth": "1992-07-02",
+    "gender": "NỮ",
+    "companyEmail": "ngan.doan@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0988798301",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-07-05",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentName": "Phòng Marketing"
+    },
+    "position": {
+      "positionId": 250,
+      "positionName": "Chuyên viên Marketing"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 51,
+    "employeeCode": "NV00051",
+    "fullName": "Nguyễn Thanh Hương",
+    "dateOfBirth": "1986-01-11",
+    "gender": "NỮ",
+    "companyEmail": "huong.nguyen@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0991055045",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2025-04-15",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentName": "Phòng Marketing"
+    },
+    "position": {
+      "positionId": 251,
+      "positionName": "Chuyên viên Marketing"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 52,
+    "employeeCode": "NV00052",
+    "fullName": "Lý Minh Hiếu",
+    "dateOfBirth": "1994-06-07",
+    "gender": "NAM",
+    "companyEmail": "hieu.ly@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0954149958",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-07-24",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentName": "Phòng Marketing"
+    },
+    "position": {
+      "positionId": 252,
+      "positionName": "Chuyên viên Marketing"
+    },
+    "role": "EMPLOYEE"
+  }
+]

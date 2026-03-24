@@ -52,7 +52,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { assetsAPI, employeesAPI, departmentsAPI } from '@/data/mockDB.js'
+import { mockAssets, mockEmployees, mockDepartments } from '@/mock-data/index.js'
 
 const userDeptId = localStorage.getItem('userDeptId') || '1';
 const assets = ref([])
@@ -69,27 +69,27 @@ const CATEGORY_ICON_MAP = {
 
 const loadData = async () => {
   try {
-    const departmentResult = departmentsAPI.getAll().find(d => Number(d.department_id) === Number(userDeptId) || d.id === userDeptId);
+    const departmentResult = mockDepartments.find(d => Number(d.departmentId) === Number(userDeptId) || d.id === userDeptId);
     if (departmentResult) {
-      deptName.value = departmentResult.department_name || departmentResult.name || 'Phòng ban';
+      deptName.value = departmentResult.departmentName || departmentResult.name || 'Phòng ban';
     }
 
-    const employeesResult = employeesAPI.getAll().filter(e => Number(e.department_id) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
-    const allAssets = assetsAPI.getAll();
+    const employeesResult = mockEmployees.filter(e => Number(e.departmentId) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
+    const allAssets = mockAssets;
     
     assets.value = allAssets.filter(a => 
-      employeesResult.some(e => (e.employee_id || e.id) === (a.assigned_to || a.employeeId))
+      employeesResult.some(e => (e.employeeId || e.id) === (a.assignedTo || a.employeeId))
     ).map(a => {
-      const emp = employeesResult.find(e => (e.employee_id || e.id) === (a.assigned_to || a.employeeId));
+      const emp = employeesResult.find(e => (e.employeeId || e.id) === (a.assignedTo || a.employeeId));
       return {
-        id: a.asset_id || a.id,
-        name: (a.asset_name || a.name || '').toUpperCase(),
-        code: a.asset_code || a.code,
-        category: a.category || ((a.asset_name || a.name || '').includes('Laptop') ? 'Laptop' : 'Màn hình'),
-        user: emp?.full_name || emp?.name || 'N/A',
+        id: a.assetId || a.id,
+        name: (a.assetName || a.name || '').toUpperCase(),
+        code: a.assetCode || a.code,
+        category: a.category || ((a.assetName || a.name || '').includes('Laptop') ? 'Laptop' : 'Màn hình'),
+        user: emp?.fullName || emp?.name || 'N/A',
         status: a.status === 'ĐANG_SỬ_DỤNG' || a.condition === 'Like New' || a.condition === 'Good' ? 'Tốt' : 'Cần bảo trì',
-        date: a.purchase_date || a.issueDate || 'N/A',
-        icon: CATEGORY_ICON_MAP[a.category] || ((a.asset_name || a.name || '').includes('Laptop') ? 'laptop_mac' : 'monitor')
+        date: a.purchaseDate || a.issueDate || 'N/A',
+        icon: CATEGORY_ICON_MAP[a.category] || ((a.assetName || a.name || '').includes('Laptop') ? 'laptop_mac' : 'monitor')
       }
     });
 

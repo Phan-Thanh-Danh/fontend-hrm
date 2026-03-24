@@ -221,12 +221,12 @@
 <script setup>
 import { computed, ref } from 'vue';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
-import { employeesAPI, departmentsAPI, positionsAPI } from '@/data/mockDB.js';
+import { mockEmployees, mockDepartments, mockPositions } from '@/mock-data/index.js';
 
 const selectedDateRange = ref('30_days');
 
 const bienDongKpiCards = computed(() => {
-  const emps = employeesAPI.getAll();
+  const emps = mockEmployees;
   const thoiViec = emps.filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC').length;
   const tyLeNghi = emps.length > 0 ? ((thoiViec / emps.length) * 100).toFixed(1) : 0;
   return [
@@ -258,14 +258,14 @@ const bienDongKpiCards = computed(() => {
 });
 
 const nghiViecBoPhan = computed(() => {
-  const depts = departmentsAPI.getAll();
-  const emps = employeesAPI.getAll();
+  const depts = mockDepartments;
+  const emps = mockEmployees;
   return depts.map(d => {
-    const deptEmps = emps.filter(e => e.department_id === d.department_id);
+    const deptEmps = emps.filter(e => e.departmentId === d.departmentId);
     const deptThoiViec = deptEmps.filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC').length;
     const tyLe = deptEmps.length > 0 ? ((deptThoiViec / deptEmps.length) * 100).toFixed(1) : 0;
     return {
-      tenPhong: d.department_name,
+      tenPhong: d.departmentName,
       soNhanSu: deptEmps.length,
       soNghiViec: deptThoiViec,
       tyLe: tyLe,
@@ -275,14 +275,14 @@ const nghiViecBoPhan = computed(() => {
 });
 
 const danhSachNghiViec = computed(() => {
-  const emps = employeesAPI.getAll().filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC');
+  const emps = mockEmployees.filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC');
   return emps.slice(0, 5).map(e => {
-    const deptName = departmentsAPI.getById(e.department_id)?.department_name || 'Không rõ';
-    const posName = positionsAPI.getById(e.position_id)?.position_name || 'Nhân viên';
+    const deptName = mockDepartments.getById(e.departmentId)?.departmentName || 'Không rõ';
+    const posName = mockPositions.getById(e.positionId)?.positionName || 'Nhân viên';
     return {
-      id: e.employee_id,
-      initials: e.full_name ? e.full_name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : 'NV',
-      name: e.full_name,
+      id: e.employeeId,
+      initials: e.fullName ? e.fullName.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase() : 'NV',
+      name: e.fullName,
       chucVu: posName,
       phongBan: deptName,
       ngayNghi: new Date().toLocaleDateString('vi-VN'),

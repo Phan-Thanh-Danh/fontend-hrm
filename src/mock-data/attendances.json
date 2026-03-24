@@ -1,0 +1,68 @@
+[
+  {
+    "attendanceId": 1001,
+    "employeeId": 4,
+    "attendanceDate": "2026-03-02",
+    "checkInTime": "2026-03-02T07:55:00Z",
+    "checkOutTime": "2026-03-02T17:35:00Z",
+    "workType": "VĂN_PHÒNG",
+    "actualWorkingHours": 8,
+    "overtimeHours": 0,
+    "lateMinutes": 0,
+    "isHoliday": false,
+    "status": "ĐÃ_DUYỆT"
+  },
+  {
+    "attendanceId": 1002,
+    "employeeId": 4,
+    "attendanceDate": "2026-03-03",
+    "checkInTime": "2026-03-03T08:15:00Z",
+    "checkOutTime": "2026-03-03T17:30:00Z",
+    "workType": "VĂN_PHÒNG",
+    "actualWorkingHours": 7.75,
+    "overtimeHours": 0,
+    "lateMinutes": 15,
+    "isHoliday": false,
+    "status": "ĐÃ_DUYỆT"
+  },
+  {
+    "attendanceId": 1003,
+    "employeeId": 4,
+    "attendanceDate": "2026-03-04",
+    "checkInTime": "2026-03-04T08:00:00Z",
+    "checkOutTime": "2026-03-04T20:30:00Z",
+    "workType": "VĂN_PHÒNG",
+    "actualWorkingHours": 8,
+    "overtimeHours": 3,
+    "lateMinutes": 0,
+    "isHoliday": false,
+    "status": "ĐÃ_DUYỆT"
+  },
+  {
+    "attendanceId": 1004,
+    "employeeId": 4,
+    "attendanceDate": "2026-03-08",
+    "checkInTime": null,
+    "checkOutTime": null,
+    "workType": "VĂN_PHÒNG",
+    "actualWorkingHours": 0,
+    "overtimeHours": 0,
+    "lateMinutes": 0,
+    "isHoliday": true,
+    "status": "ĐÃ_DUYỆT",
+    "notes": "Quốc tế Phụ Nữ (Công ty nghỉ off)"
+  },
+  {
+    "attendanceId": 1005,
+    "employeeId": 4,
+    "attendanceDate": "2026-03-09",
+    "checkInTime": "2026-03-09T08:00:00Z",
+    "checkOutTime": "2026-03-09T17:30:00Z",
+    "workType": "LÀM_TỪ_XA",
+    "actualWorkingHours": 8,
+    "overtimeHours": 0,
+    "lateMinutes": 0,
+    "isHoliday": false,
+    "status": "ĐÃ_DUYỆT"
+  }
+]

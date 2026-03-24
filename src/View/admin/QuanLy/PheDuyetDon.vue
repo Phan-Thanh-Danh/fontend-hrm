@@ -276,7 +276,7 @@
 import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { requestsAPI, employeesAPI, departmentsAPI, requestTypesAPI, mockDB } from '@/data/mockDB.js';
+import { mockLeaveRequests, mockEmployees, mockDepartments, mockRequestTypes, mockDB } from '@/mock-data/index.js';
 
 const { showAlert } = useConfirm();
 
@@ -289,14 +289,14 @@ const rejectReason = ref('');
 const selectedRequest = ref(null);
 
 const requests = computed(() => {
-  const allReqTypes = requestTypesAPI.getAll();
+  const allReqTypes = mockRequestTypes;
   // Lấy toàn bộ và sắp xếp mới nhất
-  const rawList = [...mockDB.requests].sort((a,b) => new Date(b.request_date||0) - new Date(a.request_date||0));
+  const rawList = [...mockDB.requests].sort((a,b) => new Date(b.requestDate||0) - new Date(a.requestDate||0));
   
   return rawList.map(req => {
-    const emp = employeesAPI.getById(req.requester_id || req.employee_id);
-    const dept = departmentsAPI.getById(req.department_id || (emp ? emp.department_id : null));
-    const typeObj = allReqTypes.find(t => t.request_type_id === req.request_type_id);
+    const emp = mockEmployees.getById(req.requesterId || req.employeeId);
+    const dept = mockDepartments.getById(req.departmentId || (emp ? emp.departmentId : null));
+    const typeObj = allReqTypes.find(t => t.requestTypeId === req.requestTypeId);
     
     // Convert status to match UI tab identifiers
     let mappedStatus = 'pending';
@@ -305,20 +305,20 @@ const requests = computed(() => {
     // CHỜ_GIÁM_ĐỐC_DUYỆT cũng là pending đối với Admin
     if (req.status === 'CHỜ_DUYỆT' || req.status === 'ĐANG_XỬ_LÝ' || req.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT') mappedStatus = 'pending';
 
-    const reqTitle = req.title || typeObj?.request_type_name || 'Yêu cầu';
+    const reqTitle = req.title || typeObj?.requestTypeName || 'Yêu cầu';
     let icon = 'event_note'; 
-    if (req.request_type_id === 1) icon = 'event_busy'; // Nghỉ phép
-    if (req.request_type_id === 2) icon = 'person_add'; // Tuyển dụng
-    if (req.request_type_id === 4) icon = 'payments';   // Tạm ứng
+    if (req.requestTypeId === 1) icon = 'event_busy'; // Nghỉ phép
+    if (req.requestTypeId === 2) icon = 'person_add'; // Tuyển dụng
+    if (req.requestTypeId === 4) icon = 'payments';   // Tạm ứng
 
     return {
-      id: req.request_id,
-      employeeName: emp ? emp.full_name : 'N/A',
-      employeeId: emp ? emp.employee_code : 'N/A',
-      department: dept ? dept.department_name.toUpperCase() : 'N/A',
+      id: req.requestId,
+      employeeName: emp ? emp.fullName : 'N/A',
+      employeeId: emp ? emp.employeeCode : 'N/A',
+      department: dept ? dept.departmentName.toUpperCase() : 'N/A',
       title: reqTitle,
       icon: icon,
-      dateRange: req.start_date && req.end_date ? `${req.start_date} - ${req.end_date}` : (req.request_date ? req.request_date.split(' '||'T')[0] : 'Hôm nay'),
+      dateRange: req.startDate && req.endDate ? `${req.startDate} - ${req.endDate}` : (req.requestDate ? req.requestDate.split(' '||'T')[0] : 'Hôm nay'),
       duration: req.days ? `${req.days} ngày` : 'N/A',
       reason: req.notes || req.reason || 'Không có ghi chú',
       status: mappedStatus
@@ -368,7 +368,7 @@ const closeRejectModal = () => { showRejectModal.value = false; rejectReason.val
 
 const handleApprove = async (r) => {
   try {
-    requestsAPI.approve(r.id);
+    mockLeaveRequests.approve(r.id);
     closeDetailModal();
   } catch (error) {
     console.error('Lỗi khi duyệt đơn:', error);
@@ -382,7 +382,7 @@ const confirmReject = async () => {
   }
   if (selectedRequest.value) {
     try {
-      requestsAPI.reject(selectedRequest.value.id, rejectReason.value);
+      mockLeaveRequests.reject(selectedRequest.value.id, rejectReason.value);
       closeRejectModal();
       closeDetailModal();
     } catch (error) {

@@ -272,7 +272,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import CalendarCustom from '@/components/CalendarCustom.vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { requestsAPI, requestTypesAPI, employeesAPI, departmentsAPI } from '@/data/mockDB.js';
+import { mockLeaveRequests, mockRequestTypes, mockEmployees, mockDepartments } from '@/mock-data/index.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -298,7 +298,7 @@ const leaveTypeOptions = computed(() => {
   return requestTypes.value.map(t => {
     let icon = 'event_available';
     // Mapping icons dựa trên ID hoặc tên
-    switch (t.request_type_id) {
+    switch (t.requestTypeId) {
       case 1: icon = 'event_busy'; break;     // Nghỉ phép năm
       case 6: icon = 'sick'; break;           // Nghỉ ốm
       case 7: icon = 'child_care'; break;     // Thai sản
@@ -309,8 +309,8 @@ const leaveTypeOptions = computed(() => {
       default: icon = 'article';
     }
     return {
-      label: t.request_type_name,
-      value: t.request_type_id,
+      label: t.requestTypeName,
+      value: t.requestTypeId,
       icon: icon
     };
   });
@@ -333,13 +333,13 @@ const pendingCount = computed(() => {
 });
 
 const fetchData = () => {
-  const allTypes = requestTypesAPI.getAll() || [];
+  const allTypes = mockRequestTypes || [];
   const leaveCategories = ['NGHỈ_PHÉP', 'NGHỈ PHÉP', 'NGHI_PHEP', 'NGHI PHÉP'];
   const leaveTypeIds = [1, 6, 7, 8, 9, 10, 99];
 
   requestTypes.value = allTypes.filter(t => {
     // Ép kiểu ID về Number để đảm bảo so sánh chính xác (tránh lỗi String vs Number)
-    const typeId = Number(t.request_type_id);
+    const typeId = Number(t.requestTypeId);
     const cat = String(t.category || '').trim().toUpperCase();
     
     // Lọc theo danh sách ID hoặc theo Category (Nghi phep)
@@ -348,19 +348,19 @@ const fetchData = () => {
 
   // Fallback: nếu lọc không ra gì thì lấy các loại có ID trong danh sách (ép kiểu)
   if (requestTypes.value.length === 0) {
-    requestTypes.value = allTypes.filter(t => [1, 6, 7, 8, 9, 10, 99].includes(Number(t.request_type_id)));
+    requestTypes.value = allTypes.filter(t => [1, 6, 7, 8, 9, 10, 99].includes(Number(t.requestTypeId)));
   }
 
-  const allReqs = requestsAPI.getAll();
-  const myReqs = allReqs.filter(r => r.requester_id === CURRENT_EMP_ID);
+  const allReqs = mockLeaveRequests;
+  const myReqs = allReqs.filter(r => r.requesterId === CURRENT_EMP_ID);
 
   leaveHistory.value = myReqs.map(item => {
-    const typeObj = requestTypesAPI.getById(item.request_type_id);
-    const typeName = item.request_type_id === 99 ? item.other_reason_name : (typeObj?.request_type_name || 'Nghỉ phép');
+    const typeObj = mockRequestTypes.getById(item.requestTypeId);
+    const typeName = item.requestTypeId === 99 ? item.other_reason_name : (typeObj?.requestTypeName || 'Nghỉ phép');
     return {
-      id: item.request_id,
+      id: item.requestId,
       type: typeName,
-      duration: `${item.start_date || 'N/A'} - ${item.end_date || 'N/A'}`,
+      duration: `${item.startDate || 'N/A'} - ${item.endDate || 'N/A'}`,
       total: `${item.days || 0} ngày`,
       statusRaw: item.status,
       status: item.status === 'CHỜ_DUYỆT' ? 'Chờ duyệt' : (item.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : 'Từ chối')
@@ -388,9 +388,9 @@ const submitRequest = () => {
     return;
   }
 
-  const typeObj = requestTypesAPI.getById(leaveType.value);
-  const finalTypeName = leaveType.value === 99 ? otherReason.value : (typeObj?.request_type_name || 'Nghỉ phép');
-  const employee = employeesAPI.getById(CURRENT_EMP_ID);
+  const typeObj = mockRequestTypes.getById(leaveType.value);
+  const finalTypeName = leaveType.value === 99 ? otherReason.value : (typeObj?.requestTypeName || 'Nghỉ phép');
+  const employee = mockEmployees.getById(CURRENT_EMP_ID);
 
   const newRequest = {
     requester_id: CURRENT_EMP_ID,
@@ -405,11 +405,11 @@ const submitRequest = () => {
     is_urgent: days >= 3,
     request_date: new Date().toISOString().split('T')[0],
     visible_to: ['Admin', 'Manager'],
-    department_id: employee?.department_id || 2
+    department_id: employee?.departmentId || 2
   };
 
   try {
-    requestsAPI.add(newRequest);
+    mockLeaveRequests.add(newRequest);
     isSuccess.value = true;
     startDate.value = '';
     endDate.value = '';
@@ -429,7 +429,7 @@ const handleDeleteRequest = async (item) => {
   const ok = await showConfirm('Xác nhận xóa', 'Bạn có chắc chắn muốn hủy bỏ và xóa đơn nghỉ phép này không?');
   if (ok) {
     try {
-      requestsAPI.delete(item.id);
+      mockLeaveRequests.delete(item.id);
       fetchData();
     } catch (err) {
       console.error('Lỗi khi xóa đơn:', err);

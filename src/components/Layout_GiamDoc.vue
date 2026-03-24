@@ -195,10 +195,9 @@
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
-  importantNotifications as staticNotifs,
-  approvalRequests as staticApprovals
-} from '@/data/sampleData_GiamDoc.js';
-import { requestsAPI, employeesAPI, requestTypesAPI } from '@/data/mockDB.js';
+  importantNotifications as staticNotifs
+} from '@/mock-data/sampleData_GiamDoc.js';
+import { mockLeaveRequests, mockEmployees, mockRequestTypes } from '@/mock-data/index.js';
 
 const route  = useRoute();
 const router = useRouter();
@@ -239,15 +238,15 @@ const recentNotifications = computed(() =>
 
 // Lấy yêu cầu phê duyệt REAL từ mockDB (CHỜ_GIÁM_ĐỐC_DUYỆT)
 const realApprovals = computed(() => {
-  const allReqs = requestsAPI.getAll();
+  const allReqs = mockLeaveRequests;
   return allReqs.filter(r => r.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT').map(r => {
-    const emp = employeesAPI.getById(r.requester_id);
-    const type = requestTypesAPI.getById(r.request_type_id);
+    const emp = mockEmployees.getById(r.requesterId);
+    const type = mockRequestTypes.getById(r.requestTypeId);
     return {
-      id: r.request_id,
-      name: emp?.full_name || 'Nhân viên',
-      title: type?.request_type_name || 'Nghi phép',
-      initials: emp?.full_name?.charAt(0) || 'N',
+      id: r.requestId,
+      name: emp?.fullName || 'Nhân viên',
+      title: type?.requestTypeName || 'Nghi phép',
+      initials: emp?.fullName?.charAt(0) || 'N',
       urgent: r.is_urgent || false,
       avatarBg: 'bg-indigo-100',
       avatarColor: 'text-indigo-600'

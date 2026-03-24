@@ -1,0 +1,32 @@
+[
+  {
+    "assetId": 1,
+    "assetCode": "AST-0001",
+    "assetName": "Laptop Dell Latitude 7420",
+    "category": "Laptop",
+    "status": "ĐANG_SỬ_DỤNG",
+    "assignedTo": 1,
+    "purchaseDate": "2022-02-15",
+    "value": 25000000
+  },
+  {
+    "assetId": 2,
+    "assetCode": "AST-0002",
+    "assetName": "Màn hình Dell Ultrasharp 27",
+    "category": "Màn hình",
+    "status": "TRONG_KHO",
+    "assignedTo": null,
+    "purchaseDate": "2022-03-15",
+    "value": 8000000
+  },
+  {
+    "assetId": 3,
+    "assetCode": "AST-0003",
+    "assetName": "Macbook Pro M3 14 inch",
+    "category": "Laptop",
+    "status": "HỎNG",
+    "assignedTo": null,
+    "purchaseDate": "2024-01-15",
+    "value": 45000000
+  }
+]

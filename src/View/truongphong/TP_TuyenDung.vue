@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
@@ -13,15 +13,15 @@
 
     <!-- Active Job Postings: Premium Card Style -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
-      <div v-for="job in jobs" :key="job.id" 
+      <div v-for="job in jobs" :key="job.jobId" 
         class="bg-[var(--sys-bg-surface)] rounded-lg border border-[var(--sys-border-subtle)] shadow-sm overflow-hidden flex flex-col group hover:border-[var(--sys-brand-solid)] transition-all hover:shadow-lg">
         <div class="p-6 space-y-5">
           <div class="flex justify-between items-start">
             <div class="space-y-1">
               <h4 class="text-[14px] font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight group-hover:text-[var(--sys-brand-solid)] transition-colors">{{ job.title }}</h4>
-              <p class="text-[11px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest opacity-80 leading-none">{{ job.code }} <span class="mx-2 opacity-30 text-slate-400">|</span> Mức lương: {{ job.salary }}</p>
+              <p class="text-[11px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest opacity-80 leading-none">JOB-{{ job.jobId }} <span class="mx-2 opacity-30 text-slate-400">|</span> Mức lương: {{ job.salaryMin/1000000 }}M - {{ job.salaryMax/1000000 }}M</p>
             </div>
-            <div :class="['px-3 py-1.5 rounded-md text-[10px] font-bold uppercase border shadow-sm tracking-widest transition-all', job.status === 'Đang mở' ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-bg-page)] text-[var(--sys-text-disabled)] border-[var(--sys-border-subtle)] opacity-60']">
+            <div :class="['px-3 py-1.5 rounded-md text-[10px] font-bold uppercase border shadow-sm tracking-widest transition-all', job.status === 'ĐANG_MỞ' ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]' : 'bg-[var(--sys-bg-page)] text-[var(--sys-text-disabled)] border-[var(--sys-border-subtle)] opacity-60']">
               {{ job.status }}
             </div>
           </div>
@@ -48,14 +48,14 @@
 
           <div class="flex items-center gap-4 pt-1">
             <div class="flex gap-2">
-               <div v-for="i in 3" :key="i" class="inline-block h-8 w-8 rounded-md bg-gradient-to-br from-[var(--sys-bg-page)] to-[var(--sys-bg-hover)] flex items-center justify-center font-bold text-[10px] uppercase text-[var(--sys-brand-solid)] shadow-sm border border-[var(--sys-brand-border)]">A{{ i }}</div>
+               <div v-for="i in Math.min(3, job.applied)" :key="i" class="inline-block h-8 w-8 rounded-md bg-gradient-to-br from-[var(--sys-bg-page)] to-[var(--sys-bg-hover)] flex items-center justify-center font-bold text-[10px] uppercase text-[var(--sys-brand-solid)] shadow-sm border border-[var(--sys-brand-border)]">UV</div>
             </div>
-            <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] opacity-60">Và 12 ứng viên tiềm năng đang chờ...</span>
+            <span class="text-[11px] font-bold text-[var(--sys-text-secondary)] opacity-60" v-if="job.applied > 3">Và {{ job.applied - 3 }} ứng viên khác...</span>
           </div>
         </div>
         
         <div class="px-5 py-3.5 bg-[var(--sys-bg-page)]/30 border-t border-[var(--sys-border-subtle)] flex justify-between items-center transition-all duration-300">
-          <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Job Created: {{ job.createdAt }}</span>
+          <span class="text-[10px] font-bold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Cập nhật: Mới nhất</span>
           <button @click="filterCandidatesByJob(job.title)" class="text-[10px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity">
             CHI TIẾT ỨNG VIÊN
             <span class="material-symbols-rounded text-[16px] font-bold">trending_flat</span>
@@ -108,9 +108,10 @@
               <div class="space-y-0.5">
                 <h6 class="text-[14px] font-bold text-[var(--sys-text-primary)] m-0 group-hover:text-[var(--sys-brand-solid)] transition-colors">{{ c.name }}</h6>
                 <div class="flex items-center gap-3">
-                  <span class="text-[11px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest opacity-80">{{ c.position }}</span>
+                  <span class="text-[11px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest opacity-80">{{ c.positionName }}</span>
                   <span class="w-1 h-1 rounded-full bg-[var(--sys-border-strong)] hidden md:block"></span>
-                  <span class="text-[11px] font-medium text-[var(--sys-text-secondary)] hidden md:block">Nộp HS: {{ c.dateFilled }}</span>
+                  <span class="text-[11px] font-medium text-[var(--sys-text-secondary)] hidden md:block">Nộp HS: {{ c.date }}</span>
+                  <span :class="['text-[10px] font-bold px-1.5 py-0.5 border rounded uppercase', c.status === 'pending_hr' ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]' : (c.status === 'pending_mgr' ? 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]' : 'bg-purple-50 text-purple-700 border-purple-200')]">{{ c.statusLabel }}</span>
                 </div>
               </div>
             </div>
@@ -146,7 +147,8 @@
                 <span class="material-symbols-rounded text-[var(--sys-brand-solid)] text-[24px]">assignment_ind</span>
                 <div>
                   <h3 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-wide">Chi tiết ứng viên</h3>
-                  <p class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">CHỈ ĐỌC (VIEW ONLY)</p>
+                  <p v-if="selectedCandidate?.status === 'pending_mgr'" class="text-[11px] text-[var(--sys-brand-solid)] mt-0.5 font-bold uppercase tracking-widest">YÊU CẦU ĐÁNH GIÁ</p>
+                  <p v-else class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">CHỈ ĐỌC (VIEW ONLY)</p>
                 </div>
               </div>
               <button @click="closeModal" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)] shadow-sm border border-transparent hover:border-[var(--sys-border-strong)]">
@@ -176,7 +178,11 @@
               <div class="grid grid-cols-2 gap-x-6 gap-y-4 pt-6 border-t border-[var(--sys-border-subtle)] border-dashed border-t-2">
                 <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm">
                   <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">work</span> Kinh nghiệm làm việc</span>
-                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.experience }}</span>
+                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.workExperience?.length ? selectedCandidate.workExperience.length + ' Công ty/Dự án' : 'Chưa cập nhật' }}</span>
+                </div>
+                <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm">
+                  <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">payments</span> Lương kỳ vọng</span>
+                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.notes ? selectedCandidate.notes.replace('Mức lương kỳ vọng:', '').trim() || 'Thỏa thuận' : 'Thỏa thuận' }}</span>
                 </div>
                 <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm">
                   <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">psychology</span> Điểm AI (Match Score)</span>
@@ -184,19 +190,47 @@
                 </div>
                 <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm">
                   <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">school</span> Học vấn</span>
-                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.education }}</span>
+                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.education?.school || 'Chưa cập nhật' }}</span>
                 </div>
                 <div class="flex flex-col border border-[var(--sys-border-subtle)] p-3 rounded-md bg-[var(--sys-bg-page)]/50 shadow-sm">
                   <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-1 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">checklist</span> Kỹ năng chính</span>
-                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.skills.join(', ') }}</span>
+                  <span class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ selectedCandidate.skills ? selectedCandidate.skills.join(', ') : 'Chưa cập nhật' }}</span>
                 </div>
+              </div>
+
+              <!-- Cover Letter -->
+              <div v-if="selectedCandidate.coverLetter" class="p-3 bg-[var(--sys-bg-page)] rounded-md border border-[var(--sys-border-subtle)] shadow-sm">
+                 <span class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-70 mb-2 flex items-center gap-1"><span class="material-symbols-rounded text-[14px]">format_quote</span> Lời giới thiệu</span>
+                 <p class="text-[13px] text-[var(--sys-text-primary)] italic">"{{ selectedCandidate.coverLetter }}"</p>
+              </div>
+
+              <!-- CV Link Info / Action -->
+              <div class="px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] rounded-md flex items-center justify-between" v-if="selectedCandidate.cvUrl">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-[var(--sys-text-secondary)] text-[18px]">link</span>
+                  <a :href="selectedCandidate.cvUrl" target="_blank" class="text-[13px] font-medium text-[var(--sys-brand-solid)] hover:underline flex items-center gap-1">
+                    Xem chi tiết CV / Portfolio (LinkedIn)
+                    <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+                  </a>
+                </div>
+              </div>
+
+              <!-- Manager Review Action -->
+              <div v-if="selectedCandidate.status === 'pending_mgr'" class="pt-6 border-t border-[var(--sys-border-subtle)] border-dashed border-t-2">
+                <h4 class="text-[12px] font-bold text-[var(--sys-brand-solid)] mb-2 uppercase tracking-wide flex items-center gap-2">
+                  <span class="material-symbols-rounded text-[18px]">rate_review</span> Nhận xét & Đề xuất
+                </h4>
+                <textarea v-model="managerReviewText" 
+                  class="w-full border border-[var(--sys-border-strong)] rounded-md p-3 text-[13px] font-medium bg-[var(--sys-bg-page)] focus:outline-none focus:border-[var(--sys-brand-solid)] resize-y shadow-inner" 
+                  rows="3" 
+                  placeholder="Nhập nhận xét về chuyên môn của ứng viên và duyệt phỏng vấn..."></textarea>
               </div>
 
             </div>
 
             <!-- Modal Footer -->
             <div class="px-6 py-4 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)] flex justify-end gap-3">
-              <button @click="closeModal" class="px-6 py-2 bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[12px] hover:bg-[var(--sys-bg-hover)] shadow-sm uppercase tracking-wide transition-all active:scale-95">Đóng</button>
+              <button @click="closeModal" class="px-6 py-2 bg-[var(--sys-brand-solid)] text-white border border-transparent rounded-md font-bold text-[12px] hover:brightness-90 shadow-sm uppercase tracking-wide transition-all active:scale-95">Đóng</button>
             </div>
           </div>
         </div>
@@ -206,102 +240,72 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { candidatesAPI, positionsAPI } from '@/data/mockDB.js'
+import { ref, computed } from 'vue';
+import { useRecruitmentStore } from '@/composables/useRecruitmentStore';
+import { useConfirm } from '@/composables/useConfirm';
+import { mockJobPostings } from '@/mock-data/index.js';
 
-const showModal = ref(false)
-const showFullList = ref(false)
-const selectedCandidate = ref(null)
-const selectedJobFilter = ref('')
+const showModal = ref(false);
+const showFullList = ref(false);
+const selectedCandidate = ref(null);
+const selectedJobFilter = ref('');
 
-const candidatesList = ref([])
-const jobs = ref([
-  { id: 1, title: 'SENIOR VUE DEVELOPER', code: 'IT-2401', status: 'Đang mở', salary: '20M - 35M', applied: 0, screening: 0, interviewing: 0, hired: 0, createdAt: '10/03/2026' },
-  { id: 2, title: 'BACKEND NODE.JS ENGINEER', code: 'IT-2402', status: 'Đang mở', salary: '25M - 40M', applied: 0, screening: 0, interviewing: 0, hired: 0, createdAt: '12/03/2026' },
-])
+// Get department of the logged-in user (default to 4 - Kinh doanh for demo if none)
+const userDeptId = parseInt(localStorage.getItem('userDeptId')) || 4;
+const store = useRecruitmentStore(userDeptId);
+const { showAlert } = useConfirm();
 
-const POSITION_LABELS = {
-  1: 'Giám đốc', 2: 'Trưởng phòng', 3: 'Trưởng nhóm',
-  4: 'Chuyên viên cao cấp', 5: 'Chuyên viên', 6: 'Thực tập sinh'
-}
-
-const STATUS_PIPELINE = {
-  'HẸN_PHỎNG_VẤN': 'interviewing',
-  'ĐÃ_TUYỂN': 'hired',
-  'LOẠI': 'rejected'
-}
-
-const loadData = () => {
-  const allCands = candidatesAPI.getAll()
-  const allPositions = positionsAPI.getAll()
-
-  candidatesList.value = allCands
-    .filter(c => c.status !== 'LOẠI')
-    .slice(0, 20)
-    .map((c, idx) => {
-      const pos = allPositions.find(p => p.position_id === c.applied_position_id)
-      const expYears = Math.floor(Math.random() * 5) + 1
-      const aiScore = 70 + Math.floor((c.candidate_id * 7) % 25)
-      const skills = [['Vue 3', 'Node.js', 'Python'], ['React', 'TypeScript', 'SQL'], ['Figma', 'Sketch', 'CSS'], ['Swift', 'Kotlin', 'Java']][c.candidate_id % 4]
-      const edus = ['ĐH Bách Khoa HCM', 'ĐH CNTT ĐHQG', 'ĐH Khoa Học Tự Nhiên', 'ĐH Kinh tế Quốc Dân']
-
-      return {
-        id: c.candidate_id,
-        name: c.full_name || `Ứng viên ${c.candidate_id}`,
-        position: pos?.position_name || 'Chuyên viên IT',
-        experience: `${expYears} Năm`,
-        aiScore,
-        education: edus[c.candidate_id % edus.length],
-        skills,
-        dateFilled: c.apply_date ? new Date(c.apply_date).toLocaleDateString('vi-VN') : 'N/A',
-        status: c.status
-      }
-    })
-
-  // Tính pipeline động từ data thật
-  jobs.value = jobs.value.map(job => {
-    const applied = allCands.filter(c => c.candidate_id % 2 === job.id % 2).length
-    const screening = Math.floor(applied * 0.3)
-    const interviewing = allCands.filter(c => c.status === 'HẸN_PHỎNG_VẤN' && c.candidate_id % 2 === job.id % 2).length
-    const hired = allCands.filter(c => c.status === 'ĐÃ_TUYỂN' && c.candidate_id % 2 === job.id % 2).length
-    return { ...job, applied, screening, interviewing, hired }
-  })
-}
+// Dynamic Jobs loading
+const jobs = computed(() => {
+  return mockJobPostings
+    .filter(j => j.departmentId === userDeptId)
+    .map(job => {
+      // Find matching candidates from the store
+      const jobCands = store.candidates.value.filter(c => c.jobId === job.jobId);
+      const applied = jobCands.length;
+      const screening = jobCands.filter(c => ['pending_hr', 'pending_mgr'].includes(c.status)).length;
+      const interviewing = jobCands.filter(c => c.status === 'interviewing').length;
+      const hired = jobCands.filter(c => c.status === 'pass').length;
+      return { ...job, applied, screening, interviewing, hired };
+    });
+});
 
 const baseFilteredCandidates = computed(() => {
-  if (!selectedJobFilter.value) return candidatesList.value;
-  return candidatesList.value.filter(c => c.position.toLowerCase() === selectedJobFilter.value.toLowerCase());
-})
+  let list = store.candidates.value.filter(c => c.status !== 'pass' && c.status !== 'fail');
+  if (selectedJobFilter.value) {
+    list = list.filter(c => c.positionName === selectedJobFilter.value);
+  }
+  return list;
+});
 
 const recentCandidates = computed(() => {
-  return [...baseFilteredCandidates.value].slice(0, 4)
-})
+  return [...baseFilteredCandidates.value].slice(0, 4);
+});
 
 const sortedCandidates = computed(() => {
-  return [...baseFilteredCandidates.value]
-})
+  return [...baseFilteredCandidates.value];
+});
 
 const filterCandidatesByJob = (jobTitle) => {
   selectedJobFilter.value = jobTitle;
   showFullList.value = true;
   document.getElementById('candidates-list-section')?.scrollIntoView({ behavior: 'smooth' });
-}
+};
 
 const clearJobFilter = () => {
   selectedJobFilter.value = '';
-}
+};
 
 const viewCandidateDetails = (candidate) => {
-  selectedCandidate.value = candidate
-  showModal.value = true
-}
+  selectedCandidate.value = candidate;
+  showModal.value = true;
+};
 
 const closeModal = () => {
-  showModal.value = false
-  setTimeout(() => { selectedCandidate.value = null }, 200)
-}
+  showModal.value = false;
+  setTimeout(() => { selectedCandidate.value = null; }, 200);
+};
 
-onMounted(loadData)
 </script>
 
 <style scoped>

@@ -74,11 +74,11 @@
               <td class="px-4 py-3 whitespace-nowrap bg-transparent">
                 <div class="flex items-center gap-3">
                   <div class="w-9 h-9 rounded-md bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center text-[13px] font-bold border border-[var(--sys-brand-border)] shadow-sm transition-transform group-hover:scale-105">
-                    {{ emp.full_name[0] }}
+                    {{ emp.fullName ? emp.fullName[0] : '' }}
                   </div>
                   <div class="flex flex-col bg-transparent max-w-[180px]">
-                    <span class="text-[13px] font-bold text-[var(--sys-text-primary)] transition-colors group-hover:text-[var(--sys-brand-solid)] truncate">{{ emp.full_name }}</span>
-                    <span class="text-[10px] font-bold text-[var(--sys-brand-solid)] mt-0.5 opacity-60 uppercase tracking-tight transition-opacity group-hover:opacity-100">#{{ emp.employee_code }}</span>
+                    <span class="text-[13px] font-bold text-[var(--sys-text-primary)] transition-colors group-hover:text-[var(--sys-brand-solid)] truncate">{{ emp.fullName }}</span>
+                    <span class="text-[10px] font-bold text-[var(--sys-brand-solid)] mt-0.5 opacity-60 uppercase tracking-tight transition-opacity group-hover:opacity-100">#{{ emp.employeeCode }}</span>
                   </div>
                 </div>
               </td>
@@ -89,7 +89,7 @@
                 </div>
               </td>
               <td class="px-4 py-3 text-center whitespace-nowrap bg-transparent">
-                <span class="text-[12px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-tighter">{{ emp.hire_date }}</span>
+                <span class="text-[12px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-tighter">{{ emp.hireDate }}</span>
               </td>
               <td class="px-4 py-3 text-center whitespace-nowrap bg-transparent">
                 <span :class="[
@@ -157,12 +157,12 @@
                 <div class="grid grid-cols-2 gap-5">
                   <div class="col-span-2 space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Họ và tên đầy đủ *</label>
-                    <input v-model="form.full_name" type="text" placeholder="Nhập họ tên như trên CCCD..." class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all">
+                    <input v-model="form.fullName" type="text" placeholder="Nhập họ tên như trên CCCD..." class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all">
                   </div>
                   
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Ngày tháng năm sinh</label>
-                    <CalendarCustom v-model="form.date_of_birth" placeholder="Chọn ngày sinh" />
+                    <CalendarCustom v-model="form.dateOfBirth" placeholder="Chọn ngày sinh" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Giới tính định danh</label>
@@ -171,7 +171,7 @@
 
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Số điện thoại liên lạc *</label>
-                    <input v-model="form.phone_number" type="tel" placeholder="091 xxx xxxx" class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all">
+                    <input v-model="form.phoneNumber" type="tel" placeholder="091 xxx xxxx" class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all">
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Số thẻ CCCD/Hộ chiếu *</label>
@@ -199,12 +199,12 @@
 
                   <div class="col-span-2 space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Email công vụ (@company.com) *</label>
-                    <input v-model="form.company_email" type="email" placeholder="official.alias@company.com" class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all">
+                    <input v-model="form.companyEmail" type="email" placeholder="official.alias@company.com" class="w-full h-11 px-4 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-bold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all">
                   </div>
 
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Ngày gia nhập chính thức *</label>
-                    <CalendarCustom v-model="form.hire_date" placeholder="Chọn ngày gia nhập" />
+                    <CalendarCustom v-model="form.hireDate" placeholder="Chọn ngày gia nhập" />
                   </div>
                   <div class="space-y-1.5">
                     <label class="text-[11px] font-bold text-[var(--sys-text-primary)] uppercase tracking-wider ml-1">Phân loại nhân sự</label>
@@ -219,7 +219,7 @@
                   </div>
                   <div class="bg-transparent flex flex-col">
                     <p class="text-[10px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest m-0 leading-none">Mã định danh hệ thống (ID)</p>
-                    <p class="text-xl font-bold text-[var(--sys-text-primary)] m-0 mt-1 uppercase tracking-tighter">{{ form.employee_code || 'EMP-XXXX' }}</p>
+                    <p class="text-xl font-bold text-[var(--sys-text-primary)] m-0 mt-1 uppercase tracking-tighter">{{ form.employeeCode || 'EMP-XXXX' }}</p>
                   </div>
                 </div>
               </div>
@@ -243,35 +243,35 @@
 <script setup>
 /**
  * QUẢN LÝ NHÂN SỰ - PHIÊN BẢN ENTERPRISE REFINEMENT
- * Đã kết nối Mock Database (Functional CRUD)
+ * Đã kết nối Mock Database mới từ mock-data
  */
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import CalendarCustom from '@/components/CalendarCustom.vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { employeesAPI, departmentsAPI, positionsAPI } from '@/data/mockDB.js';
+import { mockEmployees } from '@/mock-data/index.js'; // Import mock data đã refactor
 
 const { showAlert, showConfirm } = useConfirm();
 
+const employeesList = ref(mockEmployees);
+
 // Mapping Global Employees -> Component Table Format
 const employees = computed(() => {
-  return employeesAPI.getAll().map(e => ({
-    id: e.employee_id,
-    employee_code: e.employee_code || `EMP-${e.employee_id}`,
-    full_name: e.full_name || '',
-    department: departmentsAPI.getById(e.department_id)?.department_name || '',
-    department_id: e.department_id,
-    position: positionsAPI.getById(e.position_id)?.position_name || '',
-    position_id: e.position_id,
+  return employeesList.value.map(e => ({
+    id: e.employeeId,
+    employeeCode: e.employeeCode,
+    fullName: e.fullName,
+    department: e.department.departmentName,
+    departmentId: e.department.departmentId,
+    position: e.position.positionName,
+    positionId: e.position.positionId,
     status: e.status || 'THỬ_VIỆC',
-    hire_date: e.hire_date || '2023-01-01',
+    hireDate: e.hireDate || '2023-01-01',
     gender: e.gender || 'NAM',
-    phone_number: e.phone_number || '',
+    phoneNumber: e.phoneNumber || '',
     id_card: e.id_card || '',
-    company_email: e.company_email || '',
-    personal_email: e.personal_email || '',
-    date_of_birth: e.date_of_birth || '',
-    permanent_address: e.permanent_address || ''
+    companyEmail: e.companyEmail || '',
+    dateOfBirth: e.dateOfBirth || ''
   }));
 });
 
@@ -288,10 +288,13 @@ const stats = computed(() => [
   { label: 'Chính thức', value: employees.value.filter(e => e.status === 'ĐANG_LÀM_VIỆC').length.toString(), icon: 'verified', semantic: 'success' }
 ]);
 
-const departmentOptions = computed(() => [
-  { label: 'Toàn bộ phòng ban', value: 'ALL' },
-  ...departmentsAPI.getAll().map(d => ({ label: d.department_name, value: d.department_name }))
-]);
+const departmentOptions = computed(() => {
+  const depts = new Set(employeesList.value.map(e => e.department.departmentName));
+  return [
+    { label: 'Toàn bộ phòng ban', value: 'ALL' },
+    ...Array.from(depts).map(d => ({ label: d, value: d }))
+  ];
+});
 
 const statusOptions = [
   { label: 'Tất cả trạng thái', value: 'ALL' },
@@ -307,8 +310,14 @@ const genderOptions = [
 ];
 
 // Mapping Forms
-const departmentFormOptions = computed(() => departmentsAPI.getAll().map(d => ({ label: d.department_name, value: d.department_id })));
-const positionOptionsList = computed(() => positionsAPI.getAll().map(p => ({ label: p.position_name, value: p.position_id })));
+const departmentFormOptions = computed(() => {
+  const depts = Array.from(new Set(employeesList.value.map(e => JSON.stringify(e.department)))).map(d => JSON.parse(d));
+  return depts.map(d => ({ label: d.departmentName, value: d.departmentId }));
+});
+const positionOptionsList = computed(() => {
+  const poses = Array.from(new Set(employeesList.value.map(e => JSON.stringify(e.position)))).map(p => JSON.parse(p));
+  return poses.map(p => ({ label: p.positionName, value: p.positionId }));
+});
 
 const statusOptionsForm = [
   { label: 'Chính thức (Đang làm việc)', value: 'ĐANG_LÀM_VIỆC' },
@@ -317,19 +326,17 @@ const statusOptionsForm = [
 ];
 
 const emptyForm = {
-  full_name: '',
-  date_of_birth: '',
+  fullName: '',
+  dateOfBirth: '',
   gender: 'NAM',
-  phone_number: '',
+  phoneNumber: '',
   id_card: '',
-  personal_email: '',
-  permanent_address: '',
-  department: 1, // department_id in DB
-  position: 1, // position_id in DB
-  company_email: '',
-  hire_date: new Date().toISOString().substr(0, 10),
+  department: 1, // departmentId
+  position: 1, // positionId
+  companyEmail: '',
+  hireDate: new Date().toISOString().substr(0, 10),
   status: 'THỬ_VIỆC',
-  employee_code: ''
+  employeeCode: ''
 };
 
 const form = ref({ ...emptyForm });
@@ -344,7 +351,7 @@ const filteredEmployees = computed(() => {
   }
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    list = list.filter(e => e.full_name.toLowerCase().includes(q) || e.employee_code.toLowerCase().includes(q));
+    list = list.filter(e => e.fullName.toLowerCase().includes(q) || e.employeeCode.toLowerCase().includes(q));
   }
   return list;
 });
@@ -370,7 +377,7 @@ const getStatusDotClass = (status) => {
 const openAddModal = () => {
   editMode.value = false;
   form.value = { ...emptyForm };
-  form.value.employee_code = `EMP${(employees.value.length + 1).toString().padStart(3,'0')}`;
+  form.value.employeeCode = `EMP${(employees.value.length + 1).toString().padStart(3,'0')}`;
   form.value.department = 1;
   form.value.position = 1;
   showModal.value = true;
@@ -383,38 +390,39 @@ const editEmployee = (emp) => {
 };
 
 const saveEmployee = async () => {
-  if (!form.value.full_name) {
+  if (!form.value.fullName) {
     await showAlert('Thiếu dữ liệu', 'Họ tên là thông tin bắt buộc xác thực!');
     return;
   }
   
-  // Convert component form to DB DTO
-  const dto = {
-    employee_code: form.value.employee_code,
-    full_name: form.value.full_name,
-    department_id: form.value.department,
-    position_id: form.value.position,
+  // Convert component form to API Request / Update State local
+  const newEmp = {
+    employeeId: editMode.value ? form.value.id : Date.now(),
+    employeeCode: form.value.employeeCode,
+    fullName: form.value.fullName,
+    department: { departmentId: form.value.department, departmentName: 'Cập nhật' },
+    position: { positionId: form.value.position, positionName: 'Cập nhật' },
     status: form.value.status,
-    hire_date: form.value.hire_date,
+    hireDate: form.value.hireDate,
     gender: form.value.gender,
-    phone_number: form.value.phone_number,
-    id_card: form.value.id_card,
-    company_email: form.value.company_email,
-    date_of_birth: form.value.date_of_birth
+    phoneNumber: form.value.phoneNumber,
+    companyEmail: form.value.companyEmail,
+    dateOfBirth: form.value.dateOfBirth
   };
 
   if (editMode.value) {
-    employeesAPI.update(form.value.id, dto);
+    const idx = employeesList.value.findIndex(e => e.employeeId === form.value.id);
+    if (idx !== -1) employeesList.value[idx] = newEmp;
   } else {
-    employeesAPI.add(dto);
+    employeesList.value.push(newEmp);
   }
   showModal.value = false;
 };
 
 const confirmResign = async (emp) => {
-  const ok = await showConfirm('Chấm dứt hồ sơ', `Xác nhận thực hiện quy trình thôi việc cho nhân sự ${emp.full_name}?`);
+  const ok = await showConfirm('Chấm dứt hồ sơ', `Xác nhận thực hiện quy trình thôi việc cho nhân sự ${emp.fullName}?`);
   if (ok) {
-    employeesAPI.delete(emp.id);
+    employeesList.value = employeesList.value.filter(e => e.employeeId !== emp.id);
   }
 };
 </script>

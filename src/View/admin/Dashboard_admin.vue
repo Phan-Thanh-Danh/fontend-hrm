@@ -203,13 +203,13 @@ const stats = ref([]);
 const departmentData = ref([]);
 const taskItems = ref([]);
 
-import { employeesAPI, departmentsAPI, requestsAPI } from '@/data/mockDB.js';
+import { mockEmployees, mockDepartments, mockLeaveRequests } from '@/mock-data/index.js';
 
 const fetchData = () => {
     try {
-        const emps = employeesAPI.getAll();
-        const depts = departmentsAPI.getAll();
-        const reqs = requestsAPI.getAll();
+        const emps = mockEmployees;
+        const depts = mockDepartments;
+        const reqs = mockLeaveRequests;
         
         // 1. Compute stats
         const activeEmpsCount = emps.filter(e => e.status !== 'ĐÃ_THÔI_VIỆC').length;
@@ -222,26 +222,29 @@ const fetchData = () => {
         ];
 
         // 2. Compute Department Allocation
-        const totalEmpsForPercent = activeEmpsCount || 1;
         const colors = ['bg-[var(--sys-brand-solid)]', 'bg-[var(--sys-success-solid)]', 'bg-[var(--sys-warning-solid)]', 'bg-[var(--sys-danger-solid)]', 'bg-purple-500'];
-        departmentData.value = depts.map((d, index) => {
-            const count = emps.filter(e => e.department_id === d.department_id && e.status !== 'ĐÃ_THÔI_VIỆC').length;
+        const dptArr = mockDepartments;
+        departmentData.value = dptArr.map((d, index) => {
+            const count = emps.filter(e => (e.department?.departmentId || e.departmentId) === d.departmentId && e.status !== 'ĐÃ_NGHỈ_VIỆC').length;
             return {
-                name: d.department_name,
+                name: d.departmentName,
                 count: count,
-                percent: Math.round((count / totalEmpsForPercent) * 100),
+                percent: Math.round((count / (activeEmpsCount || 1)) * 100),
                 color: colors[index % colors.length]
             };
         });
 
         // 3. Compute Task Items (from requests)
         taskItems.value = reqs.map(req => {
-            const emp = emps.find(e => e.employee_id === req.employee_id) || {};
+            const emp = emps.find(e => e.employeeId === (req.requesterId || req.employeeId)) || {};
+            const deptId = emp.department?.departmentId || emp.departmentId;
+            const dept = dptArr.find(d => d.departmentId === deptId);
+            const leaveType = req.requestTypeId === 2 ? 'Nghỉ ốm' : (req.requestTypeId === 3 ? 'Nghỉ thai sản' : 'Nghỉ phép năm');
             return {
-                name: emp.full_name || 'N/A',
-                role: emp.position || 'Nhân viên',
-                action: (req.request_type || 'Đề xuất') + (req.notes ? ` (${req.notes})` : ''),
-                time: req.created_at || new Date().toISOString().split('T')[0],
+                name: emp.fullName || req.requesterName || 'N/A',
+                role: emp.position?.positionName || 'Nhân viên',
+                action: leaveType + (req.reason ? ` — ${req.reason.substring(0, 50)}` : ''),
+                time: req.requestDate || new Date().toISOString().split('T')[0],
                 status: req.status === 'CHỜ_DUYỆT' ? 'Chờ thẩm định' : 'Đã xử lý',
                 statusClass: req.status === 'CHỜ_DUYỆT' 
                     ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]' 

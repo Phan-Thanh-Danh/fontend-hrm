@@ -1,0 +1,13 @@
+[
+  { "requestTypeId": 1, "requestTypeName": "Nghỉ phép năm", "category": "NGHỈ_PHÉP" },
+  { "requestTypeId": 6, "requestTypeName": "Nghỉ ốm (Đau ốm)", "category": "NGHỈ_PHÉP" },
+  { "requestTypeId": 7, "requestTypeName": "Nghỉ thai sản", "category": "NGHỈ_PHÉP" },
+  { "requestTypeId": 8, "requestTypeName": "Nghỉ không lương", "category": "NGHỈ_PHÉP" },
+  { "requestTypeId": 9, "requestTypeName": "Nghỉ việc riêng (Hiếu, hỉ)", "category": "NGHỈ_PHÉP" },
+  { "requestTypeId": 10, "requestTypeName": "Nghỉ bù", "category": "NGHỈ_PHÉP" },
+  { "requestTypeId": 99, "requestTypeName": "Khác (Ghi rõ)", "category": "NGHỈ_PHÉP" },
+  { "requestTypeId": 2, "requestTypeName": "Tuyển dụng nhân sự mới", "category": "KHÁC" },
+  { "requestTypeId": 3, "requestTypeName": "Đề xuất tăng lương", "category": "DIỀU_CHỈNH_CÔNG" },
+  { "requestTypeId": 4, "requestTypeName": "Tạm ứng lương", "category": "TẠM_ỨNG_LƯƠNG" },
+  { "requestTypeId": 5, "requestTypeName": "Thanh toán công tác phí", "category": "THANH_TOÁN" }
+]

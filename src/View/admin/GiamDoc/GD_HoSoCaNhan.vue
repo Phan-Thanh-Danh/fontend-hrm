@@ -30,12 +30,12 @@
           </div>
         </div>
 
-        <h2 class="text-2xl font-bold text-white mb-1 tracking-tight">{{ ceoData?.full_name || 'Nguyễn Minh Triết' }}</h2>
+        <h2 class="text-2xl font-bold text-white mb-1 tracking-tight">{{ ceoData?.fullName || 'Nguyễn Minh Triết' }}</h2>
         <p class="text-blue-200/80 text-[13px] font-medium mb-6">{{ ceoData?.positionName || 'Tổng Giám đốc' }}</p>
 
         <div class="bg-white/10 backdrop-blur-sm border border-white/10 px-6 py-2 rounded-full text-white/90 text-[11px] font-bold tracking-widest uppercase shadow-inner">
           <span class="opacity-60 mr-2">ID LÃNH ĐẠO</span>
-          <span class="font-black text-white">{{ ceoData?.employee_code || 'CEO-001' }}</span>
+          <span class="font-black text-white">{{ ceoData?.employeeCode || 'CEO-001' }}</span>
         </div>
       </div>
 
@@ -92,7 +92,7 @@
         <div class="bg-slate-50/80 dark:bg-[#121827] border border-slate-100 dark:border-white/5 rounded-2xl p-5 hover:bg-slate-100 dark:hover:bg-[#161e30] transition-colors">
           <span class="material-symbols-rounded text-amber-600 dark:text-amber-500 mb-4 text-[20px] font-variation-settings:'FILL' 1">mail</span>
           <p class="text-[9px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-1.5">Email công việc</p>
-          <p class="text-[13px] font-bold text-[#1d3d70] dark:text-slate-200 truncate" :title="ceoData ? ceoData.employee_code.toLowerCase() + '@hrm.com' : 'ceo@hrm.com'">{{ ceoData ? ceoData.employee_code.toLowerCase() + '@hrm.com' : 'ceo@hrm.com' }}</p>
+          <p class="text-[13px] font-bold text-[#1d3d70] dark:text-slate-200 truncate" :title="ceoData ? ceoData.employeeCode.toLowerCase() + '@hrm.com' : 'ceo@hrm.com'">{{ ceoData ? ceoData.employeeCode.toLowerCase() + '@hrm.com' : 'ceo@hrm.com' }}</p>
         </div>
         <div class="bg-slate-50/80 dark:bg-[#121827] border border-slate-100 dark:border-white/5 rounded-2xl p-5 hover:bg-slate-100 dark:hover:bg-[#161e30] transition-colors">
           <span class="material-symbols-rounded text-amber-600 dark:text-amber-500 mb-4 text-[20px] font-variation-settings:'FILL' 1">smartphone</span>
@@ -305,7 +305,7 @@
             <div class="md:col-span-2">
               <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-widest pl-1 mb-2">Họ và tên</label>
               <div class="relative">
-                <input type="text" :value="ceoData?.full_name || 'Nguyễn Minh Triết'" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#1d3d70] text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-semibold">
+                <input type="text" :value="ceoData?.fullName || 'Nguyễn Minh Triết'" class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-[#1d3d70] text-sm focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-semibold">
                 <span class="material-symbols-rounded absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 text-[18px]">person</span>
               </div>
             </div>
@@ -352,13 +352,13 @@
 <script setup>
 import { ref, computed } from 'vue';
 import CalendarCustom from '@/components/CalendarCustom.vue';
-import { employeesAPI, positionsAPI } from '@/data/mockDB.js';
+import { mockEmployees, mockPositions } from '@/mock-data/index.js';
 
 const ceoData = computed(() => {
-  const emps = employeesAPI.getAll();
-  const ceo = emps.find(e => e.position_id === 1) || emps[0];
+  const emps = mockEmployees;
+  const ceo = emps.find(e => e.positionId === 1) || emps[0];
   if(ceo) {
-    const posName = positionsAPI.getById(ceo.position_id)?.position_name || 'Giám đốc';
+    const posName = mockPositions.getById(ceo.positionId)?.positionName || 'Giám đốc';
     return {
       ...ceo,
       positionName: posName
@@ -371,7 +371,7 @@ const isChangePasswordModalOpen = ref(false);
 const isChangeProfileModalOpen = ref(false);
 const birthDate = ref('1982-05-15');
 
-const avatarUrl = ref(ceoData.value?.avatar_url || 'https://i.pravatar.cc/300?img=3');
+const avatarUrl = ref(ceoData.value?.avatarUrl || 'https://i.pravatar.cc/300?img=3');
 const fileInput = ref(null);
 
 const triggerUpload = () => {

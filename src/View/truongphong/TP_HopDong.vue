@@ -61,7 +61,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { contractsAPI, employeesAPI, positionsAPI } from '@/data/mockDB.js'
+import { mockContracts, mockEmployees, mockPositions } from '@/mock-data/index.js'
 
 const DEPT_ID = 2
 const contracts = ref([])
@@ -75,27 +75,27 @@ const CONTRACT_TYPE_LABELS = {
 }
 
 const loadData = () => {
-  const allContracts = contractsAPI.getAll()
-  const allEmps = employeesAPI.getAll().filter(e => e.department_id === DEPT_ID)
-  const allPositions = positionsAPI.getAll()
-  const empIds = allEmps.map(e => e.employee_id)
+  const allContracts = mockContracts
+  const allEmps = mockEmployees.filter(e => e.departmentId === DEPT_ID)
+  const allPositions = mockPositions
+  const empIds = allEmps.map(e => e.employeeId)
 
   contracts.value = allContracts
-    .filter(c => empIds.includes(c.employee_id) && c.status !== 'ĐÃ_CHẤM_DỨT')
+    .filter(c => empIds.includes(c.employeeId) && c.status !== 'ĐÃ_CHẤM_DỨT')
     .slice(0, 10)
     .map(c => {
-      const emp = allEmps.find(e => e.employee_id === c.employee_id)
-      const pos = allPositions.find(p => p.position_id === emp?.position_id)
-      const startDate = c.start_date ? new Date(c.start_date).toLocaleDateString('vi-VN') : 'N/A'
-      const endDate = c.end_date ? new Date(c.end_date).toLocaleDateString('vi-VN') : null
+      const emp = allEmps.find(e => e.employeeId === c.employeeId)
+      const pos = allPositions.find(p => p.positionId === emp?.positionId)
+      const startDate = c.startDate ? new Date(c.startDate).toLocaleDateString('vi-VN') : 'N/A'
+      const endDate = c.endDate ? new Date(c.endDate).toLocaleDateString('vi-VN') : null
       const range = endDate ? `${startDate} - ${endDate}` : `Từ ${startDate}`
 
       return {
-        id: c.contract_id,
-        code: c.contract_code,
-        name: emp?.full_name || 'N/A',
-        position: pos?.position_name || 'Chuyên viên',
-        type: CONTRACT_TYPE_LABELS[c.contract_type] || c.contract_type,
+        id: c.contractId,
+        code: c.contractCode,
+        name: emp?.fullName || 'N/A',
+        position: pos?.positionName || 'Chuyên viên',
+        type: CONTRACT_TYPE_LABELS[c.contractType] || c.contractType,
         range,
         status: c.status === 'HIỆU_LỰC' ? 'Đang hiệu lực' : 'Sắp hết hạn'
       }

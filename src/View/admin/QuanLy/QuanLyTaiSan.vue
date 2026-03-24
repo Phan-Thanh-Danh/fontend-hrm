@@ -192,7 +192,7 @@
 import { ref, computed } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
-import { assetsAPI, employeesAPI } from '@/data/mockDB.js';
+import { mockAssets, mockEmployees } from '@/mock-data/index.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -225,19 +225,19 @@ const statusOptionsForm = [
 ];
 
 const assets = computed(() => {
-  return assetsAPI.getAll().map(a => {
+  return mockAssets.map(a => {
     let userName = null;
-    if (a.assigned_to) {
-      const emp = employeesAPI.getById(a.assigned_to);
-      userName = emp ? emp.full_name : `NV #${a.assigned_to}`;
+    if (a.assignedTo) {
+      const emp = mockEmployees.find(e => e.employeeId === a.assignedTo);
+      userName = emp ? emp.fullName : `NV #${a.assignedTo}`;
     }
     return {
-      id: a.asset_id,
-      name: a.asset_name,
-      code: a.asset_code,
+      id: a.assetId,
+      name: a.assetName,
+      code: a.assetCode,
       category: a.category,
       user: userName,
-      assigned_to: a.assigned_to,
+      assigned_to: a.assignedTo,
       status: a.status
     };
   });
@@ -329,34 +329,36 @@ const handleSave = async () => {
     }
 
     const q = form.value.user.trim().toLowerCase();
-    const emps = employeesAPI.getAll();
+    const emps = mockEmployees;
     const emp = emps.find(e => 
-      e.full_name.toLowerCase().includes(q) || 
-      e.employee_code.toLowerCase().includes(q)
+      e.fullName.toLowerCase().includes(q) || 
+      e.employeeCode.toLowerCase().includes(q)
     );
 
     if (!emp) {
       await showAlert('Không tìm thấy', `Không tìm thấy nhân sự khớp với "${form.value.user}". Vui lòng kiểm tra lại!`);
       return;
     }
-    assigned_id = emp.employee_id;
+    assigned_id = emp.employeeId;
   } else {
     // Nếu trạng thái khác ĐANG_SỬ_DỤNG, xóa người dùng được gán
     assigned_id = null;
   }
 
   const dto = {
-    asset_code: form.value.code,
-    asset_name: form.value.name,
+    assetId: form.value.id || Date.now(),
+    assetCode: form.value.code,
+    assetName: form.value.name,
     category: form.value.category,
     status: form.value.status,
-    assigned_to: assigned_id
+    assignedTo: assigned_id
   };
 
   if (editMode.value) {
-    assetsAPI.update(form.value.id, dto);
+    const idx = mockAssets.findIndex(a => a.assetId === form.value.id);
+    if (idx !== -1) Object.assign(mockAssets[idx], dto);
   } else {
-    assetsAPI.add(dto);
+    mockAssets.unshift(dto);
   }
   closeModal();
 };
@@ -370,14 +372,16 @@ const assignAsset = (asset) => {
 const recoverAsset = async (asset) => {
   const ok = await showConfirm('Xác nhận thu hồi', `Bạn có chắc muốn thu hồi thiết bị ${asset.name} từ nhân sự ${asset.user}?`);
   if (ok) {
-    assetsAPI.update(asset.id, { assigned_to: null, status: 'TRONG_KHO' });
+    const idx = mockAssets.findIndex(a => a.assetId === asset.id);
+    if (idx !== -1) Object.assign(mockAssets[idx], { assignedTo: null, status: 'TRONG_KHO' });
   }
 };
 
 const confirmLiquidate = async (asset) => {
   const ok = await showConfirm('Xác nhận thanh lý', `Bạn có chắc muốn thực hiện quy trình thanh lý cho thiết bị ${asset.name}?`);
   if (ok) {
-    assetsAPI.update(asset.id, { status: 'ĐÃ_THANH_LÝ', assigned_to: null });
+    const idx = mockAssets.findIndex(a => a.assetId === asset.id);
+    if (idx !== -1) Object.assign(mockAssets[idx], { status: 'ĐÃ_THANH_LÝ', assignedTo: null });
   }
 };
 </script>

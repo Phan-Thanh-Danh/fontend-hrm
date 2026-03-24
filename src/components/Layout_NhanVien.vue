@@ -479,7 +479,7 @@ onMounted(() => {
   
   // Check authentication
   const userRole = localStorage.getItem('userRole');
-  if (!userRole || userRole !== 'staff') {
+  if (!userRole || userRole !== 'employee') {
     router.push('/login');
   }
 });

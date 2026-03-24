@@ -1,0 +1,8 @@
+[
+  { "departmentId": 1, "departmentCode": "BOD", "departmentName": "Ban Giám Đốc", "status": true },
+  { "departmentId": 2, "departmentCode": "IT", "departmentName": "Công nghệ IT", "status": true },
+  { "departmentId": 3, "departmentCode": "MKT", "departmentName": "Marketing", "status": true },
+  { "departmentId": 4, "departmentCode": "SALE", "departmentName": "Kinh doanh", "status": true },
+  { "departmentId": 5, "departmentCode": "HR", "departmentName": "Quản trị Y Tế & Nhân sự", "status": true },
+  { "departmentId": 6, "departmentCode": "CSKH", "departmentName": "Chăm sóc khách hàng", "status": true }
+]

@@ -121,31 +121,101 @@
           <div class="px-5 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-page)]/50">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-[var(--sys-brand-solid)] text-[20px]">description</span>
-              <span class="text-[12px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest truncate max-w-[200px]">CV_{{ activeCandidate.name.toUpperCase().replace(/\s/g, '_') }}.PDF</span>
+              <span class="text-[12px] font-bold text-[var(--sys-text-primary)] uppercase tracking-widest truncate max-w-[200px]">{{ activeCandidate?.name || 'Chọn hồ sơ' }}</span>
             </div>
-            <div class="flex gap-1">
-              <button class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-white hover:shadow-sm transition-all text-[var(--sys-text-secondary)]">
-                <span class="material-symbols-outlined text-[18px]">download</span>
-              </button>
+            <div class="flex gap-1 items-center">
+              <span v-if="activeCandidate" :class="['px-2 py-0.5 rounded-md text-[10px] font-bold border uppercase tracking-wide', getStatusClass(activeCandidate.status)]">{{ activeCandidate.statusLabel }}</span>
             </div>
           </div>
           
-          <!-- Real PDF Viewer -->
-          <div class="flex-grow p-4 bg-[var(--sys-bg-hover)]/20 relative overflow-hidden">
+          <!-- CV Link Info / Action -->
+          <div class="p-4 bg-[var(--sys-bg-page)] border-b border-[var(--sys-border-subtle)] flex items-center justify-between" v-if="activeCandidate">
+            <div class="flex items-center gap-3">
+              <span class="material-symbols-outlined text-[var(--sys-text-secondary)] text-[18px]">link</span>
+              <a :href="activeCandidate.cvUrl" target="_blank" class="text-[13px] font-medium text-[var(--sys-brand-solid)] hover:underline flex items-center gap-1">
+                Xem chi tiết CV / Portfolio (LinkedIn)
+                <span class="material-symbols-outlined text-[14px]">open_in_new</span>
+              </a>
+            </div>
+            <!-- If cover letter, we'll display below -->
+          </div>
+
+          <!-- Real PDF Viewer (Fallback context) -->
+          <div class="flex-grow p-4 bg-[var(--sys-bg-hover)]/20 relative overflow-hidden hidden md:block">
             <iframe 
               src="/cv-template.pdf#toolbar=0" 
-              class="w-full h-full border-none rounded-md shadow-lg bg-white"
+              class="w-full h-full border-none rounded-md shadow-lg bg-white opacity-40 hover:opacity-100 transition-opacity"
               title="CV Viewer"
             ></iframe>
           </div>
 
           <!-- Decision Panel -->
-          <div class="p-5 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]">
-            <div v-if="needsScheduling(activeCandidate)" class="animate-fadeIn">
-              <h4 class="text-[12px] font-bold text-[var(--sys-brand-solid)] flex items-center gap-2 mb-5 uppercase tracking-wide">
-                <span class="material-symbols-outlined text-[18px]">event</span> Lên lịch phỏng vấn
+          <div class="p-5 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]" v-if="activeCandidate">
+            <!-- Candidate Quick Info -->
+            <div class="mb-4 p-4 rounded-md bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] space-y-2">
+              <div class="flex justify-between items-start">
+                <div>
+                  <p class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ activeCandidate.name }}</p>
+                  <p class="text-[11px] text-[var(--sys-text-secondary)]">{{ activeCandidate.email }} · {{ activeCandidate.phone }}</p>
+                  <p class="text-[11px] text-[var(--sys-brand-solid)] font-bold mt-1">{{ activeCandidate.position }} — {{ activeCandidate.department }}</p>
+                </div>
+                <div class="text-right">
+                  <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider mb-0.5">Mức lương kỳ vọng</p>
+                  <p class="text-[13px] font-bold text-[var(--sys-text-primary)]">{{ activeCandidate.notes ? activeCandidate.notes.replace('Mức lương kỳ vọng:', '').trim() || 'Thỏa thuận' : 'Thỏa thuận' }}</p>
+                </div>
+              </div>
+
+              <!-- Cover Letter Snippet -->
+              <div v-if="activeCandidate.coverLetter" class="mt-3 p-2.5 bg-white border border-[var(--sys-border-subtle)] rounded shadow-sm">
+                <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest mb-1 flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[14px]">format_quote</span> Thư tự giới thiệu
+                </p>
+                <p class="text-[12px] text-[var(--sys-text-primary)] italic line-clamp-3">"{{ activeCandidate.coverLetter }}"</p>
+              </div>
+
+              <div class="flex items-center gap-2 pt-2 border-t border-[var(--sys-border-subtle)] mt-2">
+                <span class="text-[10px] font-bold uppercase text-[var(--sys-text-disabled)] tracking-wider">AI MATCH SCORE:</span>
+                <span :class="['px-1.5 py-0.5 rounded text-[10px] font-bold border', getAiScoreClass(activeCandidate.aiScore)]">{{ activeCandidate.aiScore }}%</span>
+                <span class="text-[10px] text-[var(--sys-text-secondary)] italic truncate ml-1">{{ activeCandidate.aiRemarks?.substring(0, 50) }}...</span>
+              </div>
+            </div>
+
+            <!-- STATE: CHỜ_HR_DUYỆT → nút Forward to Manager -->
+            <div v-if="activeCandidate.status === 'pending_hr'" class="animate-fadeIn">
+              <h4 class="text-[12px] font-bold text-[var(--sys-warning-text)] flex items-center gap-2 mb-4 uppercase tracking-wide">
+                <span class="material-symbols-outlined text-[18px]">pending_actions</span> Chờ HR xét duyệt
               </h4>
-              <div class="grid grid-cols-2 gap-3 mb-5">
+              <div class="flex gap-3">
+                <button @click="handleApproveToManager"
+                  class="flex-1 h-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
+                  <span class="material-symbols-outlined text-[18px]">forward_to_inbox</span>
+                  Chuyển Trưởng phòng
+                </button>
+                <button @click="handleFinalDecision('fail')"
+                  class="flex-1 h-10 border border-[var(--sys-danger-border)] text-[var(--sys-danger-text)] rounded-md text-[13px] font-bold hover:bg-[var(--sys-danger-soft)] transition-all uppercase tracking-wide">
+                  Từ chối
+                </button>
+              </div>
+            </div>
+
+            <!-- STATE: CHỜ_TP_DUYỆT → lên lịch phỏng vấn -->
+            <div v-else-if="activeCandidate.status === 'pending_mgr'" class="animate-fadeIn">
+              <h4 class="text-[12px] font-bold text-[var(--sys-brand-solid)] flex items-center gap-2 mb-4 uppercase tracking-wide">
+                <span class="material-symbols-outlined text-[18px]">event</span> Chờ Trưởng phòng thẩm định → Lên lịch
+              </h4>
+
+              <!-- Display Manager's Review if available -->
+              <div v-if="activeCandidate.managerReview" class="mb-5 p-3.5 rounded-md bg-[var(--sys-success-soft)] border border-[var(--sys-success-border)] shadow-sm">
+                <p class="text-[11px] font-bold text-[var(--sys-success-text)] uppercase mb-1.5 flex items-center gap-1.5 tracking-wider">
+                  <span class="material-symbols-outlined text-[16px]">rate_review</span> Yêu cầu Phỏng vấn từ Trưởng Phòng:
+                </p>
+                <p class="text-[13px] text-[var(--sys-text-primary)] italic font-semibold">"{{ activeCandidate.managerReview }}"</p>
+              </div>
+              <div v-else class="mb-5 p-3 rounded-md bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] border-dashed text-center">
+                <p class="text-[11px] font-medium text-[var(--sys-text-disabled)] tracking-wide">Trạng thái: Đang chờ Trưởng phòng phản hồi thẩm định CV.</p>
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 mb-4">
                 <div class="space-y-1.5">
                   <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider ml-1">Ngày chọn</label>
                   <input type="date" v-model="interviewDate" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
@@ -155,36 +225,37 @@
                   <input type="time" v-model="interviewTime" class="w-full h-9 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded-md text-[13px] font-medium text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm">
                 </div>
               </div>
-              <button 
-                @click="handleScheduleInterview"
+              <button @click="handleScheduleInterview"
                 class="w-full h-10 bg-[var(--sys-brand-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all flex items-center justify-center gap-2 uppercase tracking-wide">
                 <span class="material-symbols-outlined text-[20px]">send</span>
                 Gửi triệu tập phỏng vấn
               </button>
             </div>
 
-            <div v-else class="animate-fadeIn">
-              <h4 class="text-[12px] font-bold text-[var(--sys-brand-solid)] flex items-center gap-2 mb-5 uppercase tracking-wide">
+            <!-- STATE: ĐANG_PHỎNG_VẤN → Quyết định cuối -->
+            <div v-else-if="activeCandidate.status === 'interviewing'" class="animate-fadeIn">
+              <h4 class="text-[12px] font-bold text-purple-600 flex items-center gap-2 mb-4 uppercase tracking-wide">
                 <span class="material-symbols-outlined text-[18px]">fact_check</span> Quyết định tuyển dụng
               </h4>
-              <!-- Hiển thị nhận định từ Trưởng phòng nếu có -->
-              <div v-if="activeCandidate.managerReview" class="mb-5 p-3 rounded-md bg-[var(--sys-brand-soft)] border border-[var(--sys-brand-border)]">
-                <p class="text-[11px] font-bold text-[var(--sys-brand-solid)] uppercase mb-1">Đánh giá từ Trưởng phòng {{ activeCandidate.department }}:</p>
+              <div v-if="activeCandidate.managerReview" class="mb-4 p-3 rounded-md bg-[var(--sys-brand-soft)] border border-[var(--sys-brand-border)]">
+                <p class="text-[11px] font-bold text-[var(--sys-brand-solid)] uppercase mb-1">Đánh giá từ Trưởng phòng:</p>
                 <p class="text-[13px] text-[var(--sys-text-primary)] italic">"{{ activeCandidate.managerReview }}"</p>
               </div>
-
-              <div class="flex items-center gap-4">
-                <button 
-                  @click="handleFinalDecision('pass')"
-                  class="flex-1 h-10 bg-[var(--sys-success-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all uppercase tracking-wide">
-                  Phê duyệt
-                </button>
-                <button 
-                  @click="handleFinalDecision('fail')"
-                  class="flex-1 h-10 bg-[var(--sys-danger-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all uppercase tracking-wide">
-                  Từ chối
-                </button>
+              <div v-if="activeCandidate.interviewDate" class="mb-4 text-[12px] text-[var(--sys-text-secondary)]">
+                <span class="font-bold">Lịch phỏng vấn:</span> {{ activeCandidate.interviewDate }}
               </div>
+              <div class="flex items-center gap-4">
+                <button @click="handleFinalDecision('pass')"
+                  class="flex-1 h-10 bg-[var(--sys-success-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all uppercase tracking-wide">Trúng tuyển</button>
+                <button @click="handleFinalDecision('fail')"
+                  class="flex-1 h-10 bg-[var(--sys-danger-solid)] text-white rounded-md text-[13px] font-bold hover:brightness-90 shadow-sm transition-all uppercase tracking-wide">Từ chối</button>
+              </div>
+            </div>
+
+            <!-- STATE: TRÚNG_TUYỂN / TỪ_CHỐI → readonly -->
+            <div v-else class="animate-fadeIn text-center py-4">
+              <span :class="['px-4 py-2 rounded-lg text-[13px] font-bold border inline-block', getStatusClass(activeCandidate.status)]">{{ activeCandidate.statusLabel }}</span>
+              <p class="text-[11px] text-[var(--sys-text-disabled)] mt-2">Hồ sơ đã được xử lý.</p>
             </div>
           </div>
         </div>
@@ -233,43 +304,45 @@
 </template>
 
 <script setup>
-/**
- * TRANG QUẢN TRỊ TUYỂN DỤNG - PHIÊN BẢN ENTERPRISE SaaS
- * Tuân thủ 7 Golden Rules:
- * - Font Inter 14px (text-sm), Tỉ lệ Table cao (text-13px)
- * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button, 8px (LG) cho Card/Thẻ/Table
- * - Hệ màu Blue/White đồng bộ cho Action Icons
- */
 import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import Dropdown from '@/components/Dropdown.vue';
-import { useRecruitmentStore } from '@/composables/useRecruitmentStore';
+import {
+  useHRApplications,
+  forwardToManager,
+  scheduleInterview,
+  finalizeCandidate,
+  rejectApplication,
+} from '@/composables/useRecruitmentStore';
 import { useConfirm } from '@/composables/useConfirm';
-import { positionsAPI } from '@/data/mockDB.js';
 
 const route = useRoute();
-const store = useRecruitmentStore();
+const { all: candidates, hrPipeline } = useHRApplications();
 const { showAlert } = useConfirm();
 
-const activeCandidateId = ref(1);
+const activeCandidateId = ref(null);
 const searchQuery = ref('');
 const filterPosition = ref('');
 const filterAiScore = ref('');
 const currentPage = ref(1);
 const pageSize = 10;
 
-// Form state for interview scheduling
 const interviewDate = ref('');
 const interviewTime = ref('');
 
-const candidates = store.candidates;
+// Auto-select first on load
+watch(candidates, (list) => {
+  if (!activeCandidateId.value && list.length > 0) {
+    activeCandidateId.value = list[0].id;
+  }
+}, { immediate: true });
 
 const positionOptions = computed(() => {
-  const options = [{ label: 'Vị trí: Tất cả', value: '' }];
-  positionsAPI.getAll().forEach(p => {
-    options.push({ label: p.position_name, value: p.position_name });
-  });
-  return options;
+  const positions = [...new Set(candidates.value.map(c => c.position))];
+  return [
+    { label: 'Vị trí: Tất cả', value: '' },
+    ...positions.map(p => ({ label: p, value: p }))
+  ];
 });
 
 const aiScoreOptions = [
@@ -279,78 +352,74 @@ const aiScoreOptions = [
 ];
 
 const activeCandidate = computed(() => {
-  return candidates.value.find(c => c.id === activeCandidateId.value) || candidates.value[0];
+  return candidates.value.find(c => c.id === activeCandidateId.value) || candidates.value[0] || null;
 });
 
-const needsScheduling = (candidate) => {
-  if (!candidate || candidate.status !== 'new') return false;
-  return true;
-};
-
 const filteredCandidates = computed(() => {
-  const currentStatus = route.query.status;
   let list = candidates.value;
-
-  if (currentStatus === 'pass') {
-    list = list.filter(c => c.status === 'pass');
-  } else if (currentStatus === 'fail') {
-    list = list.filter(c => c.status === 'fail');
-  }
-
-  if (filterAiScore.value) {
-    list = list.filter(c => c.aiScore >= parseInt(filterAiScore.value));
-  }
-
-  if (filterPosition.value) {
-    list = list.filter(c => c.position === filterPosition.value);
-  }
-
+  const currentStatus = route.query.status;
+  if (currentStatus === 'pass') list = list.filter(c => c.status === 'pass');
+  else if (currentStatus === 'fail') list = list.filter(c => c.status === 'fail');
+  if (filterAiScore.value) list = list.filter(c => c.aiScore >= parseInt(filterAiScore.value));
+  if (filterPosition.value) list = list.filter(c => c.position === filterPosition.value);
   if (searchQuery.value) {
     const q = searchQuery.value.toLowerCase();
-    list = list.filter(c => c.name.toLowerCase().includes(q));
+    list = list.filter(c => c.name.toLowerCase().includes(q) || c.email.toLowerCase().includes(q));
   }
-
   return list;
 });
 
-const totalPages = computed(() => {
-  return Math.ceil(filteredCandidates.value.length / pageSize) || 1;
-});
+const totalPages = computed(() => Math.ceil(filteredCandidates.value.length / pageSize) || 1);
 
 const paginatedCandidates = computed(() => {
   const start = (currentPage.value - 1) * pageSize;
-  const end = start + pageSize;
-  return filteredCandidates.value.slice(start, end);
+  return filteredCandidates.value.slice(start, start + pageSize);
 });
 
-watch([searchQuery, filterPosition, filterAiScore], () => {
-  currentPage.value = 1;
-});
+watch([searchQuery, filterPosition, filterAiScore], () => { currentPage.value = 1; });
 
 const getAiScoreClass = (score) => {
-  if (score >= 80) return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
-  if (score >= 70) return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
+  if (score >= 90) return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
+  if (score >= 75) return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
   return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
 };
 
-// ACTIONS
+const getStatusClass = (status) => {
+  const map = {
+    pending_hr:   'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]',
+    pending_mgr:  'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]',
+    mgr_approved: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+    interviewing: 'bg-purple-50 text-purple-700 border-purple-200',
+    pass:         'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]',
+    fail:         'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]',
+  };
+  return map[status] || map['pending_hr'];
+};
+
+// ACTION: HR phê duyệt → chuyển sang CHỜ_TP_DUYỆT
+async function handleApproveToManager() {
+  if (!activeCandidate.value) return;
+  forwardToManager(activeCandidate.value.id, 'HR Admin');
+  await showAlert('ĐÃ CHUYỂN', `Hồ sơ của ${activeCandidate.value.name} đã được chuyển tới Trưởng phòng ${activeCandidate.value.department}.`);
+}
+
+// ACTION: Lên lịch phỏng vấn
 async function handleScheduleInterview() {
   if (!interviewDate.value || !interviewTime.value) {
     await showAlert('THIẾU THÔNG TIN', 'Vui lòng chọn ngày và giờ phỏng vấn!');
     return;
   }
-  
-  store.scheduleInterview(activeCandidate.value.id, interviewDate.value, interviewTime.value);
-  await showAlert('THÀNH CÔNG', `Đã gửi lời mời phỏng vấn cho ${activeCandidate.value.name}. Thông báo đã được gửi đến Trưởng phòng ${activeCandidate.value.department}.`);
-  
-  // Clear form
+  scheduleInterview(activeCandidate.value.id, interviewDate.value, interviewTime.value);
+  await showAlert('THÀNH CÔNG', `Đã gửi lời mời phỏng vấn cho ${activeCandidate.value.name}.`);
   interviewDate.value = '';
   interviewTime.value = '';
 }
 
-async function handleFinalDecision(status) {
-  store.finalizeDecision(activeCandidate.value.id, status);
-  await showAlert('CẬP NHẬT', `Đã cập nhật trạng thái hồ sơ của ${activeCandidate.value.name}.`);
+// ACTION: Quyết định cuối (pass/fail)
+async function handleFinalDecision(finalStatus) {
+  finalizeCandidate(activeCandidate.value.id, finalStatus);
+  const msg = finalStatus === 'pass' ? `Đã xác nhận TRÚNG TUYỂN cho ${activeCandidate.value.name}.` : `Đã từ chối hồ sơ của ${activeCandidate.value.name}.`;
+  await showAlert('CẬP NHẬT', msg);
 }
 </script>
 

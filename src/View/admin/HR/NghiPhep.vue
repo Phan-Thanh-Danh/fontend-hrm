@@ -294,7 +294,7 @@
  */
 import { ref, computed, onMounted, watch } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
-import { requestsAPI, employeesAPI, departmentsAPI, requestTypesAPI } from '@/data/mockDB.js';
+import { mockLeaveRequests, mockEmployees, mockDepartments, mockRequestTypes } from '@/mock-data/index.js';
 
 const filterDept = ref('ALL');
 const filterRange = ref('month');
@@ -318,12 +318,12 @@ const tabOptions = [
 ];
 
 const deptOptions = computed(() => {
-  const depts = departmentsAPI.getAll();
+  const depts = mockDepartments;
   return [
     { label: 'Phòng ban: Tất cả', value: 'ALL' },
     ...depts.map(d => ({
-      label: `Phòng ban: ${d.department_name}`,
-      value: d.department_name
+      label: `Phòng ban: ${d.departmentName}`,
+      value: d.departmentName
     }))
   ];
 });
@@ -337,26 +337,27 @@ const requests = ref([]);
 
 const fetchData = async () => {
   try {
-    const requestsRes = requestsAPI.getAll();
+    const requestsRes = mockLeaveRequests;
 
     // Map dữ liệu từ server sang cấu trúc giao diện
     requests.value = requestsRes.map(req => {
-      const empId = req.requester_id || req.employee_id;
-      const emp = employeesAPI.getById(empId) || {};
-      const dept = departmentsAPI.getById(req.department_id || (emp ? emp.department_id : null)) || {};
+      const empId = req.requesterId || req.employeeId;
+      const emp = mockEmployees.getById(empId) || {};
+      const empDeptId = emp.department?.departmentId || emp.departmentId;
+      const dept = mockDepartments.getById(req.departmentId || empDeptId) || {};
       
-      const typeObj = requestTypesAPI.getById(req.request_type_id);
-      const typeName = req.request_type_id === 99 ? (req.other_reason_name || 'Khác') : (typeObj?.request_type_name || req.request_type || 'Nghỉ phép');
+      const typeObj = mockRequestTypes.getById(req.requestTypeId);
+      const typeName = req.requestTypeId === 99 ? (req.other_reason_name || 'Khác') : (typeObj?.requestTypeName || req.request_type || 'Nghỉ phép');
       
-      const startDate = req.start_date || req.request_date?.split(' ')[0] || '';
-      const endDate = req.end_date || startDate;
+      const startDate = req.startDate || req.requestDate?.split(' ')[0] || '';
+      const endDate = req.endDate || startDate;
 
       return {
-        id: req.request_id,
-        name: emp.full_name || 'N/A',
+        id: req.requestId,
+        name: emp.fullName || 'N/A',
         msnv: empId,
-        department: dept.department_name || 'Khác',
-        role: emp.position || 'Nhân viên',
+        department: dept.departmentName || 'Khác',
+        role: emp.position?.positionName || emp.positionName || 'Nhân viên',
         type: typeName,
         typeDetail: typeName,
         dateRange: `${startDate} - ${endDate}`,
@@ -430,7 +431,7 @@ const rejectComment = ref('');
 
 const handleApprove = async (req) => {
   try {
-    requestsAPI.approve(req.id);
+    mockLeaveRequests.approve(req.id);
     rejectComment.value = '';
     await fetchData();
     activeRequestId.value = null;
@@ -445,7 +446,7 @@ const confirmRejectAction = async (req) => {
     return;
   }
   try {
-    requestsAPI.reject(req.id, rejectComment.value);
+    mockLeaveRequests.reject(req.id, rejectComment.value);
     rejectComment.value = '';
     await fetchData();
     activeRequestId.value = null;
@@ -462,7 +463,7 @@ const handleDeleteRequest = async (req) => {
   
   if (confirm(`Bạn có chắc chắn muốn xóa đơn của ${req.name}?`)) {
     try {
-      requestsAPI.delete(req.id);
+      mockLeaveRequests.delete(req.id);
       await fetchData();
       activeRequestId.value = null;
     } catch (err) {

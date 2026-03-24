@@ -304,7 +304,7 @@ import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useConfirm } from '@/composables/useConfirm';
 import { NavSection, SidebarItem } from './Layout_Admin.vue';
-import { requestsAPI, employeesAPI } from '@/data/mockDB.js';
+import { mockLeaveRequests, mockEmployees } from '@/mock-data/index.js';
 
 const { showConfirm } = useConfirm();
 const route = useRoute();

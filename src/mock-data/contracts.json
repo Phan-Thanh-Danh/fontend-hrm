@@ -1,0 +1,32 @@
+[
+  {
+    "contractId": 1,
+    "contractCode": "HDLD-0001",
+    "employeeId": 1,
+    "contractType": "CHÍNH_THỨC_1_NĂM",
+    "startDate": "2023-01-01",
+    "endDate": "2024-01-01",
+    "basicSalary": 15000000,
+    "status": "HIỆU_LỰC"
+  },
+  {
+    "contractId": 2,
+    "contractCode": "HDLD-0002",
+    "employeeId": 2,
+    "contractType": "VÔ_THỜI_HẠN",
+    "startDate": "2023-02-15",
+    "endDate": null,
+    "basicSalary": 25000000,
+    "status": "HIỆU_LỰC"
+  },
+  {
+    "contractId": 3,
+    "contractCode": "HDLD-0003",
+    "employeeId": 3,
+    "contractType": "CHÍNH_THỨC_3_NĂM",
+    "startDate": "2023-03-10",
+    "endDate": "2026-03-10",
+    "basicSalary": 45000000,
+    "status": "HIỆU_LỰC"
+  }
+]
