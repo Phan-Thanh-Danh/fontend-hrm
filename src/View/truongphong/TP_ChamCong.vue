@@ -251,8 +251,18 @@ const loadData = async () => {
       deptName.value = departmentResult.departmentName || departmentResult.name || 'Phòng ban';
     }
 
-    const employeesResult = mockEmployees.filter(e => Number(e.departmentId) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
-    const allAtts = mockDB.attendances || []; // fallback to empty array if undefined
+    const employeesResult = mockEmployees.filter(e => {
+      const dId = e.department?.departmentId || e.departmentId || e.deptId;
+      return Number(dId) === Number(userDeptId);
+    });
+    let allAtts = [];
+    try {
+      const attRes = await fetch('http://localhost:3000/attendances');
+      if (attRes.ok) allAtts = await attRes.json();
+      else allAtts = mockDB.attendances || [];
+    } catch (e) {
+      allAtts = mockDB.attendances || [];
+    }
 
     // Build the grid
     attendanceList.value = employeesResult.map(emp => {
@@ -292,6 +302,11 @@ const loadData = async () => {
     // Build history logs
     historyLogs.value = allAtts
       .filter(att => employeesResult.some(e => (e.employeeId || e.id) === (att.employeeId || att.employeeId)))
+      .sort((a, b) => {
+        const dateA = new Date(a.attendanceDate || a.date + ' ' + (a.checkInTime || a.checkIn1 || '00:00:00'));
+        const dateB = new Date(b.attendanceDate || b.date + ' ' + (b.checkInTime || b.checkIn1 || '00:00:00'));
+        return dateB - dateA;
+      })
       .slice(0, 15)
       .map(att => {
         const emp = employeesResult.find(e => (e.employeeId || e.id) === (att.employeeId || att.employeeId));

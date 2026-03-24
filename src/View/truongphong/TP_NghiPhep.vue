@@ -5,7 +5,7 @@
       <div class="bg-transparent text-left">
         <h1 class="text-xl font-bold text-[var(--sys-text-primary)] mb-0.5 tracking-tight uppercase">Phê duyệt Nghỉ phép Phòng ban</h1>
         <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium flex items-center gap-3">
-          Xử lý các yêu cầu vắng mặt và điều phối nguồn lực nhân sự khối IT.
+          Xử lý các yêu cầu vắng mặt và điều phối nguồn lực nhân sự phòng ban.
           <span class="px-2 py-0.5 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md border border-[var(--sys-brand-border)] text-[10px] font-bold uppercase tracking-widest shadow-sm animate-pulse">PENDING: {{ pendingLeaves.length }}</span>
         </p>
       </div>
@@ -77,76 +77,120 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { mockLeaveRequests, mockEmployees } from '@/mock-data/index.js'
+import { ref, computed, onMounted } from 'vue'
+import { mockEmployees, mockRequestTypes } from '@/mock-data/index.js'
 
 const activeTab = ref('Chờ duyệt')
-const DEPT_ID = 2 // Phòng Công nghệ IT
+const deptLeaveReqs = ref([])
 
-const allBaseData = computed(() => {
-  // Lấy danh sách ID nhân viên thuộc phòng ban
-  const deptEmpIds = mockEmployees
-    .filter(e => e.department.departmentId === DEPT_ID)
-    .map(e => e.employeeId)
-
-  // Lọc lấy các đơn xin nghỉ của nhân viên trong phòng
-  const deptLeaveReqs = mockLeaveRequests.filter(r => deptEmpIds.includes(r.requesterId))
-
-  const mapReq = (r) => {
-    const emp = mockEmployees.find(e => e.employeeId === r.requesterId)
+const fetchData = async () => {
+  try {
+    const userDeptId = Number(localStorage.getItem('userDeptId')) || 2;
+    const res = await fetch('http://localhost:3000/leaveRequests');
+    const allLeaves = await res.json();
     
-    // Map mã loại nghỉ phép
-    const typeMap = {
-      'AL': 'Nghỉ phép năm',
-      'SL': 'Nghỉ ốm',
-      'UP': 'Nghỉ không lương',
-      'ML': 'Nghỉ thai sản'
-    };
-    const typeName = typeMap[r.leaveDetails.leaveTypeCode] || 'Nghỉ phép';
+    // Lấy ID nhân viên cùng phòng
+    const deptEmpIds = mockEmployees
+      .filter(e => {
+         const dId = e.department?.departmentId || e.departmentId || e.deptId;
+         return Number(dId) === Number(userDeptId);
+      })
+      .map(e => e.employeeId);
 
-    return {
-      id: r.requestId,
-      name: r.requesterName,
-      position: emp?.position.positionName?.toUpperCase() || 'NHÂN VIÊN IT',
-      range: r.leaveDetails.fromDate === r.leaveDetails.toDate 
-             ? r.leaveDetails.fromDate 
-             : `${r.leaveDetails.fromDate} - ${r.leaveDetails.toDate}`,
-      typeName: typeName,
-      days: r.leaveDetails.numberOfDays || 0,
-      reason: r.reason,
-      statusRaw: r.status
-    }
+    // Lọc các đơn của nhân viên trong phòng ban này VÀ số ngày nghỉ >= 3
+    deptLeaveReqs.value = allLeaves.filter(r => 
+      deptEmpIds.includes(r.requesterId) && 
+      (Number(r.days) >= 3)
+    );
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu nghỉ phép TP:', error);
   }
+}
+
+onMounted(fetchData)
+
+const mapReq = (r) => {
+  // 1. Xác định định danh nhân sự đa kênh
+  const empIdForLookup = r.requesterId || r.employeeId || r.userId;
+  const lookupName = r.name || r.requesterName || r.requester_name;
+
+  // 2. Tìm kiếm thông tin từ Mock Data
+  const emp = mockEmployees.find(e => 
+    (empIdForLookup && (String(e.employeeId) === String(empIdForLookup) || String(e.id) === String(empIdForLookup) || String(e.employeeCode) === String(empIdForLookup))) ||
+    (lookupName && String(e.fullName).toLowerCase() === String(lookupName).toLowerCase())
+  ) || {};
+  
+  const typeObj = mockRequestTypes.getById(r.requestTypeId);
+  const typeName = r.requestTypeId === 99 ? (r.other_reason_name || 'Khác') : (typeObj?.requestTypeName || 'Nghỉ phép');
+  
+  const startD = r.startDate || r.start_date || 'N/A';
+  const endD = r.endDate || r.end_date || startD;
 
   return {
-    pending: deptLeaveReqs.filter(r => r.status === 'CHỜ_DUYỆT').map(mapReq),
-    approved: deptLeaveReqs.filter(r => r.status === 'ĐÃ_DUYỆT').map(mapReq),
-    rejected: deptLeaveReqs.filter(r => r.status === 'TỪ_CHỐI').map(mapReq)
-  }
-})
-
-const pendingLeaves = computed(() => allBaseData.value.pending)
-const approvedLeaves = computed(() => allBaseData.value.approved)
-const rejectedLeaves = computed(() => allBaseData.value.rejected)
-
-const approve = (id) => {
-  const req = mockLeaveRequests.find(r => r.requestId === id);
-  if (req) req.status = 'ĐÃ_DUYỆT';
-}
-
-const reject = (id) => {
-  const req = mockLeaveRequests.find(r => r.requestId === id);
-  if (req) {
-    req.status = 'TỪ_CHỐI';
-    req.rejectionReason = 'Không phù hợp thời điểm';
+    id: r.id || r.requestId,
+    name: emp.fullName || lookupName || 'Nhân viên N/A',
+    position: (emp?.position?.positionName || emp?.positionName || r.position || 'Nhân viên').toUpperCase(),
+    range: startD === endD ? startD : `${startD} - ${endD}`,
+    typeName: typeName,
+    days: Number(r.days) || 0,
+    reason: r.reason || r.notes || 'Không ghi rõ',
+    statusRaw: r.status
   }
 }
+
+const pendingLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'CHỜ_DUYỆT').map(mapReq))
+const approvedLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'ĐÃ_DUYỆT').map(mapReq))
+const rejectedLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'TỪ_CHỐI').map(mapReq))
 
 const currentList = computed(() => {
   if (activeTab.value === 'Đã duyệt') return approvedLeaves.value
   if (activeTab.value === 'Đã từ chối') return rejectedLeaves.value
   return pendingLeaves.value
 })
+
+const notifyUser = async (reqId, status) => {
+  try {
+    const req = deptLeaveReqs.value.find(r => (r.id || r.requestId) === reqId);
+    if (!req) return;
+    await fetch('http://localhost:3000/notifications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: req.requesterId,
+        type: status === 'ĐÃ_DUYỆT' ? 'success' : 'danger',
+        title: 'Kết quả duyệt đơn nghỉ phép',
+        desc: `Đơn nghỉ phép của bạn đã được ${status === 'ĐÃ_DUYỆT' ? 'CHẤP THUẬN' : 'TỪ CHỐI'}.`,
+        time: 'Vừa xong',
+        isRead: false,
+        icon: status === 'ĐÃ_DUYỆT' ? 'done_all' : 'cancel'
+      })
+    });
+  } catch (e) { console.error('Notify Error:', e); }
+};
+
+const approve = async (id) => {
+  try {
+    await fetch(`http://localhost:3000/leaveRequests/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'ĐÃ_DUYỆT' })
+    });
+    await notifyUser(id, 'ĐÃ_DUYỆT');
+    fetchData();
+  } catch (err) { console.error('Lỗi khi phê duyệt:', err); }
+}
+
+const reject = async (id) => {
+  try {
+    await fetch(`http://localhost:3000/leaveRequests/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'TỪ_CHỐI' })
+    });
+    await notifyUser(id, 'TỪ_CHỐI');
+    fetchData();
+  } catch (err) { console.error('Lỗi khi từ chối:', err); }
+}
 </script>
 
 <style scoped>

@@ -214,7 +214,7 @@
               >Lê Quản Trị</span>
               <span
                 class="text-[10px] uppercase tracking-widest font-bold mt-0.5 leading-none text-[var(--sys-text-secondary)]"
-              >Admin</span>
+              >{{ currentUserRole === 'hr' ? 'HR Specialist' : 'Admin' }}</span>
             </div>
             <span
               class="material-symbols-rounded text-sm transition-transform duration-200"
@@ -358,7 +358,7 @@
         <NavSection label="Tài chính & Tài sản" :expanded="sidebarExpanded" :is-dark="isDark" />
         <div :class="sidebarExpanded ? 'w-full flex flex-col gap-1' : 'px-2 flex flex-col items-center gap-1'">
           <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/bangluong')" icon="payments" label="Bảng lương" :is-dark="isDark" to="/admin/bangluong" @click="handleNavClick" />
-          <SidebarItem :expanded="sidebarExpanded" :is-active="isActive('/admin/taisan')" icon="category" label="Quản lý Tài sản" :is-dark="isDark" to="/admin/taisan" @click="handleNavClick" />
+          <SidebarItem v-if="currentUserRole !== 'hr'" :expanded="sidebarExpanded" :is-active="isActive('/admin/taisan')" icon="category" label="Quản lý Tài sản" :is-dark="isDark" to="/admin/taisan" @click="handleNavClick" />
         </div>
 
 
@@ -419,6 +419,7 @@ const isMobileSidebarOpen = ref(false);
 const isDark = ref(false);
 const isNotificationOpen = ref(false);
 const isProfileOpen = ref(false);
+const currentUserRole = ref(localStorage.getItem('userRole') || 'admin');
 
 const notificationDropdownRef = ref(null);
 const profileDropdownRef = ref(null);
@@ -480,7 +481,7 @@ onMounted(() => {
   
   // Check authentication
   const userRole = localStorage.getItem('userRole');
-  if (!userRole || userRole !== 'admin') {
+  if (!userRole || (userRole !== 'admin' && userRole !== 'hr')) {
     router.push('/login');
   }
 });

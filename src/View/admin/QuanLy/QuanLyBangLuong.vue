@@ -226,30 +226,49 @@ const currentYear = new Date().getFullYear();
 
 const employees = computed(() => {
   return mockSalaryDetails.map(s => {
-    const emp = mockEmployees.getById(s.employeeId);
+    // Tìm kiếm nhân viên mạnh mẽ hơn
+    const empIdForLookup = s.employeeId;
+    const emp = mockEmployees.find(e => 
+      String(e.employeeId) === String(empIdForLookup) || 
+      String(e.id) === String(empIdForLookup) ||
+      String(e.employeeCode) === String(empIdForLookup)
+    ) || {};
+    
+    // Tính toán các thông số từ salaryDetails.json
+    const base = Number(s.basicSalary) || 0;
+    const allowances = (Number(s.totalAllowances) || 0) + (Number(s.bonus) || 0) + (Number(s.overtimePay) || 0);
+    const deductions = (Number(s.personalIncomeTax) || 0) + (Number(s.socialInsuranceEmployee) || 0) + (Number(s.penalty) || 0);
+    const net = Number(s.netSalary) || (base + allowances - deductions);
+
     return {
-      id: s.salaryId,
-      empId: emp ? emp.employeeCode : `EMP-${s.employeeId}`,
-      name: emp ? emp.fullName : `NV #${s.employeeId}`,
-      role: emp ? emp.departmentName : 'Nhân viên',
-      baseSalary: s.basicSalary,
-      totalIncome: s.basicSalary + s.allowance,
-      deduction: s.tax,
-      netSalary: s.netSalary,
-      status: s.status === 'ĐÃ_THANH_TOÁN' ? 'Đã thanh toán' : 'Chờ thanh toán',
-      period: `Tháng ${s.month} / ${s.year}`,
-      extraAllowance: s.allowance,
-      employee_id: s.employeeId
+      id: s.salaryDetailId || s.salaryId,
+      empId: emp.employeeCode || `NV-${empIdForLookup}`,
+      name: emp.fullName || emp.name || `Nhân viên #${empIdForLookup}`,
+      role: emp.departmentName || emp.department?.departmentName || emp.positionName || 'Phòng ban N/A',
+      baseSalary: base,
+      totalIncome: (Number(s.grossSalary) || (base + allowances)),
+      deduction: deductions,
+      netSalary: net,
+      status: s.transferStatus === 'TRANSFERRED' || s.status === 'ĐÃ_THANH_TOÁN' ? 'Đã thanh toán' : 'Chờ thanh toán',
+      period: s.periodName || `Tháng ${s.month || '?'}/${s.year || '?'}`,
+      employee_id: empIdForLookup
     };
   });
 });
 
-const stats = computed(() => [
-  { label: 'Tổng ngân quỹ lương', value: formatCurrency(employees.value.reduce((acc, curr) => acc + curr.totalIncome, 0)), icon: 'account_balance', trend: '+5.2%' },
-  { label: 'Nhân sự thụ hưởng', value: employees.value.length.toString(), icon: 'badge', trend: '+2' },
-  { label: 'Thu nhập bình quân', value: employees.value.length > 0 ? formatCurrency(Math.floor(employees.value.reduce((acc, curr) => acc + curr.totalIncome, 0) / employees.value.length)) : '0', icon: 'query_stats', trend: '+1.5%' },
-  { label: 'Tổng khấu trừ thuế', value: formatCurrency(employees.value.reduce((acc, curr) => acc + curr.deduction, 0)), icon: 'savings', trend: '-0.8%' },
-]);
+const stats = computed(() => {
+  const list = employees.value;
+  const totalBudget = list.reduce((acc, curr) => acc + (Number(curr.totalIncome) || 0), 0);
+  const totalTax = list.reduce((acc, curr) => acc + (Number(curr.deduction) || 0), 0);
+  const avgIncome = list.length > 0 ? Math.floor(totalBudget / list.length) : 0;
+
+  return [
+    { label: 'Tổng ngân quỹ lương', value: formatCurrency(totalBudget), icon: 'account_balance', trend: '+5.2%' },
+    { label: 'Nhân sự thụ hưởng', value: list.length.toString(), icon: 'badge', trend: '+2' },
+    { label: 'Thu nhập bình quân', value: formatCurrency(avgIncome), icon: 'query_stats', trend: '+1.5%' },
+    { label: 'Tổng khấu trừ thuế', value: formatCurrency(totalTax), icon: 'savings', trend: '-0.8%' },
+  ];
+});
 
 const filteredEmployees = computed(() => {
   if (!searchQuery.value) return employees.value;

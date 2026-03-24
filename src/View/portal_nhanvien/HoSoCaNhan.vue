@@ -10,7 +10,7 @@
           <!-- Avatar Section -->
           <div class="relative shrink-0">
             <div class="avatar-box rounded-lg overflow-hidden border-4 border-[var(--sys-brand-soft)] shadow-md bg-[var(--sys-bg-page)]">
-              <img src="https://i.pravatar.cc/150?u=a042581f4e29026704d" alt="Avatar" class="w-32 h-32 md:w-40 md:h-40 object-cover" />
+              <img :src="avatar" :alt="fullName" class="w-32 h-32 md:w-40 md:h-40 object-cover" />
             </div>
             <button class="absolute -right-2 -bottom-2 w-10 h-10 bg-white hover:bg-[var(--sys-brand-solid)] hover:text-white text-[var(--sys-brand-solid)] rounded-md shadow-lg border border-[var(--sys-border-strong)] flex items-center justify-center transition-all active:scale-95 group/cam">
               <span class="material-symbols-outlined text-[20px]">photo_camera</span>
@@ -20,26 +20,26 @@
           <!-- Info Section -->
           <div class="grow text-center md:text-left w-full h-full flex flex-col justify-center">
             <div class="flex flex-col md:flex-row items-center gap-4 mb-4">
-              <h1 class="text-3xl font-bold text-[var(--sys-text-primary)] tracking-tight">Nguyễn Văn An</h1>
-              <span class="bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-md border border-[var(--sys-success-border)] shadow-sm">Đang làm việc</span>
+              <h1 class="text-3xl font-bold text-[var(--sys-text-primary)] tracking-tight">{{ fullName }}</h1>
+              <span :class="['text-[11px] font-bold uppercase tracking-wide px-3 py-1 rounded-md border shadow-sm', statusClass[status] || statusClass['ĐANG_LÀM_VIỆC']]">{{ statusLabel[status] || 'Đang làm việc' }}</span>
             </div>
             
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
               <div class="bg-transparent text-left">
                 <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider mb-1 opacity-60">Mã nhân viên</p>
-                <p class="text-lg font-bold text-[var(--sys-text-primary)]">#NV-00123</p>
+                <p class="text-lg font-bold text-[var(--sys-text-primary)]">#{{ employeeCode }}</p>
               </div>
               <div class="bg-transparent text-left">
                 <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider mb-1 opacity-60">Phòng ban</p>
-                <p class="text-lg font-bold text-[var(--sys-brand-solid)]">Kỹ thuật & CN</p>
+                <p class="text-lg font-bold text-[var(--sys-brand-solid)]">{{ deptName }}</p>
               </div>
               <div class="bg-transparent text-left">
                 <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider mb-1 opacity-60">Chức vụ</p>
-                <p class="text-lg font-bold text-[var(--sys-text-primary)] opacity-80">Senior Dev</p>
+                <p class="text-lg font-bold text-[var(--sys-text-primary)] opacity-80">{{ positionName }}</p>
               </div>
               <div class="bg-transparent text-left">
                 <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider mb-1 opacity-60">Ngày gia nhập</p>
-                <p class="text-lg font-bold text-[var(--sys-text-primary)]">01/01/2023</p>
+                <p class="text-lg font-bold text-[var(--sys-text-primary)]">{{ hireDateFormatted }}</p>
               </div>
             </div>
           </div>
@@ -64,7 +64,7 @@
                   <span class="absolute inset-y-0 left-3 flex items-center text-[var(--sys-text-secondary)] opacity-50 group-focus-within:text-[var(--sys-brand-solid)]">
                     <span class="material-symbols-outlined text-[20px]">person</span>
                   </span>
-                  <input type="text" class="w-full h-10 pl-10 pr-4 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all" value="Nguyễn Văn An" readonly>
+                  <input type="text" class="w-full h-10 pl-10 pr-4 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all" :value="fullName" readonly>
                 </div>
               </div>
 
@@ -74,26 +74,23 @@
                   <span class="absolute inset-y-0 left-3 flex items-center text-[var(--sys-text-secondary)] opacity-50 group-focus-within:text-[var(--sys-brand-solid)]">
                     <span class="material-symbols-outlined text-[20px]">cake</span>
                   </span>
-                  <input type="text" class="w-full h-10 pl-10 pr-4 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all" value="15/05/1992" readonly>
+                  <input type="text" class="w-full h-10 pl-10 pr-4 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm transition-all" :value="dobFormatted" readonly>
                 </div>
               </div>
 
               <div class="space-y-1.5 text-left">
                 <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide ml-1 opacity-60">Giới tính</label>
-                <select class="w-full h-10 px-3 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm appearance-none" disabled>
-                  <option selected>Nam</option>
-                  <option>Nữ</option>
-                </select>
+                <input type="text" class="w-full h-10 px-3 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm" :value="gender === 'NAM' ? 'Nam' : gender === 'NỮ' ? 'Nữ' : gender" readonly>
               </div>
 
               <div class="space-y-1.5 text-left">
                 <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide ml-1 opacity-60">Số điện thoại</label>
-                <input type="text" class="w-full h-10 px-4 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm" value="090 123 4567" readonly>
+                <input type="text" class="w-full h-10 px-4 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm" :value="phone" readonly>
               </div>
 
               <div class="col-span-1 md:col-span-2 space-y-1.5 text-left">
                 <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide ml-1 opacity-60">Email giao dịch</label>
-                <input type="email" class="w-full h-10 px-4 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm" value="an.nguyen92@gmail.com" readonly>
+                <input type="email" class="w-full h-10 px-4 bg-white border border-[var(--sys-border-strong)] rounded-md text-[13px] font-semibold text-[var(--sys-text-primary)] outline-none focus:border-[var(--sys-brand-solid)] shadow-sm" :value="email" readonly>
               </div>
 
               <div class="col-span-1 md:col-span-2 space-y-1.5 text-left">
@@ -177,7 +174,7 @@
                 </div>
                 <div class="bg-transparent text-left">
                   <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide mb-1 opacity-60">Phòng ban</p>
-                  <p class="text-sm font-bold text-[var(--sys-text-primary)]">Kỹ thuật & Công nghệ</p>
+                  <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ deptName }}</p>
                 </div>
               </div>
 
@@ -187,17 +184,17 @@
                 </div>
                 <div class="bg-transparent text-left">
                   <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide mb-1 opacity-60">Chức danh / Cấp bậc</p>
-                  <p class="text-sm font-bold text-[var(--sys-text-primary)]">Senior Developer (Lv.4)</p>
+                  <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ positionName }}</p>
                 </div>
               </div>
 
               <div class="flex gap-4 items-start group">
                 <div class="w-10 h-10 rounded-md bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] flex items-center justify-center shrink-0 border border-[var(--sys-border-subtle)] hover:border-[var(--sys-brand-solid)] transition-all shadow-sm overflow-hidden">
-                  <img src="https://i.pravatar.cc/150?u=nam_le" alt="Manager" class="w-full h-full object-cover" />
+                  <img :src="managerAvatar" alt="Manager" class="w-full h-full object-cover" />
                 </div>
                 <div class="bg-transparent text-left">
                   <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide mb-1 opacity-60">Quản lý trực tiếp</p>
-                  <p class="text-sm font-bold text-[var(--sys-text-primary)]">Lê Hoàng Nam</p>
+                  <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ managerName }}</p>
                 </div>
               </div>
 
@@ -216,7 +213,7 @@
             <div class="mt-10 pt-8 border-t border-[var(--sys-border-subtle)] bg-transparent">
               <div class="flex justify-between items-end mb-3">
                 <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wide opacity-60">Gắn bó</p>
-                <p class="text-[12px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest">1 năm 2 tháng</p>
+                <p class="text-[12px] font-bold text-[var(--sys-brand-solid)] uppercase tracking-widest">{{ tenure }}</p>
               </div>
               <div class="h-2 w-full bg-[var(--sys-bg-page)] rounded-full overflow-hidden border border-[var(--sys-border-subtle)]">
                 <div class="h-full bg-[var(--sys-brand-solid)] transition-all" style="width: 50%"></div>
@@ -241,13 +238,27 @@
 </template>
 
 <script setup>
-/**
- * TRANG HỒ SƠ CÁ NHÂN (PORTAL) - PHIÊN BẢN ENTERPRISE SaaS
- * Tuân thủ 7 Golden Rules:
- * - Font Inter 14px (text-sm), Tỉ lệ table cao (text-13px)
- * - Bo góc chuẩn B2B: 6px (MD) cho Input/Button, 8px (LG) cho Card/Thẻ
- * - Hệ màu Semantic đồng bộ, loại bỏ font-black/italic
- */
+import { useCurrentUser } from '@/composables/useCurrentUser.js';
+
+const {
+  fullName, employeeCode, deptName, positionName,
+  email, phone, gender, dobFormatted, hireDateFormatted,
+  status, avatar, tenure, managerName, managerAvatar
+} = useCurrentUser();
+
+const statusLabel = {
+  'ĐANG_LÀM_VIỆC': 'Đang làm việc',
+  'THỬ_VIỆC': 'Thử việc',
+  'ĐÃ_NGHỈ_VIỆC': 'Đã nghỉ việc',
+  'NGHỈ_THAI_SẢN': 'Nghỉ thai sản',
+};
+
+const statusClass = {
+  'ĐANG_LÀM_VIỆC': 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]',
+  'THỬ_VIỆC': 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]',
+  'ĐÃ_NGHỈ_VIỆC': 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]',
+  'NGHỈ_THAI_SẢN': 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-border-subtle)]',
+};
 </script>
 
 <style scoped>

@@ -191,12 +191,15 @@ const loadData = async () => {
       deptName.value = departmentResult.departmentName || departmentResult.name || 'Phòng ban';
     }
 
-    const employeesResult = mockEmployees.filter(e => Number(e.departmentId) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
+    const employeesResult = mockEmployees.filter(e => {
+      const dId = e.department?.departmentId || e.departmentId || e.deptId;
+      return Number(dId) === Number(userDeptId);
+    });
     
     staffList.value = employeesResult.map(e => ({
         id: e.employeeId || e.id,
         name: e.fullName || e.name,
-        position: (e.position || e.role === 'manager' ? 'Trưởng phòng' : 'Chuyên viên').toUpperCase(),
+        position: (e.position?.positionName || e.position || (e.role === 'manager' ? 'Trưởng phòng' : 'Chuyên viên')).toString().toUpperCase(),
         status: e.status || 'active',
         joinDate: e.hired_date || e.joinDate || '2024-01-01',
         department: deptName.value,

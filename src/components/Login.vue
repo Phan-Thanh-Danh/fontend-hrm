@@ -35,11 +35,16 @@
                 Tài khoản trải nghiệm:
               </p>
               <ul class="list-disc pl-8 space-y-1 text-blue-700">
+                <li>Admin: <b>admin@aethrm.com</b></li>
+                <li>HR (Mới): <b>hr@aethrm.com</b></li>
                 <li>BOD / Giám Đốc: <b>danh.phan@aethrm.com</b></li>
-                <li>Admin (Quản trị): <b>admin@aethrm.com</b> <i>(tài khoản ẩn)</i></li>
-                <li>Trưởng phòng: <b>loc.mai@aethrm.com</b></li>
+                <li>TP. IT: <b>loc.mai@aethrm.com</b></li>
+                <li>TP. HCNS: <b>son.bui@aethrm.com</b></li>
+                <li>TP. Kinh doanh: <b>phat.do@aethrm.com</b></li>
+                <li>TP. Kế toán: <b>linh.tran@aethrm.com</b></li>
+                <li>TP. CSKH: <b>anh.nguyen@aethrm.com</b></li>
                 <li>Nhân viên: <b>ngan.bui@aethrm.com</b></li>
-                <li class="mt-1 border-t border-blue-200/50 pt-1"><i>Mật khẩu chung cho tất cả: <b>123456</b></i></li>
+                <li class="mt-1 border-t border-blue-200/50 pt-1"><i>Mật khẩu chung: <b>123456</b></i></li>
               </ul>
             </div>
           </div>
@@ -140,9 +145,11 @@ const handleLogin = async () => {
       let targetRoute = '/nhanvien';
 
       if (user.role === 'ADMIN') {
-         // BOD / Giám đốc
-         uiRole = 'director';
-         targetRoute = '/giamdoc';
+         uiRole = 'admin';
+         targetRoute = '/admin';
+      } else if (user.role === 'HR') {
+         uiRole = 'hr';
+         targetRoute = '/admin';
       } else if (user.role === 'MANAGER') {
          uiRole = 'manager';
          targetRoute = '/truongphong';
@@ -153,6 +160,10 @@ const handleLogin = async () => {
       localStorage.setItem('userName', user.fullName);
       localStorage.setItem('userEmail', user.companyEmail);
       localStorage.setItem('userDeptId', user.department?.departmentId || user.departmentId || null);
+      localStorage.setItem('userCode', user.employeeCode || '');
+      localStorage.setItem('userPhone', user.phoneNumber || '');
+      localStorage.setItem('userDeptName', user.department?.departmentName || '');
+      localStorage.setItem('userPosition', user.position?.positionName || '');
 
       router.push(targetRoute);
     } else if (email.value === 'admin@aethrm.com' && password.value === '123456') {

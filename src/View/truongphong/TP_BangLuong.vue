@@ -127,7 +127,10 @@ const loadData = async () => {
       deptName.value = departmentResult.departmentName || departmentResult.name || 'Phòng ban';
     }
 
-    const employeesResult = mockEmployees.filter(e => Number(e.departmentId) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
+    const employeesResult = mockEmployees.filter(e => {
+      const dId = e.department?.departmentId || e.departmentId || e.deptId;
+      return Number(dId) === Number(userDeptId);
+    });
     const allPayroll = mockSalaryDetails;
 
     const [month, year] = selectedPeriod.value.split('/');
@@ -161,7 +164,7 @@ const loadData = async () => {
       return {
         id: empId,
         name: emp.fullName || emp.name,
-        position: (emp.position || (emp.role === 'manager' ? 'Trưởng phòng' : 'Chuyên viên')).toUpperCase(),
+        position: (emp.position?.positionName || emp.position || (emp.role === 'manager' ? 'Trưởng phòng' : 'Chuyên viên')).toString().toUpperCase(),
         base: fmt(base),
         bonus: fmt(bonus),
         deduct: fmt(deduct),

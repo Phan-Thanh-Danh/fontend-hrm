@@ -1,5 +1,27 @@
 [
   {
+    "employeeId": 100,
+    "employeeCode": "HR00001",
+    "fullName": "Lê Tuyết Mai",
+    "dateOfBirth": "1993-08-20",
+    "gender": "NỮ",
+    "companyEmail": "hr@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0911223344",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2024-01-15",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 4,
+      "departmentName": "Phòng Hành chính Nhân sự"
+    },
+    "position": {
+      "positionId": 4,
+      "positionName": "Chuyên viên HR"
+    },
+    "role": "HR"
+  },
+  {
     "employeeId": 1,
     "employeeCode": "NV00001",
     "fullName": "Phan Thành Danh",
@@ -1151,6 +1173,98 @@
     "position": {
       "positionId": 252,
       "positionName": "Chuyên viên Marketing"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 53,
+    "employeeCode": "NV00053",
+    "fullName": "Nguyễn Thị Phương Anh",
+    "dateOfBirth": "1988-04-12",
+    "gender": "NỮ",
+    "companyEmail": "anh.nguyen@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0909123456",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-03-01",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentCode": "CSKH",
+      "departmentName": "Chăm sóc khách hàng"
+    },
+    "position": {
+      "positionId": 160,
+      "positionName": "Trưởng phòng CSKH"
+    },
+    "role": "MANAGER"
+  },
+  {
+    "employeeId": 54,
+    "employeeCode": "NV00054",
+    "fullName": "Trần Văn Khải",
+    "dateOfBirth": "1996-07-20",
+    "gender": "NAM",
+    "companyEmail": "khai.tran@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0918765432",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2023-06-01",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentCode": "CSKH",
+      "departmentName": "Chăm sóc khách hàng"
+    },
+    "position": {
+      "positionId": 261,
+      "positionName": "Chuyên viên CSKH"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 55,
+    "employeeCode": "NV00055",
+    "fullName": "Lê Thị Hồng Vân",
+    "dateOfBirth": "1999-11-05",
+    "gender": "NỮ",
+    "companyEmail": "van.le@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0927654321",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2024-01-15",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentCode": "CSKH",
+      "departmentName": "Chăm sóc khách hàng"
+    },
+    "position": {
+      "positionId": 262,
+      "positionName": "Chuyên viên CSKH"
+    },
+    "role": "EMPLOYEE"
+  },
+  {
+    "employeeId": 56,
+    "employeeCode": "NV00056",
+    "fullName": "Phạm Duy Khánh",
+    "dateOfBirth": "2000-03-28",
+    "gender": "NAM",
+    "companyEmail": "khanh.pham@aethrm.com",
+    "password": "123456",
+    "phoneNumber": "0936543210",
+    "status": "ĐANG_LÀM_VIỆC",
+    "hireDate": "2024-05-10",
+    "baseLeaveDays": 12,
+    "department": {
+      "departmentId": 6,
+      "departmentCode": "CSKH",
+      "departmentName": "Chăm sóc khách hàng"
+    },
+    "position": {
+      "positionId": 263,
+      "positionName": "Chuyên viên CSKH"
     },
     "role": "EMPLOYEE"
   }

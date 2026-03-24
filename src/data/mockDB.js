@@ -1,5 +1,5 @@
 import { reactive, watch } from 'vue';
-import { generateSeedData } from './seedData.js';
+const generateSeedData = () => ({});
 
 // Cấu hình Mock Database
 const LOCAL_STORAGE_KEY = 'HRM_MOCK_DB_V2';

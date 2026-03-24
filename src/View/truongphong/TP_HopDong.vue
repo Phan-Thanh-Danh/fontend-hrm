@@ -1,11 +1,11 @@
-﻿<template>
+<template>
   <div class="space-y-6 pb-8">
     <!-- Header Area: SaaS Enterprise Style -->
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left px-1">
       <div class="bg-transparent text-left">
         <h1 class="text-xl font-bold text-[var(--sys-text-primary)] mb-0.5 tracking-tight uppercase">Quản lý Hợp đồng Phòng ban</h1>
         <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium flex items-center gap-3">
-          Tra cứu thông tin và thời hạn các loại hợp đồng lao động khối IT.
+          Tra cứu thông tin và thời hạn các loại hợp đồng lao động của phòng ban.
           <span class="px-2 py-0.5 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md border border-[var(--sys-brand-border)] text-[10px] font-bold uppercase tracking-widest shadow-sm">READ-ONLY ACCESS</span>
         </p>
       </div>
@@ -63,7 +63,6 @@
 import { ref, onMounted } from 'vue'
 import { mockContracts, mockEmployees, mockPositions } from '@/mock-data/index.js'
 
-const DEPT_ID = 2
 const contracts = ref([])
 
 const CONTRACT_TYPE_LABELS = {
@@ -75,13 +74,29 @@ const CONTRACT_TYPE_LABELS = {
 }
 
 const loadData = () => {
+  const userDeptId = Number(localStorage.getItem('userDeptId')) || 2;
   const allContracts = mockContracts
-  const allEmps = mockEmployees.filter(e => e.departmentId === DEPT_ID)
+  const allEmps = mockEmployees.filter(e => {
+    const dId = e.department?.departmentId || e.departmentId || e.deptId;
+    return Number(dId) === Number(userDeptId);
+  })
   const allPositions = mockPositions
   const empIds = allEmps.map(e => e.employeeId)
 
-  contracts.value = allContracts
-    .filter(c => empIds.includes(c.employeeId) && c.status !== 'ĐÃ_CHẤM_DỨT')
+  let filteredContracts = allContracts.filter(c => empIds.includes(c.employeeId) && c.status !== 'ĐÃ_CHẤM_DỨT');
+  if (filteredContracts.length === 0 && allEmps.length > 0) {
+    filteredContracts = allEmps.map(emp => ({
+      contractId: 2000 + emp.employeeId,
+      contractCode: `HDLD-MOCK-${emp.employeeId}`,
+      employeeId: emp.employeeId,
+      contractType: "CHÍNH_THỨC_3_NĂM",
+      startDate: "2024-01-01",
+      endDate: "2027-01-01",
+      status: "HIỆU_LỰC"
+    }));
+  }
+
+  contracts.value = filteredContracts
     .slice(0, 10)
     .map(c => {
       const emp = allEmps.find(e => e.employeeId === c.employeeId)
@@ -94,7 +109,7 @@ const loadData = () => {
         id: c.contractId,
         code: c.contractCode,
         name: emp?.fullName || 'N/A',
-        position: pos?.positionName || 'Chuyên viên',
+        position: pos?.positionName || emp?.position?.positionName || 'Chuyên viên',
         type: CONTRACT_TYPE_LABELS[c.contractType] || c.contractType,
         range,
         status: c.status === 'HIỆU_LỰC' ? 'Đang hiệu lực' : 'Sắp hết hạn'

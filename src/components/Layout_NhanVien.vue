@@ -209,17 +209,20 @@
             class="flex items-center gap-2.5 p-1 pr-3 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-bg-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-brand-solid)]"
           >
             <div
-              class="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--sys-accent)]/10 text-[var(--sys-accent)] border border-[var(--sys-accent)]/20 text-sm font-bold shrink-0"
-            >A</div>
+              class="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--sys-accent)]/10 text-[var(--sys-accent)] border border-[var(--sys-accent)]/20 text-sm font-bold shrink-0 overflow-hidden"
+            >
+              <img v-if="avatar" :src="avatar" class="w-full h-full object-cover" />
+              <span v-else>{{ fullName.charAt(0) }}</span>
+            </div>
             <div class="hidden lg:flex flex-col justify-center text-left">
               <span
                 class="text-sm font-bold leading-tight"
                 :class="isDark ? 'text-[oklch(0.91_0.01_265)]' : 'text-[var(--sys-text-primary)]'"
-              >Nguyễn Văn A</span>
+              >{{ fullName }}</span>
               <span
                 class="text-[10px] uppercase tracking-widest font-bold mt-0.5 leading-none"
                 :class="isDark ? 'text-[oklch(0.65_0.1_265)]' : 'text-[var(--sys-text-secondary)]'"
-              >Nhân viên</span>
+              >{{ positionName || 'Nhân viên' }}</span>
             </div>
             <span
               class="material-symbols-rounded text-sm transition-transform duration-200"
@@ -244,7 +247,7 @@
                 >Cổng thông tin nhân sự</p>
                 <p
                   class="text-xs font-medium truncate mb-0 text-[var(--sys-text-primary)]"
-                >Creative Studio</p>
+                >{{ email }}</p>
               </div>
               <router-link
                 to="/nhanvien/hoso"
@@ -405,7 +408,9 @@
 import { ref, computed, watch, onMounted, onUnmounted, defineComponent, h, resolveComponent } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { useConfirm } from '@/composables/useConfirm';
+import { useCurrentUser } from '@/composables/useCurrentUser';
 
+const { fullName, email, avatar, positionName } = useCurrentUser();
 const { showConfirm } = useConfirm();
 
 const route = useRoute();

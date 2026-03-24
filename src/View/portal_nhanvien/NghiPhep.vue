@@ -136,7 +136,7 @@
     <Teleport to="body">
       <Transition name="modal">
         <div v-if="showModal" class="fixed inset-0 z-[1050] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-all duration-300">
-          <div class="bg-white w-full max-w-xl rounded-lg border border-[var(--sys-border-subtle)] flex flex-col max-h-[90vh] overflow-hidden shadow-2xl transform transition-all">
+          <div class="bg-white w-full max-w-xl rounded-lg border border-[var(--sys-border-subtle)] flex flex-col min-h-[600px] max-h-[95vh] shadow-2xl transform transition-all">
             
             <!-- Success State -->
             <div v-if="isSuccess" class="p-12 flex flex-col items-center justify-center text-center space-y-6">
@@ -273,6 +273,7 @@ import CalendarCustom from '@/components/CalendarCustom.vue';
 import Dropdown from '@/components/Dropdown.vue';
 import { useConfirm } from '@/composables/useConfirm';
 import { mockLeaveRequests, mockRequestTypes, mockEmployees, mockDepartments } from '@/mock-data/index.js';
+import { useCurrentUser } from '@/composables/useCurrentUser.js';
 
 const { showAlert, showConfirm } = useConfirm();
 
@@ -316,8 +317,9 @@ const leaveTypeOptions = computed(() => {
   });
 });
 
-// Mock Current User (Nhân viên IT)
-const CURRENT_EMP_ID = 2; // Quang Huy
+// Current user từ localStorage
+const { employeeId: currentEmpId, deptId: currentDeptId, baseLeaveDays: currentBaseLeaveDays } = useCurrentUser();
+const CURRENT_EMP_ID = computed(() => currentEmpId.value);
 
 const calculateDays = computed(() => {
   if (!startDate.value || !endDate.value) return 0;
@@ -332,43 +334,45 @@ const pendingCount = computed(() => {
   return leaveHistory.value.filter(h => h.statusRaw === 'CHỜ_DUYỆT').length;
 });
 
-const fetchData = () => {
+const fetchData = async () => {
+  // 1. Khởi tạo danh sách loại hình nghỉ phép
   const allTypes = mockRequestTypes || [];
   const leaveCategories = ['NGHỈ_PHÉP', 'NGHỈ PHÉP', 'NGHI_PHEP', 'NGHI PHÉP'];
   const leaveTypeIds = [1, 6, 7, 8, 9, 10, 99];
 
   requestTypes.value = allTypes.filter(t => {
-    // Ép kiểu ID về Number để đảm bảo so sánh chính xác (tránh lỗi String vs Number)
     const typeId = Number(t.requestTypeId);
     const cat = String(t.category || '').trim().toUpperCase();
-    
-    // Lọc theo danh sách ID hoặc theo Category (Nghi phep)
     return leaveTypeIds.includes(typeId) || leaveCategories.includes(cat);
   });
 
-  // Fallback: nếu lọc không ra gì thì lấy các loại có ID trong danh sách (ép kiểu)
   if (requestTypes.value.length === 0) {
     requestTypes.value = allTypes.filter(t => [1, 6, 7, 8, 9, 10, 99].includes(Number(t.requestTypeId)));
   }
 
-  const allReqs = mockLeaveRequests;
-  const myReqs = allReqs.filter(r => r.requesterId === CURRENT_EMP_ID);
-
-  leaveHistory.value = myReqs.map(item => {
-    const typeObj = mockRequestTypes.getById(item.requestTypeId);
-    const typeName = item.requestTypeId === 99 ? item.other_reason_name : (typeObj?.requestTypeName || 'Nghỉ phép');
-    return {
-      id: item.requestId,
-      type: typeName,
-      duration: `${item.startDate || 'N/A'} - ${item.endDate || 'N/A'}`,
-      total: `${item.days || 0} ngày`,
-      statusRaw: item.status,
-      status: item.status === 'CHỜ_DUYỆT' ? 'Chờ duyệt' : (item.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : 'Từ chối')
-    };
-  });
+  // 2. Tải lịch sử nghỉ phép từ Backend
+  try {
+    const res = await fetch(`http://localhost:3000/leaveRequests?requesterId=${CURRENT_EMP_ID.value}`);
+    const data = await res.json();
+    
+    leaveHistory.value = data.map(item => {
+      const typeObj = mockRequestTypes.getById(item.requestTypeId);
+      const typeName = item.requestTypeId === 99 ? item.other_reason_name : (typeObj?.requestTypeName || 'Nghỉ phép');
+      return {
+        id: item.id || item.requestId,
+        type: typeName,
+        duration: `${item.startDate || 'N/A'} - ${item.endDate || 'N/A'}`,
+        total: `${item.days || 0} ngày`,
+        statusRaw: item.status,
+        status: item.status === 'CHỜ_DUYỆT' ? 'Chờ duyệt' : (item.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : 'Từ chối')
+      };
+    });
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu nghỉ phép:', error);
+  }
 };
 
-const submitRequest = () => {
+const submitRequest = async () => {
   if (!leaveType.value || !startDate.value || !endDate.value || !reason.value) {
     validationMessage.value = 'Vui lòng hoàn tất tất cả các trường thông tin có dấu (*)';
     isValidationError.value = true;
@@ -388,28 +392,28 @@ const submitRequest = () => {
     return;
   }
 
-  const typeObj = mockRequestTypes.getById(leaveType.value);
-  const finalTypeName = leaveType.value === 99 ? otherReason.value : (typeObj?.requestTypeName || 'Nghỉ phép');
-  const employee = mockEmployees.getById(CURRENT_EMP_ID);
+  const employee = mockEmployees.getById(CURRENT_EMP_ID.value);
 
   const newRequest = {
-    requester_id: CURRENT_EMP_ID,
-    request_type_id: leaveType.value,
-    title: `Nghỉ phép: ${finalTypeName} (${String(days).padStart(2, '0')} ngày)`,
+    requesterId: CURRENT_EMP_ID.value,
+    requestTypeId: leaveType.value,
     notes: reason.value,
-    start_date: startDate.value,
-    end_date: endDate.value,
+    startDate: startDate.value,
+    endDate: endDate.value,
     days: days,
     other_reason_name: leaveType.value === 99 ? otherReason.value : null,
     status: 'CHỜ_DUYỆT',
     is_urgent: days >= 3,
     request_date: new Date().toISOString().split('T')[0],
-    visible_to: ['Admin', 'Manager'],
-    department_id: employee?.departmentId || 2
+    department_id: currentDeptId.value || employee?.department?.departmentId || 2
   };
 
   try {
-    mockLeaveRequests.add(newRequest);
+    await fetch('http://localhost:3000/leaveRequests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newRequest)
+    });
     isSuccess.value = true;
     startDate.value = '';
     endDate.value = '';
@@ -429,7 +433,9 @@ const handleDeleteRequest = async (item) => {
   const ok = await showConfirm('Xác nhận xóa', 'Bạn có chắc chắn muốn hủy bỏ và xóa đơn nghỉ phép này không?');
   if (ok) {
     try {
-      mockLeaveRequests.delete(item.id);
+      await fetch(`http://localhost:3000/leaveRequests/${item.id}`, {
+        method: 'DELETE'
+      });
       fetchData();
     } catch (err) {
       console.error('Lỗi khi xóa đơn:', err);

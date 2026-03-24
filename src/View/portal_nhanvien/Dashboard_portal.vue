@@ -16,7 +16,7 @@
       <!-- Header Area -->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-transparent text-left">
         <div class="bg-transparent text-left">
-          <h1 class="text-xl font-semibold text-[var(--sys-text-primary)] mb-1">Chào buổi sáng, Hệ thống đã sẵn sàng.</h1>
+          <h1 class="text-xl font-semibold text-[var(--sys-text-primary)] mb-1">Chào buổi sáng, {{ fullName }}.</h1>
           <p class="text-sm text-[var(--sys-text-secondary)]">{{ currentDateStr }} Chúc bạn một ngày làm việc hiệu quả.</p>
         </div>
         <div class="hidden md:block shrink-0">
@@ -57,13 +57,31 @@
               <!-- Action Area -->
               <div class="flex flex-col gap-4 bg-transparent">
                 <div class="grid grid-cols-2 gap-4 bg-transparent">
-                  <button @click="handleCheckIn" class="bg-[var(--sys-brand-solid)] hover:brightness-90 text-white font-bold py-5 px-4 rounded-md flex flex-col items-center justify-center gap-2 shadow-sm transition-all active:scale-95 group">
+                  <button 
+                    @click="handleCheckIn" 
+                    :disabled="attendanceToday?.checkOut2"
+                    :class="[
+                      'font-bold py-5 px-4 rounded-md flex flex-col items-center justify-center gap-2 shadow-sm transition-all group',
+                      attendanceToday?.checkOut2 
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60' 
+                        : 'bg-[var(--sys-brand-solid)] hover:brightness-90 text-white active:scale-95'
+                    ]"
+                  >
                     <span class="material-symbols-outlined text-3xl group-hover:scale-105 transition-transform">login</span>
-                    <span class="text-[12px] uppercase tracking-wide">Ghi nhận Vào</span>
+                    <span class="text-[12px] uppercase tracking-wide">Vào {{ !attendanceToday ? 'lần 1' : (!attendanceToday.checkIn2 ? 'lần 2' : '') }}</span>
                   </button>
-                  <button @click="handleCheckOut" class="bg-white hover:bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] border border-[var(--sys-border-strong)] font-bold py-5 px-4 rounded-md flex flex-col items-center justify-center gap-2 transition-all active:scale-95 group shadow-sm">
-                    <span class="material-symbols-outlined text-3xl text-[var(--sys-text-secondary)] group-hover:scale-105 transition-transform">logout</span>
-                    <span class="text-[12px] uppercase tracking-wide opacity-80">Ghi nhận Ra</span>
+                  <button 
+                    @click="handleCheckOut" 
+                    :disabled="!attendanceToday?.checkIn2 || attendanceToday?.checkOut2"
+                    :class="[
+                      'font-bold py-5 px-4 rounded-md flex flex-col items-center justify-center gap-2 shadow-sm transition-all group',
+                      (!attendanceToday?.checkIn2 || attendanceToday?.checkOut2)
+                        ? 'bg-gray-50 text-gray-400 cursor-not-allowed border-gray-100'
+                        : 'bg-white hover:bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] border border-[var(--sys-border-strong)] active:scale-95'
+                    ]"
+                  >
+                    <span class="material-symbols-outlined text-3xl group-hover:scale-105 transition-transform" :class="(!attendanceToday?.checkIn2 || attendanceToday?.checkOut2) ? 'text-gray-300' : 'text-[var(--sys-text-secondary)]'">logout</span>
+                    <span class="text-[12px] uppercase tracking-wide opacity-80">Ra {{ attendanceToday?.checkIn2 && !attendanceToday?.checkOut1 ? 'lần 1' : (attendanceToday?.checkOut1 ? 'lần 2' : '') }}</span>
                   </button>
                 </div>
                 <div class="py-3 px-4 bg-[var(--sys-bg-page)] rounded-md border border-[var(--sys-border-subtle)] text-center">
@@ -88,14 +106,14 @@
               <div class="bg-transparent text-left">
                 <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider mb-2 opacity-60">Quỹ phép năm còn lại</p>
                 <div class="flex items-baseline gap-2 bg-transparent">
-                  <h3 class="text-5xl font-bold text-[var(--sys-text-primary)] tracking-tight">12</h3>
+                  <h3 class="text-5xl font-bold text-[var(--sys-text-primary)] tracking-tight">{{ baseLeaveDays }}</h3>
                   <span class="text-[12px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest opacity-40">ngày</span>
                 </div>
               </div>
               <div class="mt-6 pt-4 border-t border-[var(--sys-border-subtle)] bg-transparent">
                 <div class="flex justify-between items-center text-[11px] font-bold text-[var(--sys-text-secondary)] mb-2 uppercase tracking-wide opacity-60">
-                  <span>Dùng: 6.0</span>
-                  <span>Quỹ: 18.0</span>
+                  <span>Dùng: 0.0</span>
+                  <span>Quỹ: {{ baseLeaveDays }}.0</span>
                 </div>
                 <div class="h-2 w-full bg-[var(--sys-bg-page)] rounded-full overflow-hidden border border-[var(--sys-border-subtle)] shadow-inner">
                   <div class="h-full bg-[var(--sys-brand-solid)] transition-all" style="width: 33%"></div>
@@ -222,9 +240,12 @@
     </div>
   </div>
 </template>
-
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useCurrentUser } from '@/composables/useCurrentUser';
+
+const { fullName, baseLeaveDays, employeeId: currentEmpId } = useCurrentUser();
+const userId = computed(() => currentEmpId.value);
 
 const currentHours = ref('00');
 const currentMinutes = ref('00');
@@ -235,7 +256,6 @@ let timerInterval = null;
 const activities = ref([]);
 const notifications = ref([]);
 const attendanceToday = ref(null);
-const userId = localStorage.getItem('userId') || 'NV002';
 const showToast = ref(false);
 const toastMsg = ref('');
 const toastType = ref('success');
@@ -254,7 +274,7 @@ const triggerToast = (msg, type = 'success') => {
 
 const notifyManager = async (msg) => {
   try {
-    const userRes = await fetch(`http://localhost:3000/employees/${userId}`);
+    const userRes = await fetch(`http://localhost:3000/employees/${userId.value}`);
     const user = await userRes.json();
     if (user && user.managerId) {
       await fetch('http://localhost:3000/notifications', {
@@ -276,7 +296,7 @@ const notifyManager = async (msg) => {
 
 const fetchData = async () => {
   try {
-    const res = await fetch(`http://localhost:3000/attendance?employeeId=${userId}`);
+    const res = await fetch(`http://localhost:3000/attendances?employeeId=${userId.value}`);
     const data = await res.json();
     const todayStr = new Date().toISOString().split('T')[0];
     attendanceToday.value = data.find(item => item.date === todayStr);
@@ -304,9 +324,15 @@ const handleCheckIn = async () => {
   const timeStr = now.toTimeString().split(' ')[0];
   const dateStr = now.toISOString().split('T')[0];
 
+  // Nếu đã chấm ra lần 2 rồi thì không cho làm gì nữa
+  if (attendanceToday.value?.checkOut2) {
+    triggerToast('Bạn đã hoàn tất tất cả lượt chấm công cho hôm nay (Check-out lần 2).', 'warning');
+    return;
+  }
+
   if (!attendanceToday.value) {
     const newEntry = {
-      employeeId: userId,
+      employeeId: userId.value,
       date: dateStr,
       checkIn1: timeStr,
       checkIn2: null,
@@ -315,7 +341,7 @@ const handleCheckIn = async () => {
       status: 'ontime',
       location: 'Văn phòng HCM'
     };
-    await fetch('http://localhost:3000/attendance', {
+    await fetch('http://localhost:3000/attendances', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newEntry)
@@ -323,7 +349,7 @@ const handleCheckIn = async () => {
     triggerToast('Khởi tạo chấm công thành công!');
     notifyManager(`đã chấm công vào lúc ${timeStr}`);
   } else if (!attendanceToday.value.checkIn2) {
-    await fetch(`http://localhost:3000/attendance/${attendanceToday.value.id}`, {
+    await fetch(`http://localhost:3000/attendances/${attendanceToday.value.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ checkIn2: timeStr })
@@ -342,29 +368,38 @@ const handleCheckOut = async () => {
   const timeStr = now.toTimeString().split(' ')[0];
 
   if (!attendanceToday.value || !attendanceToday.value.checkIn1) {
-    triggerToast('Bạn chưa ghi nhận vào hôm nay!', 'danger');
+    triggerToast('Bạn chưa ghi nhận vào lần 1 hôm nay!', 'danger');
+    return;
+  }
+
+  // Ràng buộc: Chỉ cho chấm ra nếu đã chấm vào đủ 2 lần
+  if (!attendanceToday.value.checkIn2) {
+    triggerToast('Bạn phải hoàn tất ghi nhận VÀO lần 2 trước khi ghi nhận RA.', 'warning');
+    return;
+  }
+
+  // Nếu đã chấm ra lần 2 rồi thì không cho làm gì nữa
+  if (attendanceToday.value.checkOut2) {
+    triggerToast('Bạn đã hoàn tất tất cả lượt chấm công cho hôm nay.', 'warning');
     return;
   }
 
   if (!attendanceToday.value.checkOut1) {
-    await fetch(`http://localhost:3000/attendance/${attendanceToday.value.id}`, {
+    await fetch(`http://localhost:3000/attendances/${attendanceToday.value.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ checkOut1: timeStr })
     });
     triggerToast('Ghi nhận ra lần 1 thành công!');
     notifyManager(`đã chấm công ra lúc ${timeStr}`);
-  } else if (!attendanceToday.value.checkOut2) {
-    await fetch(`http://localhost:3000/attendance/${attendanceToday.value.id}`, {
+  } else {
+    await fetch(`http://localhost:3000/attendances/${attendanceToday.value.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ checkOut2: timeStr })
     });
-    triggerToast('Ghi nhận ra lần 2 thành công!');
+    triggerToast('Ghi nhận ra lần 2 (Kết thúc ngày) thành công!');
     notifyManager(`đã chấm công ra (lần 2) lúc ${timeStr}`);
-  } else {
-    triggerToast('Bạn đã ghi nhận ra đủ 2 lần cho hôm nay.', 'warning');
-    return;
   }
   fetchData();
 };

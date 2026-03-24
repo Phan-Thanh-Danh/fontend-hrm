@@ -218,8 +218,20 @@ const fetchData = () => {
             { label: 'TỔNG NHÂN SỰ', value: activeEmpsCount, change: '+12%', color: 'brand', icon: 'groups' },
             { label: 'YÊU CẦU DUYỆT', value: pendingReqsCount, change: 'MỚI', color: 'warning', icon: 'pending_actions' },
             { label: 'NHÂN SỰ MỚI', value: 8, change: '+2', color: 'success', icon: 'person_add' }, 
-            { label: 'TỶ LỆ NGHỈ VIỆC', value: '2.4%', change: '-0.5%', color: 'danger', icon: 'trending_down' }
+            { label: 'TỶ LỆ NGHỈ VIỆC', value: '2.4%', change: '-0.5%', color: 'danger', icon: 'trending_down' },
+            { label: 'ĐI MUỘN HÔM NAY', value: '...', change: 'LIVE', color: 'danger', icon: 'schedule' }
         ];
+
+        // 1b. Fetch live attendance for Admin dashboard
+        const today = new Date().toISOString().split('T')[0];
+        fetch('http://localhost:3000/attendances?attendanceDate=' + today)
+          .then(res => res.json())
+          .then(atts => {
+              const lateCount = atts.filter(a => a.status === 'late' || a.status === 'ĐI_MUỘN').length;
+              const lateStat = stats.value.find(s => s.label === 'ĐI MUỘN HÔM NAY');
+              if (lateStat) lateStat.value = String(lateCount);
+          })
+          .catch(e => console.error('Admin Dashboard Attendances Fetch Error:', e));
 
         // 2. Compute Department Allocation
         const colors = ['bg-[var(--sys-brand-solid)]', 'bg-[var(--sys-success-solid)]', 'bg-[var(--sys-warning-solid)]', 'bg-[var(--sys-danger-solid)]', 'bg-purple-500'];

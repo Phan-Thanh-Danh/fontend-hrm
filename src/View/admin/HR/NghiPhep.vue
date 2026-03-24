@@ -337,36 +337,62 @@ const requests = ref([]);
 
 const fetchData = async () => {
   try {
-    const requestsRes = mockLeaveRequests;
+    const res = await fetch('http://localhost:3000/leaveRequests');
+    const requestsRes = await res.json();
 
     // Map dữ liệu từ server sang cấu trúc giao diện
     requests.value = requestsRes.map(req => {
-      const empId = req.requesterId || req.employeeId;
-      const emp = mockEmployees.getById(empId) || {};
-      const empDeptId = emp.department?.departmentId || emp.departmentId;
-      const dept = mockDepartments.getById(req.departmentId || empDeptId) || {};
+      // 1. Xác định định danh nhân sự đa kênh
+      const empIdForLookup = req.requesterId || req.employeeId || req.userId || req.id;
+      const lookupName = req.name || req.requesterName || req.requester_name;
       
+      // 2. Tìm kiếm thông tin từ Mock Data (Cực kỳ mạnh mẽ)
+      const emp = mockEmployees.find(e => 
+        (empIdForLookup && (String(e.employeeId) === String(empIdForLookup) || String(e.id) === String(empIdForLookup) || String(e.employeeCode) === String(empIdForLookup))) ||
+        (lookupName && String(e.fullName).toLowerCase() === String(lookupName).toLowerCase())
+      ) || {};
+      
+      // 3. Ưu tiên lấy tên và MSNV thực tế
+      const finalName = emp.fullName || lookupName || 'Nhân viên N/A';
+      const finalMsnv = emp.employeeCode || req.msnv || (typeof empIdForLookup === 'string' && empIdForLookup.includes('NV') ? empIdForLookup : null) || 'NV' + String(empIdForLookup).padStart(5, '0');
+      
+      // 4. Giải quyết Phòng ban chính xác nhất
+      let deptName = 'N/A';
+      const actualEmpDept = emp.department?.departmentName || emp.departmentName || emp.deptName;
+      if (actualEmpDept) {
+        deptName = actualEmpDept;
+      } else {
+        // Dự phòng tìm theo ID phòng ban trong bản ghi
+        const dId = req.department_id || req.departmentId || req.deptId || emp.departmentId;
+        const dept = mockDepartments.find(d => 
+          String(d.departmentId) === String(dId) || 
+          String(d.id) === String(dId) ||
+          String(d.departmentName).toLowerCase() === String(req.department).toLowerCase()
+        );
+        deptName = dept?.departmentName || dept?.name || req.department || req.deptName || 'Ban Giám Đốc';
+      }
+
       const typeObj = mockRequestTypes.getById(req.requestTypeId);
-      const typeName = req.requestTypeId === 99 ? (req.other_reason_name || 'Khác') : (typeObj?.requestTypeName || req.request_type || 'Nghỉ phép');
+      const typeName = req.requestTypeId === 99 ? (req.other_reason_name || 'Khác') : (typeObj?.requestTypeName || req.type || req.request_type || 'Nghỉ phép');
       
-      const startDate = req.startDate || req.requestDate?.split(' ')[0] || '';
-      const endDate = req.endDate || startDate;
+      const startDate = req.startDate || req.start_date || '';
+      const endDate = req.endDate || req.end_date || startDate;
 
       return {
-        id: req.requestId,
-        name: emp.fullName || 'N/A',
-        msnv: empId,
-        department: dept.departmentName || 'Khác',
-        role: emp.position?.positionName || emp.positionName || 'Nhân viên',
-        type: typeName,
+        id: req.id || req.requestId,
+        name: finalName,
+        msnv: finalMsnv,
+        department: deptName,
+        role: emp.position?.positionName || emp.positionName || req.role || 'Nhân viên',
+        type: String(typeName).toUpperCase(),
         typeDetail: typeName,
-        dateRange: `${startDate} - ${endDate}`,
-        fullDateRange: `${startDate} - ${endDate}`,
-        days: req.days || 1,
-        status: req.status === 'ĐÃ_DUYỆT' ? 'approved' : (req.status === 'TỪ_CHỐI' ? 'rejected' : 'pending'),
-        statusText: req.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : (req.status === 'TỪ_CHỐI' ? 'Từ chối' : 'Chờ duyệt'),
-        reason: req.reason || req.notes || '',
-        balance: 12, // Giả định
+        dateRange: startDate === endDate ? startDate : `${startDate} - ${endDate}`,
+        fullDateRange: startDate === endDate ? startDate : `${startDate} - ${endDate}`,
+        days: Number(req.days) || 1,
+        status: req.status === 'approved' || req.status === 'ĐÃ_DUYỆT' ? 'approved' : (req.status === 'rejected' || req.status === 'TỪ_CHỐI' ? 'rejected' : 'pending'),
+        statusText: req.status === 'approved' || req.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : (req.status === 'rejected' || req.status === 'TỪ_CHỐI' ? 'Từ chối' : 'Chờ duyệt'),
+        reason: req.reason || req.notes || 'Không có lý do',
+        balance: emp.baseLeaveDays || 12,
         warnings: req.urgent || req.is_urgent ? ['Yêu cầu khẩn cấp'] : [],
         approver_manager: req.approver_manager,
         approver_director: req.approver_director
@@ -374,12 +400,14 @@ const fetchData = async () => {
     });
     
     // Đồng bộ số lượng tab & thống kê
-    tabOptions[0].count = 0; 
+    tabOptions[0].count = requests.value.length; 
     tabOptions[1].count = requests.value.filter(r => r.status === 'pending').length;
+    tabOptions[2].count = requests.value.filter(r => r.status === 'approved').length;
+    tabOptions[3].count = requests.value.filter(r => r.status === 'rejected').length;
     
     // Cập nhật leaveStats
-    leaveStats.value[0].value = String(requests.value.filter(r => r.status === 'pending').length);
-    leaveStats.value[1].value = String(requests.value.filter(r => r.status === 'approved').length);
+    leaveStats.value[0].value = String(tabOptions[1].count);
+    leaveStats.value[1].value = String(tabOptions[2].count);
     leaveStats.value[2].value = String(requests.value.filter(r => r.status === 'approved').length); // Giả định
     
     rejectComment.value = ''; // Reset nội dung ý kiến
@@ -429,9 +457,35 @@ watch([activeTab, filterDept, searchQuery], () => {
 
 const rejectComment = ref('');
 
+const notifyUserAction = async (empId, status) => {
+  try {
+    await fetch('http://localhost:3000/notifications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: empId,
+        type: status === 'ĐÃ_DUYỆT' ? 'success' : 'danger',
+        title: 'Thông báo xét duyệt Nghỉ phép',
+        desc: `Ban lãnh đạo đã ${status === 'ĐÃ_DUYỆT' ? 'PHÊ DUYỆT' : 'TỪ CHỐI'} đơn nghỉ phép của bạn.`,
+        time: 'Vừa xong',
+        isRead: false,
+        icon: 'notifications'
+      })
+    });
+  } catch (e) { console.error('Notify Error:', e); }
+};
+
 const handleApprove = async (req) => {
   try {
-    mockLeaveRequests.approve(req.id);
+    await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        status: 'ĐÃ_DUYỆT',
+        approver_director: 'Ban Giám Đốc'
+      })
+    });
+    await notifyUserAction(req.msnv, 'ĐÃ_DUYỆT');
     rejectComment.value = '';
     await fetchData();
     activeRequestId.value = null;
@@ -446,7 +500,15 @@ const confirmRejectAction = async (req) => {
     return;
   }
   try {
-    mockLeaveRequests.reject(req.id, rejectComment.value);
+    await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        status: 'TỪ_CHỐI',
+        rejectionReason: rejectComment.value 
+      })
+    });
+    await notifyUserAction(req.msnv, 'TỪ_CHỐI');
     rejectComment.value = '';
     await fetchData();
     activeRequestId.value = null;
@@ -455,22 +517,6 @@ const confirmRejectAction = async (req) => {
   }
 };
 
-const handleDeleteRequest = async (req) => {
-  if (req.status !== 'pending') {
-    alert('Không thể xóa đơn đã được duyệt hoặc từ chối!');
-    return;
-  }
-  
-  if (confirm(`Bạn có chắc chắn muốn xóa đơn của ${req.name}?`)) {
-    try {
-      mockLeaveRequests.delete(req.id);
-      await fetchData();
-      activeRequestId.value = null;
-    } catch (err) {
-      console.error('Lỗi khi xóa đơn:', err);
-    }
-  }
-};
 
 const getLeaveTypeClass = (type) => {
   if (type.includes('Phép')) return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]';

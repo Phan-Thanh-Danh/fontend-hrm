@@ -184,7 +184,22 @@ const fetchData = () => {
       };
     });
 
-    const lateCount = 0;
+    const today = new Date().toISOString().split('T')[0];
+    let lateCount = 0;
+    
+    // Fetch live attendance if possible
+    fetch('http://localhost:3000/attendances?attendanceDate=' + today)
+      .then(res => res.json())
+      .then(atts => {
+        const deptAtts = atts.filter(a => deptEmpIds.has(a.employeeId));
+        lateCount = deptAtts.filter(a => a.status === 'late' || a.status === 'ĐI_MUỘN').length;
+        
+        // Update stat specifically
+        const lateStat = stats.value.find(s => s.label === 'ĐI MUỘN HÔM NAY');
+        if (lateStat) lateStat.value = String(lateCount).padStart(2, '0');
+      })
+      .catch(e => console.error('Dashboard Attendances Fetch Error:', e));
+
 
     stats.value = [
       { label: 'TỔNG NHÂN SỰ', value: String(deptEmps.length).padStart(2, '0'), icon: 'groups', bg: 'bg-[var(--sys-brand-soft)]', color: 'text-[var(--sys-brand-solid)]', border: 'border-[var(--sys-brand-border)]' },

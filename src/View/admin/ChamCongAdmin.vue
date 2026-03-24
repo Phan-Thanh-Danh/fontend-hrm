@@ -229,7 +229,7 @@ const loadData = async () => {
   try {
     const [empRes, attRes, deptRes] = await Promise.all([
       fetch('http://localhost:3000/employees'),
-      fetch(`http://localhost:3000/attendance?date=${filterDate.value}`),
+      fetch(`http://localhost:3000/attendances?date=${filterDate.value}`),
       fetch('http://localhost:3000/departments')
     ]);
 
@@ -239,28 +239,29 @@ const loadData = async () => {
 
     deptOptions.value = [
       { label: 'Tất cả phòng ban', value: 'ALL' },
-      ...departments.map(d => ({ label: d.name, value: d.id }))
+      ...departments.map(d => ({ label: d.departmentName || d.name, value: d.departmentId || d.id }))
     ];
 
     let filteredEmployees = employees;
     if (filterDept.value !== 'ALL') {
-      filteredEmployees = employees.filter(e => String(e.deptId) === String(filterDept.value));
+      filteredEmployees = employees.filter(e => String(e.department?.departmentId || e.departmentId || e.deptId) === String(filterDept.value));
     }
 
     timeRecords.value = filteredEmployees.map(emp => {
-      const att = attendance.find(a => a.employeeId === emp.id);
+      const att = attendance.find(a => (a.employeeId || a.employeeId) === (emp.employeeId || emp.id));
+      const positionVal = emp.position?.positionName || emp.position || 'Nhân viên';
       return {
-        id: emp.id,
-        name: emp.name,
-        shift: (emp.position || 'Nhân viên').toUpperCase(),
-        checkIn: att?.checkIn1 || '--:--',
-        checkOut: att?.checkOut1 || '--:--',
+        id: emp.employeeId || emp.id,
+        name: emp.fullName || emp.name,
+        shift: positionVal.toString().toUpperCase(),
+        checkIn: att?.checkIn1 || att?.checkInTime || '--:--',
+        checkOut: att?.checkOut1 || att?.checkOutTime || '--:--',
         checkIn2: att?.checkIn2 || null,
         checkOut2: att?.checkOut2 || null,
-        late: att?.status === 'late' ? 15 : 0,
+        late: att?.status === 'late' || att?.status === 'ĐI_MUỘN' ? 15 : 0,
         early: 0,
         ot: 0,
-        statusText: att ? (att.status === 'ontime' ? 'ĐỦ CÔNG' : 'ĐI MUỘN') : 'VẮNG MẶT'
+        statusText: att ? (att.status === 'late' || att.status === 'ĐI_MUỘN' ? 'ĐI MUỘN' : 'ĐỦ CÔNG') : 'VẮNG MẶT'
       };
     });
 

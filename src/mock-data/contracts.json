@@ -5,7 +5,7 @@
     "employeeId": 1,
     "contractType": "CHÍNH_THỨC_1_NĂM",
     "startDate": "2023-01-01",
-    "endDate": "2024-01-01",
+    "endDate": "2027-01-01",
     "basicSalary": 15000000,
     "status": "HIỆU_LỰC"
   },
@@ -25,7 +25,7 @@
     "employeeId": 3,
     "contractType": "CHÍNH_THỨC_3_NĂM",
     "startDate": "2023-03-10",
-    "endDate": "2026-03-10",
+    "endDate": "2027-03-10",
     "basicSalary": 45000000,
     "status": "HIỆU_LỰC"
   }

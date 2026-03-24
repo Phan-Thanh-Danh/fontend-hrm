@@ -74,12 +74,29 @@ const loadData = async () => {
       deptName.value = departmentResult.departmentName || departmentResult.name || 'Phòng ban';
     }
 
-    const employeesResult = mockEmployees.filter(e => Number(e.departmentId) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
+    const employeesResult = mockEmployees.filter(e => {
+      const dId = e.department?.departmentId || e.departmentId || e.deptId;
+      return Number(dId) === Number(userDeptId);
+    });
     const allAssets = mockAssets;
     
-    assets.value = allAssets.filter(a => 
+    let filteredAssets = allAssets.filter(a => 
       employeesResult.some(e => (e.employeeId || e.id) === (a.assignedTo || a.employeeId))
-    ).map(a => {
+    );
+
+    if (filteredAssets.length === 0 && employeesResult.length > 0) {
+      filteredAssets = employeesResult.map((emp, idx) => ({
+        assetId: 1000 + emp.employeeId,
+        assetCode: `AST-MOCK-${emp.employeeId}`,
+        assetName: idx % 2 === 0 ? 'Laptop Dell Latitude 7420' : 'Màn hình Dell Ultrasharp 27',
+        category: idx % 2 === 0 ? 'Laptop' : 'Màn hình',
+        assignedTo: emp.employeeId,
+        status: 'ĐANG_SỬ_DỤNG',
+        purchaseDate: '2023-01-15'
+      }));
+    }
+
+    assets.value = filteredAssets.map(a => {
       const emp = employeesResult.find(e => (e.employeeId || e.id) === (a.assignedTo || a.employeeId));
       return {
         id: a.assetId || a.id,
