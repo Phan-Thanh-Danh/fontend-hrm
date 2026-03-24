@@ -5,7 +5,7 @@
       <div class="bg-transparent text-left">
         <h1 class="text-xl font-bold text-[var(--sys-text-primary)] mb-0.5 tracking-tight uppercase">Quản lý Tài sản Phòng ban</h1>
         <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium flex items-center gap-3">
-          Kiểm kê danh mục thiết bị và cơ sở vật chất thuộc quyền quản lý khối IT.
+          Kiểm kê danh mục thiết bị và cơ sở vật chất thuộc quyền quản lý {{ deptName }}.
           <span class="px-2 py-0.5 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md border border-[var(--sys-brand-border)] text-[10px] font-bold uppercase tracking-widest shadow-sm">ASSET TRACKING MODE</span>
         </p>
       </div>
@@ -52,10 +52,11 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { assetsAPI, employeesAPI } from '@/data/mockDB.js'
+import { assetsAPI, employeesAPI, departmentsAPI } from '@/data/mockDB.js'
 
 const userDeptId = localStorage.getItem('userDeptId') || '1';
 const assets = ref([])
+const deptName = ref('Phòng ban')
 
 const CATEGORY_ICON_MAP = {
   'Laptop': 'laptop_mac',
@@ -68,27 +69,27 @@ const CATEGORY_ICON_MAP = {
 
 const loadData = async () => {
   try {
-    const [empRes, assetRes] = await Promise.all([
-      fetch(`http://localhost:3000/employees?deptId=${userDeptId}`),
-      fetch(`http://localhost:3000/assets`)
-    ]);
-    
-    const employees = await empRes.json();
-    const allAssets = await assetRes.json();
+    const departmentResult = departmentsAPI.getAll().find(d => Number(d.department_id) === Number(userDeptId) || d.id === userDeptId);
+    if (departmentResult) {
+      deptName.value = departmentResult.department_name || departmentResult.name || 'Phòng ban';
+    }
+
+    const employeesResult = employeesAPI.getAll().filter(e => Number(e.department_id) === Number(userDeptId) || Number(e.deptId) === Number(userDeptId));
+    const allAssets = assetsAPI.getAll();
     
     assets.value = allAssets.filter(a => 
-      employees.some(e => e.id === a.employeeId)
+      employeesResult.some(e => (e.employee_id || e.id) === (a.assigned_to || a.employeeId))
     ).map(a => {
-      const emp = employees.find(e => e.id === a.employeeId);
+      const emp = employeesResult.find(e => (e.employee_id || e.id) === (a.assigned_to || a.employeeId));
       return {
-        id: a.id,
-        name: a.name.toUpperCase(),
-        code: a.code,
-        category: a.category || (a.name.includes('Laptop') ? 'Laptop' : 'Màn hình'),
-        user: emp?.name || 'N/A',
-        status: a.condition === 'Like New' || a.condition === 'Good' ? 'Tốt' : 'Cần bảo trì',
-        date: a.issueDate || 'N/A',
-        icon: CATEGORY_ICON_MAP[a.category] || (a.name.includes('Laptop') ? 'laptop_mac' : 'monitor')
+        id: a.asset_id || a.id,
+        name: (a.asset_name || a.name || '').toUpperCase(),
+        code: a.asset_code || a.code,
+        category: a.category || ((a.asset_name || a.name || '').includes('Laptop') ? 'Laptop' : 'Màn hình'),
+        user: emp?.full_name || emp?.name || 'N/A',
+        status: a.status === 'ĐANG_SỬ_DỤNG' || a.condition === 'Like New' || a.condition === 'Good' ? 'Tốt' : 'Cần bảo trì',
+        date: a.purchase_date || a.issueDate || 'N/A',
+        icon: CATEGORY_ICON_MAP[a.category] || ((a.asset_name || a.name || '').includes('Laptop') ? 'laptop_mac' : 'monitor')
       }
     });
 
