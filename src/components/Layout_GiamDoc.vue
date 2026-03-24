@@ -1,191 +1,149 @@
 <template>
-  <div class="min-h-screen font-[Roboto,Inter,sans-serif] bg-slate-50 dark:bg-[#0d1117] text-slate-800 dark:text-slate-200 transition-colors duration-300">
-    <!-- Topbar -->
-    <header class="h-16 bg-[#161c2d] flex items-center justify-between px-6 shadow-md fixed top-0 left-0 right-0 z-50">
-      
-      <!-- Logo Left -->
-      <router-link to="/giamdoc" class="flex items-center gap-2.5 ml-1 cursor-pointer hover:opacity-90 transition-opacity">
+  <div class="min-h-screen font-[Roboto,Inter,sans-serif] bg-[var(--sys-bg-page)] text-[var(--sys-text-primary)] transition-colors duration-300">
+    <!-- Top App Bar -->
+    <header
+      class="fixed top-0 left-0 right-0 z-40 flex items-center h-16 px-2 gap-1 transition-colors duration-300 bg-[var(--sys-bg-surface)] border-b border-[var(--sys-border-subtle)] shadow-[0_1px_2px_oklch(0_0_0/0.07),0_2px_4px_oklch(0_0_0/0.05)]"
+    >
+      <!-- Menu Trigger -->
+      <button
+        @click="handleMenuToggle"
+        aria-label="Toggle sidebar"
+        class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
+      >
+        <span class="material-symbols-rounded" style="font-size: 24px;">menu</span>
+      </button>
+
+      <!-- Brand Section -->
+      <div class="flex items-center gap-2.5 ml-1">
         <div
-          class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 shadow-md"
-          style="background:linear-gradient(135deg,oklch(0.52 0.22 265),oklch(0.45 0.19 295));box-shadow:0 2px 8px oklch(0.48 0.195 265 / 0.35)"
+          class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md"
+          style="background: linear-gradient(135deg, oklch(0.52 0.22 265), oklch(0.45 0.19 295)); box-shadow: oklch(0.48 0.195 265 / 0.35) 0px 2px 8px;"
         >
-          <span class="material-symbols-rounded text-white" style="font-size:24px;font-variation-settings:'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 20">corporate_fare</span>
+          <span class="material-symbols-rounded text-white" style="font-size: 18px; font-variation-settings: 'FILL' 1, 'wght' 600;">corporate_fare</span>
         </div>
-        <div class="flex flex-col ml-1">
-          <span class="text-white font-bold text-lg tracking-wide leading-tight">HRM Portal</span>
-          <span class="text-white/70 text-[10px] uppercase tracking-[0.2em] font-semibold leading-none">Portal Cao Cấp</span>
-        </div>
-      </router-link>
+        <span class="hidden sm:block whitespace-nowrap font-medium text-[1.08rem] text-[var(--sys-text-primary)]">HRM Portal</span>
+      </div>
+
+      <!-- Breadcrumb -->
+      <nav class="hidden md:flex items-center gap-1 ml-4 text-sm">
+        <span class="cursor-pointer transition-colors text-[var(--sys-text-secondary)] hover:text-[var(--sys-accent)]">Director</span>
+        <span class="material-symbols-rounded text-[var(--sys-text-secondary)] opacity-50" style="font-size: 16px;">chevron_right</span>
+        <span class="font-medium text-[var(--sys-text-primary)]">{{ currentPageLabel }}</span>
+      </nav>
+
+      <div class="flex-1"></div>
 
       <!-- Right Actions -->
-      <div class="flex items-center gap-5">
-        <!-- Search input -->
-        <div class="relative hidden mx-4 md:block">
-          <span class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-[18px]">search</span>
+      <div class="flex items-center gap-0.5">
+        <!-- Search -->
+        <div class="relative group hidden sm:flex items-center mr-1">
+          <span class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] text-[var(--sys-text-secondary)]">search</span>
           <input
             type="text"
-            placeholder="Tìm kiếm báo cáo, nhân sự..."
-            class="pl-10 pr-4 py-2 w-72 rounded-full bg-[#1e2536] text-sm text-white placeholder-gray-400 border-none focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-all"
+            placeholder="Tìm kiếm..."
+            class="pl-9 pr-4 py-1.5 w-48 rounded-full text-sm transition-all duration-200 focus:outline-none focus:w-64 bg-[var(--sys-bg-page)] border border-[var(--sys-border)] text-[var(--sys-text-primary)] focus:border-[var(--sys-accent)]"
           />
         </div>
 
-        <!-- ── Dark Mode M3 Switch ── -->
-        <div class="mx-2 flex items-center gap-1.5 hidden sm:flex">
-          <span
-            class="material-symbols-rounded transition-all duration-300"
-            style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
-            :class="isDark
-              ? 'text-white/40 opacity-40 scale-90'
-              : 'text-yellow-400 opacity-100 scale-100'"
-          >light_mode</span>
-
+        <!-- Notification Bell -->
+        <div class="relative" @mouseenter="showPopup = true" @mouseleave="startHideTimer">
           <button
-            role="switch"
-            :aria-checked="isDark"
-            @click="isDark = !isDark"
-            class="relative w-[48px] h-7 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 bg-[#1e2536] border border-white/20 shadow-inner"
-            :class="isDark ? 'bg-[#0f172a] ring-2 ring-white/10' : ''"
-          >
-            <span
-              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)]"
-              :class="isDark
-                ? 'left-[calc(100%-24px)] w-5 h-5 bg-white border border-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]'
-                : 'left-1 w-4 h-4 bg-white/70'"
-            >
-              <span
-                class="material-symbols-rounded transition-all duration-200"
-                style="font-size:11px;font-variation-settings:'FILL' 1"
-                :class="isDark ? 'text-blue-500' : 'text-[#1e2536]'"
-              >{{ isDark ? 'dark_mode' : 'light_mode' }}</span>
-            </span>
-          </button>
-
-          <span
-            class="material-symbols-rounded transition-all duration-300"
-            style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
-            :class="isDark
-              ? 'text-blue-500 opacity-100 scale-100'
-              : 'text-white/40 opacity-40 scale-90'"
-          >dark_mode</span>
-        </div>
-
-        <!-- ── Notification Bell with Popup ── -->
-        <div class="notif-trigger" @mouseenter="showPopup = true" @mouseleave="startHideTimer">
-          <!-- Bell Button -->
-          <button
-            class="w-9 h-9 flex items-center justify-center rounded-full bg-[#1e2536] text-white/80 relative transition-all duration-200"
-            :class="showPopup ? 'bg-[#283144] text-white ring-2 ring-blue-500/40' : 'hover:bg-[#283144] hover:text-white'"
+            class="flex items-center justify-center w-10 h-10 rounded-full transition-colors text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
             @click="goToNotifications"
-            title="Trung tâm Thông báo & Phê duyệt"
           >
-            <span
-              class="material-symbols-rounded text-[20px] transition-all duration-200"
-              :style="showPopup ? 'font-variation-settings:\'FILL\' 1' : ''"
-            >notifications</span>
-            <!-- Unread dot -->
-            <span
-              class="absolute top-1.5 right-2 w-2.5 h-2.5 rounded-full bg-orange-500 ring-2 ring-[#161c2d] flex items-center justify-center"
-            >
-              <span class="notif-pulse"></span>
-            </span>
+            <span class="material-symbols-rounded" style="font-size: 24px;">notifications</span>
+            <span v-if="approvalCount > 0" class="absolute top-2 right-2 flex h-2 w-2 rounded-full bg-[oklch(0.55_0.22_25)] ring-2 ring-[var(--sys-bg-surface)]"></span>
           </button>
-
-          <!-- Popup Dropdown -->
-          <Transition name="notif-drop">
-            <div
-              v-if="showPopup"
-              class="notif-popup"
-              @mouseenter="cancelHideTimer"
-              @mouseleave="startHideTimer"
-            >
-              <!-- Arrow -->
-              <div class="notif-arrow"></div>
-
-              <!-- Header -->
-              <div class="notif-popup-header">
-                <div class="notif-popup-title-row">
-                  <span class="material-symbols-rounded notif-popup-icon" style="font-variation-settings:'FILL' 1">notifications_active</span>
-                  <span class="notif-popup-title">Thông báo</span>
-                </div>
-                <span class="notif-popup-badge">{{ recentNotifications.length }} mới</span>
+          
+          <Transition name="m3-dropdown">
+            <div v-if="showPopup" class="absolute right-0 mt-3 w-80 rounded-lg overflow-hidden z-50 shadow-lg border border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface-elevated)]" @mouseenter="cancelHideTimer" @mouseleave="startHideTimer">
+              <div class="flex justify-between items-center px-4 py-3 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]">
+                <h6 class="text-sm font-semibold mb-0">Thông báo</h6>
+                <span class="px-2 py-0.5 rounded-full bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] text-[10px] font-bold uppercase tracking-wider">{{ recentNotifications.length }} mới</span>
               </div>
-
-              <!-- List of 3 latest notifications -->
-              <div class="notif-popup-list">
-                <div
-                  v-for="(item, idx) in recentNotifications"
-                  :key="item.id"
-                  class="notif-popup-item"
-                  :style="{ animationDelay: (idx * 50) + 'ms' }"
-                  @click="handleNotifClick(item)"
-                >
-                  <div class="notif-popup-dot" :class="item.dotColor"></div>
-                  <div class="notif-popup-content">
-                    <div class="notif-popup-level-row">
-                      <span class="notif-popup-level" :class="[item.levelBg, item.levelColor]">{{ item.levelLabel }}</span>
-                      <span class="notif-popup-time">{{ item.time }}</span>
-                    </div>
-                    <p class="notif-popup-text">{{ item.title }}</p>
-                    <p class="notif-popup-desc">{{ item.desc }}</p>
+              <div class="max-h-[300px] overflow-y-auto custom-scrollbar">
+                <div v-for="item in recentNotifications" :key="item.id" class="p-3 flex gap-3 cursor-pointer border-b border-[var(--sys-border-subtle)] hover:bg-[var(--sys-bg-hover)]" @click="handleNotifClick(item)">
+                  <div class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)]">
+                    <span class="material-symbols-rounded text-base">notifications</span>
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-xs font-medium mb-0.5 text-[var(--sys-text-primary)]">{{ item.title }}</p>
+                    <p class="text-[10px] text-[var(--sys-text-secondary)]">{{ item.time }}</p>
                   </div>
                 </div>
-              </div>
-
-              <!-- Approval Requests Section -->
-              <div class="notif-popup-approval-header">
-                <span class="material-symbols-rounded" style="font-size:14px;font-variation-settings:'FILL' 1;color:#f59e0b">approval</span>
-                <span>Chờ phê duyệt</span>
-                <span class="notif-popup-approval-count">{{ approvalCount }} yêu cầu</span>
-              </div>
-              <div class="notif-popup-approval-mini">
-                <div
-                  v-for="req in recentApprovals"
-                  :key="req.id"
-                  class="notif-popup-approval-item"
-                  @click="goToNotifications"
-                >
-                  <div class="notif-popup-avatar" :class="[req.avatarBg, req.avatarColor]">{{ req.initials }}</div>
-                  <div class="notif-popup-approval-info">
-                    <span class="notif-popup-approval-name">{{ req.name }}</span>
-                    <span class="notif-popup-approval-title">{{ req.title }}</span>
-                  </div>
-                  <span v-if="req.urgent" class="notif-popup-urgent">Khẩn</span>
-                </div>
-              </div>
-
-              <!-- Footer -->
-              <div class="notif-popup-footer">
-                <button class="notif-popup-view-all" @click="goToNotifications">
-                  <span class="material-symbols-rounded" style="font-size:15px;font-variation-settings:'FILL' 1">open_in_new</span>
-                  Xem tất cả thông báo & yêu cầu
-                </button>
               </div>
             </div>
           </Transition>
         </div>
 
-        <div class="w-px h-8 bg-white/10 hidden md:block"></div>
+        <div class="h-6 w-px hidden md:block mx-1 bg-[var(--sys-border)]"></div>
 
         <!-- User Profile -->
-        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-1.5 -mr-1.5 rounded-xl transition-colors" @click="$router.push('/giamdoc/hoso')">
-          <div class="flex flex-col text-right hidden sm:flex">
-            <span class="text-white font-semibold text-sm leading-tight">Nguyễn Minh Triết</span>
-            <span class="text-white/60 text-xs font-medium mt-0.5">Tổng Giám Đốc</span>
-          </div>
-          <div class="w-9 h-9 flex items-center justify-center rounded-full bg-blue-500/20 border border-blue-500/30 overflow-hidden shrink-0 relative">
-            <span class="text-blue-400 font-bold text-sm">T</span>
-          </div>
+        <div class="relative" ref="profileDropdownRef">
+          <button
+            @click="isProfileOpen = !isProfileOpen"
+            class="flex items-center gap-2.5 p-1 pr-3 rounded-full transition-all hover:bg-[var(--sys-bg-hover)]"
+          >
+            <div class="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--sys-accent)]/10 text-[var(--sys-accent)] border border-[var(--sys-accent)]/20 text-sm font-bold shrink-0 overflow-hidden">
+              <img v-if="avatar" :src="avatar" class="w-full h-full object-cover" />
+              <span v-else>{{ fullName.charAt(0) }}</span>
+            </div>
+            <div class="hidden lg:flex flex-col justify-center text-left">
+              <span class="text-sm font-bold leading-tight text-[var(--sys-text-primary)]">{{ fullName }}</span>
+              <span class="text-[10px] uppercase tracking-widest font-bold mt-0.5 leading-none text-[var(--sys-text-secondary)]">Director</span>
+            </div>
+          </button>
+
+          <Transition name="m3-dropdown">
+            <div v-if="isProfileOpen" class="absolute right-0 mt-3 w-60 rounded-lg overflow-hidden z-50 shadow-lg border border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface-elevated)] py-1">
+              <router-link to="/giamdoc/hoso" class="flex items-center gap-3 px-4 py-2 text-sm font-medium hover:bg-[var(--sys-bg-hover)]" @click="isProfileOpen = false">
+                <span class="material-symbols-rounded text-[18px]">person</span>
+                Thông tin cá nhân
+              </router-link>
+              <button @click="logout" class="w-full flex items-center gap-3 px-4 py-2 text-sm font-medium text-left hover:bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)]">
+                <span class="material-symbols-rounded text-[18px]">logout</span>
+                Đăng xuất
+              </button>
+            </div>
+          </Transition>
         </div>
       </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="pt-16 min-h-screen overflow-hidden px-6 lg:px-8">
-      <router-view v-slot="{ Component }">
-        <transition :name="transitionName" mode="out-in">
-          <component :is="Component" />
-        </transition>
-      </router-view>
+    <!-- Navigation Sidebar -->
+    <aside
+      class="fixed top-16 left-0 bottom-0 z-30 flex flex-col overflow-hidden transition-[width,transform] duration-300 ease-[cubic-bezier(0.2,0,0,1)] bg-[var(--sys-bg-surface)] border-r border-[var(--sys-border-subtle)]"
+      :class="sidebarExpanded ? 'w-[280px]' : 'w-20'"
+    >
+      <div class="shrink-0 h-12 flex items-center px-3 border-b border-[var(--sys-border-subtle)]">
+        <span class="material-symbols-rounded shrink-0 text-[var(--sys-brand-solid)]" style="font-size:22px;">apps</span>
+        <span class="overflow-hidden whitespace-nowrap text-xs font-bold uppercase tracking-wider transition-all duration-300 ml-2 text-[var(--sys-text-secondary)]" :class="sidebarExpanded ? 'opacity-100 max-w-[150px]' : 'opacity-0 max-w-0'">Menu Director</span>
+        <button @click="sidebarExpanded = !sidebarExpanded" class="ml-auto w-8 h-8 rounded-full flex items-center justify-center transition-colors text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]">
+          <span class="material-symbols-rounded" :class="sidebarExpanded ? '' : 'rotate-180'">chevron_left</span>
+        </button>
+      </div>
+
+      <nav class="flex-1 overflow-y-auto py-2 custom-scrollbar px-3 space-y-0.5">
+        <SidebarItem :expanded="sidebarExpanded" :is-active="route.path === '/giamdoc'" icon="dashboard" label="Trang chủ" to="/giamdoc" />
+        <SidebarItem :expanded="sidebarExpanded" :is-active="route.path.includes('nhansu')" icon="groups" label="Nhan sự" to="/giamdoc/nhansu" />
+        <SidebarItem :expanded="sidebarExpanded" :is-active="route.path.includes('bangluong')" icon="payments" label="Bảng lương" to="/giamdoc/bangluong" />
+        <SidebarItem :expanded="sidebarExpanded" :is-active="route.path.includes('chuyencan')" icon="event_note" label="Chuyên cần" to="/giamdoc/chuyencan" />
+        <SidebarItem :expanded="sidebarExpanded" :is-active="route.path.includes('biendong')" icon="trending_up" label="Biến động" to="/giamdoc/biendong" />
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main
+      class="pt-16 min-h-screen transition-[margin] duration-300 ease-[cubic-bezier(0.2,0,0,1)] bg-transparent"
+      :class="sidebarExpanded ? 'lg:ml-[280px]' : 'lg:ml-20'"
+    >
+      <div class="p-6 lg:p-8 max-w-[1600px] mx-auto overflow-hidden bg-transparent">
+        <router-view v-slot="{ Component }">
+          <transition :name="transitionName" mode="out-in">
+            <component :is="Component" />
+          </transition>
+        </router-view>
+      </div>
     </main>
 
   </div>
@@ -194,23 +152,23 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { useCurrentUser } from '@/composables/useCurrentUser';
 import {
   importantNotifications as staticNotifs
 } from '@/mock-data/sampleData_GiamDoc.js';
 import { mockLeaveRequests, mockEmployees, mockRequestTypes } from '@/mock-data/index.js';
 
+const { fullName, email, avatar } = useCurrentUser();
+
 const route  = useRoute();
 const router = useRouter();
 const isDark = ref(false);
 
-// ── Notification Popup ──────────────────────────────────────────────────────
 const showPopup = ref(false);
 let hideTimer = null;
 
 const startHideTimer = () => {
-  hideTimer = setTimeout(() => {
-    showPopup.value = false;
-  }, 150);
+  hideTimer = setTimeout(() => { showPopup.value = false; }, 150);
 };
 
 const cancelHideTimer = () => {
@@ -224,11 +182,33 @@ const goToNotifications = () => {
 
 const handleNotifClick = (item) => {
   showPopup.value = false;
-  if (item.actionRoute) {
-    router.push(item.actionRoute);
-  } else {
-    router.push('/giamdoc/thongbao');
-  }
+  if (item.actionRoute) { router.push(item.actionRoute); }
+  else { router.push('/giamdoc/thongbao'); }
+};
+
+// ── Breadcrumb Logic ──
+const currentPageLabel = computed(() => {
+  const path = route.path;
+  if (path === '/giamdoc' || path === '/giamdoc/') return 'Tổng quan';
+  if (path.includes('nhansu')) return 'Nhan sự';
+  if (path.includes('bangluong')) return 'Bảng lương';
+  if (path.includes('chuyencan')) return 'Chuyên cần';
+  if (path.includes('biendong')) return 'Biến động';
+  if (path.includes('hoso')) return 'Hồ sơ cá nhân';
+  return 'Tổng quan';
+});
+
+const isProfileOpen = ref(false);
+const profileDropdownRef = ref(null);
+const sidebarExpanded = ref(true);
+
+const handleMenuToggle = () => {
+  sidebarExpanded.value = !sidebarExpanded.value;
+};
+
+const logout = async () => {
+  localStorage.clear();
+  router.push('/login');
 };
 
 // Lấy yêu cầu phê duyệt REAL từ mockDB (CHỜ_GIÁM_ĐỐC_DUYỆT)
@@ -292,6 +272,31 @@ onMounted(() => {
   const userRole = localStorage.getItem('userRole');
   if (!userRole || userRole !== 'director') {
     router.push('/login');
+  }
+});
+</script>
+
+<!-- Sub-components (defineComponent inline) -->
+<script>
+import { defineComponent, h, resolveComponent } from 'vue';
+
+export const SidebarItem = defineComponent({
+  name: 'SidebarItem',
+  props: { expanded: Boolean, isActive: Boolean, icon: String, label: String, to: String },
+  setup(props) {
+    return () => {
+      const RouterLink = resolveComponent('RouterLink');
+      return h(RouterLink, {
+        to: props.to,
+        class: [
+          'group relative flex items-center gap-3 w-full h-[48px] px-4 rounded-xl transition-all no-underline',
+          props.isActive ? 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] shadow-sm' : 'hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)]'
+        ].join(' ')
+      }, () => [
+        h('span', { class: 'material-symbols-rounded', style: `font-variation-settings:'FILL' ${props.isActive ? 1 : 0}` }, props.icon),
+        props.expanded ? h('span', { class: 'text-sm font-semibold' }, props.label) : null
+      ]);
+    }
   }
 });
 </script>

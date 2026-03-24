@@ -167,6 +167,12 @@ const routes = [
                         name: 'admin-cai-dat',
                         component: () => import('../View/admin/Setting_admin.vue'),
                         meta: { index: 14 }
+                  },
+                  {
+                        path: 'hoso',
+                        name: 'admin-ho-so',
+                        component: () => import('../View/portal_nhanvien/HoSoCaNhan.vue'),
+                        meta: { index: 15 }
                   }
             ]
       },

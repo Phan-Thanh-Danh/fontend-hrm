@@ -7,16 +7,13 @@
          M3 TOP APP BAR
     ═══════════════════════════════════════════════ -->
     <header
-      class="fixed top-0 left-0 right-0 z-40 flex items-center h-16 px-2 gap-1 transition-colors duration-300 bg-[var(--sys-bg-surface)] border-b border-[var(--sys-border-subtle)]"
-      :class="isDark
-        ? 'shadow-[0_1px_3px_oklch(0_0_0/0.4)]'
-        : 'shadow-[0_1px_2px_oklch(0_0_0/0.07),0_2px_4px_oklch(0_0_0/0.05)]'"
+      class="fixed top-0 left-0 right-0 z-40 flex items-center h-16 px-2 gap-1 transition-colors duration-300 bg-[var(--sys-bg-surface)] border-b border-[var(--sys-border-subtle)] shadow-[0_1px_2px_oklch(0_0_0/0.07),0_2px_4px_oklch(0_0_0/0.05)]"
     >
       <!-- Menu / Hamburger -->
       <button
         @click="handleMenuToggle"
         aria-label="Toggle sidebar"
-        class="flex items-center justify-center w-10 h-10 rounded-md transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
+        class="flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 focus-visible:outline-none text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
       >
         <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">menu</span>
       </button>
@@ -24,12 +21,13 @@
       <!-- Brand -->
       <div class="flex items-center gap-2.5 ml-1">
         <div
-          class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 border border-[var(--sys-border-subtle)] bg-[var(--sys-brand-solid)] shadow-sm"
+          class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0 shadow-md"
+          style="background: linear-gradient(135deg, oklch(0.52 0.22 265), oklch(0.45 0.19 295)); box-shadow: oklch(0.48 0.195 265 / 0.35) 0px 2px 8px;"
         >
           <span class="material-symbols-rounded text-white" style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 600,'GRAD' 0,'opsz' 20">corporate_fare</span>
         </div>
         <span
-          class="hidden sm:block whitespace-nowrap font-semibold text-base transition-colors duration-300 text-[var(--sys-text-primary)]"
+          class="hidden sm:block whitespace-nowrap font-medium text-[1.08rem] transition-colors duration-300 text-[var(--sys-text-primary)]"
         >HRM Portal</span>
       </div>
 
@@ -55,13 +53,13 @@
         <!-- Search -->
         <div class="relative group hidden sm:flex items-center mr-1">
           <span
-            class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] transition-colors text-[var(--sys-text-secondary)] opacity-50"
+            class="material-symbols-rounded absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-[18px] transition-colors text-[var(--sys-text-secondary)]"
             style="font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20"
           >search</span>
           <input
             type="text"
             placeholder="Tìm kiếm..."
-            class="pl-9 pr-4 h-9 w-48 rounded-md text-sm transition-all duration-200 focus:outline-none focus:w-64 bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)] text-[var(--sys-text-primary)] focus:border-[var(--sys-brand-solid)] shadow-sm"
+            class="pl-9 pr-4 py-1.5 w-48 rounded-full text-sm transition-all duration-200 focus:outline-none focus:w-64 bg-[var(--sys-bg-page)] border border-[var(--sys-border)] text-[var(--sys-text-primary)] focus:border-[var(--sys-accent)] focus:ring-2 focus:ring-[var(--sys-accent)]/20"
           />
         </div>
 
@@ -70,16 +68,12 @@
           <button
             @click="isNotificationOpen = !isNotificationOpen"
             aria-label="Notifications"
-            class="relative flex items-center justify-center w-10 h-10 rounded-md transition-colors duration-150"
-            :class="isDark
-              ? 'text-[oklch(0.75_0.03_265)] hover:bg-[oklch(0.28_0.025_265)]'
-              : 'text-[oklch(0.46_0.03_265)] hover:bg-[oklch(0.93_0.012_265)]'"
+            class="relative flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-150 text-[var(--sys-text-secondary)] hover:bg-[var(--sys-bg-hover)]"
           >
             <span class="material-symbols-rounded" style="font-size:24px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24">notifications</span>
             <!-- M3 Badge dot -->
             <span
-              class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5 rounded-full bg-[oklch(0.55_0.22_25)] items-center justify-center ring-2"
-              :class="isDark ? 'ring-[oklch(0.165_0.015_265)]' : 'ring-white'"
+              class="absolute top-1.5 right-1.5 flex h-2.5 w-2.5 rounded-full bg-[oklch(0.55_0.22_25)] items-center justify-center ring-2 ring-white"
             ></span>
           </button>
 
@@ -133,7 +127,6 @@
                   </div>
                 </div>
               </div>
-              <!-- Custom Xem Tất Cả Thông Báo Link -->
               <div
                 class="border-t p-2 text-center border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)]"
               >
@@ -153,44 +146,32 @@
         <div class="mx-2 flex items-center gap-1.5">
           <!-- Sun -->
           <span
-            class="material-symbols-rounded transition-all duration-300"
+            class="material-symbols-rounded transition-all duration-300 text-[oklch(0.62_0.14_75)] opacity-100 scale-100"
             style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
-            :class="isDark
-              ? 'text-[var(--sys-text-secondary)] opacity-40 scale-90'
-              : 'text-[oklch(0.62_0.14_75)] opacity-100 scale-100'"
           >light_mode</span>
 
+          <!-- Switch track -->
           <button
             role="switch"
             :aria-checked="isDark"
             :aria-label="isDark ? 'Chuyển sang sáng' : 'Chuyển sang tối'"
             @click="isDark = !isDark"
-            class="relative w-[52px] h-8 rounded-md transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)] border border-[var(--sys-border-subtle)]"
-            :class="isDark
-              ? 'bg-[#0f172a] ring-2 ring-white/10'
-              : 'bg-[var(--sys-bg-hover)]'"
+            class="relative w-[52px] h-8 rounded-full transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[var(--sys-accent)] border border-[var(--sys-border-subtle)] bg-[var(--sys-bg-hover)]"
           >
             <span
-              class="absolute top-1/2 -translate-y-1/2 rounded-md flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] shadow-md"
-              :class="isDark
-                ? 'left-[calc(100%-28px)] w-6 h-6 bg-white shadow-[0_0_12px_var(--sys-accent)]'
-                : 'left-1 w-5 h-5 bg-[var(--sys-text-secondary)]'"
+              class="absolute top-1/2 -translate-y-1/2 rounded-full flex items-center justify-center transition-all duration-300 ease-[cubic-bezier(0.2,0,0,1)] shadow-md left-1 w-5 h-5 bg-[var(--sys-text-secondary)]"
             >
               <span
-                class="material-symbols-rounded transition-all duration-200"
+                class="material-symbols-rounded transition-all duration-200 text-white"
                 style="font-size:12px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
-                :class="isDark ? 'text-[var(--sys-accent)]' : 'text-white'"
-              >{{ isDark ? 'dark_mode' : 'light_mode' }}</span>
+              >light_mode</span>
             </span>
           </button>
 
           <!-- Moon -->
           <span
-            class="material-symbols-rounded transition-all duration-300"
+            class="material-symbols-rounded transition-all duration-300 text-[var(--sys-text-secondary)] opacity-40 scale-90"
             style="font-size:18px;font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20"
-            :class="isDark
-              ? 'text-[var(--sys-accent)] opacity-100 scale-100'
-              : 'text-[var(--sys-text-secondary)] opacity-40 scale-90'"
           >dark_mode</span>
         </div>
 
@@ -202,26 +183,24 @@
         <div class="relative" ref="profileDropdownRef">
           <button
             @click="isProfileOpen = !isProfileOpen"
-            class="flex items-center gap-2.5 p-1 pr-3 rounded-md transition-all duration-200 select-none hover:bg-[var(--sys-border)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-accent)]"
+            class="flex items-center gap-2.5 p-1 pr-3 rounded-full transition-all duration-200 select-none hover:bg-[var(--sys-bg-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--sys-brand-solid)]"
           >
             <div
-              class="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0"
-              style="background:linear-gradient(135deg,oklch(0.62 0.22 340),oklch(0.55 0.25 300))"
-            >L</div>
+              class="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--sys-accent)]/10 text-[var(--sys-accent)] border border-[var(--sys-accent)]/20 text-sm font-bold shrink-0 overflow-hidden"
+            >
+              <img v-if="avatar" :src="avatar" class="w-full h-full object-cover" />
+              <span v-else>{{ fullName.charAt(0) }}</span>
+            </div>
             <div class="hidden lg:flex flex-col justify-center text-left">
               <span
                 class="text-sm font-bold leading-tight text-[var(--sys-text-primary)]"
-              >Lê Quản Trị</span>
+              >{{ fullName }}</span>
               <span
                 class="text-[10px] uppercase tracking-widest font-bold mt-0.5 leading-none text-[var(--sys-text-secondary)]"
               >{{ currentUserRole === 'hr' ? 'HR Specialist' : 'Admin' }}</span>
             </div>
             <span
-              class="material-symbols-rounded text-sm transition-transform duration-200"
-              :class="[
-                isProfileOpen ? 'rotate-180' : '',
-                'text-[var(--sys-text-secondary)]'
-              ]"
+              class="material-symbols-rounded text-sm transition-transform duration-200 text-[var(--sys-text-secondary)]"
               style="font-size:18px;font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 20"
             >expand_more</span>
           </button>
@@ -236,10 +215,10 @@
               >
                 <p
                   class="text-[10px] font-semibold uppercase tracking-wider mb-1 text-[var(--sys-text-secondary)]"
-                >Tài khoản quản trị</p>
+                >Quản trị hệ thống</p>
                 <p
                   class="text-xs font-medium truncate mb-0 text-[var(--sys-text-primary)]"
-                >admin@hrm.com</p>
+                >{{ email }}</p>
               </div>
               <router-link
                 to="/admin/hoso"
@@ -397,7 +376,9 @@
 import { ref, computed, watch, onMounted, onUnmounted, defineComponent, h, resolveComponent } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { useConfirm } from '@/composables/useConfirm';
+import { useCurrentUser } from '@/composables/useCurrentUser';
 
+const { fullName, email, avatar } = useCurrentUser();
 const { showConfirm } = useConfirm();
 
 const route = useRoute();
