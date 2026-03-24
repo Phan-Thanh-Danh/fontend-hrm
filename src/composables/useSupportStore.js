@@ -1,9 +1,5 @@
 import { reactive, computed } from 'vue'
-<<<<<<< HEAD
-import { mockLeaveRequests, mockEmployees } from '@/mock-data/index.js'
-=======
 import { supportRequestsAPI, employeesAPI, departmentsAPI } from '@/data/mockDB.js'
->>>>>>> e898cb5ebcd1acba19cc92c0fc8285af6ad708c7
 
 const AVATAR_COLORS = [
   'linear-gradient(135deg,#2563eb,#1d4ed8)',

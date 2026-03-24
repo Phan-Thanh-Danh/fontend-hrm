@@ -238,19 +238,11 @@ const realApprovals = computed(() => {
     const emp = mockEmployees.getById(r.requesterId);
     const type = mockRequestTypes.getById(r.requestTypeId);
     return {
-<<<<<<< HEAD
-      id: r.requestId,
-      name: emp?.fullName || 'Nhân viên',
-      title: type?.requestTypeName || 'Nghi phép',
-      initials: emp?.fullName?.charAt(0) || 'N',
-      urgent: r.is_urgent || false,
-=======
       id: r.request_id,
       name: emp?.full_name || 'Nhân viên',
       title: type?.request_type_name || 'Khác',
       initials: emp?.full_name?.charAt(0) || 'N',
       urgent: !!r.is_urgent || r.days >= 3,
->>>>>>> e898cb5ebcd1acba19cc92c0fc8285af6ad708c7
       avatarBg: 'bg-indigo-100',
       avatarColor: 'text-indigo-600'
     };
