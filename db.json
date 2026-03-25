@@ -1086,6 +1086,40 @@
       "request_date": "2026-03-25",
       "department_id": 2,
       "id": "w3TnmO57PSo"
+    },
+    {
+      "requesterId": 3,
+      "requestTypeId": 10,
+      "notes": "Chưa biết",
+      "startDate": "2026-03-28",
+      "endDate": "2026-03-30",
+      "days": 3,
+      "other_reason_name": null,
+      "status": "approved",
+      "is_urgent": true,
+      "request_date": "2026-03-25",
+      "department_id": 2,
+      "id": "x8u_ETDSPJg",
+      "approver_manager": "Trưởng phòng",
+      "statusText": "Đã duyệt",
+      "approver_hr": "Phòng Nhân Sự"
+    },
+    {
+      "requesterId": 3,
+      "requestTypeId": 9,
+      "notes": "cưới chồng",
+      "startDate": "2026-04-01",
+      "endDate": "2026-04-03",
+      "days": 3,
+      "other_reason_name": null,
+      "status": "approved",
+      "is_urgent": true,
+      "request_date": "2026-03-25",
+      "department_id": 2,
+      "id": "8a8nCUY8lBE",
+      "approver_manager": "Trưởng phòng",
+      "statusText": "Đã duyệt",
+      "approver_hr": "Phòng Nhân Sự"
     }
   ],
   "projects": [
@@ -6717,6 +6751,72 @@
       "status": "ontime",
       "notes": "Dữ liệu được bổ sung từ đơn phê duyệt",
       "id": "c-bcySzuceI"
+    },
+    {
+      "employeeId": "NV00003",
+      "attendanceDate": "2026-03-28",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #x8u_ETDSPJg",
+      "id": "5VSExTkktn8"
+    },
+    {
+      "employeeId": "NV00003",
+      "attendanceDate": "2026-03-29",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #x8u_ETDSPJg",
+      "id": "NCpK0uk-0P0"
+    },
+    {
+      "employeeId": "NV00003",
+      "attendanceDate": "2026-03-30",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #x8u_ETDSPJg",
+      "id": "kFU5lkXyVbg"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-04-01",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #8a8nCUY8lBE",
+      "id": "5LvB1J5ygvU"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-04-02",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #8a8nCUY8lBE",
+      "id": "PwVU0XoylCY"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-04-03",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #8a8nCUY8lBE",
+      "id": "HbcJUkyGMEU"
     }
   ],
   "contracts": [
@@ -7114,6 +7214,46 @@
       "isRead": false,
       "icon": "done_all",
       "id": "S3MeIViUYoo"
+    },
+    {
+      "userId": 3,
+      "type": "danger",
+      "title": "Kết quả duyệt đơn nghỉ phép",
+      "desc": "Đơn nghỉ phép của bạn đã được TỪ CHỐI.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "cancel",
+      "id": "2te1_AvKnqM"
+    },
+    {
+      "userId": "NV00003",
+      "type": "success",
+      "title": "Thông báo xét duyệt Nghỉ phép",
+      "desc": "Ban lãnh đạo đã PHÊ DUYỆT đơn nghỉ phép của bạn.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "notifications",
+      "id": "VLy8ozXm31s"
+    },
+    {
+      "userId": 3,
+      "type": "danger",
+      "title": "Kết quả duyệt đơn nghỉ phép",
+      "desc": "Đơn nghỉ phép của bạn đã được TỪ CHỐI.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "cancel",
+      "id": "cL8dAsmhCLk"
+    },
+    {
+      "userId": "NV00003",
+      "type": "success",
+      "title": "Thông báo xét duyệt Nghỉ phép",
+      "desc": "Ban lãnh đạo đã PHÊ DUYỆT đơn nghỉ phép của bạn.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "notifications",
+      "id": "VNUOr0d2EDI"
     }
   ],
   "dashboardStats": {

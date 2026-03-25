@@ -97,10 +97,10 @@ const fetchData = async () => {
       })
       .map(e => e.employeeId);
 
-    // Lọc các đơn của nhân viên trong phòng ban này VÀ số ngày nghỉ >= 3
+    // Lọc các đơn của nhân viên trong phòng ban này VÀ số ngày nghỉ <= 3
     deptLeaveReqs.value = allLeaves.filter(r => 
       deptEmpIds.includes(r.requesterId) && 
-      (Number(r.days) >= 3)
+      (Number(r.days) <= 3)
     );
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu nghỉ phép TP:', error);
@@ -139,7 +139,7 @@ const mapReq = (r) => {
 }
 
 const pendingLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'CHỜ_DUYỆT').map(mapReq))
-const approvedLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'ĐÃ_DUYỆT').map(mapReq))
+const approvedLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'ĐÃ_DUYỆT' || r.status === 'CHỜ_XÁC_NHẬN_HR').map(mapReq))
 const rejectedLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'TỪ_CHỐI').map(mapReq))
 
 const currentList = computed(() => {
@@ -170,12 +170,18 @@ const notifyUser = async (reqId, status) => {
 
 const approve = async (id) => {
   try {
+    const req = deptLeaveReqs.value.find(r => (r.id || r.requestId) === id);
+    const newStatus = (req && Number(req.days) <= 3) ? 'CHỜ_XÁC_NHẬN_HR' : 'ĐÃ_DUYỆT';
+    
     await fetch(`http://localhost:3000/leaveRequests/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'ĐÃ_DUYỆT' })
+      body: JSON.stringify({ 
+        status: newStatus,
+        approver_manager: 'Trưởng phòng' // Có thể lấy tên user từ store nếu có
+      })
     });
-    await notifyUser(id, 'ĐÃ_DUYỆT');
+    await notifyUser(id, newStatus === 'CHỜ_XÁC_NHẬN_HR' ? 'ĐANG_CHỜ_HR' : 'ĐÃ_DUYỆT');
     fetchData();
   } catch (err) { console.error('Lỗi khi phê duyệt:', err); }
 }
