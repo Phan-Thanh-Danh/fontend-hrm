@@ -266,7 +266,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import Dropdown from '@/components/Dropdown.vue'
 import { mockEmployees, mockDB, mockDepartments } from '@/mock-data/index.js'
 
@@ -285,6 +285,14 @@ const monthOptions = [
   { label: 'Tháng 01', value: '01' },
   { label: 'Tháng 02', value: '02' },
   { label: 'Tháng 03', value: '03' },
+  { label: 'Tháng 04', value: '04' },
+  { label: 'Tháng 05', value: '05' },
+  { label: 'Tháng 06', value: '06' },
+  { label: 'Tháng 07', value: '07' },
+  { label: 'Tháng 08', value: '08' },
+  { label: 'Tháng 09', value: '09' },
+  { label: 'Tháng 10', value: '10' },
+  { label: 'Tháng 11', value: '11' },
   { label: 'Tháng 12', value: '12' },
 ]
 
@@ -293,13 +301,15 @@ const yearOptions = [
   { label: '2025', value: '2025' },
 ]
 
-const daysInMonth = 31
+const daysInMonth = computed(() => {
+  return new Date(Number(selectedYear.value), Number(selectedMonth.value), 0).getDate();
+});
 
 const isWeekend = (day) => {
-  const date = new Date(2026, 2, day)
-  const d = date.getDay()
-  return d === 0 || d === 6
-}
+  const date = new Date(Number(selectedYear.value), Number(selectedMonth.value) - 1, day);
+  const d = date.getDay();
+  return d === 0 || d === 6;
+};
 
 // Trạng thái chấm công giả lập dựa trên attendance_id
 const getAttStatus = (seed) => {
@@ -351,9 +361,13 @@ const loadData = async () => {
         }
       });
 
-      // Fill mock data only up to yesterday (current date is March 25)
-      const currentDay = new Date().getDate();
-      for (let d = 1; d < currentDay; d++) {
+      // Fill mock data logic
+      const now = new Date();
+      const isCurrentMonth = now.getFullYear() === Number(selectedYear.value) && (now.getMonth() + 1) === Number(selectedMonth.value);
+      const isPastMonth = Number(selectedYear.value) < now.getFullYear() || (Number(selectedYear.value) === now.getFullYear() && Number(selectedMonth.value) < (now.getMonth() + 1));
+      const limitDay = isCurrentMonth ? now.getDate() : (isPastMonth ? (daysInMonth.value + 1) : 0);
+
+      for (let d = 1; d < limitDay; d++) {
         if (!data[d] && !isWeekend(d)) {
           const seed = (parseInt(String(empId).replace(/\D/g, '')) * 31 + d) % 10;
           data[d] = seed < 8 ? 'on' : (seed === 8 ? 'late' : 'off');
@@ -558,6 +572,10 @@ const getStatusClass = (status) => {
 }
 
 let pollInterval = null;
+
+watch([selectedMonth, selectedYear], () => {
+  loadData();
+});
 
 onMounted(() => {
   loadData();

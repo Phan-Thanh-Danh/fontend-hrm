@@ -278,9 +278,69 @@
               Phê chuẩn
             </button>
           </div>
+
+          <div v-if="activeRequest.status === 'waiting_hr'" class="p-6 border-t border-[var(--sys-border-subtle)] flex gap-3 bg-[var(--sys-bg-surface)] shadow-lg mt-auto">
+            <button 
+              @click="handleConfirmHR(activeRequest)"
+              class="w-full h-11 px-6 bg-[var(--sys-brand-solid)] text-white rounded-md text-sm font-bold shadow-sm hover:brightness-90 transition-all flex items-center justify-center gap-2 uppercase tracking-wide"
+            >
+              <span class="material-symbols-outlined text-[20px]">verified</span> 
+              Xác nhận & Chấm công
+            </button>
+          </div>
         </div>
       </div>
     </div>
+    
+    <!-- Attendance Confirmation Modal -->
+    <Teleport to="body">
+      <div v-if="showAttendanceModal" class="fixed inset-0 z-[1100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div class="bg-white w-full max-w-md rounded-lg shadow-2xl overflow-hidden border border-[var(--sys-border-subtle)]">
+          <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] bg-[var(--sys-bg-surface)] flex justify-between items-center">
+            <h3 class="text-sm font-bold text-[var(--sys-text-primary)] uppercase">Xác nhận chấm công tự động</h3>
+            <button @click="showAttendanceModal = false" class="text-[var(--sys-text-secondary)] hover:text-[var(--sys-text-primary)]">
+               <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+          <div class="p-6 space-y-4">
+            <div class="flex items-center gap-4 p-3 bg-[var(--sys-bg-page)] rounded-md border border-[var(--sys-border-subtle)]">
+              <div class="w-10 h-10 rounded-full bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center">
+                <span class="material-symbols-outlined">person</span>
+              </div>
+              <div>
+                <p class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest">Nhân viên nghỉ phép</p>
+                <p class="text-[14px] font-bold text-[var(--sys-text-primary)]">{{ activeRequest?.name }}</p>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="p-3 bg-[var(--sys-bg-page)] rounded-md border border-[var(--sys-border-subtle)]">
+                <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase">Từ ngày</p>
+                <p class="text-[13px] font-bold text-[var(--sys-brand-solid)]">{{ activeRequest?.fullDateRange.split(' - ')[0] }}</p>
+              </div>
+              <div class="p-3 bg-[var(--sys-bg-page)] rounded-md border border-[var(--sys-border-subtle)]">
+                <p class="text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase">Đến ngày</p>
+                <p class="text-[13px] font-bold text-[var(--sys-brand-solid)]">{{ activeRequest?.fullDateRange.split(' - ')[1] || activeRequest?.fullDateRange.split(' - ')[0] }}</p>
+              </div>
+            </div>
+            <p class="text-[12px] text-[var(--sys-text-secondary)] italic leading-relaxed">
+              Hệ thống sẽ tự động cập nhật dữ liệu chấm công "On-time" cho nhân sự này trong suốt khoảng thời gian nghỉ phép đã nêu trên.
+            </p>
+          </div>
+          <div class="p-6 bg-[var(--sys-bg-page)]/50 border-t border-[var(--sys-border-subtle)] flex gap-3">
+            <button @click="showAttendanceModal = false" class="flex-1 h-10 rounded-md text-[11px] font-bold uppercase text-[var(--sys-text-secondary)] hover:bg-white transition-all border border-[var(--sys-border-strong)]">Hủy</button>
+            <button 
+              @click="markAttendance" 
+              :disabled="isProcessingAttendance"
+              class="flex-1 h-10 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold uppercase text-[11px] hover:brightness-90 transition-all flex items-center justify-center gap-2"
+            >
+              <span v-if="isProcessingAttendance" class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              <span v-else class="material-symbols-outlined text-[18px]">rule</span>
+              {{ isProcessingAttendance ? 'Đang xử lý...' : 'Bấm Chấm công' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -302,6 +362,8 @@ const activeTab = ref('all');
 const searchQuery = ref('');
 const currentPage = ref(1);
 const pageSize = 10;
+const showAttendanceModal = ref(false);
+const isProcessingAttendance = ref(false);
 
 const leaveStats = ref([
   { label: 'Yêu cầu chờ duyệt', value: '12', unit: 'HỒ SƠ', icon: 'pending_actions', bgClass: 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)]' },
@@ -312,7 +374,8 @@ const leaveStats = ref([
 
 const tabOptions = [
   { label: 'Tất cả', value: 'all', count: 0 },
-  { label: 'Chờ duyệt', value: 'pending', count: 12 },
+  { label: 'Chờ duyệt', value: 'pending', count: 0 },
+  { label: 'Chờ xác nhận', value: 'waiting_hr', count: 0 },
   { label: 'Đã duyệt', value: 'approved', count: 0 },
   { label: 'Từ chối', value: 'rejected', count: 0 },
 ];
@@ -389,8 +452,8 @@ const fetchData = async () => {
         dateRange: startDate === endDate ? startDate : `${startDate} - ${endDate}`,
         fullDateRange: startDate === endDate ? startDate : `${startDate} - ${endDate}`,
         days: Number(req.days) || 1,
-        status: req.status === 'approved' || req.status === 'ĐÃ_DUYỆT' ? 'approved' : (req.status === 'rejected' || req.status === 'TỪ_CHỐI' ? 'rejected' : 'pending'),
-        statusText: req.status === 'approved' || req.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : (req.status === 'rejected' || req.status === 'TỪ_CHỐI' ? 'Từ chối' : 'Chờ duyệt'),
+        status: req.status === 'approved' || req.status === 'ĐÃ_DUYỆT' ? 'approved' : (req.status === 'rejected' || req.status === 'TỪ_CHỐI' ? 'rejected' : (req.status === 'CHỜ_XÁC_NHẬN_HR' ? 'waiting_hr' : 'pending')),
+        statusText: req.status === 'approved' || req.status === 'ĐÃ_DUYỆT' ? 'Đã duyệt' : (req.status === 'rejected' || req.status === 'TỪ_CHỐI' ? 'Từ chối' : (req.status === 'CHỜ_XÁC_NHẬN_HR' ? 'Chờ HR xác nhận' : 'Chờ duyệt')),
         reason: req.reason || req.notes || 'Không có lý do',
         balance: emp.baseLeaveDays || 12,
         warnings: req.urgent || req.is_urgent ? ['Yêu cầu khẩn cấp'] : [],
@@ -402,8 +465,9 @@ const fetchData = async () => {
     // Đồng bộ số lượng tab & thống kê
     tabOptions[0].count = requests.value.length; 
     tabOptions[1].count = requests.value.filter(r => r.status === 'pending').length;
-    tabOptions[2].count = requests.value.filter(r => r.status === 'approved').length;
-    tabOptions[3].count = requests.value.filter(r => r.status === 'rejected').length;
+    tabOptions[2].count = requests.value.filter(r => r.status === 'waiting_hr').length;
+    tabOptions[3].count = requests.value.filter(r => r.status === 'approved').length;
+    tabOptions[4].count = requests.value.filter(r => r.status === 'rejected').length;
     
     // Cập nhật leaveStats
     leaveStats.value[0].value = String(tabOptions[1].count);
@@ -481,7 +545,8 @@ const handleApprove = async (req) => {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
-        status: 'ĐÃ_DUYỆT',
+        status: 'approved', // Using 'approved' consistently with mappings
+        statusText: 'Đã duyệt',
         approver_director: 'Ban Giám Đốc'
       })
     });
@@ -491,6 +556,69 @@ const handleApprove = async (req) => {
     activeRequestId.value = null;
   } catch (err) {
     console.error('Lỗi khi phê duyệt:', err);
+  }
+};
+
+const handleConfirmHR = async (req) => {
+  try {
+    await fetch(`http://localhost:3000/leaveRequests/${req.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        status: 'approved',
+        statusText: 'Đã duyệt',
+        approver_hr: 'Phòng Nhân Sự'
+      })
+    });
+    await notifyUserAction(req.msnv, 'ĐÃ_DUYỆT');
+    await fetchData();
+    showAttendanceModal.value = true;
+  } catch (err) {
+    console.error('Lỗi khi HR xác nhận:', err);
+  }
+};
+
+const markAttendance = async () => {
+  if (!activeRequest.value) return;
+  isProcessingAttendance.value = true;
+  try {
+    const start = new Date(activeRequest.value.fullDateRange.split(' - ')[0]);
+    const end = new Date(activeRequest.value.fullDateRange.split(' - ')[1] || activeRequest.value.fullDateRange.split(' - ')[0]);
+    
+    const dates = [];
+    let current = new Date(start);
+    while (current <= end) {
+      dates.push(new Date(current).toISOString().split('T')[0]);
+      current.setDate(current.getDate() + 1);
+    }
+
+    for (const date of dates) {
+      // Find the actual employee record to get the correct numeric employeeId
+      const emp = mockEmployees.find(e => e.employeeCode === activeRequest.value.msnv);
+      await fetch('http://localhost:3000/attendances', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          employeeId: emp?.employeeId || activeRequest.value.msnv,
+          attendanceDate: date,
+          checkIn1: "08:00:00",
+          checkOut1: "12:00:00",
+          checkIn2: "13:30:00",
+          checkOut2: "17:30:00",
+          status: "ontime",
+          notes: `Chấm công tự động từ đơn nghỉ phép #${activeRequest.value.id}`
+        })
+      });
+    }
+    
+    alert(`Đã chấm công tự động cho ${activeRequest.value.name} từ ${dates[0]} đến ${dates[dates.length-1]}`);
+    showAttendanceModal.value = false;
+    activeRequestId.value = null;
+  } catch (err) {
+    console.error('Lỗi khi chấm công:', err);
+    alert('Có lỗi xảy ra khi chấm công tự động.');
+  } finally {
+    isProcessingAttendance.value = false;
   }
 };
 
@@ -527,7 +655,8 @@ const getLeaveTypeClass = (type) => {
 const getStatusBadgeClass = (status) => {
   switch (status) {
     case 'approved': return 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)] border-[var(--sys-success-border)]';
-    case 'pending': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-warning-border)]';
+    case 'waiting_hr': return 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border-[var(--sys-brand-border)]';
+    case 'pending': return 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)] border-[var(--sys-border-subtle)]';
     case 'rejected': return 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)] border-[var(--sys-danger-border)]';
     default: return 'bg-[var(--sys-bg-hover)] text-[var(--sys-text-disabled)] border-[var(--sys-border-subtle)] opacity-50';
   }
@@ -536,6 +665,7 @@ const getStatusBadgeClass = (status) => {
 const getStatusDotClass = (status) => {
   switch (status) {
     case 'approved': return 'bg-[var(--sys-success-solid)]';
+    case 'waiting_hr': return 'bg-[var(--sys-brand-solid)]';
     case 'pending': return 'bg-[var(--sys-warning-solid)]';
     case 'rejected': return 'bg-[var(--sys-danger-solid)]';
     default: return 'bg-[var(--sys-icon-default)] opacity-40';
