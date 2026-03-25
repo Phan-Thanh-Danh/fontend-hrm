@@ -64,5 +64,35 @@
     "lateMinutes": 0,
     "isHoliday": false,
     "status": "ĐÃ_DUYỆT"
+  },
+  {
+    "attendanceId": 1006,
+    "employeeId": 4,
+    "attendanceDate": "2026-03-23",
+    "checkIn1": "07:50:00",
+    "checkOut1": "12:05:00",
+    "checkIn2": "13:00:00",
+    "checkOut2": "17:15:00",
+    "status": "ontime"
+  },
+  {
+    "attendanceId": 1007,
+    "employeeId": "NV001",
+    "attendanceDate": "2026-03-24",
+    "checkIn1": "08:10:00",
+    "checkOut1": "12:00:00",
+    "checkIn2": "13:30:00",
+    "checkOut2": "17:30:00",
+    "status": "late"
+  },
+  {
+    "attendanceId": 1008,
+    "employeeId": 4,
+    "attendanceDate": "2026-03-25",
+    "checkIn1": "07:55:00",
+    "checkOut1": "11:30:00",
+    "checkIn2": "12:45:00",
+    "checkOut2": "17:05:00",
+    "status": "ontime"
   }
 ]

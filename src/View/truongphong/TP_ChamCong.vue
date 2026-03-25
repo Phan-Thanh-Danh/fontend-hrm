@@ -7,7 +7,7 @@
         <p class="text-[13px] text-[var(--sys-text-secondary)] font-medium">Kiểm soát và phê duyệt dữ liệu chuyên cần nhân sự {{ deptName }}.</p>
       </div>
       <div class="flex items-center gap-3 shrink-0">
-        <button class="h-11 px-6 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md font-bold text-[13px] uppercase tracking-widest border border-[var(--sys-brand-border)] hover:bg-[var(--sys-brand-solid)] hover:text-white transition-all flex items-center gap-2.5 shadow-sm active:scale-95">
+        <button @click="openExportPreview" class="h-11 px-6 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] rounded-md font-bold text-[13px] uppercase tracking-widest border border-[var(--sys-brand-border)] hover:bg-[var(--sys-brand-solid)] hover:text-white transition-all flex items-center gap-2.5 shadow-sm active:scale-95">
           <span class="material-symbols-rounded text-[20px] font-bold">cloud_download</span> 
           Xuất dữ liệu công
         </button>
@@ -135,8 +135,8 @@
               <div class="bg-transparent text-left flex items-center gap-3">
                 <span class="material-symbols-rounded text-[var(--sys-brand-solid)] text-[24px]">history</span>
                 <div>
-                  <h3 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-wide">Nhật trình chấm công & Điểm danh</h3>
-                  <p class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">THÁNG {{ selectedMonth }}/{{ selectedYear }}</p>
+                  <h3 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-wide">Nhật ký chấm công (7 ngày gần nhất)</h3>
+                  <p class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">Dữ liệu từ {{ sevenDaysAgoStr }} đến {{ todayStr }}</p>
                 </div>
               </div>
               <button @click="showHistoryModal = false" class="w-8 h-8 flex items-center justify-center rounded-md hover:bg-[var(--sys-bg-hover)] transition-all text-[var(--sys-text-secondary)] shadow-sm border border-transparent hover:border-[var(--sys-border-strong)]">
@@ -170,7 +170,7 @@
                           <span class="material-symbols-rounded text-[14px] text-[var(--sys-text-disabled)]">arrow_forward</span>
                           <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-text-secondary)] bg-[var(--sys-bg-page)]">{{ log.out || '--:--' }}</span>
                         </div>
-                        <div v-if="log.in2 || log.out2" class="flex items-center gap-2">
+                        <div class="flex items-center gap-2">
                           <span class="text-[9px] uppercase font-black text-[var(--sys-text-disabled)] w-10">Lần 2:</span>
                           <span class="px-1.5 py-0.5 rounded text-[11px] font-bold border border-[var(--sys-border-strong)] text-[var(--sys-brand-solid)] bg-[var(--sys-brand-soft)] shadow-sm">{{ log.in2 || '--:--' }}</span>
                           <span class="material-symbols-rounded text-[14px] text-[var(--sys-text-disabled)]">arrow_forward</span>
@@ -190,10 +190,73 @@
 
             <!-- Modal Footer -->
             <div class="px-6 py-4 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/50 flex justify-end gap-3">
-              <button class="px-6 py-2 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] rounded-md font-bold text-[11px] uppercase tracking-widest hover:bg-[var(--sys-brand-solid)] hover:text-white transition-all shadow-sm">
+              <button @click="handleExportHistoryExcel" class="px-6 py-2 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] rounded-md font-bold text-[11px] uppercase tracking-widest hover:bg-[var(--sys-brand-solid)] hover:text-white transition-all shadow-sm">
                 Xuất Excel Tổng Hợp
               </button>
               <button @click="showHistoryModal = false" class="px-6 py-2 bg-white text-[var(--sys-text-secondary)] border border-[var(--sys-border-strong)] rounded-md font-bold text-[11px] hover:bg-[var(--sys-bg-hover)] shadow-sm uppercase tracking-widest transition-all">Đóng</button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
+    <!-- Export Preview Modal -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div v-if="showExportPreview" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+          <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" @click="showExportPreview = false"></div>
+          <div class="relative bg-white border border-[var(--sys-border-subtle)] w-full max-w-6xl max-h-[90vh] rounded-xl shadow-2xl overflow-hidden flex flex-col text-left">
+            <!-- Modal Header -->
+            <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-page)]/50">
+              <div class="flex items-center gap-3">
+                <span class="material-symbols-rounded text-[var(--sys-brand-solid)]">table_view</span>
+                <div>
+                  <h3 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-wide">Xem trước bản xuất Excel (Tháng {{ selectedMonth }})</h3>
+                  <p class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">Kiểm tra thông tin chi tiết trước khi tải về</p>
+                </div>
+              </div>
+              <button @click="showExportPreview = false" class="text-[var(--sys-text-secondary)] hover:text-[var(--sys-text-primary)] transition-colors">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-0">
+              <table class="w-full text-left border-collapse border-spacing-0">
+                <thead class="bg-[var(--sys-bg-page)] sticky top-0 z-10 shadow-sm border-b border-[var(--sys-border-subtle)]">
+                  <tr class="h-10">
+                    <th class="px-4 text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase border-r border-[var(--sys-border-subtle)] w-12 text-center">STT</th>
+                    <th class="px-4 text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase border-r border-[var(--sys-border-subtle)]">Họ và Tên</th>
+                    <th class="px-4 text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase border-r border-[var(--sys-border-subtle)]">Phòng ban</th>
+                    <th class="px-4 text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase border-r border-[var(--sys-border-subtle)]">Ngày</th>
+                    <th class="px-3 text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase border-r border-[var(--sys-border-subtle)] text-center">Vào 1</th>
+                    <th class="px-3 text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase border-r border-[var(--sys-border-subtle)] text-center">Ra 1</th>
+                    <th class="px-3 text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase border-r border-[var(--sys-border-subtle)] text-center">Vào 2</th>
+                    <th class="px-3 text-[10px] font-bold text-[var(--sys-text-secondary)] uppercase text-center">Ra 2</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[var(--sys-border-subtle)]">
+                  <tr v-for="(row, idx) in exportData" :key="idx" class="hover:bg-[var(--sys-bg-hover)] transition-colors h-10">
+                    <td class="px-4 text-[11px] font-bold text-center border-r border-[var(--sys-border-subtle)]/50">{{ idx + 1 }}</td>
+                    <td class="px-4 text-[12px] font-bold text-[var(--sys-text-primary)] border-r border-[var(--sys-border-subtle)]/50">{{ row.name }}</td>
+                    <td class="px-4 text-[11px] font-medium text-[var(--sys-text-secondary)] border-r border-[var(--sys-border-subtle)]/50 whitespace-nowrap">{{ row.dept }}</td>
+                    <td class="px-4 text-[11px] font-bold text-[var(--sys-brand-solid)] border-r border-[var(--sys-border-subtle)]/50">{{ row.date }}</td>
+                    <td class="px-3 text-[11px] font-medium text-center border-r border-[var(--sys-border-subtle)]/50">{{ row.in1 }}</td>
+                    <td class="px-3 text-[11px] font-medium text-center border-r border-[var(--sys-border-subtle)]/50">{{ row.out1 }}</td>
+                    <td class="px-3 text-[11px] font-medium text-center border-r border-[var(--sys-border-subtle)]/50">{{ row.in2 }}</td>
+                    <td class="px-3 text-[11px] font-medium text-center">{{ row.out2 }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/30 flex justify-end gap-3">
+              <button @click="showExportPreview = false" class="px-6 py-2 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest hover:bg-[var(--sys-bg-hover)] rounded-md transition-all border border-transparent hover:border-[var(--sys-border-strong)]">Đóng</button>
+              <button @click="handleExportExcel" class="px-8 py-2 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[11px] uppercase tracking-widest hover:brightness-110 shadow-lg active:scale-95 transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined text-[18px]">download</span>
+                Xác nhận Tải Excel (.csv)
+              </button>
             </div>
           </div>
         </div>
@@ -211,6 +274,12 @@ const showHistoryModal = ref(false)
 const selectedMonth = ref('03')
 const selectedYear = ref('2026')
 const deptName = ref('Phòng ban')
+const todayStr = ref('')
+const sevenDaysAgoStr = ref('')
+
+const showExportPreview = ref(false)
+const exportData = ref([])
+const fullAttendances = ref([])
 
 const monthOptions = [
   { label: 'Tháng 01', value: '01' },
@@ -263,6 +332,7 @@ const loadData = async () => {
     } catch (e) {
       allAtts = mockDB.attendances || [];
     }
+    fullAttendances.value = allAtts;
 
     // Build the grid
     attendanceList.value = employeesResult.map(emp => {
@@ -281,8 +351,9 @@ const loadData = async () => {
         }
       });
 
-      // Fill mock data for missing days to make it look realistic for demo
-      for (let d = 1; d <= 22; d++) {
+      // Fill mock data only up to yesterday (current date is March 25)
+      const currentDay = new Date().getDate();
+      for (let d = 1; d < currentDay; d++) {
         if (!data[d] && !isWeekend(d)) {
           const seed = (parseInt(String(empId).replace(/\D/g, '')) * 31 + d) % 10;
           data[d] = seed < 8 ? 'on' : (seed === 8 ? 'late' : 'off');
@@ -299,34 +370,185 @@ const loadData = async () => {
       }
     });
 
-    // Build history logs
-    historyLogs.value = allAtts
-      .filter(att => employeesResult.some(e => (e.employeeId || e.id) === (att.employeeId || att.employeeId)))
-      .sort((a, b) => {
-        const dateA = new Date(a.attendanceDate || a.date + ' ' + (a.checkInTime || a.checkIn1 || '00:00:00'));
-        const dateB = new Date(b.attendanceDate || b.date + ' ' + (b.checkInTime || b.checkIn1 || '00:00:00'));
-        return dateB - dateA;
-      })
-      .slice(0, 15)
-      .map(att => {
-        const emp = employeesResult.find(e => (e.employeeId || e.id) === (att.employeeId || att.employeeId));
-        const statusConverted = att.status === 'ĐÃ_DUYỆT' ? 'ontime' : (att.status || 'ontime');
-        return {
-          date: att.attendanceDate || att.date,
-          name: emp ? (emp.fullName || emp.name) : (att.name || 'N/A'),
-          role: deptName.value,
-          in: (att.checkInTime || att.checkIn1)?.split(' ')[1] || (att.checkIn1 || '--:--'),
-          out: (att.checkOutTime || att.checkOut1)?.split(' ')[1] || (att.checkOut1 || '--:--'),
-          in2: att.checkIn2 || null,
-          out2: att.checkOut2 || null,
-          status: statusConverted,
-          statusLabel: statusConverted === 'ontime' ? 'Đúng giờ' : (statusConverted === 'late' ? 'Đi muộn' : 'Vắng mặt')
+    // Build history logs - Show last 7 days from current date
+    const now = new Date();
+    todayStr.value = now.toLocaleDateString('vi-VN');
+    
+    // Normalize to midnight for comparison
+    const todayLimit = new Date(now);
+    todayLimit.setHours(23, 59, 59, 999);
+    
+    const sevenDaysAgoMatch = new Date(now);
+    sevenDaysAgoMatch.setDate(now.getDate() - 6); // 6 days before today = 7 days total inclusive
+    sevenDaysAgoMatch.setHours(0, 0, 0, 0);
+    
+    sevenDaysAgoStr.value = sevenDaysAgoMatch.toLocaleDateString('vi-VN');
+
+    // Build history logs for ALL department members (Last 7 Days)
+    const history = [];
+    // Iterate through last 7 days from today back
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(now);
+      d.setDate(now.getDate() - i);
+      d.setHours(0, 0, 0, 0);
+      
+      const dateStr = d.toISOString().split('T')[0];
+      const showDay = d.toLocaleDateString('vi-VN');
+
+      employeesResult.forEach(emp => {
+        const empId = emp.employeeId || emp.id;
+        const att = allAtts.find(a => (a.employeeId === empId) && (a.attendanceDate === dateStr || a.date === dateStr));
+        
+        const formatTime = (time) => {
+          if (!time) return '--:--';
+          if (time.includes('T')) return time.split('T')[1].substring(0, 5);
+          if (time.includes(' ')) return time.split(' ')[1].substring(0, 5);
+          return time.substring(0, 5);
+        };
+
+        if (att) {
+          const statusConverted = att.status === 'ĐÃ_DUYỆT' ? 'ontime' : (att.status || 'ontime');
+          history.push({
+            date: dateStr,
+            name: emp.fullName || emp.name,
+            role: deptName.value,
+            in: formatTime(att.checkInTime || att.checkIn1),
+            out: formatTime(att.checkOutTime || att.checkOut1),
+            in2: formatTime(att.checkIn2),
+            out2: formatTime(att.checkOut2),
+            status: statusConverted,
+            statusLabel: statusConverted === 'ontime' ? 'Đúng giờ' : (statusConverted === 'late' ? 'Đi muộn' : 'Vắng mặt')
+          });
+        } else if (!isWeekend(d.getDate())) {
+          // If no live data, use the mock logic to show a complete 7-day view
+          const dayNum = d.getDate();
+          const seed = (parseInt(String(empId).replace(/\D/g, '')) * 31 + dayNum) % 10;
+          const status = seed < 8 ? 'ontime' : (seed === 8 ? 'late' : 'off');
+          
+          if (status !== 'off') {
+            history.push({
+              date: dateStr,
+              name: emp.fullName || emp.name,
+              role: deptName.value,
+              in: '08:00',
+              out: '12:00',
+              in2: '13:00',
+              out2: '17:00',
+              status: status,
+              statusLabel: status === 'ontime' ? 'Đúng giờ' : 'Đi muộn'
+            });
+          }
         }
       });
+    }
+    historyLogs.value = history;
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu chuyên cần:', error);
   }
 }
+
+const openExportPreview = () => {
+  // Build export list for all employees in current month
+  const data = [];
+  const employees = attendanceList.value; // List of team members
+  
+  // Format helpers
+  const getFTime = (time) => {
+    if (!time) return '--';
+    if (time.includes('T')) return time.split('T')[1].substring(0, 5);
+    if (time.includes(' ')) return time.split(' ')[1].substring(0, 5);
+    return time.substring(0, 5);
+  };
+
+  employees.forEach(emp => {
+    // We iterate through all days of the selected month
+    for (let d = 1; d <= daysInMonth; d++) {
+      if (isWeekend(d)) continue;
+
+      const dateStr = `${selectedYear.value}-${selectedMonth.value}-${String(d).padStart(2, '0')}`;
+      const att = fullAttendances.value.find(a => (a.employeeId === emp.id) && (a.attendanceDate === dateStr || a.date === dateStr));
+      
+      if (att) {
+         data.push({
+           name: emp.name,
+           dept: emp.dept,
+           date: dateStr,
+           in1: getFTime(att.checkIn1 || att.checkInTime),
+           out1: getFTime(att.checkOut1 || att.checkOutTime),
+           in2: getFTime(att.checkIn2),
+           out2: getFTime(att.checkOut2)
+         });
+      } else if (emp.data[d] && emp.data[d] !== 'off') {
+         // Mock row for complete table
+         data.push({
+           name: emp.name,
+           dept: emp.dept,
+           date: dateStr,
+           in1: '08:00',
+           out1: '12:00',
+           in2: '13:00',
+           out2: '17:00'
+         });
+      }
+    }
+  });
+
+  exportData.value = data;
+  showExportPreview.value = true;
+};
+
+const handleExportExcel = () => {
+  // Simple CSV generation that Excel likes (with BOM for UTF-8)
+  const headers = ['STT', 'Họ và Tên', 'Phòng Ban', 'Ngày', 'Vào 1', 'Ra 1', 'Vào 2', 'Ra 2'];
+  let csvContent = '\uFEFF' + headers.join(',') + '\n';
+
+  exportData.value.forEach((row, idx) => {
+    const rowValues = [
+      idx + 1,
+      `"${row.name}"`,
+      `"${row.dept}"`,
+      row.date,
+      row.in1,
+      row.out1,
+      row.in2,
+      row.out2
+    ];
+    csvContent += rowValues.join(',') + '\n';
+  });
+
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  const url = URL.createObjectURL(blob);
+  link.setAttribute('href', url);
+  const filename = exportData.value.length < 50 
+    ? `Lich_Su_7_Ngay_${deptName.value}.csv` 
+    : `Bang_Cong_${deptName.value}_Thang_${selectedMonth.value}.csv`;
+
+  link.setAttribute('download', filename);
+  link.style.visibility = 'hidden';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  showExportPreview.value = false;
+};
+
+const handleExportHistoryExcel = () => {
+  // Instead of immediate download, we show PREVIEW first
+  const data = historyLogs.value.map(row => ({
+    name: row.name,
+    dept: row.role, // role is dept name here
+    date: row.date,
+    in1: row.in,
+    out1: row.out,
+    in2: row.in2 || '--',
+    out2: row.out2 || '--'
+  }));
+  
+  exportData.value = data;
+  showExportPreview.value = true;
+  // We don't need to change much else as handleExportExcel uses exportData
+};
 
 const getStatusClass = (status) => {
   if (status === 'ontime') return 'text-[var(--sys-success-text)] bg-[var(--sys-success-soft)] px-2 py-0.5 rounded border border-[var(--sys-success-border)]';

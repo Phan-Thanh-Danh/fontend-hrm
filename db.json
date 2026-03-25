@@ -1024,6 +1024,26 @@
       "request_date": "2026-03-24",
       "department_id": 2,
       "id": "V__javsocCs"
+    },
+    {
+      "requesterId": 3,
+      "requesterName": "Bùi Ngọc Bảo Ngân",
+      "requestDate": "2026-03-25",
+      "startDate": "2026-03-23",
+      "endDate": "2026-03-23",
+      "days": 1,
+      "requestTypeId": 11,
+      "reason": "quên chấm công",
+      "status": "ĐÃ_DUYỆT",
+      "notes": "Bổ sung công ngày 2026-03-23. Giờ vào/ra: 08:51 - 17:12",
+      "details": {
+        "checkIn1": "08:51",
+        "checkOut1": "17:00",
+        "checkIn2": "08:56",
+        "checkOut2": "17:12",
+        "duration": ""
+      },
+      "id": "A_ib5kuzecQ"
     }
   ],
   "projects": [
@@ -6632,6 +6652,29 @@
       "status": "ontime",
       "location": "Văn phòng HCM",
       "id": "u9A9pxfH0GI"
+    },
+    {
+      "employeeId": 3,
+      "date": "2026-03-25",
+      "checkIn1": "11:47:52",
+      "checkIn2": "11:47:53",
+      "checkOut1": "11:47:54",
+      "checkOut2": "11:47:54",
+      "status": "ontime",
+      "location": "Văn phòng HCM",
+      "id": "hqTg_7Y-lqs"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-03-23",
+      "date": "2026-03-23",
+      "checkIn1": "08:51",
+      "checkOut1": "17:00",
+      "checkIn2": "08:56",
+      "checkOut2": "17:12",
+      "status": "ontime",
+      "notes": "Dữ liệu được bổ sung từ đơn phê duyệt",
+      "id": "c-bcySzuceI"
     }
   ],
   "contracts": [
@@ -6969,6 +7012,56 @@
       "isRead": false,
       "icon": "done_all",
       "id": "Rf0C3Y9_qbk"
+    },
+    {
+      "userId": "NV001",
+      "type": "info",
+      "title": "Hệ thống Chấm công",
+      "desc": "Bùi Ngọc Bảo Ngân đã chấm công vào lúc 11:47:52",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "history",
+      "id": "uuW6dGHoFY0"
+    },
+    {
+      "userId": "NV001",
+      "type": "info",
+      "title": "Hệ thống Chấm công",
+      "desc": "Bùi Ngọc Bảo Ngân đã chấm công vào (lần 2) lúc 11:47:53",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "history",
+      "id": "Fy3sMIEaISA"
+    },
+    {
+      "userId": "NV001",
+      "type": "info",
+      "title": "Hệ thống Chấm công",
+      "desc": "Bùi Ngọc Bảo Ngân đã chấm công ra lúc 11:47:54",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "history",
+      "id": "LewKLLNDPPs"
+    },
+    {
+      "userId": "NV001",
+      "type": "info",
+      "title": "Hệ thống Chấm công",
+      "desc": "Bùi Ngọc Bảo Ngân đã chấm công ra (cuối ngày) lúc 11:47:54",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "history",
+      "id": "tJeK82yPiE4"
+    },
+    {
+      "userId": "NV001",
+      "type": "warning",
+      "title": "Yêu cầu Bổ sung Công",
+      "desc": "Bùi Ngọc Bảo Ngân vừa gửi yêu cầu bổ sung công ngày 2026-03-25",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "edit_calendar",
+      "id": "TBDBYESb3fg"
     }
   ],
   "dashboardStats": {

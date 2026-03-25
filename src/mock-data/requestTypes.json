@@ -9,5 +9,6 @@
   { "requestTypeId": 2, "requestTypeName": "Tuyển dụng nhân sự mới", "category": "KHÁC" },
   { "requestTypeId": 3, "requestTypeName": "Đề xuất tăng lương", "category": "DIỀU_CHỈNH_CÔNG" },
   { "requestTypeId": 4, "requestTypeName": "Tạm ứng lương", "category": "TẠM_ỨNG_LƯƠNG" },
-  { "requestTypeId": 5, "requestTypeName": "Thanh toán công tác phí", "category": "THANH_TOÁN" }
+  { "requestTypeId": 5, "requestTypeName": "Thanh toán công tác phí", "category": "THANH_TOÁN" },
+  { "requestTypeId": 11, "requestTypeName": "Bổ sung chấm công", "category": "DIỀU_CHỈNH_CÔNG" }
 ]
