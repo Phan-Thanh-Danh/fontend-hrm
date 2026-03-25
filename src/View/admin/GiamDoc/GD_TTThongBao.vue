@@ -82,51 +82,55 @@
           </div>
 
           <!-- Approval Items -->
-          <transition-group name="list-fade" tag="div" class="tt-approval-list">
+          <transition-group name="list-fade" tag="div" class="tt-approval-list space-y-3">
             <div
               v-for="(item, index) in filteredRequests"
               :key="item.id"
-              class="tt-approval-item"
+              class="tt-approval-item group"
               :class="{ 'tt-approval-item--urgent': item.urgent }"
               :style="{ animationDelay: (index * 60) + 'ms' }"
+              @click="openMainModal(item, 'detail')"
             >
-              <!-- Avatar -->
-              <div class="tt-avatar" :class="[item.avatarBg, item.avatarColor]">
-                {{ item.initials }}
-                <span v-if="item.urgent" class="tt-urgent-dot"></span>
+              <!-- Part 1: Persona -->
+              <div class="flex items-center gap-4 flex-1 min-w-0">
+                <div class="tt-avatar shadow-sm group-hover:scale-105 transition-transform" :class="[item.avatarBg, item.avatarColor]">
+                  {{ item.initials }}
+                  <span v-if="item.urgent" class="tt-urgent-dot"></span>
+                </div>
+                <div class="flex flex-col min-w-0">
+                  <div class="flex items-center gap-2 mb-0.5">
+                    <span class="tt-approval-name truncate">{{ item.name }}</span>
+                    <span v-if="item.urgent" class="tt-urgent-badge">KHẨN</span>
+                  </div>
+                  <span class="tt-approval-dept truncate opacity-80">{{ item.dept }}</span>
+                </div>
               </div>
 
-              <!-- Info -->
-              <div class="tt-approval-info">
-                <div class="tt-approval-name-row">
-                  <span class="tt-approval-name">{{ item.name }}</span>
-                  <span v-if="item.urgent" class="tt-urgent-badge">
-                    <span class="material-symbols-rounded" style="font-size:10px;font-variation-settings:'FILL' 1">priority_high</span>
-                    Khẩn
-                  </span>
-                </div>
-                <span class="tt-approval-dept">{{ item.dept }}</span>
-                <div class="tt-approval-title-row">
-                  <span class="tt-approval-type" :class="[item.typeBg, item.typeColor]">
-                    <span class="material-symbols-rounded" style="font-size:12px;font-variation-settings:'FILL' 1">{{ item.typeIcon }}</span>
+              <!-- Part 2: Request Detail -->
+              <div class="hidden md:flex flex-col flex-[1.5] px-4 border-l border-r border-slate-100 dark:border-white/5 mx-2">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="tt-approval-type shrink-0" :class="[item.typeBg, item.typeColor]">
+                    <span class="material-symbols-rounded text-[12px] font-fill">{{ item.typeIcon }}</span>
                     {{ item.type }}
                   </span>
-                  <span class="tt-approval-title">{{ item.title }}</span>
+                  <span class="tt-approval-time shrink-0">
+                    <span class="material-symbols-rounded text-[12px]">calendar_month</span>
+                    {{ item.time ? item.time.split('T')[0] : 'N/A' }}
+                  </span>
                 </div>
-                <span class="tt-approval-time">
-                  <span class="material-symbols-rounded" style="font-size:12px">schedule</span>
-                  {{ item.time }}
-                </span>
+                <p class="tt-approval-title line-clamp-1 font-bold text-[13px] text-slate-600 dark:text-slate-300">
+                  {{ item.title }}
+                </p>
               </div>
 
-              <!-- Actions -->
+              <!-- Part 3: Actions -->
               <div class="tt-approval-actions">
-                <button class="tt-btn-reject" @click.stop="openReject(item)">
-                  TỪ CHỐI
+                <button class="tt-btn-reject" title="Từ chối yêu cầu" @click.stop="openMainModal(item, 'reject')">
+                  BÁC BỎ
                 </button>
-                <button class="tt-btn-approve" @click.stop="openApprove(item)">
-                  <span class="material-symbols-rounded" style="font-size:14px;font-variation-settings:'FILL' 1">check_circle</span>
-                  PHÊ DUYỆT NHANH
+                <button class="tt-btn-approve" title="Phê duyệt ngay" @click.stop="openMainModal(item, 'approve')">
+                  <span class="material-symbols-rounded text-[14px] font-fill">verified</span>
+                  PHÊ DUYỆT
                 </button>
               </div>
             </div>
@@ -208,42 +212,67 @@
       </div>
     </div>
 
-    <!-- ══════════════════════════════════════
-         APPROVE MODAL
-    ══════════════════════════════════════════ -->
+    <!-- Unified Approval Modal -->
     <Teleport to="body">
       <Transition name="modal-fade">
-        <div v-if="showApproveModal && selectedItem" class="tt-modal-overlay" @click.self="closeApprove">
-          <div class="tt-modal">
+        <div v-if="showMainModal && selectedItem" class="tt-modal-overlay" @click.self="closeMainModal">
+          <div class="tt-modal animate-in fade-in zoom-in duration-300">
             <div class="tt-modal-header">
-              <div class="tt-modal-icon tt-modal-icon--approve">
-                <span class="material-symbols-rounded" style="font-size:26px;font-variation-settings:'FILL' 1">task_alt</span>
+              <div 
+                class="tt-modal-icon transition-colors duration-300"
+                :class="{
+                  'tt-modal-icon--approve': modalMode === 'approve',
+                  'tt-modal-icon--reject': modalMode === 'reject',
+                  'bg-slate-100 text-slate-500': modalMode === 'detail'
+                }"
+              >
+                <span v-if="modalMode === 'approve'" class="material-symbols-rounded" style="font-size:26px;font-variation-settings:'FILL' 1">task_alt</span>
+                <span v-else-if="modalMode === 'reject'" class="material-symbols-rounded" style="font-size:26px;font-variation-settings:'FILL' 1">cancel</span>
+                <span v-else class="material-symbols-rounded" style="font-size:26px;">visibility</span>
               </div>
               <div class="tt-modal-title-block">
-                <h3 class="tt-modal-title">Xác nhận Phê duyệt</h3>
+                <h3 class="tt-modal-title">
+                  <span v-if="modalMode === 'approve'">Xác nhận Phê duyệt</span>
+                  <span v-else-if="modalMode === 'reject'">Xác nhận Từ chối</span>
+                  <span v-else>Chi tiết yêu cầu</span>
+                </h3>
                 <p class="tt-modal-subtitle">{{ selectedItem.name }} — {{ selectedItem.title }}</p>
               </div>
-              <button class="tt-modal-close" @click="closeApprove">
+              <button class="tt-modal-close" @click="closeMainModal">
                 <span class="material-symbols-rounded">close</span>
               </button>
             </div>
             <div class="tt-modal-body">
-              <div class="tt-modal-info-box">
+              <div class="tt-modal-info-box" style="display: grid; gap: 10px;">
+                <div class="tt-modal-info-row">
+                  <span class="tt-modal-info-label">Mã đơn</span>
+                  <span class="tt-modal-info-val" style="font-family: monospace; font-weight: 800; color: #2563eb;">{{ selectedItem.requestCode }}</span>
+                </div>
                 <div class="tt-modal-info-row">
                   <span class="tt-modal-info-label">Loại yêu cầu</span>
                   <span class="tt-modal-info-val">{{ selectedItem.type }}</span>
                 </div>
                 <div class="tt-modal-info-row">
-                  <span class="tt-modal-info-label">Nội dung</span>
-                  <span class="tt-modal-info-val">{{ selectedItem.title }}</span>
+                  <span class="tt-modal-info-label">Thời gian nghỉ</span>
+                  <span class="tt-modal-info-val">
+                    {{ selectedItem.startDate }} <span style="opacity: 0.5; margin: 0 4px;">→</span> {{ selectedItem.endDate }}
+                  </span>
+                </div>
+                <div class="tt-modal-info-row">
+                  <span class="tt-modal-info-label">Tổng thời gian</span>
+                  <span class="tt-modal-info-val" style="color: #ea580c; font-weight: 800;">{{ selectedItem.totalDays }} ngày</span>
                 </div>
                 <div class="tt-modal-info-row">
                   <span class="tt-modal-info-label">Người yêu cầu</span>
                   <span class="tt-modal-info-val">{{ selectedItem.dept }} ({{ selectedItem.name }})</span>
                 </div>
+                <div class="tt-modal-info-row" style="border-bottom: none;">
+                  <span class="tt-modal-info-label">Ngày gửi</span>
+                  <span class="tt-modal-info-val">{{ selectedItem.requestDate }}</span>
+                </div>
               </div>
 
-              <!-- Detailed Reason Box -->
+              <!-- Detailed Reason Box (Always visible) -->
               <div class="mt-4 p-4 bg-[var(--bg-hover)] border border-[var(--border)] rounded-xl text-left">
                  <p class="text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest mb-1 opacity-60">Lý do chi tiết</p>
                  <p class="italic text-[13px] text-[var(--text-body)] font-bold">
@@ -251,67 +280,50 @@
                  </p>
               </div>
 
-              <p class="tt-modal-confirm-text">
+              <!-- Conditional Section: Reject -->
+              <div v-if="modalMode === 'reject'" class="mt-4">
+                <label class="tt-modal-label">Lý do từ chối <span style="color:#ef4444">*</span></label>
+                <textarea
+                  v-model="rejectReason"
+                  rows="3"
+                  class="tt-modal-textarea"
+                  placeholder="Nhập lý do từ chối chi tiết để gửi tới nhân sự..."
+                ></textarea>
+                <p class="tt-modal-hint">* Thông tin này sẽ được gửi trực tiếp đến hộp thư của nhân sự.</p>
+              </div>
+
+              <!-- Conditional Section: Approve -->
+              <p v-if="modalMode === 'approve'" class="tt-modal-confirm-text">
                 Bạn có chắc chắn muốn <strong style="color: var(--brand, #2563EB)">phê duyệt</strong> yêu cầu này không?
               </p>
             </div>
             <div class="tt-modal-footer">
-              <button class="tt-modal-btn-cancel" @click="closeApprove">Hủy bỏ</button>
-              <button class="tt-modal-btn-confirm tt-modal-btn-confirm--approve" @click="confirmApprove">
-                <span class="material-symbols-rounded" style="font-size:16px;font-variation-settings:'FILL' 1">check_circle</span>
-                Phê duyệt
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+              <!-- Detail Mode Actions -->
+              <template v-if="modalMode === 'detail'">
+                <button class="tt-modal-btn-cancel" @click="closeMainModal">Đóng</button>
+                <div style="display: flex; gap: 8px;">
+                  <button class="tt-modal-btn-confirm tt-modal-btn-confirm--reject" style="background:#ef4444" @click="modalMode = 'reject'">Từ chối</button>
+                  <button class="tt-modal-btn-confirm tt-modal-btn-confirm--approve" @click="modalMode = 'approve'">Phê duyệt</button>
+                </div>
+              </template>
 
-    <!-- ══════════════════════════════════════
-         REJECT MODAL
-    ══════════════════════════════════════════ -->
-    <Teleport to="body">
-      <Transition name="modal-fade">
-        <div v-if="showRejectModal && selectedItem" class="tt-modal-overlay" @click.self="closeReject">
-          <div class="tt-modal">
-            <div class="tt-modal-header">
-              <div class="tt-modal-icon tt-modal-icon--reject">
-                <span class="material-symbols-rounded" style="font-size:26px;font-variation-settings:'FILL' 1">cancel</span>
-              </div>
-              <div class="tt-modal-title-block">
-                <h3 class="tt-modal-title">Xác nhận Từ chối</h3>
-                <p class="tt-modal-subtitle">{{ selectedItem.name }} — {{ selectedItem.title }}</p>
-              </div>
-              <button class="tt-modal-close" @click="closeReject">
-                <span class="material-symbols-rounded">close</span>
-              </button>
-            </div>
-            <div class="tt-modal-body">
-              <div class="tt-modal-info-box">
-                <div class="tt-modal-info-row">
-                  <span class="tt-modal-info-label">Loại yêu cầu</span>
-                  <span class="tt-modal-info-val">{{ selectedItem.type }}</span>
-                </div>
-                <div class="tt-modal-info-row">
-                  <span class="tt-modal-info-label">Người yêu cầu</span>
-                  <span class="tt-modal-info-val">{{ selectedItem.dept }}</span>
-                </div>
-              </div>
-              <label class="tt-modal-label">Lý do từ chối <span style="color:#ef4444">*</span></label>
-              <textarea
-                v-model="rejectReason"
-                rows="4"
-                class="tt-modal-textarea"
-                placeholder="Nhập lý do từ chối chi tiết để gửi tới nhân sự..."
-              ></textarea>
-              <p class="tt-modal-hint">* Thông tin này sẽ được gửi trực tiếp đến hộp thư của nhân sự.</p>
-            </div>
-            <div class="tt-modal-footer">
-              <button class="tt-modal-btn-cancel" @click="closeReject">Hủy bỏ</button>
-              <button class="tt-modal-btn-confirm tt-modal-btn-confirm--reject" @click="confirmReject">
-                <span class="material-symbols-rounded" style="font-size:16px;font-variation-settings:'FILL' 1">cancel</span>
-                Xác nhận Từ chối
-              </button>
+              <!-- Approve Mode Actions -->
+              <template v-else-if="modalMode === 'approve'">
+                <button class="tt-modal-btn-cancel" @click="modalMode = 'detail'">Quay lại</button>
+                <button class="tt-modal-btn-confirm tt-modal-btn-confirm--approve" @click="confirmApprove">
+                  <span class="material-symbols-rounded" style="font-size:16px;font-variation-settings:'FILL' 1">check_circle</span>
+                  Phê duyệt
+                </button>
+              </template>
+
+              <!-- Reject Mode Actions -->
+              <template v-else-if="modalMode === 'reject'">
+                <button class="tt-modal-btn-cancel" @click="modalMode = 'detail'">Quay lại</button>
+                <button class="tt-modal-btn-confirm tt-modal-btn-confirm--reject" @click="confirmReject">
+                  <span class="material-symbols-rounded" style="font-size:16px;font-variation-settings:'FILL' 1">cancel</span>
+                  Xác nhận Từ chối
+                </button>
+              </template>
             </div>
           </div>
         </div>
@@ -346,11 +358,55 @@ const router = useRouter();
 // ── State ──────────────────────────────────────────────
 const activeTab   = ref('all');
 const showHistory = ref(false);
-const showApproveModal = ref(false);
-const showRejectModal  = ref(false);
+const showMainModal = ref(false);
+const modalMode = ref('detail'); // detail, approve, reject
 const selectedItem = ref(null);
 const rejectReason = ref('');
 const toast = ref({ show: false, type: '', msg: '' });
+const rawRequests = ref([]);
+
+const fetchData = async () => {
+  try {
+    const [resReqs, resEmp] = await Promise.all([
+      fetch('http://localhost:3000/leaveRequests').then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('http://localhost:3000/employees').then(r => r.ok ? r.json() : null).catch(() => null)
+    ]);
+
+    if (resReqs) rawRequests.value = resReqs;
+    // Employees are handled by mockEmployees helpers for now, but we use the API data if available
+    if (resEmp) {
+       // Update global mock for components relying on it
+       resEmp.forEach(e => mockEmployees.update(e.employeeId || e.id, e));
+    }
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu Trung tâm phê duyệt:', error);
+  }
+};
+
+import { onMounted, onUnmounted } from 'vue';
+onMounted(() => {
+  fetchData();
+  const interval = setInterval(fetchData, 10000); // Đồng bộ 10s
+  onUnmounted(() => clearInterval(interval));
+});
+
+const openMainModal = (item, mode = 'detail') => {
+  selectedItem.value = item;
+  modalMode.value = mode;
+  showMainModal.value = true;
+};
+
+const closeMainModal = () => {
+  showMainModal.value = false;
+  selectedItem.value = null;
+  rejectReason.value = '';
+};
+
+// Compatibility wrappers
+const openApprove = (item) => openMainModal(item, 'approve');
+const openReject = (item) => openMainModal(item, 'reject');
+const closeApprove = closeMainModal;
+const closeReject = closeMainModal;
 
 // ── Mock Notifications ──────────────────────────────────
 const importantNotifications = computed(() => {
@@ -389,7 +445,7 @@ const approvalStats = computed(() => {
 // ── Mapped Reactive Requests ────────────────────────────
 const mappedRequests = computed(() => {
   // Lấy toàn bộ yêu cầu và sắp xếp mới nhất lên đầu
-  const allRequests = [...mockLeaveRequests].sort((a, b) => {
+  const allRequests = [...rawRequests.value].sort((a, b) => {
     const dateA = new Date(a.requestDate || 0);
     const dateB = new Date(b.requestDate || 0);
     return dateB - dateA;
@@ -408,7 +464,8 @@ const mappedRequests = computed(() => {
     // Trạng thái 'pending' cụ thể cho Giám đốc giải quyết là CHỜ_GIÁM_ĐỐC_DUYỆT
     // Nếu muốn hiển thị cả CHỜ_DUYỆT của TP thì thêm vào, nhưng user nói Icon Nav (chỉ lọc CHỜ_GD) là đúng
     // Vậy ta thống nhất: Giám đốc chỉ thấy những gì CẦN GIÁM ĐỐC DUYỆT
-    const isPendingForDirector = req.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT';
+    // ĐỒNG BỘ LOGIC: Giám đốc thấy đơn CHỜ_GIÁM_ĐỐC_DUYỆT HOẶC đơn CHỜ_DUYỆT nhưng được đánh dấu KHẨN CẤP (is_urgent)
+    const isPendingForDirector = (req.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT') || (req.status === 'CHỜ_DUYỆT' && req.is_urgent);
 
     return {
       id: req.requestId,
@@ -425,7 +482,15 @@ const mappedRequests = computed(() => {
       time: req.requestDate || new Date().toISOString(),
       urgent: !!req.is_urgent || req.days >= 3,
       category: ui.catKey,
-      reasonText: req.notes || req.reason || req.title,
+      reasonText: req.reason || req.notes || req.title,
+      
+      // Detailed info
+      requestCode: req.requestCode || `REQ-${req.requestId}`,
+      startDate: req.startDate,
+      endDate: req.endDate,
+      totalDays: req.days || 0,
+      requestDate: req.requestDate,
+
       status: isPendingForDirector ? 'pending' : (req.status === 'ĐÃ_DUYỆT' ? 'approved' : 'rejected')
     };
   });
@@ -451,45 +516,64 @@ const tabs = computed(() => [
 ]);
 
 // ── Actions ─────────────────────────────────────────────
-const openApprove = (item) => {
-  selectedItem.value = item;
-  showApproveModal.value = true;
-};
-const closeApprove = () => {
-  showApproveModal.value = false;
-  selectedItem.value = null;
-};
-const confirmApprove = () => {
+const confirmApprove = async () => {
   if (!selectedItem.value) return;
-  // GỌI API THỰC TẾ
-  mockLeaveRequests.approve(selectedItem.value.id);
-  showToast('approve', `Đã phê duyệt yêu cầu của ${selectedItem.value.name}`);
-  closeApprove();
+  const requestId = selectedItem.value.id;
+  
+  try {
+    const isLeaveRequest = selectedItem.value.type === 'Nghỉ phép' || (selectedItem.value.id && selectedItem.value.id.toString().startsWith('REQ'));
+    const newStatus = isLeaveRequest ? 'CHỜ_XÁC_NHẬN_HR' : 'ĐÃ_DUYỆT';
+    const newStatusText = isLeaveRequest ? 'Chờ HR xác nhận' : 'Đã duyệt';
+
+    await fetch(`http://localhost:3000/leaveRequests/${requestId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: newStatus,
+        statusText: newStatusText,
+        approver_director: 'Ban Giám Đốc'
+      })
+    });
+    
+    // Sync mock for internal helpers
+    mockLeaveRequests.approve(requestId);
+    showToast('approve', `Đã phê duyệt yêu cầu của ${selectedItem.value.name}`);
+    await fetchData(); // Refresh data immediately
+  } catch (error) {
+    console.error('Lỗi phê duyệt:', error);
+  }
+  closeMainModal();
 };
 
-const openReject = (item) => {
-  selectedItem.value = item;
-  rejectReason.value = '';
-  showRejectModal.value = true;
-};
-const closeReject = () => {
-  showRejectModal.value = false;
-  selectedItem.value = null;
-  rejectReason.value = '';
-};
-const confirmReject = () => {
+const confirmReject = async () => {
   if (!selectedItem.value) return;
   if (!rejectReason.value.trim()) {
     const ta = document.querySelector('.tt-modal-textarea');
     if (ta) { ta.focus(); ta.classList.add('tt-input-error'); setTimeout(() => ta.classList.remove('tt-input-error'), 800); }
     return;
   }
-  // GỌI API THỰC TẾ
-  mockLeaveRequests.reject(selectedItem.value.id, rejectReason.value);
-  showToast('reject', `Đã từ chối yêu cầu của ${selectedItem.value.name}`);
-  closeReject();
+  
+  const requestId = selectedItem.value.id;
+  try {
+    await fetch(`http://localhost:3000/leaveRequests/${requestId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: 'TỪ_CHỐI',
+        statusText: 'Đã từ chối',
+        notes: rejectReason.value,
+        rejectionReason: rejectReason.value
+      })
+    });
+    
+    mockLeaveRequests.reject(requestId, rejectReason.value);
+    showToast('reject', `Đã từ chối yêu cầu của ${selectedItem.value.name}`);
+    await fetchData();
+  } catch (error) {
+    console.error('Lỗi từ chối:', error);
+  }
+  closeMainModal();
 };
-
 const showToast = (type, msg) => {
   toast.value = { show: true, type, msg };
   setTimeout(() => { toast.value.show = false; }, 3500);
@@ -880,40 +964,50 @@ const showToast = (type, msg) => {
 }
 
 /* ── Approval Items ── */
-.tt-approval-list { display: flex; flex-direction: column; gap: 10px; }
+.tt-approval-list { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+  margin-top: 16px; /* Khoảng cách với thanh ngang tiêu đề */
+}
 
 .tt-approval-item {
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
-  gap: 14px;
+  display: flex;
   align-items: center;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid var(--border, #e5e7eb);
-  background: var(--bg-card, #fff);
-  transition: all 0.18s;
-  animation: fadeInUp 0.35s ease both;
+  padding: 12px 18px;
+  background: var(--bg-card, #ffffff);
+  border-radius: 12px;
+  border: 1px solid var(--border, #f1f5f9);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .tt-approval-item:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 4px 16px -4px rgba(37,99,235,0.12);
-  transform: translateY(-1px);
+  border-color: var(--brand, #3b82f6);
+  box-shadow: var(--shadow-hover);
+  background: var(--bg-hover, #f8faff);
 }
 
-/* Urgent item — dùng CSS variables, tự switch theo dark mode */
 .tt-approval-item--urgent {
-  border-color: var(--urgent-item-border, #fca5a5) !important;
-  background:   var(--urgent-item-bg, linear-gradient(135deg,#fff8f8 0%,#fff 100%)) !important;
+  background: linear-gradient(135deg, var(--danger-light, #fffcfc) 0%, var(--bg-card, #ffffff) 100%) !important;
+  border-color: var(--danger, #fca5a5) !important;
+  border-left: 5px solid #ef4444 !important;
 }
 
 :global(.dark) .tt-approval-item {
-  background: var(--bg-card, #1a2235) !important;
-  border-color: var(--border, rgba(255,255,255,0.07)) !important;
+  background: #1e293b !important; /* Force dark background */
+  border-color: rgba(255,255,255,0.06) !important;
 }
+
 :global(.dark) .tt-approval-item:hover {
-  border-color: rgba(96,165,250,0.35) !important;
-  box-shadow: 0 4px 16px -4px rgba(96,165,250,0.15);
+  background: #243045 !important;
+}
+
+:global(.dark) .tt-approval-item--urgent {
+  background: linear-gradient(135deg, #321c1c 0%, #1e293b 100%) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
 }
 
 /* ── Avatar ── */

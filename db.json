@@ -971,20 +971,6 @@
     },
     {
       "requesterId": 3,
-      "requestTypeId": 6,
-      "notes": "quaa mệt",
-      "startDate": "2026-03-24",
-      "endDate": "2026-03-25",
-      "days": 2,
-      "other_reason_name": null,
-      "status": "CHỜ_DUYỆT",
-      "is_urgent": false,
-      "request_date": "2026-03-24",
-      "department_id": 2,
-      "id": "xM5A_FjGkXc"
-    },
-    {
-      "requesterId": 3,
       "requestTypeId": 9,
       "notes": "thích",
       "startDate": "2026-03-31",
@@ -1044,20 +1030,6 @@
         "duration": ""
       },
       "id": "A_ib5kuzecQ"
-    },
-    {
-      "requesterId": 3,
-      "requestTypeId": 7,
-      "notes": "hábdgchgaefhgacdasd",
-      "startDate": "2026-03-25",
-      "endDate": "2026-03-31",
-      "days": 7,
-      "other_reason_name": null,
-      "status": "CHỜ_DUYỆT",
-      "is_urgent": true,
-      "request_date": "2026-03-25",
-      "department_id": 2,
-      "id": "3oT13hjEHsY"
     },
     {
       "requesterId": 3,
@@ -1129,13 +1101,14 @@
       "endDate": "2026-05-09",
       "days": 9,
       "other_reason_name": null,
-      "status": "CHỜ_GIÁM_ĐỐC_DUYỆT",
+      "status": "CHỜ_XÁC_NHẬN_HR",
       "is_urgent": true,
       "request_date": "2026-03-25",
       "department_id": 2,
       "id": "zZlFIUhxdU4",
-      "statusText": "Chờ Giám đốc duyệt",
-      "approver_manager": "Trưởng phòng"
+      "statusText": "Chờ HR xác nhận",
+      "approver_manager": "Trưởng phòng",
+      "approver_director": "Ban Giám Đốc"
     },
     {
       "requesterId": 3,
@@ -1171,6 +1144,20 @@
       "statusText": "Đã duyệt",
       "approver_manager": "Trưởng phòng",
       "approver_hr": "Phòng Nhân Sự"
+    },
+    {
+      "requesterId": 3,
+      "requestTypeId": 8,
+      "notes": "hahahahahahahahahah",
+      "startDate": "2026-03-25",
+      "endDate": "2026-04-07",
+      "days": 14,
+      "other_reason_name": null,
+      "status": "CHỜ_DUYỆT",
+      "is_urgent": true,
+      "request_date": "2026-03-25",
+      "department_id": 2,
+      "id": "ABnVp2IFhAQ"
     }
   ],
   "projects": [
@@ -6956,6 +6943,17 @@
       "status": "ontime",
       "notes": "Chấm công tự động từ đơn nghỉ phép #kEnHbnwzv3M",
       "id": "61IgEGzlRHM"
+    },
+    {
+      "employeeId": 2,
+      "date": "2026-03-25",
+      "checkIn1": "20:30:04",
+      "checkIn2": "20:30:10",
+      "checkOut1": "20:30:14",
+      "checkOut2": "20:30:16",
+      "status": "ontime",
+      "location": "Văn phòng HCM",
+      "id": "1tbrKPfdLZ0"
     }
   ],
   "contracts": [
@@ -7483,6 +7481,46 @@
       "isRead": false,
       "icon": "notifications",
       "id": "8vpdqYG5cAI"
+    },
+    {
+      "userId": "NV001",
+      "type": "info",
+      "title": "Hệ thống Chấm công",
+      "desc": "Mai Tấn Lộc đã chấm công vào (lần 2) lúc 20:30:10",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "history",
+      "id": "_4PsynN_j7Q"
+    },
+    {
+      "userId": "NV001",
+      "type": "info",
+      "title": "Hệ thống Chấm công",
+      "desc": "Mai Tấn Lộc đã chấm công ra lúc 20:30:14",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "history",
+      "id": "fIuu56dyn8c"
+    },
+    {
+      "userId": "NV001",
+      "type": "info",
+      "title": "Hệ thống Chấm công",
+      "desc": "Mai Tấn Lộc đã chấm công ra (cuối ngày) lúc 20:30:16",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "history",
+      "id": "prnC9BMAlOY"
+    },
+    {
+      "userId": 100,
+      "type": "info",
+      "title": "Đơn nghỉ phép chờ xác nhận",
+      "desc": "Nhân viên Bùi Ngọc Bảo Ngân nghỉ đã được Giám đốc duyệt nhanh, cần bạn xác nhận & chấm công.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "pending",
+      "id": "wCC9YtpTOgw"
     }
   ],
   "dashboardStats": {

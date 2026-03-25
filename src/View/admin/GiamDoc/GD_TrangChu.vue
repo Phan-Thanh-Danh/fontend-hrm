@@ -199,52 +199,55 @@
           </span>
         </div>
 
-        <div class="tt-approval-list px-5 mb-4">
+        <div class="tt-approval-list px-5 mb-4 space-y-3">
           <div
             v-for="(item, index) in pendingApprovals"
             :key="item.id"
-            class="tt-approval-item cursor-pointer"
+            class="tt-approval-item group"
             :class="{ 'tt-approval-item--urgent': item.urgent }"
             :style="{ animationDelay: (index * 60) + 'ms' }"
             @click="openDetailModal(item)"
           >
-            <!-- Avatar -->
-            <div class="tt-avatar" :class="[item.avatarBg, item.avatarColor]">
-              {{ item.initials }}
-              <span v-if="item.urgent" class="tt-urgent-dot"></span>
+            <!-- Part 1: Persona -->
+            <div class="flex items-center gap-4 flex-1 min-w-0">
+              <div class="tt-avatar shadow-sm group-hover:scale-105 transition-transform" :class="[item.avatarBg, item.avatarColor]">
+                {{ item.initials }}
+                <span v-if="item.urgent" class="tt-urgent-dot"></span>
+              </div>
+              <div class="flex flex-col min-w-0">
+                <div class="flex items-center gap-2 mb-0.5">
+                  <span class="tt-approval-name truncate">{{ item.name }}</span>
+                  <span v-if="item.urgent" class="tt-urgent-badge">KHẨN</span>
+                </div>
+                <span class="tt-approval-dept truncate opacity-80">{{ item.dept }}</span>
+              </div>
             </div>
 
-            <!-- Info -->
-            <div class="tt-approval-info">
-              <div class="tt-approval-name-row">
-                <span class="tt-approval-name">{{ item.name }}</span>
-                <span v-if="item.urgent" class="tt-urgent-badge">
-                  <span class="material-symbols-rounded" style="font-size:10px;font-variation-settings:'FILL' 1">priority_high</span>
-                  Khẩn
-                </span>
-              </div>
-              <span class="tt-approval-dept">{{ item.dept }}</span>
-              <div class="tt-approval-title-row">
-                <span class="tt-approval-type" :class="[item.typeBg, item.typeColor]">
-                  <span class="material-symbols-rounded" style="font-size:12px;font-variation-settings:'FILL' 1">{{ item.typeIcon }}</span>
+            <!-- Part 2: Request Detail -->
+            <div class="hidden md:flex flex-col flex-[1.5] px-4 border-l border-r border-slate-100 dark:border-white/5 mx-2">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="tt-approval-type shrink-0" :class="[item.typeBg, item.typeColor]">
+                  <span class="material-symbols-rounded text-[12px] font-fill">{{ item.typeIcon }}</span>
                   {{ item.type }}
                 </span>
-                <span class="tt-approval-title">{{ item.title }}</span>
+                <span class="tt-approval-time shrink-0">
+                  <span class="material-symbols-rounded text-[12px]">calendar_month</span>
+                  {{ item.time.split('T')[0] }}
+                </span>
               </div>
-              <span class="tt-approval-time">
-                <span class="material-symbols-rounded" style="font-size:12px">schedule</span>
-                {{ item.time }}
-              </span>
+              <p class="tt-approval-title line-clamp-1 font-bold text-[13px] text-slate-600 dark:text-slate-300">
+                {{ item.title }}
+              </p>
             </div>
 
-            <!-- Actions -->
+            <!-- Part 3: Actions -->
             <div class="tt-approval-actions">
-              <button class="tt-btn-reject" @click.stop="openRejectModal(item)">
-                TỪ CHỐI
+              <button class="tt-btn-reject" title="Từ chối yêu cầu" @click.stop="openRejectModal(item)">
+                BÁC BỎ
               </button>
-              <button class="tt-btn-approve" @click.stop="openApproveModal(item)">
-                <span class="material-symbols-rounded" style="font-size:14px;font-variation-settings:'FILL' 1">check_circle</span>
-                PHÊ DUYỆT NHANH
+              <button class="tt-btn-approve" title="Phê duyệt ngay" @click.stop="openApproveModal(item)">
+                <span class="material-symbols-rounded text-[14px] font-fill">verified</span>
+                PHÊ DUYỆT
               </button>
             </div>
           </div>
@@ -304,209 +307,160 @@
     </div>
 
     <!-- Detail Modal (Yêu cầu) -->
+    <!-- Unified Approval Modal -->
     <Teleport to="body">
       <Transition name="modal-fade">
         <div
-          v-if="showDetailModal && selectedApproval"
+          v-if="showMainModal && selectedApproval"
           class="fixed inset-0 z-[10001] flex items-center justify-center p-4"
         >
-          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeDetailModal"></div>
+          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeMainModal"></div>
 
-          <div class="relative max-w-2xl w-full bg-[var(--sys-bg-surface)] rounded-xl shadow-2xl p-6 overflow-hidden flex flex-col text-left">
+          <div class="relative max-w-xl w-full bg-[var(--sys-bg-surface)] rounded-xl shadow-2xl p-6 overflow-hidden flex flex-col text-left animate-in fade-in zoom-in duration-300">
+            <!-- Header -->
             <div class="flex items-center gap-4 mb-6">
-              <div
-                :class="[
-                  'w-14 h-14 rounded-lg flex items-center justify-center shadow-sm border border-[var(--sys-border-subtle)]',
-                  selectedApproval.iconClass || ''
-                ]"
+              <div 
+                class="w-12 h-12 rounded-lg flex items-center justify-center border transition-colors duration-300"
+                :class="{
+                  'bg-[var(--sys-brand-soft)] border-[var(--sys-brand-border)]': modalMode === 'approve',
+                  'bg-[var(--sys-danger-soft)] border-[var(--sys-danger-border)]': modalMode === 'reject',
+                  'bg-[var(--sys-bg-page)] border-[var(--sys-border-subtle)]': modalMode === 'detail'
+                }"
               >
-                <span class="material-symbols-rounded text-2xl font-bold">{{ selectedApproval.icon }}</span>
-              </div>
-
-              <div class="flex-1">
-                <h3 class="text-lg font-semibold text-[var(--sys-text-primary)] leading-tight mb-0.5">
-                  {{ selectedApproval.title }}
-                </h3>
-                <p class="text-xs font-bold text-[var(--sys-brand-solid)] uppercase tracking-tight opacity-70">
-                  {{ selectedApproval.meta }}
-                </p>
-              </div>
-
-              <button
-                @click="closeDetailModal"
-                class="w-10 h-10 rounded-full hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] flex items-center justify-center transition-all"
-              >
-                <span class="material-symbols-outlined">close</span>
-              </button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-6 mb-6">
-              <div class="space-y-1">
-                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Trạng thái</span>
-                <p class="text-sm font-bold text-[var(--sys-text-primary)]">
-                  {{ selectedApproval.urgent ? 'Khẩn cấp' : 'Bình thường' }}
-                </p>
-              </div>
-              <div class="space-y-1">
-                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">Thao tác</span>
-                <p class="text-sm font-bold text-[var(--sys-text-primary)]">Phê duyệt hoặc Từ chối</p>
-              </div>
-            </div>
-
-            <div class="space-y-2 mb-6 text-left">
-              <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest pl-1">Lý do giải trình chi tiết</span>
-              <div class="bg-[var(--sys-bg-page)] p-4 rounded-lg border border-[var(--sys-border-subtle)] shadow-inner">
-                <p class="text-[13px] text-[var(--sys-text-secondary)] leading-relaxed font-bold italic opacity-90">
-                  "{{ selectedApproval.fullReason || 'Không có ghi chú thêm.' }}"
-                </p>
-              </div>
-            </div>
-
-            <div class="flex justify-end gap-3 mt-auto pt-4 border-t border-[var(--sys-border-subtle)]">
-              <button class="btn-reject h-10 px-6" @click="openRejectModal(selectedApproval)">
-                Từ chối
-              </button>
-              <button class="btn-approve h-10 px-6" @click="openApproveModal(selectedApproval)">
-                Phê duyệt
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
-
-    <!-- Approve Modal -->
-    <Teleport to="body">
-      <Transition name="modal-fade">
-        <div
-          v-if="showApproveModal && selectedApproval"
-          class="fixed inset-0 z-[10001] flex items-center justify-center p-4"
-        >
-          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeApproveModal"></div>
-
-          <div class="relative max-w-xl w-full bg-[var(--sys-bg-surface)] rounded-xl shadow-2xl p-6 overflow-hidden flex flex-col text-left">
-            <div class="flex items-center gap-4 mb-6">
-              <div class="w-12 h-12 rounded-lg bg-[var(--sys-brand-soft)] border border-[var(--sys-brand-border)] flex items-center justify-center">
-                <span class="material-symbols-outlined text-[26px] font-bold text-[var(--sys-brand-solid)]">task_alt</span>
+                <span v-if="modalMode === 'approve'" class="material-symbols-outlined text-[26px] font-bold text-[var(--sys-brand-solid)]">task_alt</span>
+                <span v-else-if="modalMode === 'reject'" class="material-symbols-outlined text-[26px] font-bold text-[var(--sys-danger-solid)]">rule</span>
+                <span v-else class="material-symbols-outlined text-[26px] font-bold text-[var(--sys-text-secondary)]">visibility</span>
               </div>
               <div class="flex-1">
-                <h3 class="text-[17px] font-extrabold text-[var(--sys-text-primary)] m-0 tracking-tight leading-none">
-                  Xác nhận Phê duyệt
+                <h3 class="text-[17px] font-extrabold text-[var(--sys-text-primary)] m-0 tracking-tight leading-none uppercase">
+                  <span v-if="modalMode === 'approve'">Xác nhận Phê duyệt</span>
+                  <span v-else-if="modalMode === 'reject'">Thẩm định bác bỏ</span>
+                  <span v-else>Chi tiết đơn yêu cầu</span>
                 </h3>
                 <p class="text-[12px] text-[var(--sys-text-secondary)] font-bold mt-1 tracking-wide opacity-80">
-                  <span v-if="selectedApproval.name">{{ selectedApproval.name }} — </span>{{ selectedApproval.title }}
+                  {{ selectedApproval.name }} — {{ selectedApproval.title }}
                 </p>
               </div>
               <button
-                @click="closeApproveModal"
+                @click="closeMainModal"
                 class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all bg-[var(--sys-bg-page)] border border-[var(--sys-border-subtle)]"
               >
                 <span class="material-symbols-outlined text-[18px]">close</span>
               </button>
             </div>
 
-            <div class="grid grid-cols-1 gap-4 bg-[var(--sys-bg-surface)] p-5 rounded-xl border border-[var(--sys-border-strong)] mb-4 shadow-sm">
+            <!-- Content Grid (Always shown) -->
+            <div class="grid grid-cols-1 gap-2.5 bg-[var(--sys-bg-surface)] p-5 rounded-xl border border-[var(--sys-border-strong)] mb-4 shadow-sm">
               <div class="grid grid-cols-[130px_1fr] items-center gap-2">
-                <span class="text-[11px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">LOẠI YÊU CẦU</span>
+                <span class="text-[10px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">MÃ ĐƠN</span>
+                <span class="text-[13px] font-mono font-bold text-[var(--sys-brand-solid)] leading-tight">{{ selectedApproval.requestCode }}</span>
+              </div>
+              <div class="grid grid-cols-[130px_1fr] items-center gap-2">
+                <span class="text-[10px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">LOẠI YÊU CẦU</span>
                 <span class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-tight">{{ selectedApproval.type || 'Khác' }}</span>
               </div>
               <div class="grid grid-cols-[130px_1fr] items-center gap-2">
-                <span class="text-[11px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">NỘI DUNG</span>
-                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-tight">{{ selectedApproval.title }}</span>
+                <span class="text-[10px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">THỜI GIAN NGHỈ</span>
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-tight">
+                   {{ selectedApproval.startDate }} <span class="mx-1 opacity-40">→</span> {{ selectedApproval.endDate }}
+                </span>
               </div>
-              <div class="grid grid-cols-[130px_1fr] items-center gap-2 border-b-0">
-                <span class="text-[11px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">NGƯỜI YÊU CẦU</span>
+              <div class="grid grid-cols-[130px_1fr] items-center gap-2">
+                <span class="text-[10px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">TỔNG THỜI GIAN</span>
+                <span class="text-[13px] font-bold text-orange-600 leading-tight">{{ selectedApproval.totalDays }} ngày</span>
+              </div>
+              <div class="grid grid-cols-[130px_1fr] items-center gap-2">
+                <span class="text-[10px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">NGƯỜI YÊU CẦU</span>
                 <span class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-tight">{{ selectedApproval.dept }} ({{ selectedApproval.name }})</span>
+              </div>
+              <div class="grid grid-cols-[130px_1fr] items-center gap-2">
+                <span class="text-[10px] font-extrabold text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none">NGÀY GỬI</span>
+                <span class="text-[13px] font-bold text-[var(--sys-text-primary)] leading-tight">{{ selectedApproval.requestDate }}</span>
               </div>
             </div>
 
+            <!-- Reason Box (Always shown) -->
             <div class="bg-[var(--sys-bg-page)] p-5 rounded-xl border border-[var(--sys-border-subtle)] mb-5 shadow-inner text-left">
-              <p class="text-[11px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none mb-2">LÝ DO CHI TIẾT</p>
+              <p class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none mb-2.5">LÝ DO CHI TIẾT</p>
               <p class="text-[13px] text-[var(--sys-text-primary)] leading-relaxed font-bold italic opacity-90">
-                "{{ selectedApproval.reasonText || selectedApproval.fullReason || 'Không có ghi chú thêm.' }}"
+                "{{ selectedApproval.reasonText || 'Không có ghi chú thêm.' }}"
               </p>
             </div>
 
-            <p class="text-[13px] text-[var(--sys-text-secondary)] leading-relaxed mb-6 font-medium text-left">
-              Bạn có chắc chắn muốn <span class="font-extrabold text-[var(--sys-brand-solid)]">phê duyệt</span> yêu cầu này không?
-            </p>
-
-            <div class="flex justify-end gap-3 mt-auto pt-4 border-t border-[var(--sys-border-subtle)]">
-              <button class="btn-reject h-10 px-6 font-bold bg-white text-gray-700 border border-gray-300 shadow-sm hover:bg-gray-50 dark:bg-[#1e2536] dark:text-gray-300 dark:border-gray-600 dark:hover:bg-[#28324f] focus:ring-2 focus:ring-gray-200 transition-all rounded-lg" @click="closeApproveModal">Hủy bỏ</button>
-              <button class="btn-approve h-10 px-6 bg-[var(--sys-brand-solid)] hover:bg-[#1d4ed8] text-white shadow-md hover:shadow-lg focus:ring-2 focus:ring-[var(--sys-brand-soft)] transition-all font-bold rounded-lg flex items-center justify-center gap-2 border-0" @click="confirmApprove">
-                <span class="material-symbols-rounded text-[18px]">check_circle</span>
-                Phê duyệt
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
-
-    <!-- Reject Modal -->
-    <Teleport to="body">
-      <Transition name="modal-fade">
-        <div
-          v-if="showRejectModal && selectedApproval"
-          class="fixed inset-0 z-[10001] flex items-center justify-center p-4"
-        >
-          <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="closeRejectModal"></div>
-
-          <div class="relative max-w-xl w-full bg-[var(--sys-bg-surface)] rounded-xl shadow-2xl p-6 overflow-hidden flex flex-col text-left">
-            <div class="flex items-center gap-4 mb-6">
-              <div class="w-12 h-12 rounded-lg bg-[var(--sys-danger-soft)] border border-[var(--sys-danger-border)] flex items-center justify-center">
-                <span class="material-symbols-outlined text-[26px] font-bold text-[var(--sys-danger-solid)]">rule</span>
-              </div>
-              <div class="flex-1">
-                <h3 class="text-sm font-extrabold text-[var(--sys-text-primary)] m-0 uppercase tracking-tight leading-none">
-                  Thẩm định bác bỏ hồ sơ
-                </h3>
-                <p class="text-[10px] text-[var(--sys-text-secondary)] font-bold mt-1 uppercase tracking-widest opacity-70">
-                  {{ selectedApproval.title }}
-                </p>
-              </div>
-              <button
-                @click="closeRejectModal"
-                class="w-8 h-8 flex items-center justify-center rounded hover:bg-[var(--sys-bg-hover)] text-[var(--sys-text-secondary)] transition-all"
-              >
-                <span class="material-symbols-outlined text-xl">close</span>
-              </button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-4 mb-6">
-              <div class="space-y-1.5">
-                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none opacity-60">Phân loại</span>
-                <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ selectedApproval.title }}</p>
-              </div>
-              <div class="space-y-1.5">
-                <span class="text-[10px] font-black text-[var(--sys-text-disabled)] uppercase tracking-widest leading-none opacity-60">Mức độ</span>
-                <p class="text-sm font-bold text-[var(--sys-text-primary)]">{{ selectedApproval.urgent ? 'Khẩn cấp' : 'Bình thường' }}</p>
-              </div>
-            </div>
-
-            <div class="space-y-1.5 mb-6">
-              <label class="text-[10px] font-black text-[var(--sys-text-primary)] uppercase tracking-widest ml-1 opacity-60">Nội dung phản hồi thẩm định *</label>
+            <!-- Rejection Input Section -->
+            <div v-if="modalMode === 'reject'" class="space-y-1.5 mb-6">
+              <label class="text-[10px] font-black text-[var(--sys-text-primary)] uppercase tracking-widest ml-1 opacity-60">NỘI DUNG PHẢN HỒI THẨM ĐỊNH *</label>
               <textarea
                 v-model="rejectReason"
-                rows="4"
+                rows="3"
                 placeholder="Xác định nguyên nhân bác bỏ hồ sơ chi tiết..."
-                class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-[13px] font-bold text-[var(--sys-text-primary)] outline-none transition-all resize-none shadow-inner placeholder:font-normal placeholder:italic placeholder:opacity-40"
+                class="w-full px-4 py-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-[13px] font-bold text-[var(--sys-text-primary)] outline-none transition-all resize-none shadow-inner placeholder:font-normal placeholder:italic placeholder:opacity-40 focus:ring-2 focus:ring-[var(--sys-danger-soft)]"
               ></textarea>
               <p class="text-[9px] font-bold text-[var(--sys-danger-text)] uppercase tracking-widest opacity-60 italic">
                 * Thông tin này sẽ được gửi trực tiếp đến hộp thư của nhân sự.
               </p>
             </div>
 
-            <div class="flex justify-end gap-3 mt-auto pt-4 border-t border-[var(--sys-border-subtle)]">
-              <button class="btn-reject h-10 px-6" @click="closeRejectModal">Hủy bỏ</button>
-              <button class="btn-approve h-10 px-8" @click="confirmReject">
-                XÁC NHẬN BÁC BỎ
-              </button>
+            <!-- Approval Confirm Text -->
+            <p v-if="modalMode === 'approve'" class="text-[13px] text-[var(--sys-text-secondary)] border-l-4 border-[var(--sys-brand-solid)] pl-3 py-1 mb-6 font-medium text-left">
+              Bạn có chắc chắn muốn <span class="font-extrabold text-[var(--sys-brand-solid)]">phê duyệt</span> yêu cầu này không?
+            </p>
+
+            <!-- Modal Footer Actions -->
+            <div class="flex justify-end gap-3 mt-auto pt-4 border-t border-[var(--sys-border-subtle)] font-bold">
+              <!-- Mode: DETAIL -->
+              <template v-if="modalMode === 'detail'">
+                <button 
+                  class="h-10 px-6 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-100 transition-all dark:bg-[#1e2536] dark:text-gray-300 dark:border-gray-600 dark:hover:bg-[#28324f]"
+                  @click="closeMainModal"
+                >
+                  Đóng
+                </button>
+                <div class="flex gap-2">
+                  <button class="btn-reject h-10 px-6 rounded-lg" @click="modalMode = 'reject'">Từ chối</button>
+                  <button class="btn-approve h-10 px-6 rounded-lg" @click="modalMode = 'approve'">Phê duyệt</button>
+                </div>
+              </template>
+
+              <!-- Mode: APPROVE -->
+              <template v-else-if="modalMode === 'approve'">
+                <button 
+                  class="h-10 px-6 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-100 transition-all dark:bg-[#1e2536] dark:text-gray-300 dark:border-gray-600 dark:hover:bg-[#28324f]"
+                  @click="modalMode = 'detail'"
+                >
+                  Quay lại
+                </button>
+                <button 
+                  class="h-10 px-6 bg-[var(--sys-brand-solid)] hover:bg-[#1d4ed8] text-white shadow-md hover:shadow-lg transition-all rounded-lg flex items-center justify-center gap-2 border-0"
+                  @click="confirmApprove"
+                >
+                  <span class="material-symbols-rounded text-[18px]">check_circle</span>
+                  Xác nhận Phê duyệt
+                </button>
+              </template>
+
+              <!-- Mode: REJECT -->
+              <template v-else-if="modalMode === 'reject'">
+                <button 
+                  class="h-10 px-6 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-100 transition-all dark:bg-[#1e2536] dark:text-gray-300 dark:border-gray-600 dark:hover:bg-[#28324f]"
+                  @click="modalMode = 'detail'"
+                >
+                  Quay lại
+                </button>
+                <button 
+                  class="h-10 px-6 bg-[var(--sys-danger-solid)] hover:bg-red-700 text-white rounded-lg shadow-md hover:shadow-lg transition-all border-0" 
+                  @click="confirmReject"
+                >
+                  XÁC NHẬN BÁC BỎ
+                </button>
+              </template>
             </div>
           </div>
         </div>
       </Transition>
     </Teleport>
+
+    <!-- Redundant modals removed in favor of Unified Modal -->
   </div>
 </template>
 
@@ -704,7 +658,14 @@ const fetchData = async () => {
             name: emp.fullName || 'Khuyết danh',
             dept: dept.departmentName ? `Phòng ${dept.departmentName}` : '',
             type: reqTypeObj.requestTypeName || 'Khác',
-            reasonText: r.notes || r.reason || r.title,
+            reasonText: r.reason || r.notes || r.title,
+            
+            // Detailed leave info
+            requestCode: r.requestCode || `REQ-${r.requestId}`,
+            startDate: r.startDate,
+            endDate: r.endDate,
+            totalDays: r.days || 0,
+            requestDate: r.requestDate,
             
             // New UI fields from TTThongBao
             initials: getInitials(emp.fullName || '?'),
@@ -743,54 +704,29 @@ const urgentPendingCount = computed(() => {
 });
 
 const selectedApproval = ref(null);
-const showDetailModal = ref(false);
-const showApproveModal = ref(false);
-const showRejectModal = ref(false);
-const returnToDetailAfterAction = ref(false);
+const showMainModal = ref(false);
+const modalMode = ref('detail'); // 'detail', 'approve', 'reject'
 const rejectReason = ref('');
 
-const openDetailModal = (item) => {
+const openMainModal = (item, mode = 'detail') => {
   selectedApproval.value = item;
-  returnToDetailAfterAction.value = false;
-  showDetailModal.value = true;
-  showApproveModal.value = false;
-  showRejectModal.value = false;
+  modalMode.value = mode;
+  showMainModal.value = true;
 };
 
-const closeDetailModal = () => {
-  showDetailModal.value = false;
+const closeMainModal = () => {
+  showMainModal.value = false;
   selectedApproval.value = null;
-  showApproveModal.value = false;
-  showRejectModal.value = false;
-};
-
-const openApproveModal = (item) => {
-  selectedApproval.value = item;
-  returnToDetailAfterAction.value = showDetailModal.value;
-  showApproveModal.value = true;
-  showDetailModal.value = false;
-  showRejectModal.value = false;
-};
-
-const closeApproveModal = () => {
-  showApproveModal.value = false;
-  if (returnToDetailAfterAction.value) showDetailModal.value = true;
-};
-
-const openRejectModal = (item) => {
-  selectedApproval.value = item;
-  returnToDetailAfterAction.value = showDetailModal.value;
-  showRejectModal.value = true;
-  showDetailModal.value = false;
-  showApproveModal.value = false;
   rejectReason.value = '';
 };
 
-const closeRejectModal = () => {
-  showRejectModal.value = false;
-  rejectReason.value = '';
-  if (returnToDetailAfterAction.value) showDetailModal.value = true;
-};
+// Re-map existing open functions for compatibility with list items
+const openDetailModal = (item) => openMainModal(item, 'detail');
+const openApproveModal = (item) => openMainModal(item, 'approve');
+const openRejectModal = (item) => openMainModal(item, 'reject');
+const closeDetailModal = closeMainModal;
+const closeApproveModal = closeMainModal;
+const closeRejectModal = closeMainModal;
 
 const confirmApprove = async () => {
   if (!selectedApproval.value) return;
@@ -844,10 +780,7 @@ const confirmApprove = async () => {
     console.error('Lỗi khi duyệt đơn:', error);
   }
 
-  showApproveModal.value = false;
-  showRejectModal.value = false;
-  showDetailModal.value = false;
-  selectedApproval.value = null;
+  closeMainModal();
 };
 
 const confirmReject = async () => {
@@ -879,11 +812,7 @@ const confirmReject = async () => {
     console.error('Lỗi khi từ chối đơn:', error);
   }
 
-  showRejectModal.value = false;
-  showApproveModal.value = false;
-  showDetailModal.value = false;
-  rejectReason.value = '';
-  selectedApproval.value = null;
+  closeMainModal();
 };
 
 // Tính toán conic-gradient động cho Donut Chart
@@ -1448,43 +1377,46 @@ const dynamicBarChart = computed(() => {
 }
 
 /* ── TT Approval Items (Synced from TTThongBao) ── */
-.tt-approval-list { display: flex; flex-direction: column; gap: 10px; }
+.tt-approval-list { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 12px; 
+  margin-top: 16px; /* Khoảng cách với thanh ngang tiêu đề */
+}
 
 .tt-approval-item {
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
-  gap: 14px;
+  display: flex;
   align-items: center;
-  padding: 14px 16px;
-  border-radius: 14px;
-  border: 1px solid var(--border, #e5e7eb);
-  background: var(--bg-card, #fff);
-  transition: all 0.18s;
-  animation: fadeInUp 0.35s ease both;
+  padding: 12px 18px;
+  background: var(--bg-card, #ffffff);
+  border-radius: 12px;
+  border: 1px solid var(--border, #f1f5f9);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .tt-approval-item:hover {
-  border-color: #93c5fd;
-  box-shadow: 0 4px 16px -4px rgba(37,99,235,0.12);
-  transform: translateY(-1px);
+  border-color: var(--brand, #3b82f6);
+  box-shadow: var(--shadow-hover);
+  background: var(--bg-hover, #f8faff);
 }
 
 .tt-approval-item--urgent {
-  border-color: rgba(252, 165, 165, 0.45) !important;
-  background: linear-gradient(135deg,#fff8f8 0%,#ffffff 100%) !important;
+  background: linear-gradient(135deg, var(--danger-light, #fffcfc) 0%, var(--bg-card, #ffffff) 100%) !important;
+  border-color: var(--danger, #fca5a5) !important;
+  border-left: 5px solid #ef4444 !important;
 }
 
 :global(.dark) .tt-approval-item {
-  background: var(--bg-card, #1a2235) !important;
-  border-color: var(--border, rgba(255,255,255,0.07)) !important;
+  background: #1e293b !important; /* Force dark background */
+  border-color: rgba(255,255,255,0.06) !important;
 }
-:global(.dark) .tt-approval-item:hover {
-  border-color: rgba(96,165,250,0.35) !important;
-  box-shadow: 0 4px 16px -4px rgba(96,165,250,0.15);
-}
+
 :global(.dark) .tt-approval-item--urgent {
-  border-color: rgba(239,68,68,0.45) !important;
-  background: linear-gradient(135deg, #2a0d0d 0%, #1e2535 100%) !important;
+  background: linear-gradient(135deg, #321c1c 0%, #1e293b 100%) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
 }
 
 /* ── Avatar ── */

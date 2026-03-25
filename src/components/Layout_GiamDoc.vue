@@ -84,6 +84,7 @@
             >notifications</span>
             <!-- Unread dot -->
             <span
+              v-if="approvalCount > 0 || recentNotifications.some(n => !n.isRead)"
               class="absolute top-1.5 right-2 w-2.5 h-2.5 rounded-full bg-orange-500 ring-2 ring-[#161c2d] flex items-center justify-center"
             >
               <span class="notif-pulse"></span>
@@ -198,6 +199,7 @@ import {
   importantNotifications as staticNotifs
 } from '@/mock-data/sampleData_GiamDoc.js';
 import { mockLeaveRequests, mockEmployees, mockRequestTypes } from '@/mock-data/index.js';
+import { getInitials, getAvatarColors } from '@/utils/uiMapper.js';
 import { useCurrentUser } from '@/composables/useCurrentUser';
 
 const { employeeId } = useCurrentUser();
@@ -226,15 +228,20 @@ const goToNotifications = () => {
 };
 
 const liveNotifications = ref([]);
+const liveLeaveRequests = ref([]);
 
 const fetchNotifications = async () => {
   try {
-    const res = await fetch(`http://localhost:3000/notifications?userId=${employeeId.value}&_sort=id&_order=desc&_limit=20`);
-    if (res.ok) {
-      liveNotifications.value = await res.json();
-    }
+    const [resNotif, resReq] = await Promise.all([
+      fetch(`http://localhost:3000/notifications?userId=${employeeId.value}&_sort=id&_order=desc&_limit=20`),
+      fetch(`http://localhost:3000/leaveRequests`)
+    ]);
+
+    if (resNotif.ok) liveNotifications.value = await resNotif.json();
+    if (resReq.ok) liveLeaveRequests.value = await resReq.json();
+
   } catch (error) {
-    console.error('Lỗi khi tải thông báo:', error);
+    console.error('Lỗi khi tải thông báo hoặc yêu cầu:', error);
   }
 };
 
@@ -265,15 +272,25 @@ const handleNotifClick = async (item) => {
   }
 };
 
-// Lấy yêu cầu phê duyệt REAL từ mockDB (CHỜ_GIÁM_ĐỐC_DUYỆT)
+// Lấy yêu cầu phê duyệt REAL từ API (CHỜ_GIÁM_ĐỐC_DUYỆT HOẶC CẬP BÁCH/KHẨN CẤP)
 const realApprovals = computed(() => {
-  const allReqs = mockLeaveRequests;
-  return allReqs.filter(r => r.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT').map(r => {
-    const emp = mockEmployees.getById(r.requesterId);
-    const type = mockRequestTypes.getById(r.requestTypeId);
+  const allReqs = liveLeaveRequests.value.length > 0 ? liveLeaveRequests.value : mockLeaveRequests;
+  return allReqs.filter(r => {
+    // ĐỒNG BỘ LOGIC: CHỜ_GIÁM_ĐỐC_DUYỆT HOẶC CHỜ_DUYỆT mà có gắn thẻ is_urgent (Phê duyệt khẩn)
+    return r.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT' || (r.status === 'CHỜ_DUYỆT' && r.is_urgent);
+  }).map(r => {
+    const emp = mockEmployees.getById(r.requesterId) || {};
+    const type = mockRequestTypes.getById(r.requestTypeId) || {};
+    const avatarUI = getAvatarColors(emp.employeeId || 1);
+    
     return {
-
-      avatarColor: 'text-indigo-600'
+      id: r.id || r.requestId,
+      name: emp.fullName || 'Nhân viên',
+      title: r.title || type.requestTypeName || 'Yêu cầu',
+      initials: getInitials(emp.fullName || '?'),
+      avatarBg: avatarUI.bg,
+      avatarColor: avatarUI.text,
+      urgent: !!r.is_urgent
     };
   });
 });
@@ -290,7 +307,8 @@ const recentNotifications = computed(() => {
       title: n.title,
       desc: n.desc,
       time: n.time || 'Vừa xong',
-      actionRoute: n.actionRoute
+      actionRoute: n.actionRoute,
+      isRead: n.isRead
     }));
   }
   
@@ -306,7 +324,8 @@ const recentNotifications = computed(() => {
     title: `Yêu cầu phê duyệt khẩn: ${r.name}`,
     desc: `${r.title} cần được xử lý ngay trong ngày.`,
     actionRoute: '/giamdoc/thongbao',
-    time: 'Vừa xong'
+    time: 'Vừa xong',
+    isRead: false
   }));
   return [...dynamicNotifs, ...staticNotifs.slice(0, 2)];
 });
@@ -343,7 +362,7 @@ onMounted(() => {
 <style scoped>
 /* ════════════════════════════════════════
    Page Transitions
-════════════════════════════════════════ */
+/* ════════════════════════════════════════ */
 .slide-up-enter-active,
 .slide-up-leave-active,
 .slide-down-enter-active,
@@ -362,7 +381,7 @@ onMounted(() => {
 
 /* ════════════════════════════════════════
    Notification Bell
-════════════════════════════════════════ */
+/* ════════════════════════════════════════ */
 .notif-trigger {
   position: relative;
   display: flex;
@@ -386,7 +405,7 @@ onMounted(() => {
 
 /* ════════════════════════════════════════
    Popup Dropdown
-════════════════════════════════════════ */
+/* ════════════════════════════════════════ */
 .notif-popup {
   position: absolute;
   top: calc(100% + 14px);
