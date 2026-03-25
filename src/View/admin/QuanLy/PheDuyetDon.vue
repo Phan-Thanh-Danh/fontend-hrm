@@ -287,11 +287,36 @@ const showRejectModal = ref(false);
 const showDetailModal = ref(false);
 const rejectReason = ref('');
 const selectedRequest = ref(null);
+const liveRequests = ref([]);
+
+const loadData = async () => {
+  try {
+    const res = await fetch('http://localhost:3000/leaveRequests');
+    if (res.ok) {
+      liveRequests.value = await res.json();
+    } else {
+      liveRequests.value = [...mockDB.requests];
+    }
+  } catch (error) {
+    console.error('Lỗi khi tải dữ liệu phê duyệt:', error);
+    liveRequests.value = [...mockDB.requests];
+  }
+};
+
+let pollInterval = null;
+onMounted(() => {
+  loadData();
+  pollInterval = setInterval(loadData, 10000); // Polling every 10s
+});
+
+onUnmounted(() => {
+  if (pollInterval) clearInterval(pollInterval);
+});
 
 const requests = computed(() => {
   const allReqTypes = mockRequestTypes;
   // Lấy toàn bộ và sắp xếp mới nhất
-  const rawList = [...mockDB.requests].sort((a,b) => new Date(b.requestDate||0) - new Date(a.requestDate||0));
+  const rawList = (liveRequests.value.length > 0 ? liveRequests.value : [...mockDB.requests]).sort((a,b) => new Date(b.requestDate||0) - new Date(a.requestDate||0));
   
   return rawList.map(req => {
     const emp = mockEmployees.getById(req.requesterId || req.employeeId);
@@ -310,6 +335,7 @@ const requests = computed(() => {
     if (req.requestTypeId === 1) icon = 'event_busy'; // Nghỉ phép
     if (req.requestTypeId === 2) icon = 'person_add'; // Tuyển dụng
     if (req.requestTypeId === 4) icon = 'payments';   // Tạm ứng
+    if (req.requestTypeId === 11 || req.requestTypeId === 3) icon = 'edit_calendar'; // Điều chỉnh công/chấm công
 
     return {
       id: req.requestId,
@@ -321,7 +347,8 @@ const requests = computed(() => {
       dateRange: req.startDate && req.endDate ? `${req.startDate} - ${req.endDate}` : (req.requestDate ? req.requestDate.split(' '||'T')[0] : 'Hôm nay'),
       duration: req.days ? `${req.days} ngày` : 'N/A',
       reason: req.notes || req.reason || 'Không có ghi chú',
-      status: mappedStatus
+      status: mappedStatus,
+      raw: req // Store raw data for approval logic
     };
   });
 });
@@ -354,7 +381,8 @@ const typeOptions = [
   { label: 'TẤT CẢ LOẠI HÌNH', value: 'ALL' },
   { label: 'NGHỈ PHÉP (LEAVE)', value: 'event_busy' },
   { label: 'TĂNG CA (OT)', value: 'schedule' },
-  { label: 'CÔNG TÁC (WORK TRIP)', value: 'flight' }
+  { label: 'CÔNG TÁC (WORK TRIP)', value: 'flight' },
+  { label: 'ĐIỀU CHỈNH CÔNG', value: 'edit_calendar' }
 ];
 
 const tabs = ref([
@@ -368,10 +396,42 @@ const closeRejectModal = () => { showRejectModal.value = false; rejectReason.val
 
 const handleApprove = async (r) => {
   try {
-    mockLeaveRequests.approve(r.id);
-    closeDetailModal();
+    const res = await fetch(`http://localhost:3000/leaveRequests/${r.id || r.raw.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: 'ĐÃ_DUYỆT' })
+    });
+    
+    if (res.ok) {
+      // IF REQUEST IS "BỔ SUNG CHẤM CÔNG" (ID: 11) -> ADD DATA TO ATTENDANCES
+      if (r.raw.requestTypeId === 11) {
+        const attData = {
+          employeeId: r.raw.requesterId || r.raw.employeeId,
+          attendanceDate: r.raw.startDate || r.raw.date,
+          date: r.raw.startDate || r.raw.date,
+          checkIn1: r.raw.details?.checkIn1 || '--:--:--',
+          checkOut1: r.raw.details?.checkOut1 || '--:--:--',
+          checkIn2: r.raw.details?.checkIn2 || '--:--:--',
+          checkOut2: r.raw.details?.checkOut2 || '--:--:--',
+          status: 'ontime',
+          notes: 'Dữ liệu được bổ sung từ đơn phê duyệt'
+        };
+        
+        await fetch('http://localhost:3000/attendances', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(attData)
+        });
+      }
+
+      mockLeaveRequests.approve(r.id);
+      loadData();
+      closeDetailModal();
+    }
   } catch (error) {
     console.error('Lỗi khi duyệt đơn:', error);
+    mockLeaveRequests.approve(r.id); // Fallback for pure mock
+    closeDetailModal();
   }
 };
 
@@ -382,11 +442,25 @@ const confirmReject = async () => {
   }
   if (selectedRequest.value) {
     try {
+      const res = await fetch(`http://localhost:3000/leaveRequests/${selectedRequest.value.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          status: 'TỪ_CHỐI',
+          rejectionReason: rejectReason.value 
+        })
+      });
+      if (res.ok) {
+        mockLeaveRequests.reject(selectedRequest.value.id, rejectReason.value);
+        loadData();
+        closeRejectModal();
+        closeDetailModal();
+      }
+    } catch (error) {
+      console.error('Lỗi khi bác bỏ đơn:', error);
       mockLeaveRequests.reject(selectedRequest.value.id, rejectReason.value);
       closeRejectModal();
       closeDetailModal();
-    } catch (error) {
-      console.error('Lỗi khi bác bỏ đơn:', error);
     }
   }
 };

@@ -132,7 +132,7 @@
         <div class="px-5 py-4 border-b border-[var(--sys-border-subtle)] flex flex-wrap gap-4 items-center justify-between bg-[var(--sys-bg-page)]/50">
           <h3 class="text-sm font-semibold text-[var(--sys-text-primary)] uppercase tracking-wide m-0">Tra cứu lịch sử công ca</h3>
           <div class="flex flex-wrap gap-3 items-center">
-            <button class="h-11 px-5 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[11px] uppercase tracking-wide hover:brightness-90 transition-all flex items-center gap-2 shadow-sm">
+            <button @click="showRequestModal = true" class="h-11 px-5 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[11px] uppercase tracking-wide hover:brightness-90 transition-all flex items-center gap-2 shadow-sm">
               <span class="material-symbols-outlined text-[20px]">add_circle</span>
               Yêu cầu bổ sung
             </button>
@@ -203,6 +203,79 @@
         </router-link>
       </div>
 
+      <!-- Attendance Addition Request Modal -->
+      <Teleport to="body">
+        <Transition name="toast">
+          <div v-if="showRequestModal" class="fixed inset-0 z-[10000] flex items-center justify-center p-4">
+            <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showRequestModal = false"></div>
+            <div class="relative bg-white border border-[var(--sys-border-subtle)] w-full max-w-xl rounded-xl shadow-2xl overflow-hidden flex flex-col text-left">
+              <!-- Modal Header -->
+              <div class="px-6 py-4 border-b border-[var(--sys-border-subtle)] flex items-center justify-between bg-[var(--sys-bg-page)]/50">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-[var(--sys-brand-solid)]">edit_calendar</span>
+                  <div>
+                    <h3 class="text-sm font-bold text-[var(--sys-text-primary)] m-0 uppercase tracking-wide">Yêu cầu bổ sung chấm công</h3>
+                    <p class="text-[11px] text-[var(--sys-text-secondary)] mt-0.5 font-medium uppercase tracking-widest opacity-80">Gửi admin phê duyệt điều chỉnh dữ liệu</p>
+                  </div>
+                </div>
+                <button @click="showRequestModal = false" class="text-[var(--sys-text-secondary)] hover:text-[var(--sys-text-primary)] transition-colors">
+                  <span class="material-symbols-outlined">close</span>
+                </button>
+              </div>
+
+              <!-- Modal Body -->
+              <div class="p-6 space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1.5 flex flex-col">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Ngày cần bổ sung *</label>
+                    <input v-model="requestForm.date" type="date" class="h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-sm font-medium outline-none focus:border-[var(--sys-brand-solid)] transition-all">
+                  </div>
+                  <div class="space-y-1.5 flex flex-col">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Thời lượng dự kiến</label>
+                    <input v-model="requestForm.duration" type="text" placeholder="Ví dụ: 8h" class="h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-sm font-medium outline-none focus:border-[var(--sys-brand-solid)] transition-all">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1.5 flex flex-col">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Giờ vào lần 1</label>
+                    <input v-model="requestForm.checkIn1" type="time" class="h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-sm font-medium outline-none focus:border-[var(--sys-brand-solid)] transition-all">
+                  </div>
+                  <div class="space-y-1.5 flex flex-col">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Giờ ra lần 1</label>
+                    <input v-model="requestForm.checkOut1" type="time" class="h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-sm font-medium outline-none focus:border-[var(--sys-brand-solid)] transition-all">
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div class="space-y-1.5 flex flex-col">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Giờ vào lần 2</label>
+                    <input v-model="requestForm.checkIn2" type="time" class="h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-sm font-medium outline-none focus:border-[var(--sys-brand-solid)] transition-all">
+                  </div>
+                  <div class="space-y-1.5 flex flex-col">
+                    <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Giờ ra lần 2</label>
+                    <input v-model="requestForm.checkOut2" type="time" class="h-10 px-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-sm font-medium outline-none focus:border-[var(--sys-brand-solid)] transition-all">
+                  </div>
+                </div>
+
+                <div class="space-y-1.5 flex flex-col">
+                  <label class="text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-wider">Lý do điều chỉnh *</label>
+                  <textarea v-model="requestForm.reason" rows="3" placeholder="Ví dụ: Quên quẹt thẻ, đi công tác bên ngoài..." class="p-3 bg-[var(--sys-bg-page)] border border-[var(--sys-border-strong)] rounded text-sm font-medium outline-none focus:border-[var(--sys-brand-solid)] transition-all resize-none"></textarea>
+                </div>
+              </div>
+
+              <!-- Modal Footer -->
+              <div class="px-6 py-4 border-t border-[var(--sys-border-subtle)] bg-[var(--sys-bg-page)]/30 flex justify-end gap-3">
+                <button @click="showRequestModal = false" class="px-6 py-2 text-[11px] font-bold text-[var(--sys-text-secondary)] uppercase tracking-widest hover:bg-[var(--sys-bg-hover)] rounded-md transition-all border border-transparent hover:border-[var(--sys-border-strong)]">Hủy bỏ</button>
+                <button @click="submitAdditionRequest" class="px-8 py-2 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[11px] uppercase tracking-widest hover:brightness-110 shadow-lg active:scale-95 transition-all flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">send</span>
+                  Gửi yêu cầu
+                </button>
+              </div>
+            </div>
+          </div>
+        </Transition>
+      </Teleport>
     </div>
   </div>
 </template>
@@ -242,6 +315,17 @@ const historyItems = ref([]);
 const showToast = ref(false);
 const toastMsg = ref('');
 const toastType = ref('success');
+
+const showRequestModal = ref(false);
+const requestForm = ref({
+  date: new Date().toISOString().split('T')[0],
+  checkIn1: '',
+  checkOut1: '',
+  checkIn2: '',
+  checkOut2: '',
+  duration: '',
+  reason: ''
+});
 
 const lastLogTime = computed(() => {
   if (!attendanceToday.value) return '--:--:--';
@@ -409,6 +493,80 @@ const handleCheckOut = async () => {
     notifyManager(`đã chấm công ra (cuối ngày) lúc ${timeStr}`);
   }
   fetchAttendance();
+};
+
+const submitAdditionRequest = async () => {
+  if (!requestForm.value.date || !requestForm.value.reason) {
+    triggerToast('Vui lòng điền đầy đủ các thông tin bắt buộc (*)', 'danger');
+    return;
+  }
+
+  try {
+    const today = new Date().toISOString().split('T')[0];
+    const newRequest = {
+      requesterId: userId.value,
+      requesterName: currentUserName.value,
+      requestDate: today,
+      startDate: requestForm.value.date,
+      endDate: requestForm.value.date,
+      days: 1,
+      requestTypeId: 11, // Bổ sung chấm công
+      reason: requestForm.value.reason,
+      status: 'CHỜ_DUYỆT',
+      notes: `Bổ sung công ngày ${requestForm.value.date}. Giờ vào/ra: ${requestForm.value.checkIn1 || '--'} - ${requestForm.value.checkOut2 || requestForm.value.checkOut1 || '--'}`,
+      details: {
+        checkIn1: requestForm.value.checkIn1,
+        checkOut1: requestForm.value.checkOut1,
+        checkIn2: requestForm.value.checkIn2,
+        checkOut2: requestForm.value.checkOut2,
+        duration: requestForm.value.duration
+      }
+    };
+
+    const res = await fetch('http://localhost:3000/leaveRequests', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newRequest)
+    });
+
+    if (res.ok) {
+      triggerToast('Đã gửi yêu cầu bổ sung chấm công đến Admin!');
+      showRequestModal.value = false;
+      // Reset form
+      requestForm.value = {
+        date: new Date().toISOString().split('T')[0],
+        checkIn1: '',
+        checkOut1: '',
+        checkIn2: '',
+        checkOut2: '',
+        duration: '',
+        reason: ''
+      };
+      // Notify admin
+      notifyAdminAddition(requestForm.value.date);
+    }
+  } catch (error) {
+    console.error('Lỗi khi gửi yêu cầu:', error);
+    triggerToast('Có lỗi xảy ra khi gửi yêu cầu. Vui lòng thử lại sau.', 'danger');
+  }
+};
+
+const notifyAdminAddition = async (date) => {
+  try {
+    await fetch('http://localhost:3000/notifications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId: 'NV001', // Admin
+        type: 'warning',
+        title: 'Yêu cầu Bổ sung Công',
+        desc: `${currentUserName.value} vừa gửi yêu cầu bổ sung công ngày ${date}`,
+        time: 'Vừa xong',
+        isRead: false,
+        icon: 'edit_calendar'
+      })
+    });
+  } catch (e) { console.error('Notify Admin Error:', e); }
 };
 
 const updateTime = () => {
