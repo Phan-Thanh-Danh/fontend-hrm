@@ -39,6 +39,8 @@ attachHelpers(mockLeaveRequests, 'requestId');
 attachHelpers(mockAssets, 'assetId');
 attachHelpers(mockContracts, 'contractId');
 attachHelpers(mockApplications, 'applicationId');
+attachHelpers(mockPositions, 'positionId');
+attachHelpers(mockRequestTypes, 'requestTypeId');
 
 mockApplications.approve = function(id) { const idx = this.findIndex(x => x.applicationId == id); if (idx !== -1) this[idx].status = 'CHỜ_TP_DUYỆT'; };
 mockApplications.reject = function(id, reason) { const idx = this.findIndex(x => x.applicationId == id); if (idx !== -1) { this[idx].status = 'TỪ_CHỐI'; this[idx].notes = reason; } };
@@ -49,7 +51,6 @@ mockLeaveRequests.approve = function(id) { const idx = this.findIndex(x => x.req
 mockLeaveRequests.reject = function(id, reason) { const idx = this.findIndex(x => x.requestId == id || x.id == id); if (idx !== -1) { this[idx].status = 'TỪ_CHỐI'; this[idx].notes = reason; this[idx].rejectionReason = reason; } };
 mockLeaveRequests.delete = function(id) { const idx = this.findIndex(x => x.requestId == id || x.id == id); if (idx !== -1) this.splice(idx, 1); };
 mockLeaveRequests.directorApprove = function(id) { const idx = this.findIndex(x => x.requestId == id || x.id == id); if (idx !== -1) this[idx].status = 'ĐÃ_DUYỆT'; };
-mockRequestTypes.getById = function(id) { return this.find(item => item.requestTypeId == id || item.id == id); };
 
 // Simulated API calls for Frontend usage
 export const fetchEmployeesAPI = async () => {

@@ -26,27 +26,33 @@
          KPI CARDS
     ══════════════════════════════════════════════ -->
     <div class="kpi-grid">
-      <!-- ✅ KPI Cards -->
       <div
         v-for="(card, index) in kpiCards"
         :key="card.id"
         class="kpi-card animate-chart"
         :style="{ animationDelay: (index * 100) + 'ms' }"
-        @click="$router.push(card.route)"
+        @click="router.push(card.route)"
       >
+        <!-- Header: Icon + Badge -->
         <div class="kpi-card-header">
           <div class="kpi-icon" :class="card.iconClass">
             <span class="material-symbols-rounded">{{ card.icon }}</span>
           </div>
           <span class="kpi-badge" :class="card.badgeClass">
-            <span class="material-symbols-rounded" style="font-size:11px">{{ card.badgeIcon }}</span>
+            <span class="material-symbols-rounded" style="font-size:11px">{{ card.badgeTrend === 'up' ? 'trending_up' : 'trending_down' }}</span>
             {{ card.badge }}
           </span>
         </div>
+
+        <!-- Label -->
         <p class="kpi-label">{{ card.label }}</p>
+
+        <!-- Value -->
         <h3 class="kpi-value">{{ card.value }}</h3>
+
+        <!-- Footer -->
         <div class="kpi-footer">
-          <!-- Loại sparkline (bar mini) -->
+          <!-- Sparkline bars -->
           <template v-if="card.footerType === 'sparkline'">
             <div class="kpi-sparkline">
               <div
@@ -63,7 +69,7 @@
               ></div>
             </div>
           </template>
-          <!-- Loại progress bar -->
+          <!-- Progress bar -->
           <template v-else-if="card.footerType === 'progress'">
             <div class="kpi-progress-bar">
               <div
@@ -84,7 +90,7 @@
     <div class="charts-grid">
 
       <!-- Bar Chart -->
-      <div class="chart-card chart-card--wide animate-chart" style="animation-delay: 200ms;">
+      <div class="chart-card chart-card--wide animate-chart cursor-pointer hover:border-blue-400/50 transition-all" style="animation-delay: 200ms;" @click="router.push('/giamdoc/biendong')">
         <div class="chart-card-header">
           <div>
             <h4 class="chart-title">Xu hướng tăng trưởng nhân sự</h4>
@@ -112,7 +118,7 @@
               <!-- Phantom Tooltip Top Alignment -->
               <div class="absolute hidden group-hover:flex flex-col items-center z-50 pointer-events-none w-max"
                    :style="`bottom: calc(${Math.max(col.currentH, col.targetH)}% + 5px);`">
-                 <div class="bg-slate-800 text-white rounded-md text-[11px] px-3 py-2 shadow-xl whitespace-nowrap flex flex-col items-center gap-0.5 relative">
+                  <div class="bg-slate-800 text-white rounded-md text-[11px] px-3 py-2 shadow-xl whitespace-nowrap flex flex-col items-center gap-0.5 relative">
                    <span class="font-bold text-amber-400">Mục tiêu: {{ col.target }}</span>
                    <span class="font-bold text-blue-300 flex items-center gap-1.5">
                      Hiện tại: {{ col.current }}
@@ -147,7 +153,7 @@
       </div>
 
       <!-- Donut Chart -->
-      <div class="chart-card chart-card--narrow animate-chart" style="animation-delay: 300ms;">
+      <div class="chart-card chart-card--narrow animate-chart cursor-pointer hover:border-blue-400/50 transition-all" style="animation-delay: 300ms;" @click="router.push('/giamdoc/nhansu')">
         <div class="chart-card-header">
           <h4 class="chart-title">Cơ cấu phòng ban</h4>
         </div>
@@ -506,25 +512,24 @@
 import { computed, ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
-import { mockEmployees, mockDepartments, mockLeaveRequests, mockRequestTypes } from '@/mock-data/index.js';
+import { mockEmployees, mockDepartments, mockLeaveRequests, mockRequestTypes, mockSalaryDetails, mockAttendances } from '@/mock-data/index.js';
 import { getInitials, getAvatarColors, getRequestTypeUI } from '@/utils/uiMapper.js';
-import {
-  timelineEvents,
-  reminderText,
-} from '@/mock-data/sampleData_GiamDoc.js';
 import { useConfirm } from '@/composables/useConfirm';
 
 const { showAlert } = useConfirm();
 const router = useRouter();
 
 const selectedDateRange = ref('30_days');
+const Math = window.Math;
 
 const approvals = ref([]);
 const kpiCards = ref([]);
 const barChartData = ref([]);
-const barChartYLabels = ref(['300,000', '250,000', '200,000', '150,000', '100,000', '50,000', '0']);
+const barChartYLabels = ref([]);
 const donutData = ref([]);
 const donutTotal = ref(0);
+const reminderText = ref('');
+const timelineEvents = ref([]);
 
 const fetchData = () => {
   try {
@@ -533,47 +538,87 @@ const fetchData = () => {
     const allReqs = mockLeaveRequests;
 
     const activeEmps = allEmps.filter(e => e.status !== 'ĐÃ_NGHỈ_VIỆC');
-    
-    // 1. KPI Cards
     const totalHeadcount = activeEmps.length;
-    const pendingReqs = allReqs.filter(r => r.status === 'CHỜ_DUYỆT').length;
-    
+    const totalAll = allEmps.length;
+
+    // Tỷ lệ biến động: (Nghỉ việc / Tổng)
+    const soNghiViec = allEmps.filter(e => e.status === 'ĐÃ_NGHỈ_VIỆC').length;
+    const bienDongRate = totalAll > 0 ? ((soNghiViec / totalAll) * 100).toFixed(1) : '0.0';
+
+    // Tổng quỹ lương từ salaryDetails
+    const tongLuong = mockSalaryDetails.reduce((sum, s) => sum + (s.netSalary || s.basicSalary || 0), 0);
+    const NGAN_SACH_LUONG = 5000000000; // 5 tỷ ngân sách dự tính cho quy mô hiện tại
+    const nganSachPct = Math.min(Math.round((tongLuong / NGAN_SACH_LUONG) * 100), 100);
+    let tongLuongFormatted;
+    if (tongLuong >= 1_000_000_000) {
+      tongLuongFormatted = (tongLuong / 1_000_000_000).toFixed(1) + ' tỷ';
+    } else {
+      tongLuongFormatted = (tongLuong / 1_000_000).toFixed(0) + ' Tr';
+    }
+
+    // Chuyên cần
+    const allAttendance = mockAttendances;
+    const totalAttRec = allAttendance.length;
+    const onTimeRec = allAttendance.filter(a => a.status === 'ĐÚNG_GIỜ' || a.status === 'ON_TIME' || a.checkIn).length;
+    const chuyenCanRate = totalAttRec > 0 ? Math.min(((onTimeRec / totalAttRec) * 100).toFixed(1), 100) : 98.2;
+
     kpiCards.value = [
       {
-        id: 1, label: 'Tổng số nhân sự', value: totalHeadcount,
+        id: 1, label: 'TỔNG NHÂN SỰ', value: totalHeadcount.toLocaleString('vi-VN'),
         icon: 'groups', iconClass: 'kpi-icon--blue',
-        badge: '+12% so với tháng trước', badgeIcon: 'trending_up', badgeClass: 'kpi-badge--success',
+        badge: '+5.2%', badgeTrend: 'up', badgeClass: 'kpi-badge--success',
         route: '/giamdoc/nhansu', footerType: 'sparkline',
-        sparkline: [30, 45, 60, 50, 75, 40, 85, 100], sparklineDanger: false, meta: 'Dữ liệu tăng đều'
+        sparkline: [40, 55, 48, 62, 58, 70, 80, 100], sparklineDanger: false, meta: 'so với tháng trước'
       },
       {
-        id: 2, label: 'Quỹ lương tháng này', value: '2.5 Tỷ',
+        id: 2, label: 'TỶ LỆ BIẾN ĐỘNG', value: bienDongRate + '%',
+        icon: 'sync_alt', iconClass: 'kpi-icon--rose',
+        badge: '-0.5%', badgeTrend: 'down', badgeClass: 'kpi-badge--danger',
+        route: '/giamdoc/biendong', footerType: 'sparkline',
+        sparkline: [55, 48, 60, 44, 52, 40, 38, 60], sparklineDanger: true, meta: 'cải thiện 0.5%'
+      },
+      {
+        id: 3, label: 'TỔNG QUỸ LƯƠNG THÁNG', value: tongLuongFormatted,
         icon: 'payments', iconClass: 'kpi-icon--green',
-        badge: '-1.5% so với Dữ Toán', badgeIcon: 'trending_down', badgeClass: 'kpi-badge--danger',
+        badge: '+1.2%', badgeTrend: 'up', badgeClass: 'kpi-badge--success',
         route: '/giamdoc/bangluong', footerType: 'progress',
-        progress: 75, progressClass: 'kpi-progress-fill--green', meta: 'Ngân sách thực chi'
+        progress: nganSachPct, progressClass: 'kpi-progress-fill--brand', meta: nganSachPct + '% ngân sách'
       },
       {
-        id: 3, label: 'Hồ sơ cần duyệt', value: pendingReqs,
-        icon: 'task', iconClass: 'kpi-icon--amber',
-        badge: 'Ưu tiên xử lý', badgeIcon: 'priority_high', badgeClass: 'kpi-badge--warning',
-        route: '/giamdoc/thongbao', footerType: 'none', meta: `${pendingReqs} yêu cầu mới`
-      },
-      {
-        id: 4, label: 'Tỉ lệ nghỉ việc / tháng', value: '2.1%',
-        icon: 'person_remove', iconClass: 'kpi-icon--purple',
-        badge: 'Bình thường', badgeIcon: 'done_all', badgeClass: 'kpi-badge--success',
-        route: '/giamdoc/nhansu', footerType: 'sparkline',
-        sparkline: [15, 20, 25, 10, 5, 20, 30, 15], sparklineDanger: true, meta: 'Thấp hơn trung bình'
+        id: 4, label: 'CHỈ SỐ CHUYÊN CẦN', value: chuyenCanRate + '%',
+        icon: 'verified_user', iconClass: 'kpi-icon--amber',
+        badge: '+0.8%', badgeTrend: 'up', badgeClass: 'kpi-badge--success',
+        route: '/giamdoc/chuyencan', footerType: 'progress',
+        progress: parseFloat(chuyenCanRate), progressClass: 'kpi-progress-fill--amber', meta: 'Xuất sắc'
       }
     ];
 
-    // 2. Donut Data
+    // 2. Bar Chart: Headcount Growth (Last 6 Months)
+    const months = ['T10/25', 'T11/25', 'T12/25', 'T1/26', 'T2/26', 'T3/26'];
+    const cutoffDates = ['2025-10-31', '2025-11-30', '2025-12-31', '2026-01-31', '2026-02-28', '2026-03-31'];
+    
+    barChartData.value = months.map((m, idx) => {
+        const count = allEmps.filter(e => e.hireDate && e.hireDate <= cutoffDates[idx] && (e.status !== 'ĐÃ_NGHỈ_VIỆC')).length;
+        // Target giả lập tăng dần
+        const target = 50 + (idx * 5); 
+        return {
+            label: m,
+            current: count,
+            target: target,
+            active: idx === 5
+        };
+    });
+    
+    // Auto-adjust Y-axis labels based on current count
+    const maxVal = Math.max(...barChartData.value.map(d => Math.max(d.current, d.target))) + 10;
+    const step = Math.ceil(maxVal / 5);
+    barChartYLabels.value = Array.from({length: 6}, (_, i) => (step * (5 - i)).toLocaleString());
+
+    // 3. Donut Data: Department Structure
     const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#14b8a6'];
     donutTotal.value = activeEmps.length;
-    
-    let chartItems = allDepts.map((d, i) => {
-        const count = activeEmps.filter(e => e.departmentId === d.departmentId).length;
+    donutData.value = allDepts.map((d, i) => {
+        const count = activeEmps.filter(e => e.departmentId === d.departmentId || (e.department && e.department.departmentId === d.departmentId)).length;
         const pct = Math.round((count / (donutTotal.value || 1)) * 100);
         return {
             label: d.departmentName,
@@ -582,43 +627,64 @@ const fetchData = () => {
         };
     }).filter(d => d.pct > 0).sort((a,b) => b.pct - a.pct);
 
-    donutData.value = chartItems;
+    // 4. Dynamic Timeline: Today Birthdays and New Hires
+    const todayStr = '03-25'; // Giả lập hôm nay 25/03 theo context
+    const birthdays = allEmps.filter(e => e.dateOfBirth && e.dateOfBirth.includes(todayStr));
+    const newHires = allEmps.filter(e => e.hireDate && e.hireDate.startsWith('2026-03'));
+    
+    let events = [];
+    if (birthdays.length > 0) {
+      events.push({
+        id: 'bday',
+        time: 'Cả ngày hôm nay',
+        title: `Sinh nhật: ${birthdays.map(b => b.fullName).join(', ')}`,
+        place: 'Văn phòng Công ty',
+        placeIcon: 'cake',
+        active: true
+      });
+    }
+    events.push({
+      id: 'meeting',
+      time: '14:00 Chiều nay',
+      title: 'Họp Review Chỉ số Quý I',
+      place: 'Phòng Meeting 1',
+      placeIcon: 'groups',
+      active: birthdays.length === 0
+    });
+    if (newHires.length > 0) {
+      events.push({
+        id: 'new',
+        time: 'Tháng này',
+        title: `Chào mừng ${newHires.length} nhân sự mới`,
+        place: 'Ký Hợp đồng thử việc',
+        placeIcon: 'person_add',
+        active: false
+      });
+    }
+    timelineEvents.value = events.slice(0, 3);
 
-    // 3. Bar Chart Mock 
-    barChartData.value = [
-      { label: 'T1', current: 120000, target: 150000, active: false },
-      { label: 'T2', current: 140000, target: 155000, active: false },
-      { label: 'T3', current: 135000, target: 160000, active: false },
-      { label: 'T4', current: 180000, target: 165000, active: false },
-      { label: 'T5', current: 210000, target: 170000, active: false },
-      { label: 'T6', current: 240000, target: 200000, active: true },
-    ];
-
-    // 4. Pending Approvals
-    // WORKFLOW NEW: Chỉ hiển thị những đơn đã qua Trưởng phòng duyệt (CHỜ_GIÁM_ĐỐC_DUYỆT)
+    // 5. Pending Approvals
     approvals.value = allReqs.filter(r => {
         const isDirectorQueue = r.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT' || (r.status === 'CHỜ_DUYỆT' && r.is_urgent);
         const isVisible = r.visible_to ? r.visible_to.includes('Director') : true;
         return isDirectorQueue && isVisible;
     }).map(r => {
         const emp = allEmps.find(e => e.employeeId === r.requesterId) || {};
-        const dept = allDepts.find(d => d.departmentId === emp.departmentId) || {};
+        const dept = allDepts.find(d => d.departmentId === emp.departmentId || (emp.department && emp.department.departmentId === d.departmentId)) || {};
         const reqTypeObj = mockRequestTypes.getById(r.requestTypeId) || {};
         const ui = getRequestTypeUI(reqTypeObj.category || 'KHÁC') || {
           icon: 'help', color: 'text-gray-600', bg: 'bg-gray-50', catKey: 'khac'
         };
         const avatarUI = getAvatarColors(emp.employeeId || 1);
-        const dateStr = r.startDate && r.endDate ? `[${r.startDate} -> ${r.endDate}]` : '';
         return {
             id: r.requestId,
             isReal: true,
             statusRaw: r.status,
             title: r.title,
-            meta: `${emp.fullName || 'Khuyết danh'} ${dateStr} • Lý do: ${r.notes || 'Không có'}`,
+            meta: `${emp.fullName || 'Khuyết danh'} • Lý do: ${r.notes || 'Không có'}`,
             icon: r.is_urgent ? 'warning' : 'event_note',
             iconClass: r.is_urgent ? 'kpi-icon--amber' : 'kpi-icon--blue',
             urgent: r.is_urgent,
-            fullReason: r.notes || r.reason || r.title,
             actions: ['Từ chối', 'Phê duyệt'],
             status: 'pending',
             rejectReason: '',
@@ -639,6 +705,14 @@ const fetchData = () => {
             time: r.requestDate || new Date().toISOString()
         };
     }).slice(0, 5);
+
+    // Cập nhật Lời nhắc
+    const pendingTotal = approvals.value.length;
+    if (pendingTotal > 0) {
+      reminderText.value = `Anh đang có ${pendingTotal} đơn phê duyệt đang chờ xử lý. Vui lòng kiểm tra và duyệt sớm để đảm bảo tiến độ công việc của nhân viên.`;
+    } else {
+      reminderText.value = 'Hiện tại không có thông báo hay lời nhắc mới. Chúc anh một ngày làm việc hiệu quả!';
+    }
 
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu Giám đốc:', error);
@@ -982,8 +1056,10 @@ const dynamicBarChart = computed(() => {
   border-radius: 999px;
 }
 
-.kpi-badge--up   { background: var(--success-light, #DCFCE7); color: var(--success-text, #15803D); }
-.kpi-badge--down { background: var(--danger-light, #FEE2E2); color: var(--danger-text, #B91C1C); }
+.kpi-badge--up      { background: var(--success-light, #DCFCE7); color: var(--success-text, #15803D); }
+.kpi-badge--down    { background: var(--danger-light, #FEE2E2); color: var(--danger-text, #B91C1C); }
+.kpi-badge--success { background: var(--success-light, #DCFCE7); color: var(--success-text, #15803D); }
+.kpi-badge--danger  { background: var(--danger-light, #FEE2E2); color: var(--danger-text, #B91C1C); }
 
 .kpi-label {
   font-size: 11px;
@@ -1054,6 +1130,8 @@ const dynamicBarChart = computed(() => {
 }
 
 .kpi-progress-fill--amber { background: var(--warning, #F59E0B); }
+.kpi-progress-fill--brand { background: var(--brand, #3B82F6); }
+.kpi-progress-fill--green { background: var(--success, #22C55E); }
 
 /* ── Charts Grid ── */
 .charts-grid {

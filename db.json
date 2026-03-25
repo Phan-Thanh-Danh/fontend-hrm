@@ -1005,7 +1005,7 @@
       "endDate": "2026-03-31",
       "days": 4,
       "other_reason_name": null,
-      "status": "CHỜ_DUYỆT",
+      "status": "ĐÃ_DUYỆT",
       "is_urgent": true,
       "request_date": "2026-03-24",
       "department_id": 2,
@@ -1044,6 +1044,48 @@
         "duration": ""
       },
       "id": "A_ib5kuzecQ"
+    },
+    {
+      "requesterId": 3,
+      "requestTypeId": 7,
+      "notes": "hábdgchgaefhgacdasd",
+      "startDate": "2026-03-25",
+      "endDate": "2026-03-31",
+      "days": 7,
+      "other_reason_name": null,
+      "status": "CHỜ_DUYỆT",
+      "is_urgent": true,
+      "request_date": "2026-03-25",
+      "department_id": 2,
+      "id": "3oT13hjEHsY"
+    },
+    {
+      "requesterId": 3,
+      "requestTypeId": 7,
+      "notes": "hanhasbyhrbhhyaasdfn ",
+      "startDate": "2026-03-25",
+      "endDate": "2026-03-31",
+      "days": 7,
+      "other_reason_name": null,
+      "status": "ĐÃ_DUYỆT",
+      "is_urgent": true,
+      "request_date": "2026-03-25",
+      "department_id": 2,
+      "id": "lrwcoCnd3JU"
+    },
+    {
+      "requesterId": 3,
+      "requestTypeId": 6,
+      "notes": "hjanshfasdhsadnsdfhsdfm",
+      "startDate": "2026-03-25",
+      "endDate": "2026-04-17",
+      "days": 24,
+      "other_reason_name": null,
+      "status": "ĐÃ_DUYỆT",
+      "is_urgent": true,
+      "request_date": "2026-03-25",
+      "department_id": 2,
+      "id": "w3TnmO57PSo"
     }
   ],
   "projects": [
@@ -7062,6 +7104,16 @@
       "isRead": false,
       "icon": "edit_calendar",
       "id": "TBDBYESb3fg"
+    },
+    {
+      "userId": 3,
+      "type": "success",
+      "title": "Kết quả duyệt đơn nghỉ phép",
+      "desc": "Đơn nghỉ phép của bạn đã được CHẤP THUẬN.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "done_all",
+      "id": "S3MeIViUYoo"
     }
   ],
   "dashboardStats": {

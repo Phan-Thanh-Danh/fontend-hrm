@@ -223,7 +223,7 @@ import GD_DateFilter from '@/components/GD_DateFilter.vue';
 import { mockEmployees, mockSalaryDetails, mockDepartments } from '@/mock-data/index.js';
 
 const selectedDateRange = ref('30_days');
-const MathMin = Math.min;
+const Math = window.Math;
 
 const bangLuongKpiCards = computed(() => {
   const allSalaries = mockSalaryDetails;

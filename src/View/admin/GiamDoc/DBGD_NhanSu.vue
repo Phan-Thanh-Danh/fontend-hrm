@@ -231,6 +231,7 @@ import GD_DateFilter from '@/components/GD_DateFilter.vue';
 import { mockEmployees, mockDepartments, mockPositions } from '@/mock-data/index.js';
 
 const selectedDateRange = ref('30_days');
+const Math = window.Math;
 
 const nhanSuKpiCards = computed(() => {
   const emps = mockEmployees;

@@ -167,7 +167,7 @@
         <div class="w-px h-8 bg-white/10 hidden md:block"></div>
 
         <!-- User Profile -->
-        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-1.5 -mr-1.5 rounded-xl transition-colors" @click="$router.push('/giamdoc/hoso')">
+        <div class="flex items-center gap-3 cursor-pointer hover:bg-white/5 p-1.5 -mr-1.5 rounded-xl transition-colors" @click="router.push('/giamdoc/hoso')">
           <div class="flex flex-col text-right hidden sm:flex">
             <span class="text-white font-semibold text-sm leading-tight">Nguyễn Minh Triết</span>
             <span class="text-white/60 text-xs font-medium mt-0.5">Tổng Giám Đốc</span>

@@ -13,7 +13,7 @@
           class="h-11 px-6 bg-[var(--sys-brand-solid)] text-white rounded-md font-bold text-[12px] uppercase tracking-wider hover:brightness-110 active:scale-95 transition-all flex items-center gap-2 shadow-lg shrink-0"
         >
           <span class="material-symbols-outlined text-[20px]">add_circle</span>
-          Tạo Ticket hỗ trợ/// fix gửi ticket
+          Tạo Ticket hỗ trợ
         </button>
       </div>
 

@@ -194,7 +194,7 @@
                     v-if="notif.action"
                     class="tt-notif-action"
                     :class="notif.levelColor"
-                    @click="notif.actionRoute ? $router.push(notif.actionRoute) : null"
+                    @click="notif.actionRoute ? router.push(notif.actionRoute) : null"
                   >
                     {{ notif.action }}
                   </button>
