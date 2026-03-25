@@ -106,33 +106,47 @@
               @click="openDetail(ticket)"
               class="hover:bg-[var(--sys-bg-hover)] transition-colors cursor-pointer group"
             >
-              <td class="px-4 py-3 align-middle font-mono text-[11px] font-bold text-[var(--sys-brand-solid)] w-[1%] whitespace-nowrap">{{ ticket.id }}</td>
+              <td class="px-4 py-3 align-middle w-[1%] whitespace-nowrap">
+                <span class="font-mono text-[11px] font-bold text-[var(--sys-brand-solid)]">{{ ticket.id }}</span>
+              </td>
               <td class="px-4 py-3 align-middle w-[15%] whitespace-nowrap">
-                <div class="flex items-center gap-2.5">
-                  <div class="w-7 h-7 rounded-full bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center font-bold text-[10px] uppercase border border-[var(--sys-brand-border)]">
-                    {{ ticket.employeeName.charAt(0) }}
+                <div class="flex items-center gap-2.5 h-full">
+                  <div class="w-7 h-7 shrink-0 rounded-full bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] flex items-center justify-center font-bold text-[10px] uppercase border border-[var(--sys-brand-border)]">
+                    {{ ticket.employeeName?.charAt(0) || '?' }}
                   </div>
-                  <p class="text-[12px] font-bold text-[var(--sys-text-primary)] leading-tight">{{ ticket.employeeName }}</p>
+                  <span class="text-[12px] font-bold text-[var(--sys-text-primary)] leading-none truncate max-w-[150px]">{{ ticket.employeeName }}</span>
                 </div>
               </td>
               <td class="px-4 py-3 align-middle w-[1%] whitespace-nowrap">
-                <span class="px-2 py-0.5 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] rounded text-[10px] font-bold uppercase tracking-tight shadow-sm">{{ ticket.department }}</span>
+                <div class="flex items-center h-full">
+                  <span class="px-2 py-0.5 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)] border border-[var(--sys-brand-border)] rounded text-[10px] font-bold uppercase tracking-tight shadow-sm leading-none">{{ ticket.department }}</span>
+                </div>
               </td>
               <td class="px-4 py-3 align-middle w-auto">
-                <p class="text-[12px] font-medium text-[var(--sys-text-primary)] group-hover:text-[var(--sys-brand-solid)] transition-colors line-clamp-2" title="Nhấn để xem chi tiết">{{ ticket.title }}</p>
+                <div class="flex items-center h-full">
+                  <span class="text-[12px] font-medium text-[var(--sys-text-primary)] group-hover:text-[var(--sys-brand-solid)] transition-colors line-clamp-1 leading-none" title="Nhấn để xem chi tiết">{{ ticket.title }}</span>
+                </div>
               </td>
-              <td class="px-4 py-3 align-middle text-[12px] text-[var(--sys-text-secondary)] w-[1%] whitespace-nowrap">{{ ticket.category }}</td>
-              <td class="px-4 py-3 align-middle w-[1%] whitespace-nowrap">
-                <span :class="getPriorityClass(ticket.priority)" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide whitespace-nowrap">
-                  {{ ticket.priority }}
-                </span>
+              <td class="px-4 py-3 align-middle text-[12px] text-[var(--sys-text-secondary)] w-[1%] whitespace-nowrap">
+                <div class="flex items-center h-full leading-none">{{ ticket.category }}</div>
               </td>
-              <td class="px-4 py-3 align-middle text-[12px] text-[var(--sys-text-secondary)] w-[1%] whitespace-nowrap">{{ ticket.date }}</td>
               <td class="px-4 py-3 align-middle w-[1%] whitespace-nowrap">
-                <span :class="getStatusClass(ticket.status)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide whitespace-nowrap">
-                  <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotClass(ticket.status)"></span>
-                  {{ ticket.status }}
-                </span>
+                <div class="flex items-center h-full">
+                  <span :class="getPriorityClass(ticket.priority)" class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide leading-none whitespace-nowrap">
+                    {{ ticket.priority }}
+                  </span>
+                </div>
+              </td>
+              <td class="px-4 py-3 align-middle text-[12px] text-[var(--sys-text-secondary)] w-[1%] whitespace-nowrap">
+                <div class="flex items-center h-full leading-none">{{ ticket.date }}</div>
+              </td>
+              <td class="px-4 py-3 align-middle w-[1%] whitespace-nowrap">
+                <div class="flex items-center h-full">
+                  <span :class="getStatusClass(ticket.status)" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide leading-none whitespace-nowrap">
+                    <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotClass(ticket.status)"></span>
+                    {{ ticket.status }}
+                  </span>
+                </div>
               </td>
               <td class="px-4 py-3 text-right bg-transparent align-middle w-[1%] whitespace-nowrap">
                 <div class="flex items-center justify-end gap-1.5" @click.stop>

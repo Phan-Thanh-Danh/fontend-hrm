@@ -124,9 +124,6 @@ const isLoggingIn = ref(false);
 onMounted(() => {
   document.documentElement.classList.remove('dark');
   localStorage.removeItem('theme'); // Fail-safe if a theme key is used
-  
-  // Clear old mockDB data to reload fresh data
-  localStorage.removeItem('HRM_MOCK_DB_V2');
 });
 
 const handleLogin = async () => {
