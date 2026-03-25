@@ -92,39 +92,26 @@
                 <span class="text-[10px] font-semibold text-[var(--sys-brand-solid)] uppercase tracking-wider">2 Mới</span>
               </div>
               <div class="max-h-[300px] overflow-y-auto">
-                <div
+                <div v-for="notif in processedNotifications" :key="notif.id"
                   class="p-3 flex gap-3 transition-colors cursor-default border-b border-[var(--sys-border-subtle)] hover:bg-[var(--sys-bg-hover)]"
+                  :class="{'opacity-60': notif.isRead}"
                 >
-                  <div
-                    class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)]"
-                  >
-                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">person_add</span>
+                  <div :class="[
+                    'w-8 h-8 rounded-md flex items-center justify-center shrink-0',
+                    notif.type === 'success' ? 'bg-[var(--sys-success-soft)] text-[var(--sys-success-text)]' :
+                    (notif.type === 'danger' ? 'bg-[var(--sys-danger-soft)] text-[var(--sys-danger-text)]' :
+                    (notif.type === 'warning' ? 'bg-[var(--sys-warning-soft)] text-[var(--sys-warning-text)]' : 'bg-[var(--sys-brand-soft)] text-[var(--sys-brand-solid)]'))
+                  ]">
+                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1">{{ notif.icon }}</span>
                   </div>
-                  <div>
-                    <p
-                      class="text-xs font-medium mb-0.5 text-[var(--sys-text-primary)]"
-                    >3 Ứng viên mới nộp CV</p>
-                    <p
-                      class="text-[10px] text-[var(--sys-text-secondary)] font-medium"
-                    >Frontend Developer · 15 phút trước</p>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs font-medium mb-0.5 text-[var(--sys-text-primary)] truncate">{{ notif.title }}</p>
+                    <p class="text-[10px] text-[var(--sys-text-secondary)] font-medium line-clamp-2">{{ notif.desc }}</p>
+                    <p class="text-[9px] text-[var(--sys-text-disabled)] mt-1">{{ notif.time }}</p>
                   </div>
                 </div>
-                <div
-                  class="p-3 flex gap-3 transition-colors cursor-default hover:bg-[var(--sys-bg-hover)]"
-                >
-                  <div
-                    class="w-8 h-8 rounded-md flex items-center justify-center shrink-0 bg-[var(--sys-success-soft)] text-[var(--sys-success-text)]"
-                  >
-                    <span class="material-symbols-rounded text-base" style="font-variation-settings:'FILL' 1,'wght' 400,'GRAD' 0,'opsz' 20">task_alt</span>
-                  </div>
-                  <div>
-                    <p
-                      class="text-xs font-medium mb-0.5 text-[var(--sys-text-primary)]"
-                    >Đơn xin nghỉ phép đã được duyệt</p>
-                    <p
-                      class="text-[10px] text-[var(--sys-text-secondary)] font-medium"
-                    >Phê duyệt · 1 giờ trước</p>
-                  </div>
+                <div v-if="processedNotifications.length === 0" class="p-8 text-center text-xs text-[var(--sys-text-disabled)]">
+                  Không có thông báo mới
                 </div>
               </div>
               <div
@@ -404,6 +391,32 @@ const currentUserRole = ref(localStorage.getItem('userRole') || 'admin');
 
 const notificationDropdownRef = ref(null);
 const profileDropdownRef = ref(null);
+const liveNotifications = ref([]);
+
+const { employeeId: currentEmpId } = useCurrentUser();
+
+const fetchNotifications = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/notifications?userId=${currentEmpId.value}&_sort=id&_order=desc&_limit=20`);
+    if (res.ok) {
+      liveNotifications.value = await res.json();
+    }
+  } catch (error) {
+    console.error('Lỗi khi tải thông báo:', error);
+  }
+};
+
+const processedNotifications = computed(() => {
+  return liveNotifications.value.map(n => ({
+    id: n.id,
+    title: n.title,
+    desc: n.desc,
+    time: n.time || 'Vừa xong',
+    icon: n.icon || 'notifications',
+    type: n.type || 'info', // success, danger, warning, info
+    isRead: n.isRead
+  }));
+});
 
 // ── Dark mode effect ───────────────────────────────────────────────────────
 watch(isDark, (val) => {
@@ -459,6 +472,12 @@ const handleClickOutside = (event) => {
 
 onMounted(() => {
   document.addEventListener('click', handleClickOutside);
+  fetchNotifications();
+  const interval = setInterval(fetchNotifications, 10000);
+  onUnmounted(() => {
+    document.removeEventListener('click', handleClickOutside);
+    clearInterval(interval);
+  });
   
   // Check authentication
   const userRole = localStorage.getItem('userRole');
@@ -466,7 +485,6 @@ onMounted(() => {
     router.push('/login');
   }
 });
-onUnmounted(() => document.removeEventListener('click', handleClickOutside));
 
 // ── Logout ─────────────────────────────────────────────────────────────────
 const logout = async () => {

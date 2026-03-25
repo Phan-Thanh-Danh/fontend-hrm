@@ -192,12 +192,15 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import {
   importantNotifications as staticNotifs
 } from '@/mock-data/sampleData_GiamDoc.js';
 import { mockLeaveRequests, mockEmployees, mockRequestTypes } from '@/mock-data/index.js';
+import { useCurrentUser } from '@/composables/useCurrentUser';
+
+const { employeeId } = useCurrentUser();
 
 const route  = useRoute();
 const router = useRouter();
@@ -222,11 +225,42 @@ const goToNotifications = () => {
   router.push('/giamdoc/thongbao');
 };
 
-const handleNotifClick = (item) => {
+const liveNotifications = ref([]);
+
+const fetchNotifications = async () => {
+  try {
+    const res = await fetch(`http://localhost:3000/notifications?userId=${employeeId.value}&_sort=id&_order=desc&_limit=20`);
+    if (res.ok) {
+      liveNotifications.value = await res.json();
+    }
+  } catch (error) {
+    console.error('Lỗi khi tải thông báo:', error);
+  }
+};
+
+onMounted(() => {
+  fetchNotifications();
+  const interval = setInterval(fetchNotifications, 10000); // Polling every 10s
+  onUnmounted(() => clearInterval(interval));
+});
+
+const handleNotifClick = async (item) => {
   showPopup.value = false;
+  // Mark as read (optional, depends on backend capability)
+  if (!item.isRead) {
+    try {
+      await fetch(`http://localhost:3000/notifications/${item.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isRead: true })
+      });
+      fetchNotifications();
+    } catch (e) {}
+  }
+  
   if (item.actionRoute) {
     router.push(item.actionRoute);
-  } else {
+  } else if (item.type === 'warning' || item.desc.includes('cần bạn phê duyệt')) {
     router.push('/giamdoc/thongbao');
   }
 };
@@ -245,6 +279,21 @@ const realApprovals = computed(() => {
 });
 
 const recentNotifications = computed(() => {
+  if (liveNotifications.value.length > 0) {
+    return liveNotifications.value.slice(0, 5).map(n => ({
+      id: n.id,
+      level: n.type === 'warning' ? 'canh_bao' : (n.type === 'info' ? 'thong_tin' : 'thanh_cong'),
+      levelLabel: n.type === 'warning' ? 'CẦN DUYỆT' : (n.type === 'info' ? 'THÔNG TIN' : 'HOÀN TẤT'),
+      levelColor: n.type === 'warning' ? 'text-orange-700' : 'text-blue-700',
+      levelBg: n.type === 'warning' ? 'bg-orange-50' : 'bg-blue-50',
+      dotColor: n.type === 'warning' ? 'bg-orange-500' : 'bg-blue-500',
+      title: n.title,
+      desc: n.desc,
+      time: n.time || 'Vừa xong',
+      actionRoute: n.actionRoute
+    }));
+  }
+  
   const dynamicNotifs = realApprovals.value.filter(r => r.urgent).slice(0, 2).map(r => ({
     id: `urgent-${r.id}`,
     level: 'canh_bao',

@@ -1120,6 +1120,57 @@
       "approver_manager": "Trưởng phòng",
       "statusText": "Đã duyệt",
       "approver_hr": "Phòng Nhân Sự"
+    },
+    {
+      "requesterId": 3,
+      "requestTypeId": 10,
+      "notes": "chịu ",
+      "startDate": "2026-05-01",
+      "endDate": "2026-05-09",
+      "days": 9,
+      "other_reason_name": null,
+      "status": "CHỜ_GIÁM_ĐỐC_DUYỆT",
+      "is_urgent": true,
+      "request_date": "2026-03-25",
+      "department_id": 2,
+      "id": "zZlFIUhxdU4",
+      "statusText": "Chờ Giám đốc duyệt",
+      "approver_manager": "Trưởng phòng"
+    },
+    {
+      "requesterId": 3,
+      "requestTypeId": 9,
+      "notes": "okokokokokoik",
+      "startDate": "2026-05-01",
+      "endDate": "2026-05-06",
+      "days": 6,
+      "other_reason_name": null,
+      "status": "approved",
+      "is_urgent": true,
+      "request_date": "2026-03-25",
+      "department_id": 2,
+      "id": "mHFfhbpRTY8",
+      "statusText": "Đã duyệt",
+      "approver_manager": "Trưởng phòng",
+      "approver_director": "Ban Giám Đốc",
+      "approver_hr": "Phòng Nhân Sự"
+    },
+    {
+      "requesterId": 3,
+      "requestTypeId": 1,
+      "notes": "ko bt nx chịu á",
+      "startDate": "2026-06-01",
+      "endDate": "2026-06-02",
+      "days": 2,
+      "other_reason_name": null,
+      "status": "approved",
+      "is_urgent": false,
+      "request_date": "2026-03-25",
+      "department_id": 2,
+      "id": "kEnHbnwzv3M",
+      "statusText": "Đã duyệt",
+      "approver_manager": "Trưởng phòng",
+      "approver_hr": "Phòng Nhân Sự"
     }
   ],
   "projects": [
@@ -6817,6 +6868,94 @@
       "status": "ontime",
       "notes": "Chấm công tự động từ đơn nghỉ phép #8a8nCUY8lBE",
       "id": "HbcJUkyGMEU"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-05-01",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #mHFfhbpRTY8",
+      "id": "6IfYu7WMTEI"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-05-02",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #mHFfhbpRTY8",
+      "id": "5XrpFKDUen8"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-05-03",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #mHFfhbpRTY8",
+      "id": "YywgC54PQQs"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-05-04",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #mHFfhbpRTY8",
+      "id": "v_kG8VZ69CI"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-05-05",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #mHFfhbpRTY8",
+      "id": "asRIE9tHT40"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-05-06",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #mHFfhbpRTY8",
+      "id": "CbKDYPoeTIA"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-06-01",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #kEnHbnwzv3M",
+      "id": "SZ1yJd4FDsE"
+    },
+    {
+      "employeeId": 3,
+      "attendanceDate": "2026-06-02",
+      "checkIn1": "08:00:00",
+      "checkOut1": "12:00:00",
+      "checkIn2": "13:30:00",
+      "checkOut2": "17:30:00",
+      "status": "ontime",
+      "notes": "Chấm công tự động từ đơn nghỉ phép #kEnHbnwzv3M",
+      "id": "61IgEGzlRHM"
     }
   ],
   "contracts": [
@@ -7254,6 +7393,96 @@
       "isRead": false,
       "icon": "notifications",
       "id": "VNUOr0d2EDI"
+    },
+    {
+      "userId": 3,
+      "type": "danger",
+      "title": "Kết quả duyệt đơn nghỉ phép",
+      "desc": "Đơn nghỉ phép của bạn đã được TỪ CHỐI.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "cancel",
+      "id": "OECqnBTafIo"
+    },
+    {
+      "userId": 3,
+      "type": "info",
+      "title": "Cập nhật đơn nghỉ phép",
+      "desc": "Đơn của bạn đã được Trưởng phòng chuyển đến Ban Giám Đốc.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "notifications",
+      "id": "5t5LaPhnOI0"
+    },
+    {
+      "userId": 1,
+      "type": "warning",
+      "title": "Yêu cầu phê duyệt mới",
+      "desc": "Nhân viên undefined gửi đơn nghỉ phép 6 ngày cần bạn phê duyệt.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "pending_actions",
+      "id": "CmuUebZ6RaY"
+    },
+    {
+      "userId": 4,
+      "type": "warning",
+      "title": "Yêu cầu phê duyệt mới",
+      "desc": "Nhân viên undefined gửi đơn nghỉ phép 6 ngày cần bạn phê duyệt.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "pending_actions",
+      "id": "NBVZMsz4GKY"
+    },
+    {
+      "userId": 100,
+      "type": "info",
+      "title": "Đơn nghỉ phép chờ xác nhận",
+      "desc": "Nhân viên Bùi Ngọc Bảo Ngân nghỉ đã được Giám đốc duyệt nhanh, cần bạn xác nhận & chấm công.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "pending",
+      "id": "Xo81kpRJ52E"
+    },
+    {
+      "userId": "NV00003",
+      "type": "success",
+      "title": "Thông báo xét duyệt Nghỉ phép",
+      "desc": "Ban lãnh đạo đã PHÊ DUYỆT đơn nghỉ phép của bạn.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "notifications",
+      "id": "-xeGNxj4W_8"
+    },
+    {
+      "userId": 3,
+      "type": "info",
+      "title": "Cập nhật đơn nghỉ phép",
+      "desc": "Đơn của bạn đang chờ HR xác nhận.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "notifications",
+      "id": "WfHnHSUe74Y"
+    },
+    {
+      "userId": 100,
+      "type": "info",
+      "title": "Đơn nghỉ phép chờ xác nhận",
+      "desc": "Nhân viên undefined nghỉ 2 ngày cần bạn xác nhận & chấm công.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "pending",
+      "id": "5WoYq9bEsGU"
+    },
+    {
+      "userId": "NV00003",
+      "type": "success",
+      "title": "Thông báo xét duyệt Nghỉ phép",
+      "desc": "Ban lãnh đạo đã PHÊ DUYỆT đơn nghỉ phép của bạn.",
+      "time": "Vừa xong",
+      "isRead": false,
+      "icon": "notifications",
+      "id": "8vpdqYG5cAI"
     }
   ],
   "dashboardStats": {

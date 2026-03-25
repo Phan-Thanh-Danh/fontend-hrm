@@ -396,10 +396,18 @@ const closeRejectModal = () => { showRejectModal.value = false; rejectReason.val
 
 const handleApprove = async (r) => {
   try {
+    const isLeaveRequest = r.raw && Number(r.raw.requestTypeId) === 1;
+    const newStatus = isLeaveRequest ? 'CHỜ_XÁC_NHẬN_HR' : 'ĐÃ_DUYỆT';
+    const newStatusText = isLeaveRequest ? 'Chờ HR xác nhận' : 'Đã duyệt';
+
     const res = await fetch(`http://localhost:3000/leaveRequests/${r.id || r.raw.id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'ĐÃ_DUYỆT' })
+      body: JSON.stringify({ 
+        status: newStatus,
+        statusText: newStatusText,
+        approver_director: 'Ban Giám Đốc'
+      })
     });
     
     if (res.ok) {
@@ -425,6 +433,27 @@ const handleApprove = async (r) => {
       }
 
       mockLeaveRequests.approve(r.id);
+      
+      // Notify HR if it's a leave request waiting for confirmation
+      if (isLeaveRequest) {
+        const hrs = mockEmployees.filter(e => e.role === 'HR' || e.role === 'ADMIN');
+        for (const hr of hrs) {
+          await fetch('http://localhost:3000/notifications', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              userId: hr.employeeId || hr.id,
+              type: 'info',
+              title: 'Đơn nghỉ phép chờ xác nhận',
+              desc: `Nhân viên ${r.employeeName} nghỉ ${r.duration} đã được Giám đốc duyệt, cần bạn xác nhận & chấm công.`,
+              time: 'Vừa xong',
+              isRead: false,
+              icon: 'pending'
+            })
+          });
+        }
+      }
+
       loadData();
       closeDetailModal();
     }

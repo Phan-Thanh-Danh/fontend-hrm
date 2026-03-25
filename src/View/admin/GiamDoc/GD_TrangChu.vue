@@ -509,7 +509,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
 import { mockEmployees, mockDepartments, mockLeaveRequests, mockRequestTypes, mockSalaryDetails, mockAttendances } from '@/mock-data/index.js';
@@ -531,11 +531,20 @@ const donutTotal = ref(0);
 const reminderText = ref('');
 const timelineEvents = ref([]);
 
-const fetchData = () => {
+const fetchData = async () => {
   try {
-    const allEmps = mockEmployees;
+    // Fetch real-time data from API if available, fallback to mock
+    const [resReqs, resEmp, resAtt] = await Promise.all([
+      fetch('http://localhost:3000/leaveRequests').then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('http://localhost:3000/employees').then(r => r.ok ? r.json() : null).catch(() => null),
+      fetch('http://localhost:3000/attendances').then(r => r.ok ? r.json() : null).catch(() => null)
+    ]);
+
+    const allReqs = resReqs || mockLeaveRequests;
+    const allEmps = resEmp || mockEmployees;
+    const allAtts = resAtt || mockAttendances;
+    
     const allDepts = mockDepartments;
-    const allReqs = mockLeaveRequests;
 
     const activeEmps = allEmps.filter(e => e.status !== 'ĐÃ_NGHỈ_VIỆC');
     const totalHeadcount = activeEmps.length;
@@ -557,9 +566,8 @@ const fetchData = () => {
     }
 
     // Chuyên cần
-    const allAttendance = mockAttendances;
-    const totalAttRec = allAttendance.length;
-    const onTimeRec = allAttendance.filter(a => a.status === 'ĐÚNG_GIỜ' || a.status === 'ON_TIME' || a.checkIn).length;
+    const totalAttRec = allAtts.length;
+    const onTimeRec = allAtts.filter(a => a.status === 'ĐÚNG_GIỜ' || a.status === 'ON_TIME' || a.checkIn).length;
     const chuyenCanRate = totalAttRec > 0 ? Math.min(((onTimeRec / totalAttRec) * 100).toFixed(1), 100) : 98.2;
 
     kpiCards.value = [
@@ -677,7 +685,8 @@ const fetchData = () => {
         };
         const avatarUI = getAvatarColors(emp.employeeId || 1);
         return {
-            id: r.requestId,
+            id: r.id || r.requestId,
+            requestId: r.requestId,
             isReal: true,
             statusRaw: r.status,
             title: r.title,
@@ -721,6 +730,8 @@ const fetchData = () => {
 
 onMounted(() => {
   fetchData();
+  const interval = setInterval(fetchData, 10000); // Tự động cập nhật mỗi 10 giây
+  onUnmounted(() => clearInterval(interval));
 });
 
 const pendingApprovals = computed(() => approvals.value.filter((a) => a.status === 'pending'));
@@ -779,19 +790,56 @@ const closeRejectModal = () => {
   if (returnToDetailAfterAction.value) showDetailModal.value = true;
 };
 
-const confirmApprove = () => {
+const confirmApprove = async () => {
   if (!selectedApproval.value) return;
 
-  const isReal = selectedApproval.value.isReal;
   const requestId = selectedApproval.value.id;
+  const isLeaveRequest = selectedApproval.value.type === 'Nghỉ phép' || selectedApproval.value.statusRaw === 'CHỜ_GIÁM_ĐỐC_DUYỆT';
 
-  if (isReal) {
-    if (selectedApproval.value.status === 'pending' || selectedApproval.value.statusRaw === 'CHỜ_GIÁM_ĐỐC_DUYỆT') {
+  try {
+    const newStatus = isLeaveRequest ? 'CHỜ_XÁC_NHẬN_HR' : 'ĐÃ_DUYỆT';
+    const newStatusText = isLeaveRequest ? 'Chờ HR xác nhận' : 'Đã duyệt';
+
+    const res = await fetch(`http://localhost:3000/leaveRequests/${requestId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: newStatus,
+        statusText: newStatusText,
+        approver_director: 'Ban Giám Đốc'
+      })
+    });
+
+    if (res.ok) {
+       // Notify HR
+       const hrs = mockEmployees.filter(e => e.role === 'HR' || e.role === 'ADMIN');
+       for (const hr of hrs) {
+         fetch('http://localhost:3000/notifications', {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({
+             userId: hr.employeeId || hr.id,
+             type: 'info',
+             title: 'Đơn nghỉ phép chờ xác nhận',
+             desc: `Nhân viên ${selectedApproval.value.name} nghỉ đã được Giám đốc duyệt nhanh, cần bạn xác nhận & chấm công.`,
+             time: 'Vừa xong',
+             isRead: false,
+             icon: 'pending'
+           })
+         }).catch(() => {});
+       }
+    }
+    
+    // Fallback/Sync for mock data in memory
+    if (selectedApproval.value.statusRaw === 'CHỜ_GIÁM_ĐỐC_DUYỆT') {
       mockLeaveRequests.directorApprove(requestId);
     } else {
       mockLeaveRequests.approve(requestId);
     }
-    fetchData();
+    
+    await fetchData();
+  } catch (error) {
+    console.error('Lỗi khi duyệt đơn:', error);
   }
 
   showApproveModal.value = false;
@@ -808,10 +856,25 @@ const confirmReject = async () => {
     return;
   }
 
-  const isReal = selectedApproval.value.isReal;
-  if (isReal) {
-    mockLeaveRequests.reject(selectedApproval.value.id, reason);
-    fetchData();
+  const requestId = selectedApproval.value.id; // Đây là r.id nhờ vào mapping mới
+
+  try {
+    await fetch(`http://localhost:3000/leaveRequests/${requestId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: 'TỪ_CHỐI',
+        statusText: 'Đã từ chối',
+        notes: reason,
+        rejectionReason: reason
+      })
+    });
+    
+    // Sync for mock
+    mockLeaveRequests.reject(requestId, reason);
+    await fetchData();
+  } catch (error) {
+    console.error('Lỗi khi từ chối đơn:', error);
   }
 
   showRejectModal.value = false;

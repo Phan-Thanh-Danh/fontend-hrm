@@ -97,10 +97,9 @@ const fetchData = async () => {
       })
       .map(e => e.employeeId);
 
-    // Lọc các đơn của nhân viên trong phòng ban này VÀ số ngày nghỉ <= 3
+    // Lọc các đơn của nhân viên trong phòng ban này
     deptLeaveReqs.value = allLeaves.filter(r => 
-      deptEmpIds.includes(r.requesterId) && 
-      (Number(r.days) <= 3)
+      deptEmpIds.includes(r.requesterId)
     );
   } catch (error) {
     console.error('Lỗi khi tải dữ liệu nghỉ phép TP:', error);
@@ -139,7 +138,7 @@ const mapReq = (r) => {
 }
 
 const pendingLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'CHỜ_DUYỆT').map(mapReq))
-const approvedLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'ĐÃ_DUYỆT' || r.status === 'CHỜ_XÁC_NHẬN_HR').map(mapReq))
+const approvedLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'ĐÃ_DUYỆT' || r.status === 'CHỜ_XÁC_NHẬN_HR' || r.status === 'CHỜ_GIÁM_ĐỐC_DUYỆT').map(mapReq))
 const rejectedLeaves = computed(() => deptLeaveReqs.value.filter(r => r.status === 'TỪ_CHỐI').map(mapReq))
 
 const currentList = computed(() => {
@@ -152,36 +151,83 @@ const notifyUser = async (reqId, status) => {
   try {
     const req = deptLeaveReqs.value.find(r => (r.id || r.requestId) === reqId);
     if (!req) return;
+    // 1. Thông báo cho nhân viên gửi đơn
     await fetch('http://localhost:3000/notifications', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         userId: req.requesterId,
-        type: status === 'ĐÃ_DUYỆT' ? 'success' : 'danger',
-        title: 'Kết quả duyệt đơn nghỉ phép',
-        desc: `Đơn nghỉ phép của bạn đã được ${status === 'ĐÃ_DUYỆT' ? 'CHẤP THUẬN' : 'TỪ CHỐI'}.`,
+        type: status === 'TỪ_CHỐI' ? 'danger' : 'info',
+        title: 'Cập nhật đơn nghỉ phép',
+        desc: status === 'CHỜ_GIÁM_ĐỐC_DUYỆT' ? 'Đơn của bạn đã được Trưởng phòng chuyển đến Ban Giám Đốc.' : (status === 'CHỜ_XÁC_NHẬN_HR' ? 'Đơn của bạn đang chờ HR xác nhận.' : 'Đơn của bạn đã được xử lý.'),
         time: 'Vừa xong',
         isRead: false,
-        icon: status === 'ĐÃ_DUYỆT' ? 'done_all' : 'cancel'
+        icon: 'notifications'
       })
     });
+
+    // 2. Thông báo cho Giám đốc nếu cần duyệt (> 3 ngày)
+    if (status === 'CHỜ_GIÁM_ĐỐC_DUYỆT') {
+      const directors = mockEmployees.filter(e => e.role === 'DIRECTOR');
+      for (const director of directors) {
+        await fetch('http://localhost:3000/notifications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: director.employeeId || director.id,
+            type: 'warning',
+            title: 'Yêu cầu phê duyệt mới',
+            desc: `Nhân viên ${req.name || req.requesterName} gửi đơn nghỉ phép ${req.days} ngày cần bạn phê duyệt.`,
+            time: 'Vừa xong',
+            isRead: false,
+            icon: 'pending_actions'
+          })
+        });
+      }
+    }
+
+    // 3. Thông báo cho HR nếu cần xác nhận chấm công
+    if (status === 'CHỜ_XÁC_NHẬN_HR') {
+      const hrs = mockEmployees.filter(e => e.role === 'HR');
+      for (const hr of hrs) {
+        await fetch('http://localhost:3000/notifications', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userId: hr.employeeId || hr.id,
+            type: 'info',
+            title: 'Đơn nghỉ phép chờ xác nhận',
+            desc: `Nhân viên ${req.name || req.requesterName} nghỉ ${req.days} ngày cần bạn xác nhận & chấm công.`,
+            time: 'Vừa xong',
+            isRead: false,
+            icon: 'pending'
+          })
+        });
+      }
+    }
   } catch (e) { console.error('Notify Error:', e); }
 };
 
 const approve = async (id) => {
   try {
     const req = deptLeaveReqs.value.find(r => (r.id || r.requestId) === id);
-    const newStatus = (req && Number(req.days) <= 3) ? 'CHỜ_XÁC_NHẬN_HR' : 'ĐÃ_DUYỆT';
+    if (!req) return;
     
+    const isUnder3Days = Number(req.days) <= 3;
+    const newStatus = isUnder3Days ? 'CHỜ_XÁC_NHẬN_HR' : 'CHỜ_GIÁM_ĐỐC_DUYỆT';
+    const newStatusText = isUnder3Days ? 'Chờ HR xác nhận' : 'Chờ Giám đốc duyệt';
+
     await fetch(`http://localhost:3000/leaveRequests/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
         status: newStatus,
-        approver_manager: 'Trưởng phòng' // Có thể lấy tên user từ store nếu có
+        statusText: newStatusText,
+        approver_manager: 'Trưởng phòng'
       })
     });
-    await notifyUser(id, newStatus === 'CHỜ_XÁC_NHẬN_HR' ? 'ĐANG_CHỜ_HR' : 'ĐÃ_DUYỆT');
+    
+    await notifyUser(id, isUnder3Days ? 'CHỜ_XÁC_NHẬN_HR' : 'CHỜ_GIÁM_ĐỐC_DUYỆT');
     fetchData();
   } catch (err) { console.error('Lỗi khi phê duyệt:', err); }
 }

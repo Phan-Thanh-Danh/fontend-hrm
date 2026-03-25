@@ -354,7 +354,10 @@
  */
 import { ref, computed, onMounted, watch } from 'vue';
 import Dropdown from '@/components/Dropdown.vue';
-import { mockLeaveRequests, mockEmployees, mockDepartments, mockRequestTypes } from '@/mock-data/index.js';
+import { mockLeaveRequests, mockEmployees, mockDepartments, mockRequestTypes, mockAttendances } from '@/mock-data/index.js';
+import { useConfirm } from '@/composables/useConfirm';
+
+const { showAlert } = useConfirm();
 
 const filterDept = ref('ALL');
 const filterRange = ref('month');
@@ -611,12 +614,12 @@ const markAttendance = async () => {
       });
     }
     
-    alert(`Đã chấm công tự động cho ${activeRequest.value.name} từ ${dates[0]} đến ${dates[dates.length-1]}`);
+    await showAlert('THÀNH CÔNG', `Đã chấm công tự động cho ${activeRequest.value.name} từ ${dates[0]} đến ${dates[dates.length-1]}`);
     showAttendanceModal.value = false;
     activeRequestId.value = null;
   } catch (err) {
     console.error('Lỗi khi chấm công:', err);
-    alert('Có lỗi xảy ra khi chấm công tự động.');
+    await showAlert('LỖI HỆ THỐNG', 'Có lỗi xảy ra khi chấm công tự động.');
   } finally {
     isProcessingAttendance.value = false;
   }
@@ -624,7 +627,7 @@ const markAttendance = async () => {
 
 const confirmRejectAction = async (req) => {
   if (!rejectComment.value) {
-    alert('Vui lòng nhập lý do từ chối');
+    await showAlert('THIẾU DỮ LIỆU', 'Vui lòng nhập lý do từ chối');
     return;
   }
   try {
