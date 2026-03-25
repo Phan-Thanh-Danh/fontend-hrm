@@ -129,14 +129,15 @@
               </div>
 
               <!-- Target Col (Amber) -->
-              <div class="w-5 sm:w-8 md:w-10 rounded-t-md transition-all duration-300 group-hover:opacity-90 bg-gradient-to-t from-amber-500 to-amber-300 shadow-sm shadow-amber-500/20 group-hover:-translate-y-1"
-                   :style="`height: ${col.targetH}%`">
+              <div class="w-5 sm:w-8 md:w-10 rounded-t-md transition-all duration-300 group-hover:opacity-90 bg-gradient-to-t from-amber-500 to-amber-300 shadow-sm shadow-amber-500/20 group-hover:-translate-y-1 bar-pillar-modern"
+                   :style="`height: ${col.targetH}%; animation-delay: ${200 + (i * 100)}ms`"
+              >
               </div>
 
               <!-- Current Col (Blue) -->
-              <div class="w-5 sm:w-8 md:w-10 rounded-t-md transition-all duration-300 group-hover:opacity-90 bg-gradient-to-t from-blue-600 to-blue-400 shadow-sm shadow-blue-500/20 relative group-hover:-translate-y-1"
+              <div class="w-5 sm:w-8 md:w-10 rounded-t-md transition-all duration-300 group-hover:opacity-90 bg-gradient-to-t from-blue-600 to-blue-400 shadow-sm shadow-blue-500/20 relative group-hover:-translate-y-1 bar-pillar-modern"
                    :class="col.active ? 'opacity-100' : 'opacity-85'"
-                   :style="`height: ${col.currentH}%`">
+                   :style="`height: ${col.currentH}%; animation-delay: ${300 + (i * 100)}ms`">
                    <!-- SPECIAL FEATURE: Vượt mục tiêu hiển thị ngôi sao và hiệu ứng pulse viền sáng cực đẹp đặc quyền của Trang chủ Giám đốc -->
                    <div v-if="col.current >= col.target" class="absolute -top-6 left-1/2 -translate-x-1/2 text-[14px] text-green-500 font-extrabold opacity-0 group-hover:opacity-100 transition-all duration-[400ms] drop-shadow-[0_0_5px_rgba(74,222,128,0.8)] group-hover:-translate-y-1">★</div>
                    <div v-if="col.current >= col.target" class="absolute inset-0 bg-gradient-to-t from-transparent to-white/30 rounded-t-md animate-pulse pointer-events-none"></div>
@@ -148,37 +149,6 @@
           <!-- Y-axis lines -->
           <div class="y-axis-lines">
             <span class="y-label" v-for="(lab, i) in barChartYLabels" :key="i">{{ lab }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Donut Chart -->
-      <div class="chart-card chart-card--narrow animate-chart cursor-pointer hover:border-blue-400/50 transition-all" style="animation-delay: 300ms;" @click="router.push('/giamdoc/nhansu')">
-        <div class="chart-card-header">
-          <h4 class="chart-title">Cơ cấu phòng ban</h4>
-        </div>
-
-        <div class="donut-wrapper">
-          <div class="donut-chart-ring" :style="donutStyle">
-            <div class="donut-center">
-              <span class="donut-number">{{ donutTotal }}</span>
-              <span class="donut-unit">Nhân sự</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="donut-legend">
-          <div class="donut-legend-item" v-for="item in donutData" :key="item.label">
-            <div class="flex items-center gap-2">
-              <span class="donut-dot" :style="`background:${item.color}`"></span>
-              <span class="donut-label">{{ item.label }}</span>
-            </div>
-            <div class="donut-stat">
-              <span class="donut-pct">{{ item.pct }}%</span>
-              <div class="donut-mini-bar">
-                <div :style="`width:${item.pct}%;background:${item.color}`"></div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -482,8 +452,6 @@ const approvals = ref([]);
 const kpiCards = ref([]);
 const barChartData = ref([]);
 const barChartYLabels = ref([]);
-const donutData = ref([]);
-const donutTotal = ref(0);
 const reminderText = ref('');
 const timelineEvents = ref([]);
 
@@ -577,19 +545,6 @@ const fetchData = async () => {
     const maxVal = Math.max(...barChartData.value.map(d => Math.max(d.current, d.target))) + 10;
     const step = Math.ceil(maxVal / 5);
     barChartYLabels.value = Array.from({length: 6}, (_, i) => (step * (5 - i)).toLocaleString());
-
-    // 3. Donut Data: Department Structure
-    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#14b8a6'];
-    donutTotal.value = activeEmps.length;
-    donutData.value = allDepts.map((d, i) => {
-        const count = activeEmps.filter(e => e.departmentId === d.departmentId || (e.department && e.department.departmentId === d.departmentId)).length;
-        const pct = Math.round((count / (donutTotal.value || 1)) * 100);
-        return {
-            label: d.departmentName,
-            pct: pct,
-            color: colors[i % colors.length]
-        };
-    }).filter(d => d.pct > 0).sort((a,b) => b.pct - a.pct);
 
     // 4. Dynamic Timeline: Today Birthdays and New Hires
     const todayStr = '03-25'; // Giả lập hôm nay 25/03 theo context
@@ -814,20 +769,6 @@ const confirmReject = async () => {
 
   closeMainModal();
 };
-
-// Tính toán conic-gradient động cho Donut Chart
-const donutStyle = computed(() => {
-  let gradientStr = [];
-  let currentPct = 0;
-  donutData.value.forEach(item => {
-    let nextPct = currentPct + item.pct;
-    gradientStr.push(`${item.color} ${currentPct}% ${nextPct}%`);
-    currentPct = nextPct;
-  });
-  return {
-    background: `conic-gradient(${gradientStr.join(', ')})`
-  };
-});
 
 // Tính toán Scale động cho Bar Chart từ Data
 const dynamicBarChart = computed(() => {
@@ -1130,7 +1071,7 @@ const dynamicBarChart = computed(() => {
 /* ── Charts Grid ── */
 .charts-grid {
   display: grid;
-  grid-template-columns: 1fr 340px;
+  grid-template-columns: 1fr;
   gap: 16px;
 }
 
@@ -1575,6 +1516,24 @@ const dynamicBarChart = computed(() => {
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pillarGrowModern {
+  from { 
+    transform: scaleY(0); 
+    opacity: 0; 
+    filter: blur(8px);
+  }
+  to { 
+    transform: scaleY(1); 
+    opacity: 1; 
+    filter: blur(0);
+  }
+}
+
+.bar-pillar-modern {
+  transform-origin: bottom;
+  animation: pillarGrowModern 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
 }
 
 .btn-schedule {

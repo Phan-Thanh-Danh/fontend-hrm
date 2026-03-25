@@ -64,8 +64,8 @@
                   class="flex items-end h-full justify-center group relative cursor-pointer w-16 hover:z-[60]">
                 
                 <!-- Bar -->
-                <div class="w-6 md:w-8 bg-gradient-to-t rounded-t-md relative shadow-sm group-hover:opacity-90 transition-opacity"
-                     :class="[item.color, item.shadow]" :style="`height: ${item.heightPct}%`">
+                <div class="w-6 md:w-8 bg-gradient-to-t rounded-t-md relative shadow-sm group-hover:opacity-90 transition-opacity bar-pillar"
+                     :class="[item.color, item.shadow]" :style="`height: ${item.heightPct}%; animation-delay: ${200 + (index * 100)}ms`">
                      
                    <!-- Clean, Informative Tooltip -->
                    <div class="hidden group-hover:flex absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap pointer-events-none">
@@ -115,16 +115,16 @@
           
           <!-- Column Bars Container -->
           <div class="absolute inset-0 ml-8 flex items-end justify-around pb-[1px] z-20" style="height: 100%;">
-             <div v-for="(item, index) in bienDongChartComputed" :key="index"
+             <div v-for="(item, idx) in bienDongChartComputed" :key="idx"
                   class="flex items-end gap-1.5 md:gap-2.5 h-full justify-center group relative cursor-pointer w-16 hover:z-[60]">
                 
                 <!-- Tuyển Vào Bar -->
-                <div class="w-4 md:w-5 bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-md relative shadow-sm shadow-blue-500/20 group-hover:opacity-90 transition-opacity"
-                     :style="`height: ${item.tuyenVaoPct}%`"></div>
+                <div class="w-4 md:w-5 bg-gradient-to-t from-blue-600 to-blue-400 rounded-t-md relative shadow-sm shadow-blue-500/20 group-hover:opacity-90 transition-opacity bar-pillar"
+                     :style="`height: ${item.tuyenVaoPct}%; animation-delay: ${idx * 100}ms`"></div>
 
                 <!-- Nghỉ Việc Bar -->
-                <div class="w-4 md:w-5 bg-gradient-to-t from-rose-500 to-rose-400 rounded-t-md relative shadow-sm shadow-rose-500/20 group-hover:opacity-90 transition-opacity"
-                     :style="`height: ${item.nghiViecPct}%`"></div>
+                <div class="w-4 md:w-5 bg-gradient-to-t from-rose-500 to-rose-400 rounded-t-md relative shadow-sm shadow-rose-500/20 group-hover:opacity-90 transition-opacity bar-pillar"
+                     :style="`height: ${item.nghiViecPct}%; animation-delay: ${(idx * 100) + 50}ms`"></div>
 
                 <!-- Phantom Div for precise Tooltip Positioning above the tallest bar -->
                 <div class="absolute bottom-0 w-full pointer-events-none" :style="`height: ${Math.max(item.tuyenVaoPct, item.nghiViecPct)}%`">
@@ -172,7 +172,7 @@
             </thead>
             <!-- ✅ Top performers – từ topPerformers -->
             <tbody class="divide-y divide-slate-50">
-              <tr v-for="emp in topPerformers" :key="emp.id" class="hover:bg-slate-50/50 transition-colors group">
+              <tr v-for="(emp, index) in topPerformers" :key="emp.id" class="hover:bg-slate-50/50 transition-colors group">
                 <td class="py-5 px-2">
                   <div class="flex items-center gap-3">
                     <img :src="emp.avatar" class="w-10 h-10 rounded-full object-cover border-2 border-slate-100" alt=""/>
@@ -186,7 +186,10 @@
                 <td class="py-5 px-2 text-center w-36">
                   <span class="text-[12px] font-[800] text-[#3B5BDB] mb-1.5 inline-block">{{ emp.hieuSuat }}%</span>
                   <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden mx-auto">
-                    <div class="h-full bg-[#3B5BDB] rounded-full" :style="`width:${emp.hieuSuat}%`"></div>
+                    <div 
+                      class="h-full bg-[#3B5BDB] rounded-full transition-all duration-[1500ms] ease-out" 
+                      :style="{ width: isChartLoaded ? emp.hieuSuat + '%' : '0%', transitionDelay: (index * 150) + 'ms' }"
+                    ></div>
                   </div>
                 </td>
                 <td class="py-5 px-2 text-center">
@@ -204,13 +207,16 @@
         
         <!-- ✅ Dept rankings – từ deptRankings -->
         <div class="flex flex-col flex-1 justify-between gap-6">
-          <div v-for="dept in deptRankings" :key="dept.name">
+          <div v-for="(dept, index) in deptRankings" :key="dept.name">
             <div class="flex justify-between items-end mb-1.5">
               <span class="text-[13px] font-[800] text-slate-800">{{ dept.name }}</span>
               <span class="text-[14px] font-[900] text-[#3B5BDB]">{{ dept.score }}%</span>
             </div>
             <div class="w-full h-[6px] bg-slate-100 rounded-full overflow-hidden mb-1.5">
-              <div class="h-full bg-[#3B5BDB] rounded-full transition-all duration-1000" :style="`width:${dept.score}%`"></div>
+              <div 
+                class="h-full bg-[#3B5BDB] rounded-full transition-all duration-[2000ms] ease-out" 
+                :style="{ width: isChartLoaded ? dept.score + '%' : '0%', transitionDelay: (index * 200) + 'ms' }"
+              ></div>
             </div>
             <div class="flex justify-between items-center text-[11px] font-semibold text-slate-400">
               <span class="italic">{{ dept.note }}</span>
@@ -226,12 +232,17 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
 import { mockEmployees, mockDepartments, mockPositions } from '@/mock-data/index.js';
 
 const selectedDateRange = ref('30_days');
+const isChartLoaded = ref(false);
 const Math = window.Math;
+
+onMounted(() => {
+  setTimeout(() => isChartLoaded.value = true, 300);
+});
 
 const nhanSuKpiCards = computed(() => {
   const emps = mockEmployees;
@@ -345,4 +356,13 @@ const bienDongChartComputed = computed(() => {
 .draw-red { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: dashDraw 1.5s cubic-bezier(0.25, 1, 0.5, 1) forwards 0.2s; }
 .fade-area { opacity: 0; animation: fadeIn 1s ease-in forwards 0.6s; }
 .fade-dots { opacity: 0; animation: fadeIn 0.5s ease forwards 1.2s; }
+
+@keyframes pillarGrow {
+  from { height: 0; opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.bar-pillar {
+  animation: pillarGrow 1s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
 </style>

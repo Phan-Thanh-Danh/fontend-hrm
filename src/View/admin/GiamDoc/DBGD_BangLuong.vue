@@ -67,8 +67,8 @@
                   class="flex items-end h-full justify-center group relative cursor-pointer w-16 hover:z-[60]">
                 
                 <!-- Bar -->
-                <div class="w-6 md:w-8 bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-md relative shadow-sm shadow-indigo-500/30 group-hover:opacity-90 transition-opacity"
-                     :style="`height: ${Math.min(item.percent, 115)}%`">
+                <div class="w-6 md:w-8 bg-gradient-to-t from-indigo-500 to-indigo-400 rounded-t-md relative shadow-sm shadow-indigo-500/30 group-hover:opacity-90 transition-opacity bar-pillar"
+                     :style="`height: ${Math.min(item.percent, 115)}%; animation-delay: ${i * 100}ms`">
                      
                    <!-- Clean, Informative Tooltip -->
                    <div class="hidden group-hover:flex absolute bottom-full left-1/2 -translate-x-1/2 mb-2 whitespace-nowrap pointer-events-none">
@@ -109,8 +109,10 @@
             <div class="border-t border-slate-200 w-full h-0 relative"><span class="absolute -top-2.5 bg-white pr-2 text-[10px] font-bold text-slate-400">0.0</span></div>
           </div>
           
-          <!-- The SVG Area Chart (Visuals only, perfectly stretched) -->
-          <div class="absolute left-8 right-3 lg:left-10 lg:right-4 top-0 bottom-0 z-10 pointer-events-none">
+          <!-- The SVG Area Chart Wrapper with Clip-Path Scan -->
+          <div class="absolute left-8 right-3 lg:left-10 lg:right-4 top-0 bottom-0 z-10 pointer-events-none overflow-hidden" 
+               :style="`clip-path: inset(0 ${isChartLoaded ? 0 : 100}% 0 0); transition: clip-path 2s cubic-bezier(0.4, 0, 0.2, 1);`"
+          >
              <svg class="w-full h-full overflow-visible" viewBox="0 0 100 100" preserveAspectRatio="none">
                 <defs>
                    <linearGradient id="curveGradient" x1="0" y1="0" x2="0" y2="1">
@@ -118,13 +120,15 @@
                       <stop offset="100%" stop-color="#3B5BDB" stop-opacity="0" />
                    </linearGradient>
                 </defs>
-                <path class="transition-all duration-1000 ease-in-out" :d="bangLuongAreaPath" fill="url(#curveGradient)" />
-                <path class="transition-all duration-1000 ease-in-out" :d="bangLuongLinePath" fill="none" stroke="#3B5BDB" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" />
+                <path :d="bangLuongAreaPath" fill="url(#curveGradient)" />
+                <path :d="bangLuongLinePath" fill="none" stroke="#3B5BDB" stroke-width="4" stroke-linecap="round" vector-effect="non-scaling-stroke" />
              </svg>
           </div>
 
-          <!-- HTML Interactive Hover Zones & Dots (Absolutely mapped to p.x) -->
-          <div class="absolute left-8 right-3 lg:left-10 lg:right-4 top-0 bottom-0 z-20">
+          <!-- HTML Interactive Hover Zones & Dots -->
+          <div class="absolute left-8 right-3 lg:left-10 lg:right-4 top-0 bottom-0 z-20 overflow-hidden"
+               :style="`clip-path: inset(0 ${isChartLoaded ? 0 : 100}% 0 0); transition: clip-path 2s cubic-bezier(0.4, 0, 0.2, 1);`"
+          >
              <!-- Each Month Column explicitly becomes a strictly defined Vertical Axis at {p.x}% -->
              <div v-for="(p, idx) in bangLuongLinePoints" :key="idx"
                   class="absolute top-0 bottom-0 w-px group cursor-pointer hover:z-[60]"
@@ -137,10 +141,10 @@
                 <div class="absolute bottom-0 left-1/2 -translate-x-1/2 w-px bg-blue-400 border-l border-dashed border-blue-400 opacity-0 group-hover:opacity-70 transition-opacity z-20 pointer-events-none"
                      :style="`height: ${p.yPct}%`"></div>
                 
-                <!-- PERMANENTLY VISIBLE Data Dot: Anchors the wave nodes exactly at each month -->
+                <!-- PERMANENTLY VISIBLE Data Dot -->
                 <div class="absolute left-1/2 w-3 h-3 md:w-4 md:h-4 rounded-full bg-white border-[2.5px] border-[#3B5BDB] shadow shadow-[#3B5BDB]/20 z-30 transition-all duration-300 pointer-events-none group-hover:scale-[1.4] group-hover:border-[3px] group-hover:shadow-blue-500/50 -translate-x-1/2 translate-y-1/2"
-                     :style="`bottom: ${p.yPct}%`">
-                </div>
+                     :style="`bottom: ${p.yPct}%`"
+                ></div>
 
                 <!-- Clean, Informative Tooltip (Decoupled & perfectly anchored above the dot) -->
                 <div class="hidden group-hover:flex absolute left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none z-50 animate-fade-in-up"
@@ -218,12 +222,19 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import GD_DateFilter from '@/components/GD_DateFilter.vue';
 import { mockEmployees, mockSalaryDetails, mockDepartments } from '@/mock-data/index.js';
 
 const selectedDateRange = ref('30_days');
+const isChartLoaded = ref(false);
 const Math = window.Math;
+
+onMounted(() => {
+  setTimeout(() => {
+    isChartLoaded.value = true;
+  }, 100);
+});
 
 const bangLuongKpiCards = computed(() => {
   const allSalaries = mockSalaryDetails;
@@ -310,7 +321,6 @@ const bangLuongLinePath = computed(() => {
     const prev = bangLuongLinePoints.value[i-1];
     const curr = bangLuongLinePoints.value[i];
     const cpX = (prev.x + curr.x) / 2;
-    // Đường cong cubic trơn tru theo thang toạ độ 0-100
     d += ` C ${cpX} ${prev.y} ${cpX} ${curr.y} ${curr.x} ${curr.y}`;
   }
   return d;
@@ -327,5 +337,14 @@ const bangLuongAreaPath = computed(() => {
 <style scoped>
 .material-symbols-outlined {
   font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+}
+
+@keyframes pillarGrow {
+  from { height: 0; opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.bar-pillar {
+  animation: pillarGrow 1s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
 }
 </style>
