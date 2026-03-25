@@ -17,48 +17,59 @@ const state = reactive({
 export function useSupportStore() {
   const fetchTickets = async () => {
     try {
-      // Simulate API delay
-      await new Promise(r => setTimeout(r, 200));
+      // API delay simulation
+      await new Promise(r => setTimeout(r, 100));
 
-      const reqs = supportRequestsAPI.getAll();
-      const employees = employeesAPI.getAll();
-      const departments = departmentsAPI.getAll();
+      const reqs = supportRequestsAPI.getAll() || [];
+      const employees = employeesAPI.getAll() || [];
+      const departments = departmentsAPI.getAll() || [];
       
       state.tickets = reqs.map(req => {
+        // Robust lookup handling string vs number and different property names
         const emp = employees.find(e => {
-            // Dữ liệu NV001 dạng chuỗi hoặc dạng số
-            return e.id === req.employeeId || e.employee_id === req.employeeId || `NV${String(e.employee_id).padStart(3, '0')}` === req.employeeId;
+            const sid = String(req.employeeId);
+            return String(e.id) === sid || 
+                   String(e.employeeId) === sid || 
+                   String(e.employee_id) === sid || 
+                   (e.employeeCode && String(e.employeeCode).includes(sid));
         });
         
         let dept = null;
         if (emp) {
-            dept = departments.find(d => String(d.id) === String(emp.deptId) || String(d.department_id) === String(emp.department_id));
+            const deptId = emp.deptId || emp.departmentId || (emp.department && emp.department.departmentId);
+            dept = departments.find(d => 
+              String(d.id) === String(deptId) || 
+              String(d.departmentId) === String(deptId) || 
+              String(d.department_id) === String(deptId)
+            );
         }
         
         // Status mapping: backend -> frontend
         let uiStatus = 'Chờ xử lý';
-        if (req.status === 'resolved') uiStatus = 'Hoàn thành';
-        else if (req.status === 'processing') uiStatus = 'Đang xử lý';
-        else if (req.status === 'rejected') uiStatus = 'Từ chối';
+        if (req.status === 'resolved' || req.status === 'Hoàn thành') uiStatus = 'Hoàn thành';
+        else if (req.status === 'processing' || req.status === 'Đang xử lý') uiStatus = 'Đang xử lý';
+        else if (req.status === 'rejected' || req.status === 'Từ chối') uiStatus = 'Từ chối';
+        else if (req.status === 'pending' || req.status === 'Mới') uiStatus = 'Chờ xử lý';
 
         return {
-          id: req.id.toString(),
-          employeeName: emp ? (emp.name || emp.full_name) : 'Unknown',
-          department: dept ? (dept.name || dept.department_name) : 'N/A',
-          category: req.type || 'Hành chính & Văn phòng',
-          title: req.title,
+          id: req.id ? req.id.toString() : Date.now().toString(),
+          employeeName: emp ? (emp.fullName || emp.full_name || emp.name) : 'Người dùng hệ thống',
+          department: dept ? (dept.departmentName || dept.name || dept.department_name) : 'N/A',
+          category: req.type || 'Hỗ trợ IT & Thiết bị',
+          title: req.title || 'Không có tiêu đề',
           priority: req.priority || 'Trung bình',
           status: uiStatus,
           date: req.date || new Date().toLocaleDateString('vi-VN'),
           deadline: req.deadline || '',
           asset: req.asset || '',
-          description: req.desc || '',
-          avatarColor: AVATAR_COLORS[String(req.id).length % AVATAR_COLORS.length],
+          description: req.desc || req.description || '',
+          avatarColor: AVATAR_COLORS[String(req.id || '').length % AVATAR_COLORS.length],
           note: req.note || ''
         }
       })
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu hỗ trợ:', error)
+      state.tickets = [];
     }
   }
 

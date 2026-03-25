@@ -1,24 +1,52 @@
 import { reactive, watch } from 'vue';
-const generateSeedData = () => ({});
+import { 
+  mockEmployees, mockDepartments, mockLeaveRequests, mockAttendances, 
+  mockPositions, mockRequestTypes, mockAssets, mockContracts, 
+  mockCandidates, mockSalaryDetails 
+} from '@/mock-data/index.js';
+
+const generateSeedData = () => ({
+  requests: [...mockLeaveRequests],
+  employees: [...mockEmployees],
+  departments: [...mockDepartments],
+  positions: [...mockPositions],
+  requestTypes: [...mockRequestTypes],
+  assets: [...mockAssets],
+  contracts: [...mockContracts],
+  candidates: [...mockCandidates],
+  salaries: [...mockSalaryDetails],
+  supportRequests: [],
+  attendances: [...mockAttendances]
+});
 
 // Cấu hình Mock Database
 const LOCAL_STORAGE_KEY = 'HRM_MOCK_DB_V2';
 
-// Lấy dữ liệu từ LocalStorage nếu có, nếu không thì tự sinh ra từ seedData.js
 const getInitialDB = () => {
   try {
+    let db = {};
     const saved = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (saved) {
-      const parsed = JSON.parse(saved);
-      if (!parsed.supportRequests) parsed.supportRequests = [];
-      return parsed;
+      db = JSON.parse(saved);
+    } else {
+      db = generateSeedData();
     }
+    
+    // Ensure ALL required keys are initialized as arrays to prevent mapping errors
+    const keys = [
+      'requests', 'employees', 'departments', 'positions', 
+      'requestTypes', 'assets', 'contracts', 'candidates', 
+      'salaries', 'supportRequests', 'attendances'
+    ];
+    keys.forEach(k => {
+      if (!db[k] || !Array.isArray(db[k])) db[k] = [];
+    });
+
+    return db;
   } catch (e) {
-    console.warn("Could not load Mock DB from localStorage", e);
+    console.error("Critical error initializing mockDB:", e);
+    return generateSeedData();
   }
-  const seed = generateSeedData();
-  if (!seed.supportRequests) seed.supportRequests = [];
-  return seed;
 };
 
 // Global Store lưu trữ nội dung Mock DB, có tính Reactivity
@@ -30,6 +58,20 @@ watch(mockDB, (newVal) => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newVal));
   } catch (e) { /* ignore */ }
 }, { deep: true });
+
+// Sync across multiple tabs
+if (typeof window !== 'undefined') {
+  window.addEventListener('storage', (e) => {
+    if (e.key === LOCAL_STORAGE_KEY && e.newValue) {
+      try {
+        const newVal = JSON.parse(e.newValue);
+        Object.assign(mockDB, newVal);
+      } catch (err) {
+        console.error("Error syncing mockDB across tabs:", err);
+      }
+    }
+  });
+}
 
 // === HELPER FUNCTIONS API (CRUD) ===
 

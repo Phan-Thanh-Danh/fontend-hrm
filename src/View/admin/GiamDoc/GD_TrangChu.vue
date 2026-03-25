@@ -250,10 +250,12 @@
           </div>
         </div>
 
-        <button class="list-card-footer" @click="router.push('/giamdoc/thongbao')">
-          <span class="material-symbols-rounded" style="font-size:15px">expand_more</span>
-          Xem toàn bộ {{ pendingApprovals.length }} yêu cầu
-        </button>
+        <div class="list-card-footer-container">
+          <button class="btn-view-all" @click="router.push('/giamdoc/thongbao')">
+            <span>Xem toàn bộ {{ pendingApprovals.length }} yêu cầu</span>
+            <span class="material-symbols-rounded">arrow_forward</span>
+          </button>
+        </div>
       </div>
 
       <!-- Events Timeline -->
@@ -1651,29 +1653,63 @@ const dynamicBarChart = computed(() => {
 }
 .btn-schedule:hover { background: #334155 !important; }
 
-.list-card-footer {
-  padding: 14px;
-  background: var(--bg-page, #F8FAFC);
-  border-top: 1px solid var(--border-light, #F3F4F6);
-  border: none;
-  width: 100%;
+.list-card-footer-container {
+  margin-top: auto;
+  padding: 16px;
   display: flex;
-  align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted, #6B7280);
-  cursor: pointer;
-  font-family: inherit;
-  transition: color 0.15s, background-color 0.15s;
+  border-top: 1px solid var(--border-light, #F3F4F6);
+  background: linear-gradient(to bottom, transparent, var(--bg-hover, #F8FAFC)/30);
 }
 
-.list-card-footer:hover {
-  color: var(--text-title, #111827);
-  background: var(--bg-hover, #F1F5F9);
+.btn-view-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 24px;
+  border-radius: 999px;
+  background: var(--brand-light, #DBEAFE);
+  color: var(--brand, #2563eb);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1.5px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.05);
+}
+
+.btn-view-all:hover {
+  background: var(--brand, #2563eb);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(37, 99, 235, 0.2);
+}
+
+.btn-view-all .material-symbols-rounded {
+  font-size: 16px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-view-all:hover .material-symbols-rounded {
+  transform: translateX(4px);
+}
+
+:global(.dark) .btn-view-all {
+  background: rgba(37, 99, 235, 0.15);
+  color: #93c5fd;
+  border-color: rgba(37, 99, 235, 0.2);
+}
+
+:global(.dark) .btn-view-all:hover {
+  background: var(--brand, #2563eb);
+  color: white;
+}
+
+:global(.dark) .list-card-footer-container {
+  border-top-color: rgba(255,255,255,0.05);
 }
 
 /* Events Card — always dark themed regardless of light/dark toggle */
